@@ -1,0 +1,8 @@
+exe
+*.o
+*.d
+*.json
+*.txt
+*.out
+*.o
+*.pdf
