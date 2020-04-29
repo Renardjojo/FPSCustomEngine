@@ -50,6 +50,9 @@ PhysicalObject::~PhysicalObject ()
 
 void PhysicalObject::AddForce(Vec3 force)
 {
+    if (_isKinematic)
+        return;
+
     if (!freezeTrX)
         velocity.x += force.x; 
     else
@@ -68,18 +71,63 @@ void PhysicalObject::AddForce(Vec3 force)
 
 void PhysicalObject::AddForce(float x, float y, float z)
 {
-    if (!freezeTrX)
+    if (_isKinematic)
+        return;
+
+    if (!freezeRotX)
         velocity.x += x;
     else
         velocity.x = 0;
     
-    if (!freezeTrY)
+    if (!freezeRotY)
         velocity.y += y;
     else
-        velocity.x = 0;
+        velocity.y = 0;
     
-    if (!freezeTrZ)
+    if (!freezeRotZ)
         velocity.z += z;
     else
-        velocity.x = 0;
+        velocity.z = 0;
+}
+
+void PhysicalObject::AddTorque(Vec3 force)
+{
+    if (_isKinematic)
+        return;
+        
+    if (!freezeRotX)
+        angularVelocity.x += force.x; 
+    else
+        angularVelocity.x = 0;
+
+    if (!freezeRotY)
+        angularVelocity.y += force.y;
+    else
+        velocity.y = 0;
+
+    if (!freezeRotZ)
+        angularVelocity.z += force.z;
+    else
+        angularVelocity.z = 0;
+}
+
+void PhysicalObject::AddTorque(float x, float y, float z)
+{
+    if (_isKinematic)
+        return;
+
+    if (!freezeTrX)
+        angularVelocity.x += x;
+    else
+        angularVelocity.x = 0;
+    
+    if (!freezeTrY)
+        angularVelocity.y += y;
+    else
+        angularVelocity.y = 0;
+    
+    if (!freezeTrZ)
+        angularVelocity.z += z;
+    else
+        angularVelocity.z = 0;
 }

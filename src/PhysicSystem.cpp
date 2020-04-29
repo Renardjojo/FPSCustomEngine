@@ -11,6 +11,8 @@ void PhysicSystem::update() noexcept
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
+        if (object->isKinematic())
+            continue;
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass() + gravity) * TimeSystem::getDeltaTime());
 

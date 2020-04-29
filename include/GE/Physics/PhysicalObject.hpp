@@ -34,6 +34,8 @@ namespace Engine::Physics
 
         void AddForce(Vec3 force);
         void AddForce(float x, float y, float z);
+        void AddTorque(Vec3 force);
+        void AddTorque(float x, float y, float z);
 
         #pragma endregion //!methods
 

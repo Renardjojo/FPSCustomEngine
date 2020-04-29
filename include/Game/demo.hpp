@@ -71,12 +71,12 @@ namespace Game
             bool flagF1IsDown;
             bool mouseForPlayer1;
 
+            Engine::Core::DataStructure::GraphEntity* sunLight;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
-            Engine::Core::Maths::Vec3 dirPlayer2;
             Engine::Core::DataStructure::GraphEntity* player1;
-            Engine::Core::DataStructure::GraphEntity* player2;
-            Engine::Core::DataStructure::GraphEntity* sunLight;*/
+            Engine::Core::DataStructure::GraphEntity* player2;*/
 
+            Engine::Core::Maths::Vec3 dirCamera;
             Engine::Core::DataStructure::GraphEntity* mainCamera;
 
 
@@ -91,18 +91,18 @@ namespace Game
             void loadResourceAndScene  ();
 
             void loadGeneralRessource   (Resources& resourceManager);
+            void loadLights             (Resources& resourceManager);
             /*void loadSound              (Resources& resourceManager);
             void loadPlayers            (Resources& resourceManager, const Engine::Resources::Size& windowSize);
             void loadSkyBox             (Resources& resourceManager);
             void loadGround             (Resources& resourceManager);
             void loadMultipleRock       (Resources& resourceManager);
             void loadMultipleCrash      (Resources& resourceManager);
-            void loadLights             (Resources& resourceManager);
             void loadTowerGuard         (Resources& resourceManager);
             void loadTree               (Resources& resourceManager);
             void loadCloud              (Resources& resourceManager);*/
 
-            void updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime);
+            void updateControl          (const Engine::Core::InputSystem::Input& input);
 
             #pragma endregion //!methods
 
