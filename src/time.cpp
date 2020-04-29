@@ -1,5 +1,5 @@
-#include "time.hpp"
-#include "log.hpp"
+#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/Debug/log.hpp"
 #include <SDL2/SDL_timer.h>
 #include <string>
 

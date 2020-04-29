@@ -6,7 +6,7 @@
 #define _GE_SAMPLE_H
 
 #include <SDL2/SDL_mixer.h>
-#include "sound.hpp"
+#include "GE/Resources/sound.hpp"
 
 //function based on SDL2_mixer library. See documentation on : http://sdl.beuc.net/sdl.wiki/SDL_mixer
 namespace Engine::Resources

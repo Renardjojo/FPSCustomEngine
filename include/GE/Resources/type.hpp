@@ -5,7 +5,7 @@
 #ifndef _GE_TYPE_H
 #define _GE_TYPE_H
 
-#include "vec.hpp"
+#include "GE/Core/Maths/vec.hpp"
 #include <string>
 #include <vector>
 

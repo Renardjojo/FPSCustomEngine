@@ -1,5 +1,5 @@
-#include "windowSDL.hpp"
-#include "log.hpp"
+#include "GE/Core/Rendering/Window/windowSDL.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Core::Renderer;
 using namespace Engine::Core::Debug;

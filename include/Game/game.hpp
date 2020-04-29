@@ -5,7 +5,7 @@
 #ifndef _GAME_H
 #define _GAME_H
 
-#include "GE.hpp"
+#include "GE/GE.hpp"
 
 namespace Game
 {

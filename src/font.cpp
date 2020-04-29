@@ -1,7 +1,7 @@
-#include "font.hpp"
+#include "GE/Resources/font.hpp"
 
-#include "parserTool.hpp"
-#include "log.hpp"
+#include "GE/Core/Parsers/parserTool.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Core::Debug;

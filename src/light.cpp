@@ -1,6 +1,6 @@
-#include "light.hpp"
-#include "pointLight.hpp"
-#include "spotLight.hpp"
+#include "GE/LowRenderer/Light/light.hpp"
+#include "GE/LowRenderer/Light/pointLight.hpp"
+#include "GE/LowRenderer/Light/spotLight.hpp"
 #include <algorithm>
 
 using namespace Engine::Core::Maths;

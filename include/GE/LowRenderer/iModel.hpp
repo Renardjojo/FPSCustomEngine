@@ -5,8 +5,8 @@
 #ifndef _GE_INTERFACE_Model_H
 #define _GE_INTERFACE_Model_H
 
-#include "vec.hpp"
-#include "entity.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/LowRenderer/entity.hpp"
 
 namespace Engine::LowRenderer
 {

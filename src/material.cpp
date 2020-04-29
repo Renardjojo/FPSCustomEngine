@@ -1,5 +1,5 @@
-#include "material.hpp"
-#include "log.hpp"
+#include "GE/Resources/material.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Core::Debug;
 using namespace Engine::Resources;

@@ -1,8 +1,8 @@
-#include "model.hpp"
-#include "log.hpp"
-#include "assert.hpp"
-#include "camera.hpp"
-#include "light.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Debug/assert.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/LowRenderer/Light/light.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::LowRenderer;

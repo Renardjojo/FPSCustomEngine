@@ -5,9 +5,9 @@
 #ifndef _GE_ENTITY_H
 #define _GE_ENTITY_H
 
-#include "vec.hpp"
-#include "transform.hpp"
-#include "log.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Physics/transform.hpp"
+#include "GE/Core/Debug/log.hpp"
 #include <string>
 
 namespace Engine::LowRenderer

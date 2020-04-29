@@ -7,8 +7,8 @@
 
 #include <string>
 #include <vector>
-#include "vec.hpp"
-#include "shader_type.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Resources/shader_type.hpp"
 
 namespace Engine::Resources
 {

@@ -5,8 +5,8 @@
 #ifndef _GE_SHADER_TYPE_H
 #define _GE_SHADER_TYPE_H
 
-#include "vec.hpp"
-#include "type.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Resources/type.hpp"
 
 namespace Engine::Resources
 {
