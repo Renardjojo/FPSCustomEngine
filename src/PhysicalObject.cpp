@@ -26,11 +26,13 @@ PhysicalObject::~PhysicalObject ()
 PhysicalObject& PhysicalObject::operator=(PhysicalObject const& other)
 {
     PhysicSystem::addPhysicalObject(this);
+    return *this;
 }
 
 PhysicalObject& PhysicalObject::operator=(PhysicalObject && other)
 {
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
+    return *this;
 }
 
 void PhysicalObject::AddForce(Vec3 force)

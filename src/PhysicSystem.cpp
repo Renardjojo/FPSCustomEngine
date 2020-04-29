@@ -7,10 +7,10 @@ Engine::Core::Maths::Vec3       PhysicSystem::gravity;
 
 void PhysicSystem::update()
 {
-    for (PhysicalObject* object : pPhysicalObjects)
+    /*for (PhysicalObject* object : pPhysicalObjects)
     {
         //object->translate((object->GetVelocity() / object->GetMass() + gravity) * deltaTime);
 
         // detect collision
-    }
+    }*/
 }
