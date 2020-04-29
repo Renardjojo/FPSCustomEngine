@@ -13,12 +13,12 @@ namespace Engine::Physics
 
         #pragma region constructor/destructor
 
-        PhysicalObject ()					                = default;
-        PhysicalObject (const PhysicalObject& other)        = default;
-        PhysicalObject (PhysicalObject&& other)			    = default;
-        virtual ~PhysicalObject ()				            = default;
-        PhysicalObject& operator=(PhysicalObject const&)	= default;
-        PhysicalObject& operator=(PhysicalObject &&)		= default;
+        PhysicalObject ();
+        PhysicalObject (const PhysicalObject& other);
+        PhysicalObject (PhysicalObject&& other);
+        virtual ~PhysicalObject ();
+        PhysicalObject& operator=(PhysicalObject const& other);
+        PhysicalObject& operator=(PhysicalObject && other);
 
         #pragma endregion //!constructor/destructor
 

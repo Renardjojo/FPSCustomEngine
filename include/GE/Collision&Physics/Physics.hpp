@@ -49,6 +49,32 @@ namespace Engine::Physics
             pPhysicalObjects.push_back(pPhysicalObject);
         }
 
+        static
+        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) 
+        {
+            for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
+            {
+                if ((*it) == exPointorPhysicalObject)
+                {
+                    *it = newPointorPhysicalObject;
+                    return;
+                }
+            }
+        }
+
+        static
+        void removePhysicalObject (PhysicalObject* pPhysicalObject) 
+        {
+            for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
+            {
+                if ((*it) == pPhysicalObject)
+                {
+                    pPhysicalObjects.erase(it);
+                    return;
+                }
+            }
+        }
+
         #pragma endregion //!mutator
 
         #pragma region operator
