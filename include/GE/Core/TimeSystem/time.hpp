@@ -8,7 +8,7 @@
 namespace Engine::Core::TimeSystem
 {
 
-	#define DEFAULT_FPS_MAX 6000
+	#define DEFAULT_FPS_MAX 0xffffffff //60
 
 	class ChronoDt
 	{
