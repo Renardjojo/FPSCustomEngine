@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include "texture.hpp"
-#include "font.hpp"
-#include "type.hpp"
+#include "GE/Resources/texture.hpp"
+#include "GE/Resources/font.hpp"
+#include "GE/Resources/type.hpp"
 
 namespace Engine::Resources
 {

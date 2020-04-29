@@ -8,11 +8,11 @@
 #include <cmath>
 #include <vector>
 
-#include "glad.h"
-#include "vec.hpp"
-#include "entity.hpp"
-#include "camera.hpp"
-#include "shader_type.hpp"
+#include "glad/glad.h"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/LowRenderer/entity.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/Resources/shader_type.hpp"
 
 namespace Engine::LowRenderer
 {

@@ -3,7 +3,7 @@
 //Date : 09/01/2020 - 16 h 44
 
 #include <string>
-#include "type.hpp"
+#include "GE/Resources/type.hpp"
 
 #ifndef _GE_TEXTURE_H
 #define _GE_TEXTURE_H

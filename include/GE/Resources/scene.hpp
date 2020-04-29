@@ -7,8 +7,8 @@
 
 #include <vector>
 #include <string>
-#include "mat.hpp"
-#include "graph.hpp"
+#include "GE/Core/Maths/mat.hpp"
+#include "GE/Core/DataStructure/graph.hpp"
 
 namespace Engine::Resources
 {

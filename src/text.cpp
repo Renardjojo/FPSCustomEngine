@@ -1,7 +1,7 @@
-#include "text.hpp"
+#include "GE/Resources/text.hpp"
 
 #include <SDL2/SDL_pixels.h>
-#include "log.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Core::Debug;

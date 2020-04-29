@@ -1,6 +1,6 @@
-#include "GE.hpp"
-#include "log.hpp"
-#include "rendererSDLOpGl33.hpp"
+#include "GE/GE.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Rendering/Renderer/rendererSDLOpGl33.hpp"
 
 using namespace Engine;
 using namespace Engine::Core::Debug;

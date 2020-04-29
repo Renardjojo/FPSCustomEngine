@@ -1,5 +1,5 @@
-#include "shaderParser.hpp"
-#include "log.hpp"
+#include "GE/Core/Parsers/shaderParser.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 #include <sstream> 
 #include <iostream>

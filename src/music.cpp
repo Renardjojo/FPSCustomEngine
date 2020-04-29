@@ -1,7 +1,7 @@
-#include "music.hpp"
+#include "GE/Resources/music.hpp"
 
-#include "log.hpp"
-#include "assert.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Core::Debug;

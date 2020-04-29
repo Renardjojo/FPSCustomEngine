@@ -1,6 +1,6 @@
-#include "rendererSDLOpGl33.hpp"
-#include "log.hpp"
-#include "windowSDL.hpp"
+#include "GE/Core/Rendering/Renderer/rendererSDLOpGl33.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Rendering/Window/windowSDL.hpp"
 #include <SDL2/SDL_hints.h>
 
 using namespace Engine::Core::Renderer;
@@ -14,7 +14,7 @@ RendererSDLOpGl33::~RendererSDLOpGl33 ()
 
 void    RendererSDLOpGl33::initialize  (const WindowCreateArg& winArg)
 {
-    SLog::logInitializationStart("SDL/OpenGL 3.3 Renderer");
+    SLog::logInitializationStart("SDL/OpenGL 4.6 Renderer");
 
     //Init window
     pWin = std::make_unique<WindowSDL>();
@@ -22,8 +22,8 @@ void    RendererSDLOpGl33::initialize  (const WindowCreateArg& winArg)
 
     //Init openGL
     //init parameter :
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
@@ -43,11 +43,11 @@ void    RendererSDLOpGl33::initialize  (const WindowCreateArg& winArg)
         functError("Failed to initialize GLAD");
     }
 
-    SLog::logInitializationEnd("SDL/OpenGL 3.3 Renderer");
+    SLog::logInitializationEnd("SDL/OpenGL 4.6 Renderer");
 }
 
 void   RendererSDLOpGl33::release   ()
 {
     SDL_GL_DeleteContext(openGlContext_);
-    SLog::log("SDL/OpenGL 3.3 Renderer release");
+    SLog::log("SDL/OpenGL 4.6 Renderer release");
 }

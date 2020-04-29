@@ -9,11 +9,11 @@
 #include <string>
 #include <memory>
 
-#include "mat.hpp"
-#include "glad.h"
-#include "type.hpp"
-#include "shader_type.hpp"
-#include "material.hpp"
+#include "GE/Core/Maths/mat.hpp"
+#include "glad/glad.h"
+#include "GE/Resources/type.hpp"
+#include "GE/Resources/shader_type.hpp"
+#include "GE/Resources/material.hpp"
 
 
 namespace Engine::Resources

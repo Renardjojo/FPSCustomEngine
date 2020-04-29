@@ -5,11 +5,11 @@
 #ifndef _GE_BILLBOARD_H
 #define _GE_BILLBOARD_H
 
-#include "model.hpp"
-#include "mat.hpp"
-#include "vec.hpp"
-#include "camera.hpp"
-#include "assert.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/Core/Maths/mat.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 namespace Engine::LowRenderer
 {

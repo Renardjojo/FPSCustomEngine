@@ -1,5 +1,5 @@
-#include "camera.hpp"
-#include "log.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;

@@ -12,10 +12,10 @@
 #include <istream>
 #include <sstream>
 #include <iostream>
-#include "entity.hpp"
-#include "log.hpp"
-#include "model.hpp"
-#include "camera.hpp"
+#include "GE/LowRenderer/entity.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/LowRenderer/camera.hpp"
 
 namespace Engine::Core::DataStructure
 {
