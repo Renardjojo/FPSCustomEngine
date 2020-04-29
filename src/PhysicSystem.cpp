@@ -1,11 +1,11 @@
-#include "GE/Collision&Physics/Physics.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
 
 using namespace Engine::Physics;
 
-std::vector<PhysicalObject*> Physic::pPhysicalObjects;
-Engine::Core::Maths::Vec3 gravity;
+std::vector<PhysicalObject*>    PhysicSystem::pPhysicalObjects;
+Engine::Core::Maths::Vec3       PhysicSystem::gravity;
 
-void Physic::update()
+void PhysicSystem::update()
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {

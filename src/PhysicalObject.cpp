@@ -1,5 +1,5 @@
-#include "GE/Collision&Physics/PhysicalObject.hpp"
-#include "GE/Collision&Physics/PhysicSystem.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
 
 using namespace Engine::Physics;
 

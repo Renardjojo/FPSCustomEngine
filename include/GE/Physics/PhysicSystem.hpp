@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/Collision&Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 
 namespace Engine::Physics
 {

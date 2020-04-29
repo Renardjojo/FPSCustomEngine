@@ -43,10 +43,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXXFLAGSRELEASE) $< -o $@
+	g++ -c $(CXXFLAGSDEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(CXXFLAGSRELEASE) $< -o $@
+	gcc -c $(CXXFLAGSDEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
