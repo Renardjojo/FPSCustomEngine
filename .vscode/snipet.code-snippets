@@ -1,0 +1,80 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"header": {
+		"scope": "cpp, hpp",
+		"prefix": "h",
+		"body": [
+			"//Project : Engine",
+			"//Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan",
+			"//Date : $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE - $CURRENT_HOUR h $CURRENT_MINUTE",
+			"",
+			"#ifndef _$1_H",
+			"#define _$1_H",
+			"",
+			"namespace $2",
+			"{",
+			"",
+			"} //$2",
+			"#endif //_$1_H"
+		],
+		"description": "header"
+	},
+
+	"class": {
+		"scope": "cpp, hpp",
+		"prefix": "cl",
+		"body": [
+			"class $1",
+			"{",
+			"\tpublic:",
+			"",
+			"\t#pragma region constructor/destructor",
+			"",
+			"\t$1 ()\t\t\t\t\t= default;",
+            "\t$1 (const $1& other)\t\t\t= default;",
+            "\t$1 ($1&& other)\t\t\t\t= default;",
+			"\tvirtual ~$1 ()\t\t\t\t= default;",
+			"\t$1& operator=($1 const&)\t\t\t= default;",
+			"\t$1& operator=($1 &&)\t\t\t= default;",
+			"",
+			"\t#pragma endregion //!constructor/destructor",
+			"",
+			"\t#pragma region methods",
+			"\t#pragma endregion //!methods",
+			"",
+			"\t#pragma region accessor",
+			"\t#pragma endregion //!accessor",
+			"",
+			"\t#pragma region mutator",
+			"\t#pragma endregion //!mutator",
+			"",
+			"\t#pragma region operator",
+			"\t#pragma endregion //!operator",
+			"",
+			"\t#pragma region convertor",
+			"\t#pragma endregion //!convertor",
+			"",
+			"\tprotected:",
+			"",
+			"\t#pragma region attribut",
+			"\t#pragma endregion //!attribut",
+			"",
+			"\t#pragma region static attribut",
+			"\t#pragma endregion //! static attribut",
+			"",
+			"\t#pragma region methods",
+			"\t#pragma endregion //!methods",
+			"",
+			"\tprivate:",
+			"",
+			"};"
+		],
+		"description": "create class"
+	}
+}
