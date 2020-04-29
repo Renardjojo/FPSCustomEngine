@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 
-#define PATH_MTL "./resources/material/"
+#define PATH_MTL "./ressources/material/"
 #define EXTENSION_MTL ".mtl"
 
 namespace Engine::Core::Parsers
@@ -21,7 +21,7 @@ namespace Engine::Core::Parsers
      * @param materialPath 
      * @param materials
      */
-    extern void loadMTL (std::string& materialPath, std::vector<Engine::Resources::MaterialAttrib>&  materials) noexcept;
+    extern void loadMTL (std::string& materialPath, std::vector<Engine::Ressources::MaterialAttrib>&  materials) noexcept;
 
 } // namespace Engine::Core::Parsers
 

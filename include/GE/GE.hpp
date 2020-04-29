@@ -5,15 +5,15 @@
 #include <memory>
 #include "GE/Core/Rendering/Renderer/iRenderer.hpp"
 #include "GE/Core/InputSystem/input.hpp"
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 #include "GE/Core/TimeSystem/time.hpp"
-#include "GE/Resources/resourcesManager.hpp"
-#include "GE/Resources/mesh.hpp"
-#include "GE/Resources/shader.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/mesh.hpp"
+#include "GE/Ressources/shader.hpp"
 #include "GE/LowRenderer/model.hpp"
-#include "GE/Resources/sample.hpp"
-#include "GE/Resources/music.hpp"
-#include "GE/Resources/font.hpp"
+#include "GE/Ressources/sample.hpp"
+#include "GE/Ressources/music.hpp"
+#include "GE/Ressources/font.hpp"
 
 #ifndef _GE_H
 #define _GE_H
@@ -47,7 +47,7 @@ namespace Engine
             const Engine::Core::InputSystem::T_inputMouse&	    getMouseEvent() const noexcept       { return inputManager_.mouse;};
             const Engine::Core::InputSystem::T_inputKeyboard&	getKeyboardEvent() const noexcept    { return inputManager_.keyboard; };
 
-            const Engine::Resources::Size getWinSize () { return ren_->getWin()->getSize(); }
+            const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
 
             float   getDeltaTime() { return timeManager_.dtf_; };
             void    setDeltaTime(float dtf) { timeManager_.dtf_ = dtf; };
@@ -71,12 +71,12 @@ namespace Engine
             Engine::Core::InputSystem::Input                    inputManager_;
             Engine::Core::TimeSystem::TimeManager               timeManager_;
 
-            Engine::Resources::ResourcesManager<Engine::Resources::Mesh, 
-                                                Engine::Resources::Shader, 
-                                                Engine::Resources::Material, 
-                                                Engine::Resources::Sample, 
-                                                Engine::Resources::Music, 
-                                                Engine::Resources::Font>    resourceManager_;
+            Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, 
+                                                Engine::Ressources::Shader, 
+                                                Engine::Ressources::Material, 
+                                                Engine::Ressources::Sample, 
+                                                Engine::Ressources::Music, 
+                                                Engine::Ressources::Font>    ressourceManager_;
 
             #pragma endregion //!attribut
 

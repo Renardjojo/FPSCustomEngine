@@ -8,7 +8,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     struct FontCreateArg
     {
@@ -46,6 +46,6 @@ namespace Engine::Resources
 		private:
 	};	
 
-}//namespace Engine::Resources
+}//namespace Engine::Ressources
 
 #endif //_GE_FONT_H

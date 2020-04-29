@@ -1,8 +1,8 @@
-#include "GE/Resources/sample.hpp"
+#include "GE/Ressources/sample.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Debug/assert.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 
 Sample::Sample (const char* SamplePath, unsigned int volume)

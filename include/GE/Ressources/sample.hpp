@@ -6,10 +6,10 @@
 #define _GE_SAMPLE_H
 
 #include <SDL2/SDL_mixer.h>
-#include "GE/Resources/sound.hpp"
+#include "GE/Ressources/sound.hpp"
 
 //function based on SDL2_mixer library. See documentation on : http://sdl.beuc.net/sdl.wiki/SDL_mixer
-namespace Engine::Resources
+namespace Engine::Ressources
 {
 	struct SampleCreateArg
 	{
@@ -156,6 +156,6 @@ namespace Engine::Resources
 		private:
 
 	};
-} // namespace Engine::Resources
+} // namespace Engine::Ressources
 
 #endif //_GE_SAMPLE_H

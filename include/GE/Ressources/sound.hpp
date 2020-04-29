@@ -9,7 +9,7 @@
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Debug/assert.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
 	#define DEFAULT_VOLUME MIX_MAX_VOLUME / 2
 
@@ -110,6 +110,6 @@ namespace Engine::Resources
         private:
 
     };
-}; //namespace Engine::Resources
+}; //namespace Engine::Ressources
 
 #endif // _GE_SOUND_H

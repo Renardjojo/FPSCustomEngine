@@ -1,4 +1,4 @@
-#include "GE/Resources/shader.hpp"
+#include "GE/Ressources/shader.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "glad/glad.h"
 #include "GE/Core/Parsers/shaderParser.hpp"
@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Parsers;
 using namespace std;

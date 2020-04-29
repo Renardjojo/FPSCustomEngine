@@ -6,9 +6,9 @@
 #define _GE_SHADER_TYPE_H
 
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     struct alignas(16) MaterialComponent
     {

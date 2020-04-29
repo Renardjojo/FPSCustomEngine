@@ -1,4 +1,4 @@
-#include "GE/Resources/texture.hpp"
+#include "GE/Ressources/texture.hpp"
 #include "glad/glad.h"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Parsers/parserTool.hpp"
@@ -9,7 +9,7 @@
 #include "GE/Core/Parsers/stb_image.h"
 
 using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 
 /*
 Texture::Texture(const Texture &other)

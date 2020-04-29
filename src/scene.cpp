@@ -1,4 +1,4 @@
-#include "GE/Resources/scene.hpp"
+#include "GE/Ressources/scene.hpp"
 
 using namespace Engine::LowRenderer;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;

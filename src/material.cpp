@@ -1,8 +1,8 @@
-#include "GE/Resources/material.hpp"
+#include "GE/Ressources/material.hpp"
 #include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 
 Material::Material (const MaterialAndTextureCreateArg& arg)
     :   comp_                           (arg.comp_),

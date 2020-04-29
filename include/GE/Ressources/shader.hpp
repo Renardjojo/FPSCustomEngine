@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/Resources/shader_type.hpp"
+#include "GE/Ressources/shader_type.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     enum class E_ShaderType
     {

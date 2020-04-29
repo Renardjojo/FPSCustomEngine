@@ -1,7 +1,7 @@
 #include "Game/game.hpp"
 #include "Game/demo.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 
 Game::Game::Game (Engine::GE& gameEngine)
     : gameEngine_ {gameEngine}

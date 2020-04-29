@@ -6,9 +6,9 @@
 #define _GE_MUSIC_H
 
 #include <SDL2/SDL_mixer.h>
-#include "GE/Resources/sound.hpp"
+#include "GE/Ressources/sound.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
 //function based on SDL2_mixer library. See documentation on : http://sdl.beuc.net/sdl.wiki/SDL_mixer
 	struct MusicCreateArg
@@ -123,6 +123,6 @@ namespace Engine::Resources
 
 		private:
 	};
-} //namespace Engine::Resources
+} //namespace Engine::Ressources
 
 #endif //_GE_MUSIC_H

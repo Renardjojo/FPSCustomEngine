@@ -8,19 +8,19 @@
 #include "GE/LowRenderer/iModel.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Physics/transform.hpp"
-#include "GE/Resources/material.hpp"
-#include "GE/Resources/texture.hpp"
-#include "GE/Resources/mesh.hpp"
-#include "GE/Resources/shader.hpp"
+#include "GE/Ressources/material.hpp"
+#include "GE/Ressources/texture.hpp"
+#include "GE/Ressources/mesh.hpp"
+#include "GE/Ressources/shader.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_ModelCreateArg
     {
         Engine::Core::Maths::Vec3                       position, rotation, scale;
-        Engine::Resources::Shader*                      pShader;
-        std::vector<Engine::Resources::Material*>       pMaterials;
-        Engine::Resources::Mesh*                        pMesh;
+        Engine::Ressources::Shader*                      pShader;
+        std::vector<Engine::Ressources::Material*>       pMaterials;
+        Engine::Ressources::Mesh*                        pMesh;
         const char*                                     name;
          
         bool                                            loadInGPU               = true;
@@ -63,7 +63,7 @@ namespace Engine::LowRenderer
             #pragma region static methods
 
             //nullptr if don't use the shader else set pointor to shader to use
-            void useSimpleShader(Engine::Resources::Shader* pShader);
+            void useSimpleShader(Engine::Ressources::Shader* pShader);
 
             #pragma endregion //!static methods
     
@@ -87,10 +87,10 @@ namespace Engine::LowRenderer
     
             #pragma region attribut
 
-            Engine::Resources::Shader*                  pShader_;
-            std::vector<Engine::Resources::Material*>   pMaterial_; //contain the texture and material data
-            std::vector<Engine::Resources::Material*>   pMaterialToUse_; //contain pointor to the material to use when model is display.
-            Engine::Resources::Mesh*                    pMesh_;
+            Engine::Ressources::Shader*                  pShader_;
+            std::vector<Engine::Ressources::Material*>   pMaterial_; //contain the texture and material data
+            std::vector<Engine::Ressources::Material*>   pMaterialToUse_; //contain pointor to the material to use when model is display.
+            Engine::Ressources::Mesh*                    pMesh_;
 
             bool                                        enableBackFaceCulling_;
             bool                                        isOpaque_;

@@ -5,7 +5,7 @@
 
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 
 Light::Light ( const Engine::Core::Maths::Vec3&    pos,
         const AmbiantComponent&             ambient, 
@@ -51,9 +51,9 @@ void Light::enable (bool flag) throw()
     }
 }
 
-std::vector<Engine::Resources::light> Light::getLightsToUseInAlignasStruct ()
+std::vector<Engine::Ressources::light> Light::getLightsToUseInAlignasStruct ()
 {
-    std::vector<Engine::Resources::light> lightBufferRtn;
+    std::vector<Engine::Ressources::light> lightBufferRtn;
 
     for(Light* light : lightsToUse)
     {

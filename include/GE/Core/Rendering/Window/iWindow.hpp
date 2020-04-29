@@ -5,7 +5,7 @@
 #ifndef _INTERFACE_WINDOW_H
 #define _INTERFACE_WINDOW_H
 
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 
 namespace Engine::Core::Renderer
 {
@@ -39,7 +39,7 @@ namespace Engine::Core::Renderer
             
             virtual void*                       get     () const noexcept = 0;
             virtual unsigned int                getId   () const noexcept = 0;
-            virtual Engine::Resources::Size     getSize () const noexcept = 0;
+            virtual Engine::Ressources::Size     getSize () const noexcept = 0;
 
             #pragma endregion //!accessor
 

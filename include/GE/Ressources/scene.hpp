@@ -10,7 +10,7 @@
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/DataStructure/graph.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     class Scene
         : public Engine::Core::DataStructure::Graph

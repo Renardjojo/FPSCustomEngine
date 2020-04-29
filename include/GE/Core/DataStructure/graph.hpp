@@ -16,74 +16,10 @@
 #include "GE/Core/Debug/log.hpp"
 #include "GE/LowRenderer/model.hpp"
 #include "GE/LowRenderer/camera.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::Core::DataStructure
 {
-    typedef struct S_GraphEntity
-    {
-        std::unique_ptr<Engine::LowRenderer::Entity>    entity;
-        std::list<struct S_GraphEntity>                 children;
-
-        /**
-         * @brief update entity and these child if current entity is dirty
-         * 
-         */
-        void update()
-        {
-            for (auto i = children.begin(); i != children.end(); i++)
-            {
-                if (i->entity->isDirty())
-                {
-                    i->entity->update(entity->getModelMatrix());
-                    i->forceUpdate();
-                }
-                else
-                {
-                    i->update();
-                }
-            }      
-        }
-
-        /**
-         * @brief Force the update of entity without check if entity is dirty
-         * 
-         */
-        void forceUpdate()
-        {
-            for (auto i = children.begin(); i != children.end(); i++)
-            {
-                i->entity->update(entity->getModelMatrix());
-                i->forceUpdate();
-            }   
-        }
-
-        /**
-         * @brief Draw entity if entity is drawable
-         * 
-         */
-        void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model*>& mapElemSortedByDistance) const
-        {
-            for (auto i = children.begin(); i != children.end(); i++)
-            {
-                Engine::LowRenderer::Model* model = dynamic_cast<Engine::LowRenderer::Model*>(i->entity.get());
-                if (model != nullptr)
-                {
-                    if(model->isOpaque())
-                        model->draw();
-                    else
-                    {
-                        float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - model->getPosition()).length();
-                        mapElemSortedByDistance[distance] = model;
-                    }
-                }
-
-                i->sortAndDrawOpqueElement(mapElemSortedByDistance);
-            }
-        }    
-
-
-    } GraphEntity;
-
     class Graph
     {
         public:
@@ -117,7 +53,7 @@ namespace Engine::Core::DataStructure
              * 
              * @return GraphEntity* 
              */
-            GraphEntity& getWorld() noexcept { return world_;}
+            Engine::Ressources::GameObject& getWorld() noexcept { return world_;}
 
             /**
              * @brief Get the Entity object in function of path in arg
@@ -125,13 +61,13 @@ namespace Engine::Core::DataStructure
              * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
              * @return GraphEntity& 
              */
-            GraphEntity& getEntity (const std::string& path) noexcept
+            Engine::Ressources::GameObject& getGameObject (const std::string& path) noexcept
             {
                 GE_assert(!path.empty());
 
                 std::stringstream sPath(path);
                 std::string word;
-                GraphEntity* currentEntity = &world_;
+                Engine::Ressources::GameObject* currentEntity = &world_;
 
                 while (std::getline(sPath, word, '/'))
                 {
@@ -167,14 +103,14 @@ namespace Engine::Core::DataStructure
              * @tparam Args 
              * @param args 
              * @param dependenceEntity&
-             * @return GraphEntity&
+             * @return GameObject&
              */
             template<typename T, typename ...Args>
-            GraphEntity& add(GraphEntity& dependenceEntity, Args&&... args) noexcept
+            Engine::Ressources::GameObject& add(Engine::Ressources::GameObject& dependenceEntity, Args&&... args) noexcept
             {
                 dependenceEntity.children.push_back({});
                 dependenceEntity.children.back().entity = std::make_unique<T>(args...);
-                dependenceEntity.children.back().children = std::list<struct S_GraphEntity>();
+                dependenceEntity.children.back().children = std::list<Engine::Ressources::GameObject>();
                 dependenceEntity.children.back().entity->update(dependenceEntity.entity->getModelMatrix());
 
                 return dependenceEntity.children.back();
@@ -192,7 +128,7 @@ namespace Engine::Core::DataStructure
 
             #pragma region attribut
 
-		    GraphEntity world_;
+		    Engine::Ressources::GameObject world_;
 
             #pragma endregion //!attribut
 

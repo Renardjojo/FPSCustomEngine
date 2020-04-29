@@ -83,6 +83,6 @@ clean :
 re : clean all
 
 med : 
-	find ./Resources -name "*" > ./Resources.txt
+	find ./Ressources -name "*" > ./Ressources.txt
 	g++ -Wall -Werror mediaCreator.cpp -o mediaCreator && ./mediaCreator
-	rm ./Resources.txt && rm ./mediaCreator
+	rm ./Ressources.txt && rm ./mediaCreator
