@@ -9,6 +9,9 @@ void Physic::update()
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
+        if (object->isKinematic())
+            continue;
+            
         //object->translate((object->GetVelocity() / object->GetMass() + gravity) * deltaTime);
 
         // detect collision

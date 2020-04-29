@@ -375,7 +375,7 @@ MeshConstructorArg Mesh::createSphere(int latitudeCount, int longitudeCount)
 	{
 		float xy;
 		float latitudeAngle, longitudeAngle;
-		float radius = 1.f; 			// radius of 1
+		float radius = 0.5f; 			// radius of 1
 		float posX, posY, posZ; 		//position of point
 		float s, t;						//few constant for texture position
 
