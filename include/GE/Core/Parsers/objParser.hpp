@@ -10,7 +10,7 @@
 
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Parsers/mtlParser.hpp"
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 
 namespace Engine::Core::Parsers
 {
@@ -23,9 +23,9 @@ namespace Engine::Core::Parsers
      * @param materials 
      */
     extern void loadObjWithMTL (const char*                                         objPath,
-                                Engine::Resources::Attrib*                         attrib,
-                                std::vector<Engine::Resources::Shape>*             shape,
-                                std::vector<Engine::Resources::MaterialAttrib>*    materials) noexcept;
+                                Engine::Ressources::Attrib*                         attrib,
+                                std::vector<Engine::Ressources::Shape>*             shape,
+                                std::vector<Engine::Ressources::MaterialAttrib>*    materials) noexcept;
 
 } // namespace Engine::Core::Parsers
 

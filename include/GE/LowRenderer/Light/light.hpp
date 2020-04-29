@@ -12,16 +12,16 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/camera.hpp"
-#include "GE/Resources/shader_type.hpp"
+#include "GE/Ressources/shader_type.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_LightCreateArg
     {
         const Engine::Core::Maths::Vec3&                 pos;
-        const Engine::Resources::AmbiantComponent&      ambient; 
-        const Engine::Resources::DiffuseComponent&      diffuse;
-        const Engine::Resources::SpecularComponent&     specular;
+        const Engine::Ressources::AmbiantComponent&      ambient; 
+        const Engine::Ressources::DiffuseComponent&      diffuse;
+        const Engine::Ressources::SpecularComponent&     specular;
         const char*                                      name;
 
     } LightCreateArg;
@@ -38,9 +38,9 @@ namespace Engine::LowRenderer
             Light (const LightCreateArg& arg);
 
             Light ( const Engine::Core::Maths::Vec3&                pos,
-                    const Engine::Resources::AmbiantComponent&     ambient, 
-                    const Engine::Resources::DiffuseComponent&     diffuse, 
-                    const Engine::Resources::SpecularComponent&    specular,
+                    const Engine::Ressources::AmbiantComponent&     ambient, 
+                    const Engine::Ressources::DiffuseComponent&     diffuse, 
+                    const Engine::Ressources::SpecularComponent&    specular,
                     const char* name);
             
             Light (const Light& other)		= default;
@@ -51,7 +51,7 @@ namespace Engine::LowRenderer
     
             #pragma region methods
    
-            virtual void addToLightToUseBuffer(std::vector<Engine::Resources::light>& lb) noexcept
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept
             {
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 
@@ -69,9 +69,9 @@ namespace Engine::LowRenderer
     
             #pragma region accessor
 
-            virtual const Engine::Resources::AmbiantComponent&             getAmbient()               const noexcept { return ambientComp_; }
-            virtual const Engine::Resources::DiffuseComponent&             getDiffuse()               const noexcept { return diffuseComp_; }
-            virtual const Engine::Resources::SpecularComponent&            getSpecular()              const noexcept { return specularComp_; }
+            virtual const Engine::Ressources::AmbiantComponent&             getAmbient()               const noexcept { return ambientComp_; }
+            virtual const Engine::Ressources::DiffuseComponent&             getDiffuse()               const noexcept { return diffuseComp_; }
+            virtual const Engine::Ressources::SpecularComponent&            getSpecular()              const noexcept { return specularComp_; }
             virtual bool                                                    isEnable()                 const noexcept { return isEnable_; }
 
             /**
@@ -80,7 +80,7 @@ namespace Engine::LowRenderer
              * @return std::vector<Engine::LowRenderer::light> 
              */
             static
-            std::vector<Engine::Resources::light> getLightsToUseInAlignasStruct ();
+            std::vector<Engine::Ressources::light> getLightsToUseInAlignasStruct ();
 
             #pragma endregion //!accessor
     
@@ -100,9 +100,9 @@ namespace Engine::LowRenderer
     
             #pragma region attribut
 
-            Engine::Resources::AmbiantComponent        ambientComp_;
-            Engine::Resources::DiffuseComponent        diffuseComp_;
-            Engine::Resources::SpecularComponent       specularComp_;
+            Engine::Ressources::AmbiantComponent        ambientComp_;
+            Engine::Ressources::DiffuseComponent        diffuseComp_;
+            Engine::Ressources::SpecularComponent       specularComp_;
 
             bool                    isEnable_;
 

@@ -5,13 +5,13 @@
 #ifndef _GE_MATERIAL_H
 #define _GE_MATERIAL_H
 
-#include "GE/Resources/texture.hpp"
-#include "GE/Resources/type.hpp"
-#include "GE/Resources/shader_type.hpp"
+#include "GE/Ressources/texture.hpp"
+#include "GE/Ressources/type.hpp"
+#include "GE/Ressources/shader_type.hpp"
 
 #include <memory>
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     struct MaterialAndTextureCreateArg
     {

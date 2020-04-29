@@ -5,23 +5,26 @@
 #ifndef _DEMO_H
 #define _DEMO_H
 
-#include "GE/Resources/scene.hpp"
+#include "GE/Ressources/scene.hpp"
 #include "GE/GE.hpp"
-#include "GE/Resources/resourcesManager.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Core/InputSystem/input.hpp"
-#include "GE/Resources/mesh.hpp"
-#include "GE/Resources/shader.hpp"
+#include "GE/Ressources/mesh.hpp"
+#include "GE/Ressources/shader.hpp"
 #include "GE/LowRenderer/model.hpp"
-#include "GE/Resources/sample.hpp"
-#include "GE/Resources/material.hpp"
-#include "GE/Resources/music.hpp"
-#include "GE/Resources/font.hpp"
+#include "GE/Ressources/sample.hpp"
+#include "GE/Ressources/material.hpp"
+#include "GE/Ressources/music.hpp"
+#include "GE/Ressources/font.hpp"
 #include "GE/Core/Maths/vec.hpp"
+
+#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
 
 namespace Game
 {
 
-    typedef Engine::Resources::ResourcesManager<Engine::Resources::Mesh, Engine::Resources::Shader, Engine::Resources::Material, Engine::Resources::Sample, Engine::Resources::Music, Engine::Resources::Font> Resources;
+    typedef Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, Engine::Ressources::Shader, Engine::Ressources::Material, Engine::Ressources::Sample, Engine::Ressources::Music, Engine::Ressources::Font> Ressources;
 
     class Demo
     {
@@ -65,21 +68,21 @@ namespace Game
             #pragma region attribut
 
             Engine::GE& gameEngine_;
-            Engine::Resources::Scene scene_;
+            Engine::Ressources::Scene scene_;
 
             bool flagleftClicIsDown;
             bool flagF1IsDown;
             bool mouseForPlayer1;
 
-            Engine::Core::DataStructure::GraphEntity* sunLight;
+            Engine::Ressources::GameObject* sunLight;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
-            Engine::Core::DataStructure::GraphEntity* player1;
-            Engine::Core::DataStructure::GraphEntity* player2;*/
+            Engine::Ressources::GameObject* player1;
+            Engine::Ressources::GameObject* player2;*/
 
             Engine::Core::Maths::Vec3 dirCamera;
-            Engine::Core::DataStructure::GraphEntity* mainCamera;
+            Engine::Ressources::GameObject* mainCamera;
 
-
+            Engine::Physics::PhysicalObject* physictest;
             #pragma endregion //!attribut
 
             #pragma region static attribut
@@ -88,21 +91,21 @@ namespace Game
 
             #pragma region methods
 
-            void loadResourceAndScene  ();
+            void loadRessourceAndScene  ();
 
-            void loadGeneralRessource   (Resources& resourceManager);
-            void loadLights             (Resources& resourceManager);
-            /*void loadSound              (Resources& resourceManager);
-            void loadPlayers            (Resources& resourceManager, const Engine::Resources::Size& windowSize);
-            void loadSkyBox             (Resources& resourceManager);
-            void loadGround             (Resources& resourceManager);
-            void loadMultipleRock       (Resources& resourceManager);
-            void loadMultipleCrash      (Resources& resourceManager);
-            void loadTowerGuard         (Resources& resourceManager);
-            void loadTree               (Resources& resourceManager);
-            void loadCloud              (Resources& resourceManager);*/
+            void loadGeneralRessource   (Ressources& ressourceManager);
+            void loadLights             (Ressources& ressourceManager);
+            /*void loadSound              (Ressources& ressourceManager);
+            void loadPlayers            (Ressources& ressourceManager, const Engine::Ressources::Size& windowSize);
+            void loadSkyBox             (Ressources& ressourceManager);
+            void loadGround             (Ressources& ressourceManager);
+            void loadMultipleRock       (Ressources& ressourceManager);
+            void loadMultipleCrash      (Ressources& ressourceManager);
+            void loadTowerGuard         (Ressources& ressourceManager);
+            void loadTree               (Ressources& ressourceManager);
+            void loadCloud              (Ressources& ressourceManager);*/
 
-            void updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime);
+            void updateControl          (const Engine::Core::InputSystem::Input& input);
 
             #pragma endregion //!methods
 

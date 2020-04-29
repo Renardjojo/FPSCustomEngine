@@ -1,9 +1,9 @@
-#include "GE/Resources/music.hpp"
+#include "GE/Ressources/music.hpp"
 
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Debug/assert.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 
 Music::Music (const char* musicPath, unsigned int volume)

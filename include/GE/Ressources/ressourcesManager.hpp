@@ -2,31 +2,31 @@
 //Editing by Six Jonathan
 //Date : 13/01/2020 - 09 h 07
 
-#ifndef _GE_Resources_MMANAGER_H
-#define _GE_Resources_MMANAGER_H
+#ifndef _GE_Ressources_MMANAGER_H
+#define _GE_Ressources_MMANAGER_H
 
 #include <unordered_map>
 #include <string>
 #include <utility>
 #include "GE/Core/Debug/log.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     //Technical inspired about understanding example found from stackOverFlow : https://stackoverflow.com/questions/27941661/generating-one-class-member-per-variadic-template-argument/53112843#53112843?newreg=f97a957ca4ca467bab0d0ce1cc6ea7b2
 
     //Variadic template class
-    template<class LType, class... RType> class ResourcesManager;
+    template<class LType, class... RType> class RessourcesManager;
 
-    //Resources of one type. Will be created for each differente type.
+    //Ressources of one type. Will be created for each differente type.
     template<class LType>
-    class ResourcesManager<LType>
+    class RessourcesManager<LType>
     {
         public:
 
-        ResourcesManager ()                                = default;
-        ResourcesManager (const ResourcesManager& other)  = delete;
-        ResourcesManager (ResourcesManager&& other)       = default;
-        ~ResourcesManager ()                               = default;
+        RessourcesManager ()                                = default;
+        RessourcesManager (const RessourcesManager& other)  = delete;
+        RessourcesManager (RessourcesManager&& other)       = default;
+        ~RessourcesManager ()                               = default;
 
         protected:
 
@@ -39,10 +39,10 @@ namespace Engine::Resources
         LType& get(const std::string& key)
         {    
             //iterator of LType
-            auto it = resource_.find(key);
-            if (it == resource_.end())
+            auto it = ressource_.find(key);
+            if (it == ressource_.end())
             {
-                Engine::Core::Debug::SLog::logError(std::string("resource not found with key : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("ressource not found with key : ") + key);
                 exit(1);    
             }
 
@@ -60,13 +60,13 @@ namespace Engine::Resources
         LType& add(std::string key, Args&&... args)
         {
             //auto for pair of iterator of LType and bool
-            auto rst = resource_.emplace(  std::piecewise_construct,
+            auto rst = ressource_.emplace(  std::piecewise_construct,
                                             std::forward_as_tuple(key),
                                             std::forward_as_tuple(args...));
 
             if (rst.second == false)
             {
-                Engine::Core::Debug::SLog::logError(std::string("resource insert with same key as an element existing : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("ressource insert with same key as an element existing : ") + key);
                 exit(1);
             }
 
@@ -75,27 +75,27 @@ namespace Engine::Resources
 
         private:
 
-        std::unordered_map <std::string, LType> resource_;
+        std::unordered_map <std::string, LType> ressource_;
 
     };
 
-    //Global resource manager.
+    //Global ressource manager.
     //create a class hierarchy where each base class is a specialization for one of the types
-    //For example : resourceManager<int, float, std::string> wille create :
-    //resourceManager<int>, resourceManager<float> and resourceManager<std::string>.
-    //resourceManager<int, float, std::string> inherited about these 3 class and can access to each element
+    //For example : ressourceManager<int, float, std::string> wille create :
+    //ressourceManager<int>, ressourceManager<float> and ressourceManager<std::string>.
+    //ressourceManager<int, float, std::string> inherited about these 3 class and can access to each element
     template<class LType, class... RType>
-    class ResourcesManager
-        : public ResourcesManager<LType>, public ResourcesManager<RType...>
+    class RessourcesManager
+        : public RessourcesManager<LType>, public RessourcesManager<RType...>
     {
         public:
 
             #pragma region constructor/destructor
 
-            ResourcesManager ()                                = default;
-            ResourcesManager (const ResourcesManager& other)  = delete;
-            ResourcesManager (ResourcesManager&& other)       = default;
-            ~ResourcesManager ()                               = default;
+            RessourcesManager ()                                = default;
+            RessourcesManager (const RessourcesManager& other)  = delete;
+            RessourcesManager (RessourcesManager&& other)       = default;
+            ~RessourcesManager ()                               = default;
 
             #pragma endregion //!constructor/destructor
 
@@ -105,7 +105,7 @@ namespace Engine::Resources
             #pragma region accessor
 
             /**
-             * @brief Return resource. Example : get<Texture>(0)
+             * @brief Return ressource. Example : get<Texture>(0)
              * 
              * @tparam T 
              * @param key 
@@ -114,7 +114,7 @@ namespace Engine::Resources
             template<class T>
             T& get(const std::string& key)
             {
-                return ResourcesManager<T>::get(key);
+                return RessourcesManager<T>::get(key);
             }
 
             #pragma endregion //!accessor
@@ -122,7 +122,7 @@ namespace Engine::Resources
             #pragma region mutator
 
             /**
-             * @brief Add resource. Example : add<Texture>(Texture())
+             * @brief Add ressource. Example : add<Texture>(Texture())
              * 
              * @tparam T 
              * @tparam Args 
@@ -132,7 +132,7 @@ namespace Engine::Resources
             template<class T, typename... Args>
             T& add(const std::string& key, Args&&... args)
             {
-                return ResourcesManager<T>::add(key, std::forward<Args>(args)...);
+                return RessourcesManager<T>::add(key, std::forward<Args>(args)...);
             }
 
             #pragma endregion //!mutator
@@ -143,6 +143,6 @@ namespace Engine::Resources
 
     };
 
-}// namespaceEngine::Resources
+}// namespaceEngine::Ressources
 
-#endif // _GE_Resources_MMANAGER_H
+#endif // _GE_Ressources_MMANAGER_H

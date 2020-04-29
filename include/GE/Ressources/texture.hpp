@@ -3,14 +3,14 @@
 //Date : 09/01/2020 - 16 h 44
 
 #include <string>
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
 
 #ifndef _GE_TEXTURE_H
 #define _GE_TEXTURE_H
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
-    #define PATH_TEXTURE_RESSORUCE "./resources/texture/"
+    #define PATH_TEXTURE_RESSORUCE "./ressources/texture/"
 
     enum class E_WrapType
     {

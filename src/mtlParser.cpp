@@ -9,7 +9,7 @@
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Parsers/parserTool.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Parsers;

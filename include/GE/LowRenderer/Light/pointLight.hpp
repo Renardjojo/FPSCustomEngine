@@ -18,9 +18,9 @@ namespace Engine::LowRenderer
     typedef struct S_PointLightCreateArg
     {
         const Engine::Core::Maths::Vec3&    pos;
-        const Engine::Resources::AmbiantComponent&             ambient; 
-        const Engine::Resources::DiffuseComponent&             diffuse;
-        const Engine::Resources::SpecularComponent&            specular;
+        const Engine::Ressources::AmbiantComponent&             ambient; 
+        const Engine::Ressources::DiffuseComponent&             diffuse;
+        const Engine::Ressources::SpecularComponent&            specular;
 
         float                               constant; 
         float                               linear;
@@ -48,9 +48,9 @@ namespace Engine::LowRenderer
 
                         
             PointLight ( const Engine::Core::Maths::Vec3&                       pos,
-                         const Engine::Resources::AmbiantComponent&            ambient, 
-                         const Engine::Resources::DiffuseComponent&            diffuse, 
-                         const Engine::Resources::SpecularComponent&           specular,
+                         const Engine::Ressources::AmbiantComponent&            ambient, 
+                         const Engine::Ressources::DiffuseComponent&            diffuse, 
+                         const Engine::Ressources::SpecularComponent&           specular,
                          float                              constant, 
                          float                              linear, 
                          float                              quadratic, 
@@ -70,7 +70,7 @@ namespace Engine::LowRenderer
             #pragma region methods
 
 
-            virtual void addToLightToUseBuffer(std::vector<Engine::Resources::light>& lb) noexcept override
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override
             {
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 

@@ -8,18 +8,19 @@
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/DataStructure/graph.hpp"
+#include "GE/Ressources/Component.hpp"
 
 using namespace Engine::Core::Maths;
 
 namespace Engine::Physics
 {
-    class PhysicalObject
+    class PhysicalObject : public Engine::Ressources::Component
     {
         public:
 
         #pragma region constructor/destructor
 
-        PhysicalObject (Engine::Core::DataStructure::GraphEntity& refGameObject);
+        PhysicalObject (Engine::Ressources::GameObject& refGameObject);
         PhysicalObject (const PhysicalObject& other);
         PhysicalObject (PhysicalObject&& other);
         virtual ~PhysicalObject ();
@@ -45,9 +46,9 @@ namespace Engine::Physics
         Vec3 GetAngularVelocity()   { return angularVelocity; }
         float GetMass()             { return mass; }
 
-        bool isKinematic() { return _isKinematic; }
-        bool useGravity() { return _useGravity; }
-        Engine::Core::DataStructure::GraphEntity& getGameObject () { return gameObject;}
+        bool IsKinematic() { return _isKinematic; }
+        bool UseGravity() { return _useGravity; }
+        Engine::Ressources::GameObject& getGameObject () { return gameObject;}
 
         #pragma endregion //!accessor
 
@@ -56,8 +57,8 @@ namespace Engine::Physics
         void SetVelocity(Vec3 _velocity) { velocity = _velocity; }
         void SetVelocity(float x, float y, float z) { velocity.x = x; velocity.y = y; velocity.z = z;}  
         void SetMass(float _mass) { mass = _mass; } 
-        void SetKinematic(bool state) { _isKinematic = state; }
-        void SetGravity(bool state) { _useGravity = state; }
+        void SetIsKinematic(bool state) { _isKinematic = state; }
+        void SetUseGravity(bool state) { _useGravity = state; }
         void SetFreezeTrX(bool state) { freezeTrX = state; }
         void SetFreezeTrY(bool state) { freezeTrY = state; }
         void SetFreezeTrZ(bool state) { freezeTrZ = state; }
@@ -73,23 +74,22 @@ namespace Engine::Physics
         #pragma region convertor
         #pragma endregion //!convertor
 
+
         protected:
 
         #pragma region attribut
 
-        Vec3 velocity;
+        Vec3 velocity = {0,0,0};
         Vec3 angularVelocity;
-        float mass;
-        bool freezeTrX;
-        bool freezeTrY;
-        bool freezeTrZ;
-        bool freezeRotX;
-        bool freezeRotY;
-        bool freezeRotZ;
-        bool _isKinematic;
-        bool _useGravity;
-
-        Engine::Core::DataStructure::GraphEntity& gameObject;
+        float mass = 1;
+        bool freezeTrX = false;
+        bool freezeTrY = false;
+        bool freezeTrZ = false;
+        bool freezeRotX = false;
+        bool freezeRotY = false;
+        bool freezeRotZ = false;
+        bool _isKinematic = false;
+        bool _useGravity = true;
 
         #pragma endregion //!attribut
 

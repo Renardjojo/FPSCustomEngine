@@ -1,8 +1,8 @@
-#include "GE/Resources/sound.hpp"
+#include "GE/Ressources/sound.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Debug/assert.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 
 Sound::Sound ()

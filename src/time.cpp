@@ -3,7 +3,7 @@
 #include <SDL2/SDL_timer.h>
 #include <string>
 
-using namespace Engine::Core::TimeSystem;
+using namespace Engine::Core::Time;
 using namespace Engine::Core::Debug;
 
 ChronoDt::ChronoDt (float delay)
@@ -36,33 +36,33 @@ void ChronoDt::reset()
 	time_ 		= 0;
 }
 
-
-TimeManager::TimeManager (unsigned int FPSmax)
-	:	time_		(SDL_GetTicks()),
-		dtf_		(0.f),
-		FPS_		({{1000}, FPSmax})
-{}
-
-void TimeManager::update()
+void TimeSystem::update()
 {
- 	dtf_ = (time_ > 0) ? ((SDL_GetTicks() - time_) / 1000.f) : 1.0f / 60.0f;
+ 	unscaledDetlaTime_ = (timeExFrame_ > 0) ? ((SDL_GetTicks() - timeExFrame_) / 1000.f) : 1.0f / 60.0f;
 	
-	float delay = ((1/(float)FPS_.FPSmax)*1000) - (dtf_*1000);
+	float delay = ((1/(float)FPS_.FPSmax)*1000) - (unscaledDetlaTime_*1000);
 	
 	if(delay <= 0.)
 		delay = 1.;
 
 	SDL_Delay(delay);
 
-	dtf_ += delay/1000;
+	unscaledDetlaTime_ += delay/1000;
+	deltaTime_ = unscaledDetlaTime_ * timeScale_;
 
-	time_ = SDL_GetTicks();
+	timeExFrame_ = SDL_GetTicks();
 
-	FPS_.chrono.update (dtf_);
+	FPS_.chrono.update (unscaledDetlaTime_);
 
 	if(FPS_.chrono.isEnd())
 	{
 		FPS_.chrono.reset();
-		SLog::log(std::string("FPS : ") + std::to_string(1.f / dtf_) + "\nDelta time : " + std::to_string(dtf_));
+		SLog::log(std::string("FPS : ") + std::to_string(1.f / unscaledDetlaTime_));
 	}
 }
+
+float TimeSystem::deltaTime_			= 0.f;
+float TimeSystem::unscaledDetlaTime_ 	= 0.f;
+float TimeSystem::timeScale_			= 1.f;
+float TimeSystem::timeExFrame_			= 0.f;
+FPS   TimeSystem::FPS_					= {{1000}, DEFAULT_FPS_MAX};

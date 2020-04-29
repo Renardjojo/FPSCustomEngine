@@ -4654,20 +4654,20 @@ typedef void (APIENTRYP PFNGLGETPROGRAMINTERFACEIVPROC)(GLuint program, GLenum p
 GLAPI PFNGLGETPROGRAMINTERFACEIVPROC glad_glGetProgramInterfaceiv;
 #define glGetProgramInterfaceiv glad_glGetProgramInterfaceiv
 typedef GLuint (APIENTRYP PFNGLGETPROGRAMRESOURCEINDEXPROC)(GLuint program, GLenum programInterface, const GLchar *name);
-GLAPI PFNGLGETPROGRAMRESOURCEINDEXPROC glad_glGetProgramResourceIndex;
-#define glGetProgramResourceIndex glad_glGetProgramResourceIndex
+GLAPI PFNGLGETPROGRAMRESOURCEINDEXPROC glad_glGetProgramRessourceIndex;
+#define glGetProgramRessourceIndex glad_glGetProgramRessourceIndex
 typedef void (APIENTRYP PFNGLGETPROGRAMRESOURCENAMEPROC)(GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name);
-GLAPI PFNGLGETPROGRAMRESOURCENAMEPROC glad_glGetProgramResourceName;
-#define glGetProgramResourceName glad_glGetProgramResourceName
+GLAPI PFNGLGETPROGRAMRESOURCENAMEPROC glad_glGetProgramRessourceName;
+#define glGetProgramRessourceName glad_glGetProgramRessourceName
 typedef void (APIENTRYP PFNGLGETPROGRAMRESOURCEIVPROC)(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei count, GLsizei *length, GLint *params);
-GLAPI PFNGLGETPROGRAMRESOURCEIVPROC glad_glGetProgramResourceiv;
-#define glGetProgramResourceiv glad_glGetProgramResourceiv
+GLAPI PFNGLGETPROGRAMRESOURCEIVPROC glad_glGetProgramRessourceiv;
+#define glGetProgramRessourceiv glad_glGetProgramRessourceiv
 typedef GLint (APIENTRYP PFNGLGETPROGRAMRESOURCELOCATIONPROC)(GLuint program, GLenum programInterface, const GLchar *name);
-GLAPI PFNGLGETPROGRAMRESOURCELOCATIONPROC glad_glGetProgramResourceLocation;
-#define glGetProgramResourceLocation glad_glGetProgramResourceLocation
+GLAPI PFNGLGETPROGRAMRESOURCELOCATIONPROC glad_glGetProgramRessourceLocation;
+#define glGetProgramRessourceLocation glad_glGetProgramRessourceLocation
 typedef GLint (APIENTRYP PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC)(GLuint program, GLenum programInterface, const GLchar *name);
-GLAPI PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC glad_glGetProgramResourceLocationIndex;
-#define glGetProgramResourceLocationIndex glad_glGetProgramResourceLocationIndex
+GLAPI PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC glad_glGetProgramRessourceLocationIndex;
+#define glGetProgramRessourceLocationIndex glad_glGetProgramRessourceLocationIndex
 typedef void (APIENTRYP PFNGLSHADERSTORAGEBLOCKBINDINGPROC)(GLuint program, GLuint storageBlockIndex, GLuint storageBlockBinding);
 GLAPI PFNGLSHADERSTORAGEBLOCKBINDINGPROC glad_glShaderStorageBlockBinding;
 #define glShaderStorageBlockBinding glad_glShaderStorageBlockBinding

@@ -40,9 +40,9 @@ namespace Engine::Core::Renderer
 
             unsigned int getId () const noexcept final { return SDL_GetWindowID(win); }
 
-            Engine::Resources::Size    getSize () const noexcept final 
+            Engine::Ressources::Size    getSize () const noexcept final 
             { 
-                Engine::Resources::Size rst;
+                Engine::Ressources::Size rst;
                 SDL_GetWindowSize(win, &rst.width, &rst.heigth);
                 return rst;
             }

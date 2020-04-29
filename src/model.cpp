@@ -4,7 +4,7 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Maths;

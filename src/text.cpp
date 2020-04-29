@@ -1,9 +1,9 @@
-#include "GE/Resources/text.hpp"
+#include "GE/Ressources/text.hpp"
 
 #include <SDL2/SDL_pixels.h>
 #include "GE/Core/Debug/log.hpp"
 
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 
 Text::Text(const TextCreateArg& arg)

@@ -1,16 +1,21 @@
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
 
-using namespace Engine::Physics;
+#include "GE/Ressources/Component.hpp"
 
-PhysicalObject::PhysicalObject (Engine::Core::DataStructure::GraphEntity& refGameObject)
-    : gameObject    (refGameObject)
+using namespace Engine::Physics;
+using namespace Engine::Core::DataStructure;
+using namespace Engine::Ressources;
+
+PhysicalObject::PhysicalObject (GameObject& refGameObject)
+    : Component(refGameObject)
 {
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (const PhysicalObject& other)
-    :   velocity            (other.velocity),
+    :   Component(*this),
+        velocity            (other.velocity),
         angularVelocity     (other.angularVelocity),
         mass                (other.mass),
         freezeTrX           (other.freezeTrX),
@@ -20,14 +25,14 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
         freezeRotY          (other.freezeRotY),
         freezeRotZ          (other.freezeRotZ),
         _isKinematic        (other._isKinematic),
-        _useGravity         (other._useGravity),
-        gameObject          (other.gameObject)
+        _useGravity         (other._useGravity)
 {
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (PhysicalObject&& other)
-    :   velocity            (std::move(other.velocity)),
+    :   Component(*this),
+        velocity            (std::move(other.velocity)),
         angularVelocity     (std::move(other.angularVelocity)),
         mass                (std::move(other.mass)),
         freezeTrX           (std::move(other.freezeTrX)),
@@ -37,8 +42,7 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
         freezeRotY          (std::move(other.freezeRotY)),
         freezeRotZ          (std::move(other.freezeRotZ)),
         _isKinematic        (std::move(other._isKinematic)),
-        _useGravity         (std::move(other._useGravity)),
-        gameObject          (other.gameObject)
+        _useGravity         (std::move(other._useGravity))
 {
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }

@@ -18,9 +18,9 @@ namespace Engine::LowRenderer
     typedef struct S_DirectionnalLightCreateArg
     {
         const Engine::Core::Maths::Vec3&                        direction;
-        const Engine::Resources::AmbiantComponent&             ambient; 
-        const Engine::Resources::DiffuseComponent&             diffuse;
-        const Engine::Resources::SpecularComponent&            specular;
+        const Engine::Ressources::AmbiantComponent&             ambient; 
+        const Engine::Ressources::DiffuseComponent&             diffuse;
+        const Engine::Ressources::SpecularComponent&            specular;
 
         const char*                         name;
 
@@ -41,9 +41,9 @@ namespace Engine::LowRenderer
 
                         
             DirectionnalLight ( const Engine::Core::Maths::Vec3&                direction,
-                         const Engine::Resources::AmbiantComponent&            ambient, 
-                         const Engine::Resources::DiffuseComponent&            diffuse, 
-                         const Engine::Resources::SpecularComponent&           specular,
+                         const Engine::Ressources::AmbiantComponent&            ambient, 
+                         const Engine::Ressources::DiffuseComponent&            diffuse, 
+                         const Engine::Ressources::SpecularComponent&           specular,
                          const char*                                            name)
             :   Light               (direction.getNormalize(), ambient, diffuse, specular, name)
             {}
@@ -57,7 +57,7 @@ namespace Engine::LowRenderer
             #pragma region methods
 
 
-            virtual void addToLightToUseBuffer(std::vector<Engine::Resources::light>& lb) noexcept override
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override
             {
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 

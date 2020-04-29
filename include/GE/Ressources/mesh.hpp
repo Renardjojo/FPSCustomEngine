@@ -11,12 +11,12 @@
 
 #include "GE/Core/Maths/mat.hpp"
 #include "glad/glad.h"
-#include "GE/Resources/type.hpp"
-#include "GE/Resources/shader_type.hpp"
-#include "GE/Resources/material.hpp"
+#include "GE/Ressources/type.hpp"
+#include "GE/Ressources/shader_type.hpp"
+#include "GE/Ressources/material.hpp"
 
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     typedef struct S_MeshConstructorArg
     {
@@ -24,7 +24,7 @@ namespace Engine::Resources
         std::vector<Engine::Core::Maths::Vec3>  vBuffer;
         std::vector<Engine::Core::Maths::Vec2>  vtBuffer;
         std::vector<Engine::Core::Maths::Vec3>  vnBuffer;
-        std::vector<std::vector<Engine::Resources::Indice>> iBuffer;
+        std::vector<std::vector<Engine::Ressources::Indice>> iBuffer;
 
     } MeshConstructorArg;
 
@@ -124,7 +124,7 @@ namespace Engine::Resources
              * 
              * @return const std::vector<std::vector<Engine::Core::Indice>>& 
              */
-            const std::vector<std::vector<Engine::Resources::Indice>>&  getIndices () const noexcept { return iBuffer_; }
+            const std::vector<std::vector<Engine::Ressources::Indice>>&  getIndices () const noexcept { return iBuffer_; }
 
             /**
              * @brief Get the Id Materials object
@@ -155,7 +155,7 @@ namespace Engine::Resources
             std::vector<Engine::Core::Maths::Vec3>                  vBuffer_;
             std::vector<Engine::Core::Maths::Vec2>                  vtBuffer_;
             std::vector<Engine::Core::Maths::Vec3>                  vnBuffer_;
-            std::vector<std::vector<Engine::Resources::Indice>>    iBuffer_;
+            std::vector<std::vector<Engine::Ressources::Indice>>    iBuffer_;
             std::vector<std::string>                                idMaterial_;
 
             #pragma endregion //!attribut
@@ -165,6 +165,6 @@ namespace Engine::Resources
         //this function generate the normal of object. Must be use if obj file don't contain normal.
         void generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcept;
     };
-} //namespace Engine::Resources
+} //namespace Engine::Ressources
 
 #endif // _GE_Mesh_H

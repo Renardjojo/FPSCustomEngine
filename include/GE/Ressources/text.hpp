@@ -7,11 +7,11 @@
 
 #include <string>
 
-#include "GE/Resources/texture.hpp"
-#include "GE/Resources/font.hpp"
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/texture.hpp"
+#include "GE/Ressources/font.hpp"
+#include "GE/Ressources/type.hpp"
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     struct TextCreateArg
     {
@@ -64,6 +64,6 @@ namespace Engine::Resources
 
 		private:
 	};	
-}//namespace Engine::Resources
+}//namespace Engine::Ressources
 
 #endif //_GE_TEXT_H

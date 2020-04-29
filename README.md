@@ -16,7 +16,7 @@ This project is a game engine create with SDL2 and Opengl 3.3 with core profile.
 This engine own lots of feature :
 - time manager (this delta time system)
 - input manager
-- resources manager with variadic template and access to resources data using keys
+- ressources manager with variadic template and access to ressources data using keys
 - Sound system (sample and music managed with SDL_Mixer)
 - Parser of MTL and OBJ file
 - Log file with different setting (by default create log fil if error happend)

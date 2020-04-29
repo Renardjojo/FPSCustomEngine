@@ -1,4 +1,4 @@
-#include "GE/Resources/mesh.hpp"
+#include "GE/Ressources/mesh.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Parsers/objParser.hpp"
 
@@ -8,7 +8,7 @@ using namespace Engine::Core;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
 using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 
 
 Mesh::Mesh (const char* objPath, bool loadInGPU)

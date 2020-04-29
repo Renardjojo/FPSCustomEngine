@@ -4,19 +4,23 @@
 #include "GE/LowRenderer/Light/directionnalLight.hpp"
 #include "GE/LowRenderer/Light/pointLight.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
-#include "GE/Resources/text.hpp"
+#include "GE/Ressources/text.hpp"
 #include "GE/LowRenderer/billBoard.hpp"
-#include "GE/Resources/type.hpp"
+#include "GE/Ressources/type.hpp"
+#include "GE/Ressources/GameObject.hpp"
+#include "GE/Core/TimeSystem/time.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
 
 using namespace Game;
-using namespace Engine::Resources;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Parsers;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::LowRenderer;
+using namespace Engine::Physics;
+using namespace Engine::Core::Time;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -27,7 +31,7 @@ Demo::Demo(Engine::GE& gameEngine)
         mouseForPlayer1     (true),
         dirCamera          {0.f, 0.f, -1.f}
 {
-    loadResourceAndScene();
+    loadRessourceAndScene();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -45,11 +49,12 @@ Demo::Demo(Engine::GE& gameEngine)
 
 void Demo::update     () noexcept
 {
-    updateControl (gameEngine_.inputManager_, gameEngine_.getDeltaTime() * 3.f);
+    updateControl (gameEngine_.inputManager_);       
 
-    //scene_.getEntity("world/cube1").entity->translate({0.0f, 0.0f, -0.1f});
+    PhysicSystem::update();
 
     scene_.update();
+
 }
 
 void Demo::display    () const noexcept
@@ -64,12 +69,12 @@ void Demo::display    () const noexcept
 }
 
 
-void Demo::loadResourceAndScene  ()
+void Demo::loadRessourceAndScene  ()
 {
-    loadGeneralRessource   (gameEngine_.resourceManager_);
+    loadGeneralRessource   (gameEngine_.ressourceManager_);
 
     //Load Camera
-    Camera  camP1Arg ({0.f, 0.f, 5.f},
+    Camera  camP1Arg ({0.f, 0.f, 15.f},
                     {0.f, 0.f, 0.f}, 
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
 
@@ -77,19 +82,19 @@ void Demo::loadResourceAndScene  ()
 
 }
 
-void Demo::loadGeneralRessource   (Resources& resourceManager)
+void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 {
     MaterialAndTextureCreateArg matDefault;
     matDefault.name_                = "DefaultMaterial";
     matDefault.pathDiffuseTexture   = nullptr;
     matDefault.flipTexture          = false;
 
-    ModelCreateArg cube1arg     {{0.f, 0.f, 0.f}, 
+    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
-                                {1.f, 1.f, 1.f}, 
-                                &resourceManager.add<Shader>("White", "./resources/shader/vLightObj.vs", "./resources/shader/fLightObj.fs"), 
-                                {&resourceManager.add<Material>("DefaultMaterial", matDefault)}, 
-                                &resourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
+                                {5.f, 0.01f, 5.f}, 
+                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
+                                {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
+                                &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
                                 "cube1"};
 
     scene_.add<Model>(scene_.getWorld(), cube1arg);
@@ -97,24 +102,26 @@ void Demo::loadGeneralRessource   (Resources& resourceManager)
     ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
-                                &resourceManager.get<Shader>("White"), 
-                                {&resourceManager.get<Material>("DefaultMaterial")}, 
-                                &resourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
                                 "sphere1"};
 
     scene_.add<Model>(scene_.getWorld(), sphere1arg);
+
+    scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
 }
 
 
 
-void Demo::loadLights      (Resources& resourceManager)
+void Demo::loadLights      (Ressources& ressourceManager)
 {
     ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
                                 {0.f, 0.f, 0.f},
                                 {1.f, 1.f, 1.f},
-                                &resourceManager.get<Shader>("White"),
-                                {&resourceManager.get<Material>("DefaultMaterial")},
-                                &resourceManager.get<Mesh>("Sphere"),
+                                &ressourceManager.get<Shader>("White"),
+                                {&ressourceManager.get<Material>("DefaultMaterial")},
+                                &ressourceManager.get<Mesh>("Sphere"),
                                 "Ground",
                                 true};
 
@@ -131,7 +138,7 @@ void Demo::loadLights      (Resources& resourceManager)
 
     sunLight = &scene_.add<DirectionnalLight>(scene_.getWorld(), lightArg2);
 
-    GraphEntity& pl1 = scene_.add<PointLight>(scene_.getWorld(), lightArg5);
+    GameObject& pl1 = scene_.add<PointLight>(scene_.getWorld(), lightArg5);
 
     scene_.add<Model>(pl1, lightArg);
 
@@ -141,37 +148,37 @@ void Demo::loadLights      (Resources& resourceManager)
 
 
 
-void Demo::updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime)
+void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
 {
     if (input.keyboard.isDown[SDL_SCANCODE_UP])
     {
-        Vec3 vec = dirCamera * (20.f * detlaTime);
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(vec);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_DOWN])
     {
-        Vec3 vec = dirCamera * (20.f * detlaTime);
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(-vec);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_LEFT])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * detlaTime);
+        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(-playerDirOrtho);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_RIGHT])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * detlaTime);
+        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(playerDirOrtho);
     }
 
@@ -179,7 +186,7 @@ void Demo::updateControl          (const Engine::Core::InputSystem::Input& input
     {
         if (mouseForPlayer1)
         {
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * detlaTime, {1.f, 0.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * TimeSystem::getDeltaTime(), {1.f, 0.f, 0.f});
         }
     }
 
@@ -188,10 +195,10 @@ void Demo::updateControl          (const Engine::Core::InputSystem::Input& input
         if (mouseForPlayer1)
         {
             Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-            vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI);
+            vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI);
             dirCamera.x = vecDirPlayer.x;
             dirCamera.z = vecDirPlayer.y;
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * detlaTime, {0.f, 1.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime(), {0.f, 1.f, 0.f});
         }
     }
 

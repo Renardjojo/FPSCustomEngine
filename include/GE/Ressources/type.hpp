@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace Engine::Resources
+namespace Engine::Ressources
 {
     typedef struct S_indice
     {
