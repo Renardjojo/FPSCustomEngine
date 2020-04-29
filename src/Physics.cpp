@@ -2,42 +2,15 @@
 
 using namespace Engine::Physics;
 
-Physic::Physic ()
-{
-
-}
-
-Physic::Physic (const Physic& other)
-{
-
-}
-
-Physic::Physic (Physic&& other)
-{
-
-}
-
-Physic::~Physic ()
-{
-
-}
-
-Physic& Physic::operator=(Physic const&)
-{
-
-}
-
-Physic& Physic::operator=(Physic &&)
-{
-
-}
+std::vector<PhysicalObject*> Physic::pPhysicalObjects;
+Engine::Core::Maths::Vec3 gravity;
 
 void Physic::update()
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        // object->translate((object->GetVelocity() / object->GetMass() + gravity) * deltaTime);
-        
+        //object->translate((object->GetVelocity() / object->GetMass() + gravity) * deltaTime);
+
         // detect collision
     }
 }
