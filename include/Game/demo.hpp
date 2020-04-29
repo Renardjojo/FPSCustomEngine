@@ -105,7 +105,7 @@ namespace Game
             void loadTree               (Ressources& ressourceManager);
             void loadCloud              (Ressources& ressourceManager);*/
 
-            void updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime);
+            void updateControl          (const Engine::Core::InputSystem::Input& input);
 
             #pragma endregion //!methods
 

@@ -20,7 +20,7 @@
 			"namespace $2",
 			"{",
 			"",
-			"} //$2",
+			"} /*namespace $2*/",
 			"#endif //_$1_H"
 		],
 		"description": "header"

@@ -8,6 +8,7 @@
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
+#include "GE/Core/TimeSystem/time.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -19,6 +20,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::LowRenderer;
 using namespace Engine::Physics;
+using namespace Engine::Core::Time;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -47,7 +49,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
 void Demo::update     () noexcept
 {
-    updateControl (gameEngine_.inputManager_, gameEngine_.getDeltaTime() * 3.f);
+    updateControl (gameEngine_.inputManager_);       
 
     PhysicSystem::update();
 
@@ -146,37 +148,37 @@ void Demo::loadLights      (Ressources& ressourceManager)
 
 
 
-void Demo::updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime)
+void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
 {
     if (input.keyboard.isDown[SDL_SCANCODE_UP])
     {
-        Vec3 vec = dirCamera * (20.f * detlaTime);
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(vec);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_DOWN])
     {
-        Vec3 vec = dirCamera * (20.f * detlaTime);
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(-vec);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_LEFT])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * detlaTime);
+        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(-playerDirOrtho);
     }
 
     if (input.keyboard.isDown[SDL_SCANCODE_RIGHT])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * detlaTime);
+        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
         static_cast<Camera*>(mainCamera->entity.get())->translate(playerDirOrtho);
     }
 
@@ -184,7 +186,7 @@ void Demo::updateControl          (const Engine::Core::InputSystem::Input& input
     {
         if (mouseForPlayer1)
         {
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * detlaTime, {1.f, 0.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * TimeSystem::getDeltaTime(), {1.f, 0.f, 0.f});
         }
     }
 
@@ -193,10 +195,10 @@ void Demo::updateControl          (const Engine::Core::InputSystem::Input& input
         if (mouseForPlayer1)
         {
             Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-            vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * detlaTime * 180 / M_PI);
+            vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI);
             dirCamera.x = vecDirPlayer.x;
             dirCamera.z = vecDirPlayer.y;
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * detlaTime, {0.f, 1.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime(), {0.f, 1.f, 0.f});
         }
     }
 
