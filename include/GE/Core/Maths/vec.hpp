@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <math.h>
-#include "assert.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 //Engine::Core::Maths::[..]
 namespace Engine::Core::Maths

@@ -5,13 +5,13 @@
 #ifndef _GE_Model_H
 #define _GE_Model_H
 
-#include "iModel.hpp"
-#include "vec.hpp"
-#include "transform.hpp"
-#include "material.hpp"
-#include "texture.hpp"
-#include "mesh.hpp"
-#include "shader.hpp"
+#include "GE/LowRenderer/iModel.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Physics/transform.hpp"
+#include "GE/Resources/material.hpp"
+#include "GE/Resources/texture.hpp"
+#include "GE/Resources/mesh.hpp"
+#include "GE/Resources/shader.hpp"
 
 namespace Engine::LowRenderer
 {

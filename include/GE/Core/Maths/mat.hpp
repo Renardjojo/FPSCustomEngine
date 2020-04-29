@@ -16,7 +16,7 @@
 #include <utility>
 #include <array>
 #include <cmath>
-#include "vec.hpp"
+#include "GE/Core/Maths/vec.hpp"
 
 namespace Engine::Core::Maths
 {

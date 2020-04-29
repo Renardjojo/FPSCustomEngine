@@ -5,9 +5,9 @@
 #ifndef _GE_CAMERA_H
 #define _GE_CAMERA_H
 
-#include "entity.hpp"
-#include "vec.hpp"
-#include "mat.hpp"
+#include "GE/LowRenderer/entity.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Maths/mat.hpp"
 
 namespace Engine::LowRenderer
 {

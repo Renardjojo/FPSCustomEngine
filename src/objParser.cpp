@@ -1,13 +1,13 @@
-#include "objParser.hpp"
+#include "GE/Core/Parsers/objParser.hpp"
 
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <cctype>
 
-#include "assert.hpp"
-#include "log.hpp"
-#include "parserTool.hpp"
+#include "GE/Core/Debug/assert.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Parsers/parserTool.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Core::Maths;

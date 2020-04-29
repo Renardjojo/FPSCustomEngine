@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "vec.hpp"
-#include "mtlParser.hpp"
-#include "type.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Parsers/mtlParser.hpp"
+#include "GE/Resources/type.hpp"
 
 namespace Engine::Core::Parsers
 {

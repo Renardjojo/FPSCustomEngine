@@ -1,15 +1,15 @@
-#include "demo.hpp"
-#include "objParser.hpp"
-#include "camera.hpp"
-#include "directionnalLight.hpp"
-#include "pointLight.hpp"
-#include "spotLight.hpp"
-#include "text.hpp"
-#include "billBoard.hpp"
-#include "type.hpp"
+#include "Game/demo.hpp"
+#include "GE/Core/Parsers/objParser.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/LowRenderer/Light/directionnalLight.hpp"
+#include "GE/LowRenderer/Light/pointLight.hpp"
+#include "GE/LowRenderer/Light/spotLight.hpp"
+#include "GE/Resources/text.hpp"
+#include "GE/LowRenderer/billBoard.hpp"
+#include "GE/Resources/type.hpp"
 
 #include <SDL2/SDL_mouse.h>
-#include "glad.h"
+#include "glad/glad.h"
 
 using namespace Game;
 using namespace Engine::Resources;

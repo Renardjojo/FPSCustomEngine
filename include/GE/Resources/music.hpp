@@ -6,7 +6,7 @@
 #define _GE_MUSIC_H
 
 #include <SDL2/SDL_mixer.h>
-#include "sound.hpp"
+#include "GE/Resources/sound.hpp"
 
 namespace Engine::Resources
 {

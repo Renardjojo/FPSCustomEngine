@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <string>
 #include <utility>
-#include "log.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 namespace Engine::Resources
 {

@@ -1,6 +1,6 @@
-#include "mesh.hpp"
-#include "log.hpp"
-#include "objParser.hpp"
+#include "GE/Resources/mesh.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Parsers/objParser.hpp"
 
 #include <iostream>
 

@@ -8,10 +8,10 @@
 #include <cmath>
 #include <vector>
 
-#include "glad.h"
-#include "vec.hpp"
-#include "entity.hpp"
-#include "light.hpp"
+#include "glad/glad.h"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/LowRenderer/entity.hpp"
+#include "GE/LowRenderer/Light/light.hpp"
 
 namespace Engine::LowRenderer
 {

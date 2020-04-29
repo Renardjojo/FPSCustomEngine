@@ -5,9 +5,9 @@
 #ifndef _GE_MATERIAL_H
 #define _GE_MATERIAL_H
 
-#include "texture.hpp"
-#include "type.hpp"
-#include "shader_type.hpp"
+#include "GE/Resources/texture.hpp"
+#include "GE/Resources/type.hpp"
+#include "GE/Resources/shader_type.hpp"
 
 #include <memory>
 

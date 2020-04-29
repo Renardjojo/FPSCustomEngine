@@ -1,4 +1,4 @@
-#include "log.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace Engine::Core::Debug;
  

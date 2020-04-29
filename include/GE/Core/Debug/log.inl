@@ -1,5 +1,5 @@
-#include "log.hpp"
-#include "glad.h"
+#include "GE/Core/Debug/log.hpp"
+#include "glad/glad.h"
 
 inline 
 void Engine::Core::Debug::SLog::release() noexcept

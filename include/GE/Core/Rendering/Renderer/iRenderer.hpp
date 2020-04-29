@@ -3,7 +3,7 @@
 //Date : 09/01/2020 - 09 h 11
 
 #include <memory>
-#include "iWindow.hpp"
+#include "GE/Core/Rendering/Window/iWindow.hpp"
 
 #ifndef _GE_IRENDERER_H
 #define _GE_IRENDERER_H

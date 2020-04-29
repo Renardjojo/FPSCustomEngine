@@ -5,18 +5,18 @@
 #ifndef _DEMO_H
 #define _DEMO_H
 
-#include "scene.hpp"
-#include "GE.hpp"
-#include "resourcesManager.hpp"
-#include "input.hpp"
-#include "mesh.hpp"
-#include "shader.hpp"
-#include "model.hpp"
-#include "sample.hpp"
-#include "material.hpp"
-#include "music.hpp"
-#include "font.hpp"
-#include "vec.hpp"
+#include "GE/Resources/scene.hpp"
+#include "GE/GE.hpp"
+#include "GE/Resources/resourcesManager.hpp"
+#include "GE/Core/InputSystem/input.hpp"
+#include "GE/Resources/mesh.hpp"
+#include "GE/Resources/shader.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/Resources/sample.hpp"
+#include "GE/Resources/material.hpp"
+#include "GE/Resources/music.hpp"
+#include "GE/Resources/font.hpp"
+#include "GE/Core/Maths/vec.hpp"
 
 namespace Game
 {

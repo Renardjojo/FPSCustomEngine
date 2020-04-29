@@ -5,9 +5,9 @@
 #ifndef _GE_TRANSFORM_H
 #define _GE_TRANSFORM_H
 
-#include "vec.hpp"
-#include "mat.hpp"
-#include "log.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Maths/mat.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 namespace Engine::Physics
 {
