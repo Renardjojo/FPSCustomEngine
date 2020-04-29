@@ -1,34 +1,34 @@
 #include "GE/Collision&Physics/PhysicalObject.hpp"
-#include "GE/Collision&Physics/Physics.hpp"
+#include "GE/Collision&Physics/PhysicSystem.hpp"
 
 using namespace Engine::Physics;
 
 PhysicalObject::PhysicalObject ()
 {
-    Physic::addPhysicalObject(this);
+    PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (const PhysicalObject& other)
 {
-    Physic::addPhysicalObject(this);
+    PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (PhysicalObject&& other)
 {
-    Physic::updatePhysicalObjectPointor(this, &other);
+    PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }
 
 PhysicalObject::~PhysicalObject ()
 {
-    Physic::removePhysicalObject(this);
+    PhysicSystem::removePhysicalObject(this);
 }
 
 PhysicalObject& PhysicalObject::operator=(PhysicalObject const& other)
 {
-
+    PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject& PhysicalObject::operator=(PhysicalObject && other)
 {
-    Physic::updatePhysicalObjectPointor(this, &other);
+    PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }

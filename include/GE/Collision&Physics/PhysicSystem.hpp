@@ -11,18 +11,18 @@
 
 namespace Engine::Physics
 {
-    class Physic
+    class PhysicSystem
     {
         public:
 
         #pragma region constructor/destructor
 
-        Physic ()					        = delete;
-        Physic (const Physic& other)		= delete;
-        Physic (Physic&& other)				= delete;
-        virtual ~Physic ()				    = delete;
-        Physic& operator=(Physic const&)	= delete;
-        Physic& operator=(Physic &&)		= delete;
+        PhysicSystem ()					                = delete;
+        PhysicSystem (const PhysicSystem& other)	    = delete;
+        PhysicSystem (PhysicSystem&& other)			    = delete;
+        virtual ~PhysicSystem ()				        = delete;
+        PhysicSystem& operator=(PhysicSystem const&)	= delete;
+        PhysicSystem& operator=(PhysicSystem &&)		= delete;
 
         #pragma endregion //!constructor/destructor
 
