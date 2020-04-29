@@ -8,6 +8,7 @@
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 
 namespace Engine::Physics
 {
@@ -29,7 +30,7 @@ namespace Engine::Physics
         #pragma region methods
 
         static
-        void update ();
+        void update () noexcept;
 
         #pragma endregion //!methods
 
@@ -44,13 +45,13 @@ namespace Engine::Physics
          * @param pPhysicalObject 
          */
         static
-        void addPhysicalObject (PhysicalObject* pPhysicalObject) 
+        void addPhysicalObject (PhysicalObject* pPhysicalObject) noexcept
         {
             pPhysicalObjects.push_back(pPhysicalObject);
         }
 
         static
-        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) 
+        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) noexcept
         {
             for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {
@@ -63,7 +64,7 @@ namespace Engine::Physics
         }
 
         static
-        void removePhysicalObject (PhysicalObject* pPhysicalObject) 
+        void removePhysicalObject (PhysicalObject* pPhysicalObject) noexcept
         {
             for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {

@@ -7,6 +7,7 @@
 
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/DataStructure/graph.hpp"
 
 using namespace Engine::Core::Maths;
 
@@ -18,12 +19,14 @@ namespace Engine::Physics
 
         #pragma region constructor/destructor
 
-        PhysicalObject ();
+        PhysicalObject (Engine::Core::DataStructure::GraphEntity& refGameObject);
         PhysicalObject (const PhysicalObject& other);
         PhysicalObject (PhysicalObject&& other);
         virtual ~PhysicalObject ();
-        PhysicalObject& operator=(PhysicalObject const& other);
-        PhysicalObject& operator=(PhysicalObject && other);
+        
+        PhysicalObject ()                                       = delete;
+        PhysicalObject& operator=(PhysicalObject const& other)  = delete;
+        PhysicalObject& operator=(PhysicalObject && other)      = delete;
 
         #pragma endregion //!constructor/destructor
 
@@ -36,11 +39,13 @@ namespace Engine::Physics
 
         #pragma region accessor
 
-        Vec3 GetVelocity() { return velocity; }
-        float GetMass() { return mass; }
+        Vec3 GetVelocity()          { return velocity; }
+        Vec3 GetAngularVelocity()   { return angularVelocity; }
+        float GetMass()             { return mass; }
 
         bool isKinematic() { return _isKinematic; }
         bool useGravity() { return _useGravity; }
+        Engine::Core::DataStructure::GraphEntity& getGameObject () { return gameObject;}
 
         #pragma endregion //!accessor
 
@@ -81,6 +86,8 @@ namespace Engine::Physics
         bool freezeRotZ;
         bool _isKinematic;
         bool _useGravity;
+
+        Engine::Core::DataStructure::GraphEntity& gameObject;
 
         #pragma endregion //!attribut
 

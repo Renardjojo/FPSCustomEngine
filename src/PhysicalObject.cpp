@@ -3,17 +3,42 @@
 
 using namespace Engine::Physics;
 
-PhysicalObject::PhysicalObject ()
+PhysicalObject::PhysicalObject (Engine::Core::DataStructure::GraphEntity& refGameObject)
+    : gameObject    (refGameObject)
 {
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (const PhysicalObject& other)
+    :   velocity            (other.velocity),
+        angularVelocity     (other.angularVelocity),
+        mass                (other.mass),
+        freezeTrX           (other.freezeTrX),
+        freezeTrY           (other.freezeTrY),
+        freezeTrZ           (other.freezeTrZ),
+        freezeRotX          (other.freezeRotX),
+        freezeRotY          (other.freezeRotY),
+        freezeRotZ          (other.freezeRotZ),
+        _isKinematic        (other._isKinematic),
+        _useGravity         (other._useGravity),
+        gameObject          (other.gameObject)
 {
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (PhysicalObject&& other)
+    :   velocity            (std::move(other.velocity)),
+        angularVelocity     (std::move(other.angularVelocity)),
+        mass                (std::move(other.mass)),
+        freezeTrX           (std::move(other.freezeTrX)),
+        freezeTrY           (std::move(other.freezeTrY)),
+        freezeTrZ           (std::move(other.freezeTrZ)),
+        freezeRotX          (std::move(other.freezeRotX)),
+        freezeRotY          (std::move(other.freezeRotY)),
+        freezeRotZ          (std::move(other.freezeRotZ)),
+        _isKinematic        (std::move(other._isKinematic)),
+        _useGravity         (std::move(other._useGravity)),
+        gameObject          (other.gameObject)
 {
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }
@@ -21,18 +46,6 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
 PhysicalObject::~PhysicalObject ()
 {
     PhysicSystem::removePhysicalObject(this);
-}
-
-PhysicalObject& PhysicalObject::operator=(PhysicalObject const& other)
-{
-    PhysicSystem::addPhysicalObject(this);
-    return *this;
-}
-
-PhysicalObject& PhysicalObject::operator=(PhysicalObject && other)
-{
-    PhysicSystem::updatePhysicalObjectPointor(this, &other);
-    return *this;
 }
 
 void PhysicalObject::AddForce(Vec3 force)
