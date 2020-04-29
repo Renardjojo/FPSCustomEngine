@@ -6,7 +6,7 @@
 #define _GE_ASSERT_H
 
 #ifndef NDEBUG
-#include "log.hpp"
+#include "GE/Core/Debug/log.hpp"
 #include <string>
 #endif
 

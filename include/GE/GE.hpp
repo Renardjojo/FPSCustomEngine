@@ -3,17 +3,17 @@
 //Date : 08/01/2020 - 18 h 22
 
 #include <memory>
-#include "iRenderer.hpp"
-#include "input.hpp"
-#include "type.hpp"
-#include "time.hpp"
-#include "resourcesManager.hpp"
-#include "mesh.hpp"
-#include "shader.hpp"
-#include "model.hpp"
-#include "sample.hpp"
-#include "music.hpp"
-#include "font.hpp"
+#include "GE/Core/Rendering/Renderer/iRenderer.hpp"
+#include "GE/Core/InputSystem/input.hpp"
+#include "GE/Resources/type.hpp"
+#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Resources/resourcesManager.hpp"
+#include "GE/Resources/mesh.hpp"
+#include "GE/Resources/shader.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/Resources/sample.hpp"
+#include "GE/Resources/music.hpp"
+#include "GE/Resources/font.hpp"
 
 #ifndef _GE_H
 #define _GE_H

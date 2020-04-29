@@ -2,8 +2,8 @@
 //Editing by Six Jonathan
 //Date : 09/01/2020 - 10 h 14
 
-#include "iRenderer.hpp"
-#include "glad.h"
+#include "GE/Core/Rendering/Renderer/iRenderer.hpp"
+#include "glad/glad.h"
 
 #include <SDL2/SDL_video.h>
 

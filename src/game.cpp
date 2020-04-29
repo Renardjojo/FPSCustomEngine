@@ -1,5 +1,5 @@
-#include "game.hpp"
-#include "demo.hpp"
+#include "Game/game.hpp"
+#include "Game/demo.hpp"
 
 using namespace Engine::Resources;
 

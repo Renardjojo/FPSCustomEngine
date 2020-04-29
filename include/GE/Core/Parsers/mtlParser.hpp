@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "type.hpp"
+#include "GE/Resources/type.hpp"
 
 #define PATH_MTL "./resources/material/"
 #define EXTENSION_MTL ".mtl"

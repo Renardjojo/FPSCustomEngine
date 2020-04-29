@@ -1,5 +1,5 @@
-#include "game.hpp"
-#include "GE.hpp"
+#include "Game/game.hpp"
+#include "GE/GE.hpp"
 
 using namespace Engine;
 

@@ -1,6 +1,6 @@
-#include "sample.hpp"
-#include "log.hpp"
-#include "assert.hpp"
+#include "GE/Resources/sample.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Core::Debug;

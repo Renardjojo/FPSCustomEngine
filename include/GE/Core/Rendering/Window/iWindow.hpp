@@ -5,7 +5,7 @@
 #ifndef _INTERFACE_WINDOW_H
 #define _INTERFACE_WINDOW_H
 
-#include "type.hpp"
+#include "GE/Resources/type.hpp"
 
 namespace Engine::Core::Renderer
 {

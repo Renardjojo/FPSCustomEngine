@@ -2,19 +2,7 @@
 OUTPUT=./bin/exe
 
 #Include path
-DIRI=include
-DIRIG=$(DIRI)/Game
-DIRIGE=$(DIRI)/GE
-DIRICORE=$(DIRIGE)/Core
-DIRIRESS=$(DIRIGE)/Resources
-DIRIPHYSICS=$(DIRIGE)/Physics
-DIRILR=$(DIRIGE)/LowRenderer
-DIRISDK=$(DIRIGE)/SDK
-IDIRCOR=-I$(DIRICORE)/Maths -I$(DIRICORE)/Debug -I$(DIRICORE)/Parsers -I$(DIRICORE)/Rendering/Renderer -I$(DIRICORE)/Rendering/Window -I$(DIRICORE)/DataStructure -I$(DIRICORE)/InputSystem -I$(DIRICORE)/TimeSystem
-IDIRSDK=-I$(DIRISDK)/glad -I$(DIRISDK)/KHR
-IDIRLR=-I$(DIRILR)/Light
-IDIR=-I$(DIRI) -I$(DIRIGE) -I$(DIRICORE) -I$(DIRIPHYSICS) -I$(DIRILR) -I$(DIRIG) -I$(DIRISDK) -I$(DIRIRESS) $(IDIRCOR) $(IDIRSDK) $(IDIRLR)
-#IDIR=$(-I,$(shell find $(DIRI)) -name "*.h") $(shell find $(DIRI) -name "*.hpp")
+IDIR=-Iinclude
 
 #Relase or debug option
 CXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
@@ -43,10 +31,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXXFLAGSRELEASE) $< -o $@
+	g++ -c $(CXXFLAGSDEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(CXXFLAGSRELEASE) $< -o $@
+	gcc -c $(CXXFLAGSDEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin

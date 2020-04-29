@@ -6,8 +6,8 @@
 #define _GE_SOUND_H
 
 #include <SDL2/SDL_mixer.h>
-#include "log.hpp"
-#include "assert.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 namespace Engine::Resources
 {

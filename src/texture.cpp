@@ -1,12 +1,12 @@
-#include "texture.hpp"
-#include "glad.h"
-#include "log.hpp"
-#include "parserTool.hpp"
-#include "assert.hpp"
+#include "GE/Resources/texture.hpp"
+#include "glad/glad.h"
+#include "GE/Core/Debug/log.hpp"
+#include "GE/Core/Parsers/parserTool.hpp"
+#include "GE/Core/Debug/assert.hpp"
 #include <utility>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "GE/Core/Parsers/stb_image.h"
 
 using namespace Engine::Core::Debug;
 using namespace Engine::Resources;

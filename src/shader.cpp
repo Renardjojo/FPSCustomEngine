@@ -1,7 +1,7 @@
-#include "shader.hpp"
-#include "log.hpp"
-#include "glad.h"
-#include "shaderParser.hpp"
+#include "GE/Resources/shader.hpp"
+#include "GE/Core/Debug/log.hpp"
+#include "glad/glad.h"
+#include "GE/Core/Parsers/shaderParser.hpp"
 
 #include <fstream>
 #include <sstream>

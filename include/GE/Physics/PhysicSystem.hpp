@@ -7,29 +7,30 @@
 
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/Collision&Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 
 namespace Engine::Physics
 {
-    class Physic
+    class PhysicSystem
     {
         public:
 
         #pragma region constructor/destructor
 
-        Physic ()					        = delete;
-        Physic (const Physic& other)		= delete;
-        Physic (Physic&& other)				= delete;
-        virtual ~Physic ()				    = delete;
-        Physic& operator=(Physic const&)	= delete;
-        Physic& operator=(Physic &&)		= delete;
+        PhysicSystem ()					                = delete;
+        PhysicSystem (const PhysicSystem& other)	    = delete;
+        PhysicSystem (PhysicSystem&& other)			    = delete;
+        virtual ~PhysicSystem ()				        = delete;
+        PhysicSystem& operator=(PhysicSystem const&)	= delete;
+        PhysicSystem& operator=(PhysicSystem &&)		= delete;
 
         #pragma endregion //!constructor/destructor
 
         #pragma region methods
 
         static
-        void update ();
+        void update () noexcept;
 
         #pragma endregion //!methods
 
@@ -44,13 +45,13 @@ namespace Engine::Physics
          * @param pPhysicalObject 
          */
         static
-        void addPhysicalObject (PhysicalObject* pPhysicalObject) 
+        void addPhysicalObject (PhysicalObject* pPhysicalObject) noexcept
         {
             pPhysicalObjects.push_back(pPhysicalObject);
         }
 
         static
-        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) 
+        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) noexcept
         {
             for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {
@@ -63,7 +64,7 @@ namespace Engine::Physics
         }
 
         static
-        void removePhysicalObject (PhysicalObject* pPhysicalObject) 
+        void removePhysicalObject (PhysicalObject* pPhysicalObject) noexcept
         {
             for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {
