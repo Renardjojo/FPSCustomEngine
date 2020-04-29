@@ -15,7 +15,7 @@ void PhysicSystem::update() noexcept
             continue;
 
         if (object->UseGravity())
-            object->AddForce(gravity);
+            object->AddForce(gravity * TimeSystem::getDeltaTime());
         
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getDeltaTime());

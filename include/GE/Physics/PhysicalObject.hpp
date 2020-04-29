@@ -14,7 +14,7 @@ using namespace Engine::Core::Maths;
 
 namespace Engine::Physics
 {
-    class PhysicalObject : Engine::Ressources::Component
+    class PhysicalObject : public Engine::Ressources::Component
     {
         public:
 

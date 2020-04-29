@@ -27,9 +27,9 @@ public:
     Component &operator=(Component const &other)    = delete;
     Component &operator=(Component &&other)         = delete;
 
+    GameObject& gameObject;
 protected:
 
-    GameObject& gameObject;
 
 };
 
