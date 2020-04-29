@@ -5,6 +5,8 @@
 #ifndef _GE_TIME_MANAGER_H
 #define _GE_TIME_MANAGER_H
 
+#include <algorithm>
+
 namespace Engine::Core::TimeSystem
 {
 
@@ -63,51 +65,73 @@ namespace Engine::Core::TimeSystem
 		ChronoDt		chrono {500};
 		unsigned int 	FPSmax;
 
-	} T_FPS;
+	} FPS;
 
-	class TimeManager
+	class TimeSystem
 	{
 		public:
-			TimeManager (unsigned int FPSmax = DEFAULT_FPS_MAX);
-			TimeManager (const TimeManager& other)			= default;
-			~TimeManager () 								= default;
 
-			/*----------*/
-			/* methode  */
-			/*----------*/
+		#pragma region constructor/destructor
 
-			//update current time and add delay to correspond to the good FPS
-			void update();
+		TimeSystem ()									= delete;
+		TimeSystem (const TimeSystem& other)			= delete;
+		TimeSystem (TimeSystem&& other)					= delete;
+		virtual ~TimeSystem ()							= delete;
+		TimeSystem& operator=(TimeSystem const&)		= delete;
+		TimeSystem& operator=(TimeSystem &&)			= delete;
 
-			bool secondIsPassing () { return FPS_.chrono.time_ == 0.f; }
+		#pragma endregion //!constructor/destructor
 
-			/*----------*/
-			/* accessor */
-			/*----------*/
+		#pragma region methods
 
-			/*----------*/
-			/* mutator  */
-			/*----------*/
+		static void update();
 
-			/*----------*/
-			/* operator */
-			/*----------*/
+		#pragma endregion //!methods
 
-			/*----------*/
-			/* convertor*/
-			/*----------*/
+		#pragma region accessor
 
-			//public variable (get and set with no effect for class)
-			unsigned int 	time_;
-			float			dtf_; //delta frame frame
+		static float getDeltaTime()				{ return deltaTime_;}
+		static float getUnscaledDetlaTime()		{ return unscaledDetlaTime_;}
+		static float getTimeScale()				{ return timeScale_;}
 
+		#pragma endregion //!accessor
+
+		#pragma region mutator
+
+		static float setTimeScale(float timeScale)	{ return timeScale_ = timeScale; }
+
+		#pragma endregion //!mutator
+
+		#pragma region operator
+		#pragma endregion //!operator
+
+		#pragma region convertor
+		#pragma endregion //!convertor
 
 		protected:
 
-			T_FPS	FPS_;
+		#pragma region attribut
+
+		static float deltaTime_;
+		static float unscaledDetlaTime_;
+		static float timeScale_;
+
+		static FPS	FPS_;
+
+		#pragma endregion //!attribut
+
+		#pragma region static attribut
+		#pragma endregion //! static attribut
+
+		#pragma region methods
+
+		#pragma endregion //!methods
 
 		private:
+
+		static float timeExFrame_;
 	};
+
 }//namespace Engine::Core::TimeSystem
 
 #endif // _GE_TIME_MANAGER_H

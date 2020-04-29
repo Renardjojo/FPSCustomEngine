@@ -5,8 +5,11 @@ OUTPUT=./bin/exe
 IDIR=-Iinclude
 
 #Relase or debug option
-CXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSRELEASE=-O3 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
+CCXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+CCXXFLAGSDEBUG=--O3 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
+
+CXXFLAGSDEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
 #VFLAG=--leak-check=yes
@@ -34,7 +37,7 @@ multi :
 	g++ -c $(CXXFLAGSDEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(CXXFLAGSDEBUG) $< -o $@
+	gcc -c $(CCXXFLAGSDEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin

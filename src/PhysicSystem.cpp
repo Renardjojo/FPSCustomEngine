@@ -12,7 +12,7 @@ void PhysicSystem::update() noexcept
     for (PhysicalObject* object : pPhysicalObjects)
     {
         /*update movement induct by the differente force on the object*/
-        object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass() + gravity) * 0.001);
+        object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass() + gravity) * TimeSystem::getDeltaTime());
 
 
         /*check if object collided with an other object*/

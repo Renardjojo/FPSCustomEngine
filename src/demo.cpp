@@ -44,7 +44,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
 void Demo::update     () noexcept
 {
-    updateControl (gameEngine_.inputManager_, gameEngine_.getDeltaTime() * 3.f);       
+    updateControl (gameEngine_.inputManager_);       
 
     scene_.update();
 }
@@ -79,7 +79,7 @@ void Demo::loadGeneralRessource   (Resources& resourceManager)
 
 }
 
-void Demo::updateControl          (const Engine::Core::InputSystem::Input& input, float detlaTime)
+void Demo::updateControl          (const Engine::Core::InputSystem::Input& input)
 {
  
 }
