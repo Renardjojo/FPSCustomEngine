@@ -36,8 +36,7 @@ namespace Engine::Core::Maths
 
         protected :
 
-        Vec3      pt1_, 
-                        pt2_;
+        Vec3      pt1_, pt2_;
     };
 
     class Line
@@ -156,25 +155,25 @@ namespace Engine::Core::Maths
         Sphere ()                                   = default;
         Sphere(const Sphere& other)                 = default;
         Sphere(Sphere&& other)                      = default;
-        ~Sphere()                                   = default;
+        virtual ~Sphere()                           = default;
         Sphere& operator=(Sphere const&)    = default;
         Sphere& operator=(Sphere &&)        = default; 
 
-        explicit Sphere (const Vec3& center, float radius)
-            :   center_    {center},
-                radius_    {radius}
+        explicit Sphere (float radius, const Vec3& localCenter = Vec3::zero)
+            :   center_        {localCenter},
+                radius_             {radius}
         {}
 
-        const Vec3&     getCenter() { return center_;}
-        float           getRadius() { return radius_;}
+        virtual const Vec3&     getCenter()         { return center_;}
+        float                   getRadius()         { return radius_;}
 
         void    setCenter(const Vec3& center)   { center_ = center;}
         void    setRadius(float radius)         { radius_ = radius;}
 
         protected :
 
-        Vec3    center_;
-        float   radius_;
+        Vec3            center_;
+        float           radius_;
     };
 
     class Capsule
@@ -245,15 +244,15 @@ namespace Engine::Core::Maths
         OrientedBox ()                              = default;
         OrientedBox(const OrientedBox& other)       = default;
         OrientedBox(OrientedBox&& other)            = default;
-        ~OrientedBox()                              = default;
+        virtual ~OrientedBox()                      = default;
         OrientedBox& operator=(OrientedBox const&)  = default;
         OrientedBox& operator=(OrientedBox &&)      = default;
 
-        explicit OrientedBox (const Vec3& center, const Vec3& rotation, float upLenght, float rightLenght, float forwardLenght)
-            :   ref_            {center},
+        explicit OrientedBox (float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
+            :   ref_    {center},
                 iI_     (upLenght), 
-                iJ_  (rightLenght), 
-                iK_(forwardLenght)
+                iJ_     (rightLenght), 
+                iK_     (forwardLenght)
         {
             Mat3 rotationMatrix = Mat3::createFixedAngleEulerRotationMatrix(rotation);
             ref_.unitI = rotationMatrix.getVectorUp();
@@ -261,7 +260,7 @@ namespace Engine::Core::Maths
             ref_.unitK = rotationMatrix.getVectorForward();
         }
 
-        std::vector<Quad> getFaces ()
+        virtual std::vector<Quad> getFaces ()
         {
              return std::vector<Quad>{  Quad(Referential{ref_.origin + ref_.unitI,  ref_.unitI, ref_.unitJ, ref_.unitK}, iJ_, iK_), 
                                         Quad(Referential{ref_.origin - ref_.unitI, -ref_.unitI, ref_.unitJ,-ref_.unitK}, iJ_, iK_), 
@@ -271,12 +270,12 @@ namespace Engine::Core::Maths
                                         Quad(Referential{ref_.origin - ref_.unitK, -ref_.unitK, ref_.unitJ, ref_.unitI}, iI_, iJ_)};
         }
 
-
-        const Referential&      getReferential()                { return ref_;}
-        float                   getExtensionValueI()             { return iI_;}
-        float                   getExtensionValueJ()             { return iJ_;}
-        float                   getExtensionValueK()             { return iK_;}
-
+        
+        virtual const Referential&      getReferential()                { return ref_;}
+        virtual float                   getExtensionValueI()            { return iI_;}
+        virtual float                   getExtensionValueJ()            { return iJ_;}
+        virtual float                   getExtensionValueK()            { return iK_;}
+ 
         void                    setReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setExtensionValueI(float iI)                { iI_   = iI;}
         void                    setExtensionValueJ(float iJ)                { iJ_   = iJ;}
