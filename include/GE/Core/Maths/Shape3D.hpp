@@ -34,6 +34,11 @@ namespace Engine::Core::Maths
                 pt2_    {pt2}
         {}
 
+        explicit operator Line () //use static_cast<Line>(seg) to convert seg to Line
+        {
+            return Line(pt1_, (pt2_ - pt1_).length); 
+        }
+
         protected :
 
         Vec3      pt1_, pt2_;
@@ -92,8 +97,7 @@ namespace Engine::Core::Maths
          * 
          * @return Plan 
          */
-        
-        Plane getPlane()
+        explicit operator Plane() //use static_cast<Plane>(quad) to convert quad to plane
         {
             return Plane(referential_.origin, referential_.unitK);
         }
@@ -104,18 +108,18 @@ namespace Engine::Core::Maths
         float           iI_, iJ_;
     };
 
-    class InfiniteCylindre
+    class InfiniteCylinder
     {
         public :
 
-        InfiniteCylindre ()                                                     = default;
-        InfiniteCylindre(const InfiniteCylindre& other)                         = default;
-        InfiniteCylindre( InfiniteCylindre&& other)                             = default;
-        ~InfiniteCylindre()                                                     = default;
-        InfiniteCylindre& operator=(InfiniteCylindre const&)  = default;
-        InfiniteCylindre& operator=(InfiniteCylindre &&)      = default; 
+        InfiniteCylinder ()                                                     = default;
+        InfiniteCylinder(const InfiniteCylinder& other)                         = default;
+        InfiniteCylinder( InfiniteCylinder&& other)                             = default;
+        ~InfiniteCylinder()                                                     = default;
+        InfiniteCylinder& operator=(InfiniteCylinder const&)  = default;
+        InfiniteCylinder& operator=(InfiniteCylinder &&)      = default; 
 
-        explicit InfiniteCylindre (const Line& line, float radius)
+        explicit InfiniteCylinder (const Line& line, float radius)
             :   line_    {line},
                 radius_  {radius}
         {}
@@ -126,21 +130,26 @@ namespace Engine::Core::Maths
         float   radius_;
     };
 
-    class Cylindre
+    class Cylinder
     {
         public :
 
-        Cylindre ()                           = default;
-        Cylindre(const Cylindre& other)       = default;
-        Cylindre( Cylindre&& other)           = default;
-        ~Cylindre()                           = default;
-        Cylindre& operator=(Cylindre const&)  = default;
-        Cylindre& operator=(Cylindre &&)      = default; 
+        Cylinder ()                           = default;
+        Cylinder(const Cylinder& other)       = default;
+        Cylinder( Cylinder&& other)           = default;
+        ~Cylinder()                           = default;
+        Cylinder& operator=(Cylinder const&)  = default;
+        Cylinder& operator=(Cylinder &&)      = default; 
 
-        explicit Cylindre (const Segment& seg, float radius)
+        explicit Cylinder (const Segment& seg, float radius)
             :   segment_ {seg},
                 radius_  {radius}
         {}
+
+        explicit operator InfiniteCylinder() //use static_cast<InfiniteCylinder>(seg) to convert Cylinder to InfiniteCylinder
+        {
+            return InfiniteCylinder(static_cast<Line>(segment_), radius_);
+        }
 
         public :
 
@@ -262,14 +271,18 @@ namespace Engine::Core::Maths
 
         virtual std::vector<Quad> getFaces ()
         {
-             return std::vector<Quad>{  Quad(Referential{ref_.origin + ref_.unitI,  ref_.unitI, ref_.unitJ, ref_.unitK}, iJ_, iK_), 
-                                        Quad(Referential{ref_.origin - ref_.unitI, -ref_.unitI, ref_.unitJ,-ref_.unitK}, iJ_, iK_), 
-                                        Quad(Referential{ref_.origin + ref_.unitJ,  ref_.unitJ,-ref_.unitI, ref_.unitK}, iK_, iI_),
-                                        Quad(Referential{ref_.origin - ref_.unitJ, -ref_.unitJ, ref_.unitI, ref_.unitK}, iK_, iI_),
-                                        Quad(Referential{ref_.origin + ref_.unitK,  ref_.unitK, ref_.unitJ,-ref_.unitI}, iI_, iJ_),
-                                        Quad(Referential{ref_.origin - ref_.unitK, -ref_.unitK, ref_.unitJ, ref_.unitI}, iI_, iJ_)};
-        }
+            const Referential& ref = getReferential();  //include virtual modification
+            float iI = getExtensionValueI();            //include virtual modification
+            float iJ = getExtensionValueJ();            //include virtual modification
+            float iK = getExtensionValueK();            //include virtual modification
 
+            return std::vector<Quad>{  Quad(Referential{ref.origin + ref.unitI,  ref.unitI, ref.unitJ, ref.unitK}, iJ, iK), 
+                                        Quad(Referential{ref.origin - ref.unitI, -ref.unitI, ref.unitJ,-ref.unitK}, iJ, iK), 
+                                        Quad(Referential{ref.origin + ref.unitJ,  ref.unitJ,-ref.unitI, ref.unitK}, iK, iI),
+                                        Quad(Referential{ref.origin - ref.unitJ, -ref.unitJ, ref.unitI, ref.unitK}, iK, iI),
+                                        Quad(Referential{ref.origin + ref.unitK,  ref.unitK, ref.unitJ,-ref.unitI}, iI, iJ),
+                                        Quad(Referential{ref.origin - ref.unitK, -ref.unitK, ref.unitJ, ref.unitI}, iI, iJ)};
+        }
         
         virtual const Referential&      getReferential()                { return ref_;}
         virtual float                   getExtensionValueI()            { return iI_;}
