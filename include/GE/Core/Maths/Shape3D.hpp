@@ -14,6 +14,7 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/plane.hpp"
+#include "GE/Core/Maths/Referential.hpp"
 
 namespace Engine::Core::Maths
 {
@@ -248,7 +249,7 @@ namespace Engine::Core::Maths
         OrientedBox& operator=(OrientedBox const&)  = default;
         OrientedBox& operator=(OrientedBox &&)      = default;
 
-        explicit OrientedBox (const Vec3& center, const Vec3& rotation, float upLenght, float rightLenght, float forwardLenght)
+        explicit OrientedBox (const Vec3& center, const Vec3& rotation, float rightLenght, float upLenght, float forwardLenght)
             :   ref_            {center},
                 iI_     (upLenght), 
                 iJ_  (rightLenght), 

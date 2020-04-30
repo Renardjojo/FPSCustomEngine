@@ -7,6 +7,8 @@
 
 #include "GE/Ressources/Component.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Core/Maths/Collision.hpp"
+#include "GE/Core/Maths/Shape3D.hpp"
 
 namespace Engine::Physics
 {
@@ -22,26 +24,67 @@ public:
     
     Collider() = delete;
 
-    virtual bool isCollidingWith(Collider& collider);
-
-    virtual bool IsCollidingWithSphere();
-    virtual bool IsCollidingWithBox();
-
+    virtual bool isCollidingWith(Collider& collider) { return false; }
+    //virtual bool isCollidingWith(OrientedBoxCollider& collider) { return false; }
 
     PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
 
-    float GetBounciness() { return bounciness; }
-    float SetBounciness(float _bounciness) { bounciness = _bounciness; }
+    float GetBounciness() { return bounciness_; }
+    void SetBounciness(float bounciness) { bounciness_ = bounciness; }
 
-private:
+protected:
 
     PhysicalObject* attachedPhysicalObject;
 
-    float bounciness;
-    float friction;
+    float bounciness_;
+    float friction_;
 
 };
 
+class SphereCollider : public Collider
+{
+
+public:
+
+    SphereCollider(Engine::Ressources::GameObject &refGameObject);
+    SphereCollider(const SphereCollider &other);
+    SphereCollider(SphereCollider &&other);
+
+    bool isCollidingWith(Collider& collider) final;
+    //bool isCollidingWith(OrientedBoxCollider& collider) final;
+
+    virtual ~SphereCollider();
+    
+    Sphere& GetSphere() { return sphere_; }
+
+private:
+
+    Sphere sphere_;
+
+};
+
+class OrientedBoxCollider : public Collider
+{
+
+public:
+
+    OrientedBoxCollider(Engine::Ressources::GameObject &refGameObject);
+    OrientedBoxCollider(const OrientedBoxCollider &other);
+    OrientedBoxCollider(OrientedBoxCollider &&other);
+    virtual ~OrientedBoxCollider();
+    
+    OrientedBoxCollider() = delete;
+
+    bool isCollidingWith(Collider& collider) final;
+    // bool isCollidingWith(OrientedBoxCollider& collider) final
+
+    OrientedBox& GetBox() { return orientedbox_; }
+
+private:
+
+    OrientedBox orientedbox_;
+
+};
 
 } /*namespace */
 
