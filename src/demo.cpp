@@ -49,7 +49,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
 void Demo::update     () noexcept
 {
-    updateControl (gameEngine_.inputManager_);       
+    updateControl (gameEngine_.inputManager_);     
 
     PhysicSystem::update();
 
