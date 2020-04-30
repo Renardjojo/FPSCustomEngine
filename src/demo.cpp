@@ -112,8 +112,6 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
 }
 
-
-
 void Demo::loadLights      (Ressources& ressourceManager)
 {
     ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
@@ -145,8 +143,6 @@ void Demo::loadLights      (Ressources& ressourceManager)
     static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
     static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
-
-
 
 void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
 {

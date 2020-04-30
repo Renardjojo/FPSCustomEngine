@@ -19,7 +19,26 @@ void PhysicSystem::update() noexcept
         
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getDeltaTime());
+    }
 
-        /*check if object collided with an other object*/
+    for (Collider* collider1 : pColliders)
+    {
+        if (collider1->GetAttachedPhysicalObject()->IsKinematic())
+            continue;
+
+        for (Collider* collider2 : pColliders)
+        {
+            if (collider2->GetAttachedPhysicalObject()->IsKinematic())
+                continue;
+
+            if (collider1 != collider2)
+            {
+                if (collider1->isCollidingWith(*collider2))
+                { // Colliding
+                    collider1->GetAttachedPhysicalObject()->SetVelocity(collider1->GetAttachedPhysicalObject()->GetVelocity()); 
+                    collider2->GetAttachedPhysicalObject()->SetVelocity(collider2->GetAttachedPhysicalObject()->GetVelocity()); 
+                }
+            }
+        }
     }
 }
