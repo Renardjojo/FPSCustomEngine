@@ -699,9 +699,9 @@ Mat4 Mat4::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const &
 	Vec3 const s(f.getCross(up).getNormalize());
 	Vec3 const u(s.getCross(f));
 
-	return {  s.x, u.x, -f.x, -s.dot_product(eye),
-              s.y, u.y, -f.y, -u.dot_product(eye),
-              s.z, u.z, -f.z, f.dot_product(eye),
+	return {  s.x, u.x, -f.x, -s.dotProduct(eye),
+              s.y, u.y, -f.y, -u.dotProduct(eye),
+              s.z, u.z, -f.z, f.dotProduct(eye),
               0.f, 0.f,  0.f, 1.f};
 }
 

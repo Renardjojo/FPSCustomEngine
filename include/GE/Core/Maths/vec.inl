@@ -15,7 +15,7 @@ float degres_to_rad (float degres)
 }
 
 inline
-float Vec2::dot_product (const Vec2& other) const
+float Vec2::dotProduct (const Vec2& other) const
 {
 	return x * other.x + y * other.y;
 }
@@ -101,7 +101,7 @@ Vec2  	Vec2::getRotated270 		() const
 inline
 int Vec2::foundAngleType (const Vec2& other) const
 {
-	float rst_dotProduct = dot_product(other);
+	float rst_dotProduct = dotProduct(other);
 	return rst_dotProduct == 0 ? 0 : ( rst_dotProduct > 0 ? 1 : -1);
 }
 
@@ -109,7 +109,7 @@ inline
 float Vec2::angle_between_vectors	(Vec2 other) const
 {
 	Vec2 vec1 = getNormalize();
-	return (acos(vec1.dot_product(other.getNormalize())));
+	return (acos(vec1.dotProduct(other.getNormalize())));
 }
 
 inline
@@ -117,13 +117,13 @@ float Vec2::signedAngle_between_vectors	(Vec2 other) const
 {
 	Vec2 vec1 {1.f, 0.f};
 	other -= (*this);
-	return (acos(vec1.dot_product(other.getNormalize())));
+	return (acos(vec1.dotProduct(other.getNormalize())));
 }
 
 inline
 Vec2 Vec2::projection (const Vec2& other) const
 {
-	float prod1 = dot_product(other);
+	float prod1 = dotProduct(other);
 
 	if(prod1 == 0) //suppress possibility of division by 0
 		return {0.f, 0.f};
@@ -298,7 +298,7 @@ void operator>>(::std::istream& in, Vec2& vec)
 inline
 float operator, (Vec2 vec1, const Vec2& vec2)
 {
-	return vec1.dot_product(vec2);
+	return vec1.dotProduct(vec2);
 }
 
 inline
@@ -349,7 +349,7 @@ inline
 /////////////////////
 
 inline
-float Vec3::dot_product (const Vec3& other) const
+float Vec3::dotProduct (const Vec3& other) const
 {
 	return (x * other.x) + (y * other.y) + (z * other.z);
 }
@@ -435,7 +435,7 @@ Vec3 Vec3::getRotateArroundAxis (const Vec3& k, float angleRad) const
 	const Vec3& v = (*this);
 
 	//rodrigues rotation formula
-	return v * cosA + k.getCross(v) * sinf(angleRad) + k * k.dot_product(v) * (1 - cosA);
+	return v * cosA + k.getCross(v) * sinf(angleRad) + k * k.dotProduct(v) * (1 - cosA);
 }
 
 inline
@@ -581,7 +581,7 @@ Vec3 operator/		(const float& scale, Vec3 vec)
 inline
 float operator, (Vec3 vec1, const Vec3& vec2)
 {
-	return vec1.dot_product(vec2);
+	return vec1.dotProduct(vec2);
 }
 
 inline
@@ -632,7 +632,7 @@ inline
 /////////////////////
 
 inline
-float Vec4::dot_product (const Vec4& other) const
+float Vec4::dotProduct (const Vec4& other) const
 {
 	return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w);
 }
@@ -832,7 +832,7 @@ Vec4		operator*		(Vec4 vec1, const Vec4& vec2)
 inline
 float operator, (Vec4 vec1, const Vec4& vec2)
 {
-	return vec1.dot_product(vec2);
+	return vec1.dotProduct(vec2);
 }
 
 inline

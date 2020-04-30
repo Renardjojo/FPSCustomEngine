@@ -11,7 +11,7 @@ namespace Engine::Core::Maths
 {
 	typedef struct Vec2
 	{
-		float 		dot_product	 	(const Vec2& other) const;
+		float 		dotProduct	 	(const Vec2& other) const;
 		float 		length		 	() 					const;
 		float 		cross_product	(const Vec2& other) const;
 
@@ -143,7 +143,7 @@ namespace Engine::Core::Maths
 	typedef struct Vec3
 	{	
 
-		float 		dot_product	 	(const Vec3& other) const;
+		float 		dotProduct	 	(const Vec3& other) const;
 
 		//same as get magnitude
 		float 		length		 	() 					const;
@@ -216,7 +216,7 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec4
 	{	
-		float 		dot_product	 	(const Vec4& other) const;
+		float 		dotProduct	 	(const Vec4& other) const;
 
 		//same as get magnitude
 		float 		length		 	() 					const;
