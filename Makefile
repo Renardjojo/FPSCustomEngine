@@ -6,7 +6,7 @@ IDIR=-Iinclude
 
 #Relase or debug option
 CCXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSDEBUG=-O3 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
+CCXXFLAGSDEBUG=--O3 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
 
 CXXFLAGSDEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
