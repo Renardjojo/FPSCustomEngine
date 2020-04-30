@@ -10,6 +10,9 @@
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/TimeSystem/time.hpp"
 
+#include "GE/Core/System/ScriptSystem.hpp"
+#include "Game/PlayerController.hpp"
+
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
 
@@ -21,6 +24,7 @@ using namespace Engine::Core::DataStructure;
 using namespace Engine::LowRenderer;
 using namespace Engine::Physics;
 using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -52,6 +56,7 @@ void Demo::update     () noexcept
     updateControl (gameEngine_.inputManager_);     
 
     PhysicSystem::update();
+    ScriptSystem::update();
 
     scene_.update();
 
@@ -67,7 +72,6 @@ void Demo::display    () const noexcept
     
     glUseProgram(0);
 }
-
 
 void Demo::loadRessourceAndScene  ()
 {
@@ -108,11 +112,22 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 "sphere1"};
 
     scene_.add<Model>(scene_.getWorld(), sphere1arg);
-
     scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+
+
+    //Player
+
+    ModelCreateArg playerArg   {{0.f, 5.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {0.5f, 0.5f, 0.5f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("sphere1"),
+                                "Player"};
+    scene_.add<Model>(scene_.getWorld(),playerArg);
+    scene_.getGameObject("world/Player").addComponent<PlayerController>(gameEngine_.inputManager_);
+
 }
-
-
 
 void Demo::loadLights      (Ressources& ressourceManager)
 {

@@ -45,7 +45,7 @@ public:
             if (i->entity->isDirty())
             {
                 i->entity->update(entity->getModelMatrix());
-                i->forceUpdate();
+                i->forceupdate();
             }
             else
             {
@@ -58,12 +58,12 @@ public:
          * @brief Force the update of entity without check if entity is dirty
          * 
          */
-    void forceUpdate()
+    void forceupdate()
     {
         for (auto i = children.begin(); i != children.end(); i++)
         {
             i->entity->update(entity->getModelMatrix());
-            i->forceUpdate();
+            i->forceupdate();
         }
     }
 

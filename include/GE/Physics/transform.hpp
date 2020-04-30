@@ -40,7 +40,7 @@ namespace Engine::Physics
             #pragma region methods
 
             /**
-             * @brief Update Mesh matrix 
+             * @brief update Mesh matrix 
              * 
              */
             virtual void update () noexcept
@@ -53,7 +53,7 @@ namespace Engine::Physics
             }
 
             /**
-             * @brief Update transform if it depend to parent Mesh view (use in inherance in scene graph)
+             * @brief update transform if it depend to parent Mesh view (use in inherance in scene graph)
              * 
              * @param parentMeshMatrix : Mesh view matrix of parent
              */
