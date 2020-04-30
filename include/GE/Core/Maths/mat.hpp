@@ -180,6 +180,27 @@ namespace Engine::Core::Maths
 			bool	inverse		(Mat3& reversMat) const;
 
 			/**
+			 * @brief Get the Vector Up object
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorUp() 		const;
+
+			/**
+			 * @brief Get the Vector Right object. For indirect referential
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorRight() 	const;
+
+			/**
+			 * @brief Get the Vector Forward object
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorForward() 	const;
+
+			/**
 			 * @brief Create a Look At View object. Don't intagrat translation and scale. Only look at in direction of
 			 * 
 			 * @param eye

@@ -190,12 +190,20 @@ namespace Engine::Core::Maths
 		friend void operator>>(::std::istream& in, Vec3& vec); //TODO:
 		friend ::std::ostream& operator<<(::std::ostream& out, const Vec3& vec);
 
+		static Vec3 up;
+		static Vec3 down;
+		static Vec3 left;
+		static Vec3 right;
+		static Vec3 forward;
+		static Vec3 backward;
+
 		union 
 		{
 			struct {float x, y, z;};
 			float e[3];
 			Vec2 xy;
 		};
+
 	} Vector3D;
 
 	Vec3 		operator-		(Vec3 vec1, Vec3 const& vec2);
