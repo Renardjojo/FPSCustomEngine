@@ -14,6 +14,7 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/plane.hpp"
+#include "GE/Core/Maths/Referential.hpp"
 
 namespace Engine::Core::Maths
 {

@@ -8,7 +8,7 @@
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"

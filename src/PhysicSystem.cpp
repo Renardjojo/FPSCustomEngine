@@ -1,5 +1,5 @@
 #include "GE/Physics/PhysicSystem.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 using namespace Engine::Physics;
 using namespace Engine::Core::Time;
