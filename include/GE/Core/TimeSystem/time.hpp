@@ -62,8 +62,10 @@ namespace Engine::Core::Time
 
 	typedef struct S_FPS
 	{
-		ChronoDt		chrono {500};
-		unsigned int 	FPSmax;
+		ChronoDt		chrono 					{500};
+		unsigned int 	FPSmax					= DEFAULT_FPS_MAX;
+		unsigned int 	FPSrealCount			= 0;
+		float 			FPSTheoriqueAverage		= 0.f;
 
 	} FPS;
 

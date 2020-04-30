@@ -38,7 +38,7 @@ void ChronoDt::reset()
 
 void TimeSystem::update()
 {
- 	unscaledDetlaTime_ = (timeExFrame_ > 0) ? ((SDL_GetTicks() - timeExFrame_) / 1000.f) : 1.0f / 60.0f;
+ 	unscaledDetlaTime_ = (timeExFrame_ > 0) ? ((SDL_GetTicks() - timeExFrame_) / 1000.f) : 1.0f / (float)FPS_.FPSmax;
 	
 	float delay = ((1/(float)FPS_.FPSmax)*1000) - (unscaledDetlaTime_*1000);
 	
@@ -47,18 +47,24 @@ void TimeSystem::update()
 
 	SDL_Delay(delay);
 
-	unscaledDetlaTime_ += delay/1000;
+	unscaledDetlaTime_ += delay / 1000.f;
 	deltaTime_ = unscaledDetlaTime_ * timeScale_;
 
 	timeExFrame_ = SDL_GetTicks();
 
 	FPS_.chrono.update (unscaledDetlaTime_);
-
+	
 	if(FPS_.chrono.isEnd())
 	{
+		
 		FPS_.chrono.reset();
-		SLog::log(std::string("FPS : ") + std::to_string(1.f / unscaledDetlaTime_));
+		SLog::log(std::string("|FPS thoerique :") + std::to_string(1.f / (FPS_.FPSTheoriqueAverage / static_cast<float>(FPS_.FPSrealCount))) + "| |FPS real :" + std::to_string(FPS_.FPSrealCount / FPS_.chrono.delay_) + "|");
+		FPS_.FPSrealCount 			= 0;
+		FPS_.FPSTheoriqueAverage 	= 0.f;
 	}
+
+	FPS_.FPSrealCount++;
+	FPS_.FPSTheoriqueAverage += unscaledDetlaTime_;
 }
 
 float TimeSystem::deltaTime_			= 0.f;
