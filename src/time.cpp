@@ -40,7 +40,7 @@ void TimeSystem::update()
 {
  	unscaledDetlaTime_ = (timeExFrame_ > 0) ? ((SDL_GetTicks() - timeExFrame_) / 1000.f) : 1.0f / (float)FPS_.FPSmax;
 	
-	float delay = ((1/(float)FPS_.FPSmax)*1000) - (unscaledDetlaTime_*1000);
+	float delay = ((1/(float)FPS_.FPSmax) * 1000.f) - (unscaledDetlaTime_ * 1000.f);
 	
 	if(delay <= 0.)
 		delay = 1.;
