@@ -34,6 +34,12 @@ namespace Engine::Core::Maths
                 pt2_    {pt2}
         {}
 
+        const Vec3& getPt1() noexcept { return pt1_; }
+        const Vec3& getPt2() noexcept { return pt2_; }
+
+        void setPt1(const Vec3& newPt) noexcept { pt1_ = newPt; }
+        void setPt2(const Vec3& newPt) noexcept { pt2_ = newPt; }
+
         explicit operator Line () //use static_cast<Line>(seg) to convert seg to Line
         {
             return Line(pt1_, (pt2_ - pt1_).length); 
@@ -55,14 +61,20 @@ namespace Engine::Core::Maths
         Line& operator=(Line const&)  = default;
         Line& operator=(Line &&)      = default; 
 
-        explicit Line (const Vec3& pt, const Vec3& normal)
-            :   pt_     {pt},
+        explicit Line (const Vec3& origin, const Vec3& normal)
+            :   origin_     {origin},
                 normal_ {normal}
         {}
 
+        const Vec3& getOrigin() noexcept    { return origin_; }
+        const Vec3& getNormal() noexcept    { return normal_; }
+
+        void setOrigin(const Vec3& newOrigin) noexcept { origin_ = newOrigin; }
+        void setNormal(const Vec3& newNormal) noexcept { normal_ = newNormal; }
+
         public :
 
-        Vec3    pt_, 
+        Vec3    origin_, 
                 normal_;
     };
 
@@ -223,7 +235,7 @@ namespace Engine::Core::Maths
         AABB& operator=(AABB const&)            = default;
         AABB& operator=(AABB &&)                = default; 
 
-        explicit AABB (const Vec3& center, float upLenght, float rightLenght, float forwardLenght)
+        explicit AABB (float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero)
             :   ref_    {center, Vec3::up, Vec3::right, Vec3::forward},
                 iI_     (upLenght), 
                 iJ_     (rightLenght), 
