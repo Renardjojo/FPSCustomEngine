@@ -18,28 +18,6 @@
 
 namespace Engine::Core::Maths
 {
-    class Segment
-    {
-        public :
-
-        Segment ()                             = default;
-        Segment(const Segment& other)          = default;
-        Segment(Segment&& other)               = default;
-        ~Segment()                             = default;
-        Segment& operator=(Segment const&)     = default;
-        Segment& operator=(Segment &&)         = default; 
-
-        explicit Segment (const Vec3& pt1, const Vec3& pt2)
-            :   pt1_    {pt1},
-                pt2_    {pt2}
-        {}
-
-        protected :
-
-        Vec3      pt1_, 
-                        pt2_;
-    };
-
     class Line
     {
         public :
@@ -61,6 +39,33 @@ namespace Engine::Core::Maths
         Vec3    pt_, 
                 normal_;
     };
+
+    class Segment
+    {
+        public :
+
+        Segment ()                             = default;
+        Segment(const Segment& other)          = default;
+        Segment(Segment&& other)               = default;
+        ~Segment()                             = default;
+        Segment& operator=(Segment const&)     = default;
+        Segment& operator=(Segment &&)         = default; 
+
+        explicit Segment (const Vec3& pt1, const Vec3& pt2)
+            :   pt1_    {pt1},
+                pt2_    {pt2}
+        {}
+
+        explicit operator Line () //use static_cast<Line>(seg) to convert seg to Line
+        {
+            return Line(pt1_, (pt2_ - pt1_).normalize()); 
+        }
+
+        protected :
+
+        Vec3      pt1_, pt2_;
+    };
+
 
     class Quad
     {
@@ -93,8 +98,7 @@ namespace Engine::Core::Maths
          * 
          * @return Plan 
          */
-        
-        Plane getPlane()
+        explicit operator Plane() //use static_cast<Plane>(quad) to convert quad to plane
         {
             return Plane(referential_.origin, referential_.unitK);
         }
@@ -105,18 +109,18 @@ namespace Engine::Core::Maths
         float           iI_, iJ_;
     };
 
-    class InfiniteCylindre
+    class InfiniteCylinder
     {
         public :
 
-        InfiniteCylindre ()                                                     = default;
-        InfiniteCylindre(const InfiniteCylindre& other)                         = default;
-        InfiniteCylindre( InfiniteCylindre&& other)                             = default;
-        ~InfiniteCylindre()                                                     = default;
-        InfiniteCylindre& operator=(InfiniteCylindre const&)  = default;
-        InfiniteCylindre& operator=(InfiniteCylindre &&)      = default; 
+        InfiniteCylinder ()                                                     = default;
+        InfiniteCylinder(const InfiniteCylinder& other)                         = default;
+        InfiniteCylinder( InfiniteCylinder&& other)                             = default;
+        ~InfiniteCylinder()                                                     = default;
+        InfiniteCylinder& operator=(InfiniteCylinder const&)  = default;
+        InfiniteCylinder& operator=(InfiniteCylinder &&)      = default; 
 
-        explicit InfiniteCylindre (const Line& line, float radius)
+        explicit InfiniteCylinder (const Line& line, float radius)
             :   line_    {line},
                 radius_  {radius}
         {}
@@ -127,21 +131,26 @@ namespace Engine::Core::Maths
         float   radius_;
     };
 
-    class Cylindre
+    class Cylinder
     {
         public :
 
-        Cylindre ()                           = default;
-        Cylindre(const Cylindre& other)       = default;
-        Cylindre( Cylindre&& other)           = default;
-        ~Cylindre()                           = default;
-        Cylindre& operator=(Cylindre const&)  = default;
-        Cylindre& operator=(Cylindre &&)      = default; 
+        Cylinder ()                           = default;
+        Cylinder(const Cylinder& other)       = default;
+        Cylinder( Cylinder&& other)           = default;
+        ~Cylinder()                           = default;
+        Cylinder& operator=(Cylinder const&)  = default;
+        Cylinder& operator=(Cylinder &&)      = default; 
 
-        explicit Cylindre (const Segment& seg, float radius)
+        explicit Cylinder (const Segment& seg, float radius)
             :   segment_ {seg},
                 radius_  {radius}
         {}
+
+        explicit operator InfiniteCylinder() //use static_cast<InfiniteCylinder>(seg) to convert Cylinder to InfiniteCylinder
+        {
+            return InfiniteCylinder(static_cast<Line>(segment_), radius_);
+        }
 
         public :
 
@@ -156,25 +165,25 @@ namespace Engine::Core::Maths
         Sphere ()                                   = default;
         Sphere(const Sphere& other)                 = default;
         Sphere(Sphere&& other)                      = default;
-        ~Sphere()                                   = default;
+        virtual ~Sphere()                           = default;
         Sphere& operator=(Sphere const&)    = default;
         Sphere& operator=(Sphere &&)        = default; 
 
-        explicit Sphere (const Vec3& center, float radius)
-            :   center_    {center},
-                radius_    {radius}
+        explicit Sphere (float radius, const Vec3& localCenter = Vec3::zero)
+            :   center_        {localCenter},
+                radius_             {radius}
         {}
 
-        const Vec3&     getCenter() { return center_;}
-        float           getRadius() { return radius_;}
+        virtual Vec3      getCenter()         { return center_;}
+        virtual float     getRadius()         { return radius_;}
 
         void    setCenter(const Vec3& center)   { center_ = center;}
         void    setRadius(float radius)         { radius_ = radius;}
 
         protected :
 
-        Vec3    center_;
-        float   radius_;
+        Vec3            center_;
+        float           radius_;
     };
 
     class Capsule
@@ -245,38 +254,42 @@ namespace Engine::Core::Maths
         OrientedBox ()                              = default;
         OrientedBox(const OrientedBox& other)       = default;
         OrientedBox(OrientedBox&& other)            = default;
-        ~OrientedBox()                              = default;
+        virtual ~OrientedBox()                      = default;
         OrientedBox& operator=(OrientedBox const&)  = default;
         OrientedBox& operator=(OrientedBox &&)      = default;
 
-        explicit OrientedBox (const Vec3& center, const Vec3& rotation, float rightLenght, float upLenght, float forwardLenght)
-            :   ref_            {center},
-                iI_     (upLenght), 
-                iJ_  (rightLenght), 
-                iK_(forwardLenght)
+        explicit OrientedBox (float rightLenght, float upLenght, float forwardLenght, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
+            :   ref_    {center},
+                iI_     (rightLenght), 
+                iJ_     (upLenght), 
+                iK_     (forwardLenght)
         {
             Mat3 rotationMatrix = Mat3::createFixedAngleEulerRotationMatrix(rotation);
-            ref_.unitI = rotationMatrix.getVectorUp();
-            ref_.unitJ = rotationMatrix.getVectorRight();
+            ref_.unitI = rotationMatrix.getVectorRight();
+            ref_.unitJ = rotationMatrix.getVectorUp();
             ref_.unitK = rotationMatrix.getVectorForward();
         }
 
-        std::vector<Quad> getFaces ()
+        virtual std::vector<Quad> getFaces ()
         {
-             return std::vector<Quad>{  Quad(Referential{ref_.origin + ref_.unitI,  ref_.unitI, ref_.unitJ, ref_.unitK}, iJ_, iK_), 
-                                        Quad(Referential{ref_.origin - ref_.unitI, -ref_.unitI, ref_.unitJ,-ref_.unitK}, iJ_, iK_), 
-                                        Quad(Referential{ref_.origin + ref_.unitJ,  ref_.unitJ,-ref_.unitI, ref_.unitK}, iK_, iI_),
-                                        Quad(Referential{ref_.origin - ref_.unitJ, -ref_.unitJ, ref_.unitI, ref_.unitK}, iK_, iI_),
-                                        Quad(Referential{ref_.origin + ref_.unitK,  ref_.unitK, ref_.unitJ,-ref_.unitI}, iI_, iJ_),
-                                        Quad(Referential{ref_.origin - ref_.unitK, -ref_.unitK, ref_.unitJ, ref_.unitI}, iI_, iJ_)};
+            const Referential& ref = getReferential();  //include virtual modification
+            float iI = getExtensionValueI();            //include virtual modification
+            float iJ = getExtensionValueJ();            //include virtual modification
+            float iK = getExtensionValueK();            //include virtual modification
+
+            return std::vector<Quad>{  Quad(Referential{ref.origin + ref.unitI,  ref.unitI, ref.unitJ, ref.unitK}, iJ, iK), 
+                                        Quad(Referential{ref.origin - ref.unitI, -ref.unitI, ref.unitJ,-ref.unitK}, iJ, iK), 
+                                        Quad(Referential{ref.origin + ref.unitJ,  ref.unitJ,-ref.unitI, ref.unitK}, iK, iI),
+                                        Quad(Referential{ref.origin - ref.unitJ, -ref.unitJ, ref.unitI, ref.unitK}, iK, iI),
+                                        Quad(Referential{ref.origin + ref.unitK,  ref.unitK, ref.unitJ,-ref.unitI}, iI, iJ),
+                                        Quad(Referential{ref.origin - ref.unitK, -ref.unitK, ref.unitJ, ref.unitI}, iI, iJ)};
         }
-
-
-        const Referential&      getReferential()                { return ref_;}
-        float                   getExtensionValueI()             { return iI_;}
-        float                   getExtensionValueJ()             { return iJ_;}
-        float                   getExtensionValueK()             { return iK_;}
-
+        
+        virtual Referential             getReferential()                { return ref_;}
+        virtual float                   getExtensionValueI()            { return iI_;}
+        virtual float                   getExtensionValueJ()            { return iJ_;}
+        virtual float                   getExtensionValueK()            { return iK_;}
+ 
         void                    setReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setExtensionValueI(float iI)                { iI_   = iI;}
         void                    setExtensionValueJ(float iJ)                { iJ_   = iJ;}

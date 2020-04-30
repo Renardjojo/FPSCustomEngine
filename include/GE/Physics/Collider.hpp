@@ -8,7 +8,7 @@
 #include "GE/Ressources/Component.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Core/Maths/Collision.hpp"
-#include "GE/Core/Maths/Shape3D.hpp"
+#include "GE/Core/Maths/LinkedShape3D.hpp"
 
 namespace Engine::Physics
 {
@@ -55,11 +55,11 @@ public:
 
     virtual ~SphereCollider();
     
-    Sphere& GetSphere() { return sphere_; }
+    Engine::Core::Maths::LinkedSphere& GetSphere() { return sphere_; }
 
 private:
 
-    Sphere sphere_;
+    Engine::Core::Maths::LinkedSphere sphere_;
 
 };
 
@@ -78,11 +78,11 @@ public:
     bool isCollidingWith(Collider& collider) final;
     // bool isCollidingWith(OrientedBoxCollider& collider) final
 
-    OrientedBox& GetBox() { return orientedbox_; }
+    Engine::Core::Maths::LinkedOrientedBox& GetBox() { return orientedbox_; }
 
 private:
 
-    OrientedBox orientedbox_;
+    Engine::Core::Maths::LinkedOrientedBox orientedbox_;
 
 };
 

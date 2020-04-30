@@ -190,6 +190,7 @@ namespace Engine::Core::Maths
 		friend void operator>>(::std::istream& in, Vec3& vec); //TODO:
 		friend ::std::ostream& operator<<(::std::ostream& out, const Vec3& vec);
 
+		static Vec3 zero;
 		static Vec3 up;
 		static Vec3 down;
 		static Vec3 left;

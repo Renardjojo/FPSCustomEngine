@@ -5,6 +5,7 @@
 
 using namespace Engine::Physics;
 using namespace Engine::Core::DataStructure;
+using namespace Engine::Core::Maths;
 using namespace Engine::Ressources;
 
 PhysicalObject::PhysicalObject (GameObject& refGameObject)

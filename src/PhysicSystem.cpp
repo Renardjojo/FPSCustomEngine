@@ -1,6 +1,6 @@
 #include "GE/Physics/PhysicSystem.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
 #include "GE/Core/Debug/log.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 using namespace Engine::Physics;
 using namespace Engine::Core::Time;
@@ -35,7 +35,6 @@ void PhysicSystem::update() noexcept
 
         for (Collider* collider2 : pColliders)
         {
-            static_cast<SphereCollider*>(collider1)->GetSphere().setCenter(collider1->gameObject.entity->getPosition());
             // is kinematic
             if (collider1 != collider2)
             {

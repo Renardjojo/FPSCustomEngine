@@ -1,10 +1,12 @@
 #include "GE/Physics/Collider.hpp"
+#include "GE/Core/Maths/Collision.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
 
 #include "GE/Ressources/Component.hpp"
 
 using namespace Engine::Physics;
 using namespace Engine::Ressources;
+using namespace Engine::Core::Maths;
 
 Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)
@@ -34,7 +36,7 @@ Collider::~Collider ()
 
 SphereCollider::SphereCollider (GameObject& refGameObject)
     : Collider(refGameObject),
-    sphere_(refGameObject.entity->getPosition(), refGameObject.entity->getScale().x)
+    sphere_(*refGameObject.entity)
 {
 }
 
@@ -76,11 +78,7 @@ SphereCollider::~SphereCollider ()
 
 OrientedBoxCollider::OrientedBoxCollider (GameObject& refGameObject)
     : Collider(refGameObject),
-    orientedbox_(refGameObject.entity->getPosition(), 
-                 refGameObject.entity->getRotation(), 
-                 refGameObject.entity->getScale().x / 2.0f,
-                 refGameObject.entity->getScale().y / 2.0f,
-                 refGameObject.entity->getScale().z / 2.0f)
+    orientedbox_(*refGameObject.entity)
 {
 }
 

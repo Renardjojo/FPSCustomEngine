@@ -8,7 +8,7 @@
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -90,7 +90,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     matDefault.flipTexture          = false;
 
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
-                                {0.f, 0.f, 45.f}, 
+                                {0.f, 0.f, 0.f}, 
                                 {5.f, 0.1f, 5.f}, 
                                 &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
                                 {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
