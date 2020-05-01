@@ -93,6 +93,7 @@ namespace Engine::Core::Maths
 
         static bool IsSphereOrientedBoxCollided(LinkedSphere sphere, LinkedOrientedBox box, CollisionPoints& _intersection);
 
+        static bool GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSphere sphere, Vec3 vectSphereSpeed, float deltaTime, HitInfo& hit);
 
         #pragma endregion //!static methods
 

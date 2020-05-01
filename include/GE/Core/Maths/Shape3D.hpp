@@ -293,7 +293,7 @@ namespace Engine::Core::Maths
         void                    setReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setExtensionValueI(float iI)                { iI_   = iI;}
         void                    setExtensionValueJ(float iJ)                { iJ_   = iJ;}
-        void                    etExtensionValueK(float iK)                 { iK_   = iK;}
+        void                    setExtensionValueK(float iK)                 { iK_   = iK;}
 
         protected :
 

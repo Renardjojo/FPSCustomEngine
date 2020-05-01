@@ -1,4 +1,8 @@
 #include "GE/Core/Maths/Collision.hpp"
+#include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Maths/Shape3D.hpp"
+#include "GE/Core/Maths/LinkedShape3D.hpp"
+
 
 using namespace Engine::Core::Maths;
 
@@ -61,4 +65,18 @@ bool Collision::IsSphereOrientedBoxCollided(LinkedSphere sphere, LinkedOrientedB
 
     _intersection.SetNotIntersection();
     return false;
+}
+
+bool Collision::GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSphere sphere, Vec3 vectSphereSpeed, float deltaTime, HitInfo& hit)
+{
+    CollisionPoints collisionPoint;
+
+    box.setLocalExtensionValueI(box.getLocalExtensionValueI() + sphere.getRadius());
+    box.setLocalExtensionValueJ(box.getLocalExtensionValueJ() + sphere.getRadius());
+    box.setLocalExtensionValueK(box.getLocalExtensionValueK() + sphere.getRadius());
+
+    // if (!Collision::IsSegmentIntersectingOrientedBox(sphere, box, collisionPoint))
+    //     return false;
+
+    collisionPoint.
 }
