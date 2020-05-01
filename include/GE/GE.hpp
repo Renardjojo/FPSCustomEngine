@@ -14,6 +14,8 @@
 #include "GE/Ressources/sample.hpp"
 #include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
+#include "GE/Ressources/ui.hpp"
+
 
 #ifndef _GE_H
 #define _GE_H
@@ -74,7 +76,9 @@ namespace Engine
                                                 Engine::Ressources::Material, 
                                                 Engine::Ressources::Sample, 
                                                 Engine::Ressources::Music, 
-                                                Engine::Ressources::Font>    ressourceManager_;
+                                                Engine::Ressources::Font,
+                                                Engine::Ressources::Button,
+                                                Engine::Ressources::TextField>    ressourceManager_;
 
             #pragma endregion //!attribut
 

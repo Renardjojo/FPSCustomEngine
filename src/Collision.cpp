@@ -78,5 +78,11 @@ bool Collision::GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSph
     // if (!Collision::IsSegmentIntersectingOrientedBox(sphere, box, collisionPoint))
     //     return false;
 
-    collisionPoint.
+    // detect if intersection point is on voroin face
+    // is recherched point
+
+    // if not detect if intersecting 1 or 3 near captulse
+
+    // return info
+    return false;
 }

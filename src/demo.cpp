@@ -9,6 +9,8 @@
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "GE/Core/System/UISystem.hpp"
+#include "GE/Ressources/ui.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -21,6 +23,7 @@ using namespace Engine::Core::DataStructure;
 using namespace Engine::LowRenderer;
 using namespace Engine::Physics;
 using namespace Engine::Core::Time;
+using namespace Engine::Core::Systems;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -44,6 +47,8 @@ Demo::Demo(Engine::GE& gameEngine)
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+    UISystem::isActive = true;
 }
 
 
@@ -51,6 +56,8 @@ void Demo::update     () noexcept
 {
     updateControl (gameEngine_.inputManager_);       
 
+    UISystem::update(gameEngine_.inputManager_);
+    
     PhysicSystem::update();
 
     scene_.update();
@@ -64,6 +71,7 @@ void Demo::display    () const noexcept
     glViewport(0, 0, sizeWin.width, sizeWin.heigth);
     static_cast<Camera*>(mainCamera->entity.get())->use();
     scene_.draw();
+    UISystem::draw();
     
     glUseProgram(0);
 }
@@ -72,11 +80,14 @@ void Demo::display    () const noexcept
 void Demo::loadRessourceAndScene  ()
 {
     loadGeneralRessource   (gameEngine_.ressourceManager_);
+    
+    loadUI(gameEngine_.ressourceManager_);
 
     //Load Camera
     Camera  camP1Arg ({0.f, 0.f, 15.f},
                     {0.f, 0.f, 0.f}, 
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
+
 
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
 
@@ -116,6 +127,19 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
     scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+}
+
+void Demo::loadUI      (Ressources& ressourceManager)
+{
+    ressourceManager.add<Button>("button1", 0.0f, 0.0f, 25.0f, 25.0f, Vec3{255.0f, 255.0f, 255.0f});
+    ressourceManager.add<TextField>("textfield1", "./ressources/opensans.ttf", 100, 100, 100, 25, "0");
+
+    // button and textfield configuration
+
+    ressourceManager.get<Button>("button1").function = [&]() 
+    {
+        std::cout << "button working because im a pgm" << std::endl;
+    };
 }
 
 void Demo::loadLights      (Ressources& ressourceManager)
