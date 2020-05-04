@@ -9,6 +9,7 @@
 
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/Shape3D.hpp"
+#include "GE/Core/Maths/LinkedShape3D.hpp"
 #include "GE/Core/Maths/Referential.hpp"
 #include "GE/Ressources/GameObject.hpp"
 
@@ -89,6 +90,10 @@ namespace Engine::Core::Maths
         #pragma region static methods
 
         static bool IsSphereOrientedBoxCollided(Sphere sphere, OrientedBox box, CollisionPoints& _intersection);
+
+        static bool IsSphereOrientedBoxCollided(LinkedSphere sphere, LinkedOrientedBox box, CollisionPoints& _intersection);
+
+        static bool GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSphere sphere, Vec3 vectSphereSpeed, float deltaTime, HitInfo& hit);
 
         #pragma endregion //!static methods
 

@@ -18,7 +18,7 @@
 
 namespace Engine::Core::Maths
 {
-    class Segment
+   class Segment
     {
         public :
 
@@ -42,7 +42,7 @@ namespace Engine::Core::Maths
 
         explicit operator Line () //use static_cast<Line>(seg) to convert seg to Line
         {
-            return Line(pt1_, (pt2_ - pt1_).length); 
+            return Line(pt1_, (pt2_ - pt1_).normalize()); 
         }
 
         protected :
@@ -50,9 +50,6 @@ namespace Engine::Core::Maths
         Vec3      pt1_, pt2_;
     };
 
-    class Line
-    {
-        public :
 
         Line ()                             = default;
         Line(const Line& other)             = default;
@@ -185,8 +182,8 @@ namespace Engine::Core::Maths
                 radius_             {radius}
         {}
 
-        virtual const Vec3&     getCenter()         { return center_;}
-        float                   getRadius()         { return radius_;}
+        virtual Vec3      getCenter()         { return center_;}
+        virtual float     getRadius()         { return radius_;}
 
         void    setCenter(const Vec3& center)   { center_ = center;}
         void    setRadius(float radius)         { radius_ = radius;}
@@ -269,15 +266,15 @@ namespace Engine::Core::Maths
         OrientedBox& operator=(OrientedBox const&)  = default;
         OrientedBox& operator=(OrientedBox &&)      = default;
 
-        explicit OrientedBox (float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
+        explicit OrientedBox (float rightLenght, float upLenght, float forwardLenght, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
             :   ref_    {center},
-                iI_     (upLenght), 
-                iJ_     (rightLenght), 
+                iI_     (rightLenght), 
+                iJ_     (upLenght), 
                 iK_     (forwardLenght)
         {
             Mat3 rotationMatrix = Mat3::createFixedAngleEulerRotationMatrix(rotation);
-            ref_.unitI = rotationMatrix.getVectorUp();
-            ref_.unitJ = rotationMatrix.getVectorRight();
+            ref_.unitI = rotationMatrix.getVectorRight();
+            ref_.unitJ = rotationMatrix.getVectorUp();
             ref_.unitK = rotationMatrix.getVectorForward();
         }
 
@@ -296,7 +293,7 @@ namespace Engine::Core::Maths
                                         Quad(Referential{ref.origin - ref.unitK, -ref.unitK, ref.unitJ, ref.unitI}, iI, iJ)};
         }
         
-        virtual const Referential&      getReferential()                { return ref_;}
+        virtual Referential             getReferential()                { return ref_;}
         virtual float                   getExtensionValueI()            { return iI_;}
         virtual float                   getExtensionValueJ()            { return iJ_;}
         virtual float                   getExtensionValueK()            { return iK_;}
@@ -304,7 +301,7 @@ namespace Engine::Core::Maths
         void                    setReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setExtensionValueI(float iI)                { iI_   = iI;}
         void                    setExtensionValueJ(float iJ)                { iJ_   = iJ;}
-        void                    etExtensionValueK(float iK)                 { iK_   = iK;}
+        void                    setExtensionValueK(float iK)                 { iK_   = iK;}
 
         protected :
 

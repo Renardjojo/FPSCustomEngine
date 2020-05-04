@@ -36,13 +36,17 @@ namespace Engine::Core::Maths
     {
         public :
 
-        explicit LinkedSphere (const Engine::Physics::Transform& transform, float radius, const Vec3& localCenter = Vec3::zero)
+        explicit LinkedSphere (const Engine::Physics::Transform& transform, float radius = 0.f, const Vec3& localCenter = Vec3::zero)
             :   Sphere              (radius, localCenter),
                 transform_          {transform}
         {}
 
-        const Vec3&     getCenter() override { return transform_.getPosition() + center_;}
-        const Vec3&     getLocalCenter()    { return center_;}
+        Vec3            getCenter() override    { return transform_.getPosition() + center_;}
+        const Vec3&     getLocalCenter()        { return center_;}
+        // set local
+
+        float   getRadius() override            { return transform_.getScale().x + radius_;}
+        float   getLocalRadius (float radius)   { return radius_;}
 
         protected :
 
@@ -53,12 +57,12 @@ namespace Engine::Core::Maths
     {
         public :
 
-        explicit LinkedOrientedBox (const Engine::Physics::Transform& transform, float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
-            :   OrientedBox          (upLenght, rightLenght, forwardLenght, center, rotation),
+        explicit LinkedOrientedBox (const Engine::Physics::Transform& transform, float rightLenght = 0.f, float upLenght = 0.f, float forwardLenght = 0.f, const Vec3& center = Vec3::zero, const Vec3& rotation = Vec3::zero)
+            :   OrientedBox          (rightLenght, upLenght, forwardLenght, center, rotation),
                 transform_           {transform}
         {}
 
-        const Referential&      getReferential()        final       
+        Referential       getReferential()        final       
         { 
             return Referential {ref_.origin + transform_.getPosition(),
                                 (ref_.unitI + Mat3(transform_.getModelMatrix()).getVectorRight()).normalize(),
@@ -66,9 +70,9 @@ namespace Engine::Core::Maths
                                 (ref_.unitK + Mat3(transform_.getModelMatrix()).getVectorForward()).normalize()};
         }
         
-        float                   getExtensionValueI()    final       { return iI_ + transform_.getScale().x;}
-        float                   getExtensionValueJ()    final       { return iJ_ + transform_.getScale().y;}
-        float                   getExtensionValueK()    final       { return iK_ + transform_.getScale().z;}
+        float                   getExtensionValueI()    final       { return iI_ + transform_.getScale().x / 2.f;}
+        float                   getExtensionValueJ()    final       { return iJ_ + transform_.getScale().y / 2.f;}
+        float                   getExtensionValueK()    final       { return iK_ + transform_.getScale().z / 2.f;}
         
         const Referential&      getLocalReferential()           { return ref_;}
         float                   getLocalExtensionValueI()       { return iI_;}
@@ -78,7 +82,7 @@ namespace Engine::Core::Maths
         void                    setLocalReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setLocalExtensionValueI(float iI)                { iI_   = iI;}
         void                    setLocalExtensionValueJ(float iJ)                { iJ_   = iJ;}
-        void                    etELocalxtensionValueK(float iK)                 { iK_   = iK;}
+        void                    setLocalExtensionValueK(float iK)                 { iK_   = iK;}
 
         protected :
 
