@@ -693,16 +693,16 @@ Mat4 Mat4::createProjectionMatrix		(float distance)
 }
 
 inline
-Mat4 Mat4::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const & up)
+Mat4 Mat4::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const & upp)
 {
-	Vec3 const f((center - eye).getNormalize());
-	Vec3 const s(f.getCross(up).getNormalize());
-	Vec3 const u(s.getCross(f));
+	Vec3 const forward((center - eye).getNormalize());
+	Vec3 const right(forward.getCross(upp).getNormalize());
+	Vec3 const up(right.getCross(forward));
 
-	return {  s.x, u.x, -f.x, -s.dot_product(eye),
-              s.y, u.y, -f.y, -u.dot_product(eye),
-              s.z, u.z, -f.z, f.dot_product(eye),
-              0.f, 0.f,  0.f, 1.f};
+	return {  right.x	, right.y	, right.z		, -right.dot_product(eye),
+              up.x		, up.y		, up.z			, -up.dot_product(eye),
+              -forward.x, -forward.y, -forward.z	, forward.dot_product(eye),
+              0.f		, 0.f		,  0.f			, 1.f};
 }
 
 inline

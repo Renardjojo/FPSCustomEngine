@@ -73,7 +73,7 @@ Camera::Camera (const Engine::Core::Maths::Vec3& position,
 }
 
 void Camera::update () noexcept
-{
+{ 
     if (!isDirty_)
         return;
 
@@ -101,7 +101,6 @@ void Camera::lookAt (const Engine::Core::Maths::Vec3& eye, const Engine::Core::M
     position_ = eye;
     viewMatrix_ = Mat4::createLookAtView(eye, center, up);
     viewProjectionMatrix_ = projection_ * viewMatrix_;
-    isDirty_ = true;  
 }
 
 void Camera::setFovY(const float fovY) noexcept
