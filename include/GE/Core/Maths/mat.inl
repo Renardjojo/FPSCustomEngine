@@ -279,6 +279,24 @@ bool	Mat3::inverse		(Mat3& reversMat) const
 }
 
 inline
+Vec3 	Mat3::getVectorUp() 		const
+{
+	return Vec3{mat[1], mat[4], mat[7]};
+}
+
+inline 
+Vec3 	Mat3::getVectorRight() 	const
+{
+	return Vec3{mat[0], mat[3], mat[6]};
+}
+
+inline
+Vec3 	Mat3::getVectorForward() 	const
+{
+	return Vec3{mat[2], mat[5], mat[8]};
+}
+
+inline
 Mat3 Mat3::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const & up)
 {
 	Vec3 const f((center - eye).getNormalize());
@@ -699,9 +717,9 @@ Mat4 Mat4::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const &
 	Vec3 const s(f.getCross(up).getNormalize());
 	Vec3 const u(s.getCross(f));
 
-	return {  s.x, u.x, -f.x, -s.dot_product(eye),
-              s.y, u.y, -f.y, -u.dot_product(eye),
-              s.z, u.z, -f.z, f.dot_product(eye),
+	return {  s.x, u.x, -f.x, -s.dotProduct(eye),
+              s.y, u.y, -f.y, -u.dotProduct(eye),
+              s.z, u.z, -f.z, f.dotProduct(eye),
               0.f, 0.f,  0.f, 1.f};
 }
 

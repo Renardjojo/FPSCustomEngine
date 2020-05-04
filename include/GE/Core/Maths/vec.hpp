@@ -11,7 +11,7 @@ namespace Engine::Core::Maths
 {
 	typedef struct Vec2
 	{
-		float 		dot_product	 	(const Vec2& other) const;
+		float 		dotProduct	 	(const Vec2& other) const;
 		float 		length		 	() 					const;
 		float 		cross_product	(const Vec2& other) const;
 
@@ -143,7 +143,7 @@ namespace Engine::Core::Maths
 	typedef struct Vec3
 	{	
 
-		float 		dot_product	 	(const Vec3& other) const;
+		float 		dotProduct	 	(const Vec3& other) const;
 
 		//same as get magnitude
 		float 		length		 	() 					const;
@@ -190,12 +190,21 @@ namespace Engine::Core::Maths
 		friend void operator>>(::std::istream& in, Vec3& vec); //TODO:
 		friend ::std::ostream& operator<<(::std::ostream& out, const Vec3& vec);
 
+		static Vec3 zero;
+		static Vec3 up;
+		static Vec3 down;
+		static Vec3 left;
+		static Vec3 right;
+		static Vec3 forward;
+		static Vec3 backward;
+
 		union 
 		{
 			struct {float x, y, z;};
 			float e[3];
 			Vec2 xy;
 		};
+
 	} Vector3D;
 
 	Vec3 		operator-		(Vec3 vec1, Vec3 const& vec2);
@@ -216,7 +225,7 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec4
 	{	
-		float 		dot_product	 	(const Vec4& other) const;
+		float 		dotProduct	 	(const Vec4& other) const;
 
 		//same as get magnitude
 		float 		length		 	() 					const;

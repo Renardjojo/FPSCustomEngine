@@ -6,7 +6,7 @@
 #include "GE/Core/Rendering/Renderer/iRenderer.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Ressources/type.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"

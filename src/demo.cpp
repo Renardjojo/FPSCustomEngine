@@ -8,7 +8,7 @@
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -91,7 +91,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
-                                {5.f, 0.01f, 5.f}, 
+                                {5.f, 0.1f, 5.f}, 
                                 &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
                                 {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
                                 &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
@@ -110,9 +110,13 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
     scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+
+    scene_.getGameObject("world/sphere1").getComponent<PhysicalObject>()->SetMass(10);
+
+    scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
+    scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
+    scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 }
-
-
 
 void Demo::loadLights      (Ressources& ressourceManager)
 {
@@ -145,8 +149,6 @@ void Demo::loadLights      (Ressources& ressourceManager)
     static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
     static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
-
-
 
 void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
 {
