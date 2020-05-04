@@ -1,6 +1,8 @@
 #include "GE/GE.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Rendering/Renderer/rendererSDLOpGl33.hpp"
+#include "Game/define.h"
+
 
 using namespace Engine;
 using namespace Engine::Core::Debug;
@@ -17,13 +19,15 @@ GE::GE ()
 
     Engine::Core::Renderer::WindowCreateArg winArg;
     winArg.name     = "Window";
-    winArg.height   = 800;
-    winArg.width    = 1000;
+    winArg.width    = WIDTH;
+    winArg.height   = HEIGHT;
 
     ren_->initialize(winArg);
 
     //init random value
     srand(time(NULL));
+    
+    gameState = E_GAME_STATE::STARTING;
 }
 
 GE::~GE ()

@@ -1,6 +1,7 @@
 #include "GE/Core/System/UISystem.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "GE/GE.hpp"
 
 using namespace Engine::Ressources;
 using namespace Engine::Core::Systems;
@@ -13,23 +14,28 @@ TextField * UISystem::pActiveTextfield;
 
 bool UISystem::isActive = true;
 
-void UISystem::update(Engine::Core::InputSystem::Input input) noexcept
+void UISystem::update(Engine::GE& gameEngine) noexcept
 {
     if (!isActive)
         return;
 
-    int state = input.mouse.leftClic_down;
+    int state = gameEngine.inputManager_.mouse.oneLeftClick();
 
     for (Button *button : pButtons)
     {
-        button->isButtonPressed(input.mouse.position.x, input.mouse.position.y, state);
+        if (!button->isActive || button->whenIsActive != gameEngine.gameState)
+                continue;
+        button->isButtonPressed(gameEngine.inputManager_.mouse.position.x, gameEngine.inputManager_.mouse.position.y, state);
     }
+
+
 
     bool atLeastOneTextfieldActive = false;
 
     for (TextField *textField : pTextFields)
     {
-        if (textField->isTextFieldactive(input.mouse.position.x, input.mouse.position.y))
+        if (gameEngine.inputManager_.mouse.leftClic_down 
+        &&  textField->isTextFieldactive(gameEngine.inputManager_.mouse.position.x, gameEngine.inputManager_.mouse.position.y))
         {
             pActiveTextfield = textField;
             atLeastOneTextfieldActive = true;
@@ -39,14 +45,22 @@ void UISystem::update(Engine::Core::InputSystem::Input input) noexcept
     if (!atLeastOneTextfieldActive)
         pActiveTextfield = nullptr;
 
-    if (pActiveTextfield && input.keyboard.isDown[SDL_SCANCODE_BACKSPACE])
+    if (pActiveTextfield && gameEngine.inputManager_.keyboard.isDown)
         pActiveTextfield->stringDel();
+
+    if (pActiveTextfield)
+    {
+        pActiveTextfield->updateString(static_cast<char>(gameEngine.inputManager_.keyboard.key));
+    }
+
 }
 
-void UISystem::draw() noexcept
+void UISystem::draw(Engine::GE& gameEngine) noexcept
 {
     for (Button *button : pButtons)
     {
+        if (!button->isActive || button->whenIsActive != gameEngine.gameState)
+                continue;
         button->draw();
     }
     for (TextField *textField : pTextFields)

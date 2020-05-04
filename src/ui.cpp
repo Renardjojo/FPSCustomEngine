@@ -1,26 +1,33 @@
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "GE/Core/System/UISystem.hpp"
+#include "GE/Physics/transform.hpp"
+#include "Game/define.h"
 
 
+using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Systems;
 
 
-Button::Button(float _x, float _y, float _w, float _h, Vec3 _color)
-    : shader("./ressources/shader/2d.vert", "./ressources/shader/color.frag")
-{
+Button::Button(Engine::Ressources::Shader* _shader, float _x, float _y, float _w, float _h, Vec3 _color, E_GAME_STATE _whenIsActive)
+    : shader(_shader)
+{   
     x = _x;
     y = _y;
     w = _w;
     h = _h;
-    this->color = _color;
+    r = _color.x;
+    g = _color.y;
+    b = _color.z;
 
+    isActive = true;
+    whenIsActive = _whenIsActive;
 
-    float wid = 1400;
-    float hei = 900;
+    float wid = WIDTH;
+    float hei = HEIGHT;
 
     float tempx1 = ((_x) / wid * 2) - 1;
     float tempy1 = 1 - ((_y) / hei * 2);
@@ -55,25 +62,27 @@ Button::Button(float _x, float _y, float _w, float _h, Vec3 _color)
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 
+    transform = std::make_unique<Transform>();
+
     UISystem::addButton(this);  
 }
 
 void Button::draw()
 {
+    glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     
-    Mat4 matrix;
-    GLfloat tempcolor[3] = {this->color.x, this->color.y, this->color.z};
+    GLfloat tempcolor[3] = {r, g, b};
 
-    GLuint matrixID = glGetUniformLocation(shader.getIdProgramm(), "matrix");
-    GLuint colorID = glGetUniformLocation(shader.getIdProgramm(), "color");
-    shader.use();
-    glUniformMatrix4fv(matrixID, 1, GL_TRUE, &matrix[0][0]);
+    GLuint matrixID = glGetUniformLocation(shader->getIdProgramm(), "matrix");
+    GLuint colorID = glGetUniformLocation(shader->getIdProgramm(), "color");
+    shader->use();
+    glUniformMatrix4fv(matrixID, 1, GL_TRUE, &transform->getModelMatrix()[0][0]);
     glUniform3fv(colorID, 1, &tempcolor[0]);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    
+
     glBindVertexArray(0);
     
     glEnable(GL_DEPTH_TEST);
@@ -87,11 +96,11 @@ bool Button::isButtonPressed(float x, float y, int state)
         &&  y >= this->y && y <= this->y + this->h)
         {
             this->function();
-            this->color = Vec3{0.5f, 0.5f, 0.5f};
+            r = g = b = 0.5f;
             return true;
         }
     }
-    this->color = Vec3{1.f, 1.f, 1.f};
+    r = g = b = 1.0f;
     return false;
 }
 
@@ -101,8 +110,9 @@ Button::~Button()
     UISystem::removeButton(this);
 }
 
-TextField::TextField(const char* TTFPath, float _x, float _y, float _w, float _h, const std::string& _string)
-    : shader("./ressources/shader/text.vert", "./ressources/shader/texture.frag")
+TextField::TextField(Font* _font, Shader* _shader, float _x, float _y, float _w, float _h, const std::string& _string)
+    :   font(_font),
+        shader(_shader)
 {
     color.r = 255;
     color.g = 255;
@@ -111,14 +121,7 @@ TextField::TextField(const char* TTFPath, float _x, float _y, float _w, float _h
     y = _y;
     w = _w;
     h = _h;
-    
     value = _string;
-
-    std::string ttfpathstring = TTFPath;
-
-    font = TTF_OpenFont(TTFPath, 18);
-    if (!font)
-        SLog::logError("failed to open : " + ttfpathstring);
 
     updateTexture();
 
@@ -127,7 +130,6 @@ TextField::TextField(const char* TTFPath, float _x, float _y, float _w, float _h
 
 TextField::~TextField()
 {   
- 	TTF_CloseFont(font);
     glDeleteVertexArrays(1, &VAO);
     UISystem::removeTextField(this);
 }
@@ -141,7 +143,7 @@ void TextField::updateTexture()
     Uint32 Rmask, Gmask, Bmask, Amask;
     SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888, &bpp, &Rmask, &Gmask, &Bmask, &Amask);
     SDL_Surface *img_rgba8888 = SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
-    SDL_Surface* surface = TTF_RenderText_Solid(font, value.c_str(), color);
+    SDL_Surface* surface = TTF_RenderText_Solid(font->getpFont(), value.c_str(), color);
     SDL_BlitSurface(surface, NULL, img_rgba8888, NULL);
     SDL_FreeSurface(surface);
 
@@ -207,12 +209,13 @@ void TextField::updateTexture()
 
 void TextField::draw()
 {
+    glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
-    shader.use();
     glBindTexture(GL_TEXTURE_2D, texture);
     
-    Mat4 matrix = Mat4::createTRSMatrix({0,0,0},{0,0,0},{1,1,1});
-    GLuint matrixID = glGetUniformLocation(shader.getIdProgramm(), "matrix");
+    Mat4 matrix;
+    GLuint matrixID = glGetUniformLocation(shader->getIdProgramm(), "matrix");
+    shader->use();
 
     glUniformMatrix4fv(matrixID, 1, GL_TRUE, &matrix[0][0]);
 
@@ -270,6 +273,7 @@ void TextField::updateString(char toAdd)
     function();
     updateTexture();
 }
+
 void TextField::stringDel()
 {
     if (value.size() == 0)

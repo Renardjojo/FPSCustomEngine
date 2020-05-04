@@ -6,6 +6,7 @@
 #include <vector>
 #include "GE/Ressources/ui.hpp"
 #include "GE/Core/InputSystem/input.hpp"
+#include "GE/GE.hpp"
 
 namespace Engine::Core::Systems
 {
@@ -31,9 +32,9 @@ namespace Engine::Core::Systems
         
         static bool isActive;
 
-        static void update(Engine::Core::InputSystem::Input input) noexcept;
+        static void update(Engine::GE& gameEngine) noexcept;
 
-        static void draw() noexcept;
+        static void draw(Engine::GE& gameEngine) noexcept;
 
         static void addTextField(Engine::Ressources::TextField *pTextField) noexcept
         {

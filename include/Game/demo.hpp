@@ -56,21 +56,6 @@ namespace Game
 
             #pragma endregion //!methods
 
-            #pragma region static methods
-            #pragma endregion //!static methods
-
-            #pragma region accessor
-            #pragma endregion //!accessor
-
-            #pragma region mutator
-            #pragma endregion //!mutator
-
-            #pragma region operator
-            #pragma endregion //!operator
-
-            #pragma region convertor
-            #pragma endregion //!convertor
-
         protected:
 
             #pragma region attribut
@@ -80,7 +65,7 @@ namespace Game
 
             bool flagleftClicIsDown;
             bool flagF1IsDown;
-            bool mouseForPlayer1;
+            bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
@@ -92,10 +77,6 @@ namespace Game
 
             Engine::Physics::PhysicalObject* physictest;
             #pragma endregion //!attribut
-
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
 
             #pragma region methods
 
@@ -114,7 +95,7 @@ namespace Game
             void loadTree               (Ressources& ressourceManager);
             void loadCloud              (Ressources& ressourceManager);*/
 
-            void updateControl          (const Engine::Core::InputSystem::Input& input);
+            void updateControl          (Engine::Core::InputSystem::Input& input);
 
             #pragma endregion //!methods
 

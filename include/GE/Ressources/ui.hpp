@@ -6,113 +6,102 @@
 
 #include <SDL2/SDL_ttf.h>
 
-
 #include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/shader.hpp"
+#include "GE/Physics/transform.hpp"
+#include "GE/Ressources/font.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/mat.hpp"
+#include "Game/define.h"
+
 
 #include <functional>
 #include <vector>
-
+#include <memory>
 
 namespace Engine::Ressources
 {
-
-class Button
-{
-public:
-    // void(*function)();
-    std::function<void()> function = [](){};
-
-    GLuint VAO;
-    Engine::Ressources::Shader shader;
-
-    Engine::Core::Maths::Vec3 color;
-
-    float x;
-    float y;
-    float w;
-    float h;
-    
-public:
-
-    Button(float, float, float, float, Engine::Core::Maths::Vec3);
-    // Button(const Button &other);
-    // Button(Button &&other);
-    virtual ~Button();
-
-    Button()                                = delete;
-    Button &operator=(Button const &other)  = delete;
-    Button &operator=(Button &&other)       = delete;
-
-    void draw();
-    bool isButtonPressed(float x, float y, int state);
-};
-
-
-
-class TextField
-{
-private:
-    TTF_Font* font;
-    SDL_Color color;
-    GLuint texture;
-    GLuint VAO;
-    Engine::Ressources::Shader shader;
-
-    std::string value;
-
-    float x;
-    float y;
-    float w;
-    float h; 
-
-
-public:
-    std::function<void()> function = [](){};
-    bool active = false;
-    bool keyPressed = false;
-    bool wasActive = false;
-
-    TextField(const char* TTFPath, float, float, float, float, const std::string&);
-    // TextField(const TextField &other);
-    // TextField(TextField &&other);
-    virtual ~TextField();
-
-    TextField()                                   = delete;
-    TextField &operator=(TextField const &other)  = delete;
-    TextField &operator=(TextField &&other)       = delete;
-
-    void draw();
-    void updateTexture();
-    void updateString(char);
-    bool isTextFieldactive(float x, float y);
-    void desactivateTextField();
-    void stringDel();
-   
-    std::string getValue() const
+    class Button
     {
-        return value;
-    }
-    std::string& setValue()
+    private:
+        Engine::Ressources::Shader* shader;
+        float r, g, b;
+        GLuint VAO;
+
+        float x;
+        float y;
+        float w;
+        float h;
+
+    public:
+        std::unique_ptr<Engine::Physics::Transform> transform;
+        E_GAME_STATE whenIsActive;
+        bool isActive;
+
+        std::function<void()> function = [](){};
+
+        Button(Engine::Ressources::Shader*, float, float, float, float, Engine::Core::Maths::Vec3, E_GAME_STATE);
+        virtual ~Button();
+
+        Button() = delete;
+        Button(const Button &other) = delete;
+        Button(Button &&other) = delete;
+        Button &operator=(Button const &other) = delete;
+        Button &operator=(Button &&other) = delete;
+
+        void draw();
+        bool isButtonPressed(float x, float y, int state);
+    };
+
+    class TextField
     {
-        return value;
-    }
-};
+    private:
+        Font *font;
+        Engine::Ressources::Shader *shader;
+        SDL_Color color;
+        GLuint texture;
+        GLuint VAO;
 
-class UIBox
-{
-private:
-    std::vector<Button> buttons;
-    std::vector<TextField> textfields;
+        float x;
+        float y;
+        float w;
+        float h;
 
-    
-public:
-    UIBox();
-    ~UIBox();
-};
+    public:
+        std::string value;
+        std::function<void()> function = []() {};
+        bool active = false;
+        bool keyPressed = false;
+        bool wasActive = false;
 
-};
+        TextField(Font *font, Shader *_shader, float, float, float, float, const std::string &);
+        // TextField(const TextField &other);
+        // TextField(TextField &&other);
+        virtual ~TextField();
+
+        TextField() = delete;
+        TextField &operator=(TextField const &other) = delete;
+        TextField &operator=(TextField &&other) = delete;
+
+        void draw();
+        void updateTexture();
+        void updateString(char);
+        bool isTextFieldactive(float x, float y);
+        void desactivateTextField();
+        void stringDel();
+    };
+
+    class UIBox
+    {
+    private:
+        std::vector<Button> buttons;
+        std::vector<TextField> textfields;
+
+    public:
+        UIBox();
+        ~UIBox();
+    };
+
+}; // namespace Engine::Ressources
 
 #endif
