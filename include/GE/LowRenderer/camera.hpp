@@ -122,8 +122,7 @@ namespace Engine::LowRenderer
 
             #pragma region static methods         
 
-            static
-            const Camera* getCamUse() noexcept { return camToUse; }
+            static Camera* getCamUse() noexcept { return camToUse; }
 
             #pragma endregion //!static methods
 

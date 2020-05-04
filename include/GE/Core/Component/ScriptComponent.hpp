@@ -13,25 +13,20 @@ namespace Engine::Core::Component
 {
     class ScriptComponent : public Engine::Ressources::Component
     {
-        private:
-            bool _active;
+    private:
+    public:
+        ScriptComponent(Engine::Ressources::GameObject &gameobject);
+        ScriptComponent(const ScriptComponent &other) = default;
+        ScriptComponent(ScriptComponent &&other) = default;
+        virtual ~ScriptComponent();
 
-        public:
-            ScriptComponent (Engine::Ressources::GameObject& gameobject):Engine::Ressources::Component(gameObject),_active{true}{}
-    //        ScriptComponent (const ScriptComponent& other)=default;
-    //        ScriptComponent (ScriptComponent&& other)=default;
-     //       virtual ~ScriptComponent ()=0;
-            
-            ScriptComponent ()                                        = delete;
-            ScriptComponent& operator=(ScriptComponent const& other)  = delete;
-            ScriptComponent& operator=(ScriptComponent && other)      = delete;
+        ScriptComponent() = delete;
+        ScriptComponent &operator=(ScriptComponent const &other) = delete;
+        ScriptComponent &operator=(ScriptComponent &&other) = delete;
 
-            virtual void update()=0;
-            bool isActive(){return _active;}
-
+        virtual void update() = 0;
         //Engine::Ressources::GameObject& getGameObject () { return gameObject;}
-
     };
-}
+} // namespace Engine::Core::Component
 
 #endif // __SCRIPTCOMPONENT_HPP__

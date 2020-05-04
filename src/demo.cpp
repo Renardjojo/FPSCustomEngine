@@ -35,7 +35,7 @@ Demo::Demo(Engine::GE& gameEngine)
         mouseForPlayer1     (true),
         dirCamera          {0.f, 0.f, -1.f}
 {
-    loadRessourceAndScene();
+    loadGeneralRessource(gameEngine_.ressourceManager_);
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -67,27 +67,22 @@ void Demo::display    () const noexcept
     Size sizeWin = gameEngine_.getWinSize();
 
     glViewport(0, 0, sizeWin.width, sizeWin.heigth);
-    static_cast<Camera*>(mainCamera->entity.get())->use();
     scene_.draw();
     
     glUseProgram(0);
 }
 
-void Demo::loadRessourceAndScene  ()
+void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 {
-    loadGeneralRessource   (gameEngine_.ressourceManager_);
-
-    //Load Camera
+        //Load Camera
     Camera  camP1Arg ({0.f, 0.f, 15.f},
                     {0.f, 0.f, 0.f}, 
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
 
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
+    static_cast<Camera*>(mainCamera->entity.get())->use();
 
-}
 
-void Demo::loadGeneralRessource   (Ressources& ressourceManager)
-{
     MaterialAndTextureCreateArg matDefault;
     matDefault.name_                = "DefaultMaterial";
     matDefault.pathDiffuseTexture   = nullptr;
@@ -111,21 +106,20 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
                                 "sphere1"};
 
-    scene_.add<Model>(scene_.getWorld(), sphere1arg);
-    scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+    GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
+    sphere.addComponent<PhysicalObject>();
 
-    //Player
-
-    ModelCreateArg playerArg   {{0.f, 5.f, 0.f}, 
+    ModelCreateArg player       {{0.f, 0.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("sphere1"),
                                 "Player"};
-    scene_.add<Model>(scene_.getWorld(),playerArg);
-    scene_.getGameObject("world/Player").addComponent<PlayerController>(gameEngine_.inputManager_);
+    GameObject& playerGameObject = scene_.add<Model>(scene_.getWorld(),player);
+    
+    playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
 
 }
 
@@ -161,85 +155,33 @@ void Demo::loadLights      (Ressources& ressourceManager)
     static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
 
-
-
 void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
 {
-    if (input.keyboard.isDown[SDL_SCANCODE_UP])
-    {
-        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
-        static_cast<Camera*>(mainCamera->entity.get())->translate(vec);
-    }
+    
 
-    if (input.keyboard.isDown[SDL_SCANCODE_DOWN])
-    {
-        Vec3 vec = dirCamera * (20.f * TimeSystem::getDeltaTime());
-        static_cast<Camera*>(mainCamera->entity.get())->translate(-vec);
-    }
+    // static int exFrameWheelVal = input.mouse.wheel_scrolling;
 
-    if (input.keyboard.isDown[SDL_SCANCODE_LEFT])
-    {
-        Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
-        Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
-
-        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
-        static_cast<Camera*>(mainCamera->entity.get())->translate(-playerDirOrtho);
-    }
-
-    if (input.keyboard.isDown[SDL_SCANCODE_RIGHT])
-    {
-        Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI).rotated90();
-        Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
-
-        playerDirOrtho *= (20.f * TimeSystem::getDeltaTime());
-        static_cast<Camera*>(mainCamera->entity.get())->translate(playerDirOrtho);
-    }
-
-    if (input.mouse.motion.y != 0)
-    {
-        if (mouseForPlayer1)
-        {
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * TimeSystem::getDeltaTime(), {1.f, 0.f, 0.f});
-        }
-    }
-
-    if (input.mouse.motion.x != 0)
-    {
-        if (mouseForPlayer1)
-        {
-            Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-            vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI);
-            dirCamera.x = vecDirPlayer.x;
-            dirCamera.z = vecDirPlayer.y;
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime(), {0.f, 1.f, 0.f});
-        }
-    }
-
-    static int exFrameWheelVal = input.mouse.wheel_scrolling;
-
-    if (input.mouse.wheel_scrolling != exFrameWheelVal)
-    {
-        if(input.mouse.wheel_scrolling > exFrameWheelVal)
-        {
-            static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY + 5);
-        }
-        else
-        {
-            static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY - 5);
-        }
+    // if (input.mouse.wheel_scrolling != exFrameWheelVal)
+    // {
+    //     if(input.mouse.wheel_scrolling > exFrameWheelVal)
+    //     {
+    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY + 5);
+    //     }
+    //     else
+    //     {
+    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY - 5);
+    //     }
         
-        exFrameWheelVal = input.mouse.wheel_scrolling;
-    }
+    //     exFrameWheelVal = input.mouse.wheel_scrolling;
+    // }
 
-    if (input.keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
-    {
-        mouseForPlayer1 = !mouseForPlayer1;
-        flagF1IsDown = true;
-    }
-    else
-    {
-        flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
-    }    
+    // if (input.keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    // {
+    //     mouseForPlayer1 = !mouseForPlayer1;
+    //     flagF1IsDown = true;
+    // }
+    // else
+    // {
+    //     flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
+    // }    
 }

@@ -6,69 +6,38 @@
 using namespace Engine::Core::Time;
 using namespace Engine::Core::Debug;
 
-ChronoDt::ChronoDt (float delay)
-	:	delay_	(delay/1000),
-		time_	(0.),
-		isFinish_(false)
-{}
+bool TimeSystem::_limitFPS = false;
 
-ChronoDt::~ChronoDt ()
-{}
+double TimeSystem::_time = 0;
+double TimeSystem::_temp_time = 0;
+double TimeSystem::_time_acc = 0;
 
-void ChronoDt::update(float delta_time)
-{
-	isFinish_ = time_ > delay_;
+unsigned int TimeSystem::_frame_acc =0;
 
-	if (time_ > delay_)
-		return;
-
-	time_ += delta_time;
-}
-
-bool ChronoDt::isEnd() const
-{
-	return isFinish_;
-}
-
-void ChronoDt::reset()
-{
-	isFinish_ 	= false;
-	time_ 		= 0;
-}
+float TimeSystem::_FPSmax =50.f;
+float TimeSystem::_sample =1.f; //FPS time sample
+float TimeSystem::_deltaTime = 0;
+float TimeSystem::_unscaledDeltaTime = 0;
+float TimeSystem::_timeScale = 1.f;
 
 void TimeSystem::update()
-{
- 	unscaledDetlaTime_ = (timeExFrame_ > 0) ? ((SDL_GetTicks() - timeExFrame_) / 1000.f) : 1.0f / (float)FPS_.FPSmax;
-	
-	float delay = ((1/(float)FPS_.FPSmax)*1000) - (unscaledDetlaTime_*1000);
-	
-	if(delay <= 0.)
-		delay = 1.;
+{	
+	_temp_time = SDL_GetTicks() / 1000.0;
+	_unscaledDeltaTime = _temp_time - _time;
+	_time = _temp_time;
 
-	SDL_Delay(delay);
+	_time_acc += _unscaledDeltaTime;
+	_frame_acc++;
 
-	unscaledDetlaTime_ += delay / 1000.f;
-	deltaTime_ = unscaledDetlaTime_ * timeScale_;
-
-	timeExFrame_ = SDL_GetTicks();
-
-	FPS_.chrono.update (unscaledDetlaTime_);
-	
-	if(FPS_.chrono.isEnd())
+	if (_time_acc >= _sample)
 	{
-		
-		FPS_.chrono.reset();
-		SLog::log(std::string("|FPS thoerique :") + std::to_string(1.f / (FPS_.FPSTheoriqueAverage / static_cast<float>(FPS_.FPSrealCount))) + "| |FPS real :" + std::to_string(FPS_.FPSrealCount / FPS_.chrono.delay_) + "|");
-		FPS_.FPSrealCount 			= 0;
-		FPS_.FPSTheoriqueAverage 	= 0.f;
+		std::cout << "FPS: " << round(1 / (_time_acc / _frame_acc)) << std::endl;
+		_time_acc = 0;
+		_frame_acc = 0;
 	}
 
-	FPS_.FPSrealCount++;
-	FPS_.FPSTheoriqueAverage += unscaledDetlaTime_;
-}
+	_deltaTime = _unscaledDeltaTime * _timeScale;
 
-float TimeSystem::deltaTime_			= 0.f;
-float TimeSystem::unscaledDetlaTime_ 	= 0.f;
-float TimeSystem::timeScale_			= 1.f;
-float TimeSystem::timeExFrame_			= 0.f;
-FPS   TimeSystem::FPS_					= {{1000}, DEFAULT_FPS_MAX};
+	if (_limitFPS)
+		SDL_Delay((Uint32)(((1.f / _FPSmax)*1000)-_unscaledDeltaTime));
+}
