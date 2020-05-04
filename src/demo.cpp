@@ -54,7 +54,6 @@ void Demo::update     () noexcept
     PhysicSystem::update();
 
     scene_.update();
-
 }
 
 void Demo::display    () const noexcept
@@ -98,29 +97,46 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 
     scene_.add<Model>(scene_.getWorld(), cube1arg);
 
-    matDefault.name_                = "GreenMaterial";
-    matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
+    matDefault.name_                = "PinkMaterial";
+    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 1.f, 1.f};
 
     ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.add<Material>("GreenMaterial", matDefault)},  
+                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
                                 &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
                                 "sphere1"};
 
     GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
-    /*life bar*/
-    ModelCreateArg lifeBarArg   {{0.f, 1.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {1.f, 0.5f, 0.1f}, 
-                                &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("cube1"),
-                                "billBoard"};
+    /*life bar*/             
+        GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
+        lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
+        lifeBar.entity->setName("lifeBar");
 
-    scene_.add<BillBoard>(sphere, lifeBarArg);
+        matDefault.name_                = "BlackMaterial";
+        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 0.f, 0.f, 1.f};
+        ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
+                                                {0.f, 0.f, 0.f}, 
+                                                {1.f, 0.1f, 0.2f}, 
+                                                &ressourceManager.get<Shader>("White"), 
+                                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
+                                                &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
+                                                "lifeBarBG"};
+        scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
+
+        matDefault.name_                = "GreenMaterial";
+        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
+
+        ModelCreateArg lifeBarInternalArg   {{0.f, -0.05f, 0.1f}, 
+                                            {0.f, 0.f, 0.f}, 
+                                            {0.8f, 0.1f, 0.f}, 
+                                            &ressourceManager.get<Shader>("White"), 
+                                            {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
+                                            &ressourceManager.get<Mesh>("Plane1"),
+                                            "lifeBarBGIndicator"};
+        scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
 
     sphere.addComponent<PhysicalObject>();
     sphere.getComponent<PhysicalObject>()->SetMass(10);
@@ -199,7 +215,7 @@ void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
     {
         if (mouseForPlayer1)
         {
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.1f * TimeSystem::getDeltaTime(), {1.f, 0.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.y * 0.01f * TimeSystem::getDeltaTime(), {1.f, 0.f, 0.f});
         }
     }
 
@@ -211,7 +227,7 @@ void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
             vecDirPlayer.rotate(input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime() * 180 / M_PI);
             dirCamera.x = vecDirPlayer.x;
             dirCamera.z = vecDirPlayer.y;
-            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.1f * TimeSystem::getDeltaTime(), {0.f, 1.f, 0.f});
+            static_cast<Camera*>(mainCamera->entity.get())->rotate(-input.mouse.motion.x * 0.01f * TimeSystem::getDeltaTime(), {0.f, 1.f, 0.f});
         }
     }
 
