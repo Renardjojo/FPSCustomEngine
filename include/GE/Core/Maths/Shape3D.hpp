@@ -18,6 +18,34 @@
 
 namespace Engine::Core::Maths
 {
+    class Line
+    {
+        public : 
+
+        Line ()                             = default;
+        Line(const Line& other)             = default;
+        Line(Line&& other)                  = default;
+        ~Line()                             = default;
+        Line& operator=(Line const&)        = default;
+        Line& operator=(Line &&)            = default; 
+
+        explicit Line (const Vec3& origin, const Vec3& normal)
+            :   origin_     {origin},
+                normal_ {normal}
+        {}
+
+        const Vec3& getOrigin() noexcept    { return origin_; }
+        const Vec3& getNormal() noexcept    { return normal_; }
+
+        void setOrigin(const Vec3& newOrigin) noexcept { origin_ = newOrigin; }
+        void setNormal(const Vec3& newNormal) noexcept { normal_ = newNormal; }
+
+        protected :
+
+        Vec3    origin_, 
+                normal_;
+    };
+
    class Segment
     {
         public :
@@ -48,31 +76,6 @@ namespace Engine::Core::Maths
         protected :
 
         Vec3      pt1_, pt2_;
-    };
-
-
-        Line ()                             = default;
-        Line(const Line& other)             = default;
-        Line(Line&& other)            = default;
-        ~Line()                             = default;
-        Line& operator=(Line const&)  = default;
-        Line& operator=(Line &&)      = default; 
-
-        explicit Line (const Vec3& origin, const Vec3& normal)
-            :   origin_     {origin},
-                normal_ {normal}
-        {}
-
-        const Vec3& getOrigin() noexcept    { return origin_; }
-        const Vec3& getNormal() noexcept    { return normal_; }
-
-        void setOrigin(const Vec3& newOrigin) noexcept { origin_ = newOrigin; }
-        void setNormal(const Vec3& newNormal) noexcept { normal_ = newNormal; }
-
-        public :
-
-        Vec3    origin_, 
-                normal_;
     };
 
     class Quad

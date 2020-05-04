@@ -20,8 +20,9 @@ namespace Engine::Ressources
     };
 
     //feature mask
-    #define LIGHT_BLIN_PHONG            1  // 2^1, bit 1
-    #define SKYBOX                      2  // 2^2, bit 2
+    #define LIGHT_BLIN_PHONG            1  // 2^0, bit 1
+    #define SKYBOX                      2  // 2^1, bit 2
+    #define AMBIANTE_COLOR_ONLY         4  // 2^2, bit 4
 
     //Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
     class Shader

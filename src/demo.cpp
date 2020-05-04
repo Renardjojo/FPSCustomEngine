@@ -79,7 +79,6 @@ void Demo::loadRessourceAndScene  ()
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
 
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
-
 }
 
 void Demo::loadGeneralRessource   (Ressources& ressourceManager)
@@ -92,29 +91,41 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {5.f, 0.1f, 5.f}, 
-                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
+                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY), 
                                 {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
                                 &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
                                 "cube1"};
 
     scene_.add<Model>(scene_.getWorld(), cube1arg);
 
+    matDefault.name_                = "GreenMaterial";
+    matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
+
     ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                {&ressourceManager.add<Material>("GreenMaterial", matDefault)},  
                                 &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
                                 "sphere1"};
 
-    scene_.add<Model>(scene_.getWorld(), sphere1arg);
+    GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
-    scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+    /*life bar*/
+    ModelCreateArg lifeBarArg   {{0.f, 1.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {1.f, 0.5f, 0.1f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("cube1"),
+                                "billBoard"};
 
-    scene_.getGameObject("world/sphere1").getComponent<PhysicalObject>()->SetMass(10);
+    scene_.add<BillBoard>(sphere, lifeBarArg);
 
-    scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
-    scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
+    sphere.addComponent<PhysicalObject>();
+    sphere.getComponent<PhysicalObject>()->SetMass(10);
+    sphere.addComponent<SphereCollider>();
+    sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 }
 

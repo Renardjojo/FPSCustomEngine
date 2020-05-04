@@ -78,5 +78,6 @@ bool Collision::GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSph
     // if (!Collision::IsSegmentIntersectingOrientedBox(sphere, box, collisionPoint))
     //     return false;
 
-    collisionPoint.
+    //collisionPoint.
+    return false;
 }
