@@ -717,9 +717,9 @@ Mat4 Mat4::createLookAtView (Vec3 const & eye, Vec3 const & center, Vec3 const &
 	Vec3 const right(forward.getCross(upp).getNormalize());
 	Vec3 const up(right.getCross(forward));
 
-	return {  right.x	, right.y	, right.z		, -right.dot_product(eye),
-              up.x		, up.y		, up.z			, -up.dot_product(eye),
-              -forward.x, -forward.y, -forward.z	, forward.dot_product(eye),
+	return {  right.x	, right.y	, right.z		, -right.dotProduct(eye),
+              up.x		, up.y		, up.z			, -up.dotProduct(eye),
+              -forward.x, -forward.y, -forward.z	, forward.dotProduct(eye),
               0.f		, 0.f		,  0.f			, 1.f};
 }
 
