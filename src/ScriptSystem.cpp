@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "GE/Core/System/ScriptSystem.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 using namespace Engine::Core::System;
 std::vector<ScriptComponent *> ScriptSystem::_scripts;

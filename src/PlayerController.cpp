@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Game/PlayerController.hpp"
 #include "GE/Core/InputSystem/input.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 #include <math.h>
 
 using namespace Game;
@@ -32,9 +32,7 @@ Vec3 coord(float r, float angle)
 }
 
 void PlayerController::move()
-{
-     std::cout<<_camera->getPosition()<<std::endl;
-    
+{    
     //orbit
     _orbity += (_input.mouse.motion.x * M_PI / 180);
     _camera->setTranslation(coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition());
@@ -48,7 +46,6 @@ void PlayerController::move()
     _direction.y = 0;
     _direction.z=-cosf(_orbity);
 
-    std::cout<<_direction<<std::endl;
     //movement
     if (_input.keyboard.isDown[SDL_SCANCODE_UP])
         _movement -= _direction;

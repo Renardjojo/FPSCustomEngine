@@ -128,6 +128,13 @@ void Model::draw () const noexcept
             {
                 pShader_->setMaterialBlock((pMaterialToUse_[part])->getMaterialComponent());
             }
+            else if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+            {
+               pShader_->setVec4("Color",  (pMaterialToUse_[part])->getMaterialComponent().ambient.kr, 
+                                            (pMaterialToUse_[part])->getMaterialComponent().ambient.kg,
+                                            (pMaterialToUse_[part])->getMaterialComponent().ambient.kb,
+                                            (pMaterialToUse_[part])->getMaterialComponent().ambient.ki);
+            }
         }
         else
         {
@@ -138,6 +145,14 @@ void Model::draw () const noexcept
             {
                 pShader_->setMaterialBlock((pMaterial_[0])->getMaterialComponent());
             }
+            else if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+            {
+               pShader_->setVec4("Color",  (pMaterial_[0])->getMaterialComponent().ambient.kr, 
+                                            (pMaterial_[0])->getMaterialComponent().ambient.kg,
+                                            (pMaterial_[0])->getMaterialComponent().ambient.kb,
+                                            (pMaterial_[0])->getMaterialComponent().ambient.ki);
+            }
+    
         }
 
 		glDrawArrays(GL_TRIANGLES, first, pMesh_->getIndices()[part].size());

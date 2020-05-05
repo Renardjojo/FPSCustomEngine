@@ -59,7 +59,6 @@ void Demo::update     () noexcept
     ScriptSystem::update();
 
     scene_.update();
-
 }
 
 void Demo::display    () const noexcept
@@ -91,18 +90,21 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {5.f, 0.1f, 5.f}, 
-                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
+                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY), 
                                 {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
                                 &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
                                 "cube1"};
 
     scene_.add<Model>(scene_.getWorld(), cube1arg);
 
+    matDefault.name_                = "PinkMaterial";
+    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 1.f, 1.f};
+
     ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
                                 &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
                                 "sphere1"};
 
@@ -115,16 +117,41 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("sphere1"),
                                 "Player"};
-    GameObject& playerGameObject = scene_.add<Model>(scene_.getWorld(),player);
+    scene_.add<Model>(scene_.getWorld(),player).addComponent<PlayerController>(gameEngine_.inputManager_);
     
-    playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
+    // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
+    /*life bar*/             
+        GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
+        lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
+        lifeBar.entity->setName("lifeBar");
 
-    scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+        matDefault.name_                = "BlackMaterial";
+        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 0.f, 0.f, 1.f};
+        ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
+                                                {0.f, 0.f, 0.f}, 
+                                                {1.f, 0.1f, 0.2f}, 
+                                                &ressourceManager.get<Shader>("White"), 
+                                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
+                                                &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
+                                                "lifeBarBG"};
+        scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
 
-    scene_.getGameObject("world/sphere1").getComponent<PhysicalObject>()->SetMass(10);
+        matDefault.name_                = "GreenMaterial";
+        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
 
-    scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
-    scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
+        ModelCreateArg lifeBarInternalArg   {{0.f, -0.05f, 0.1f}, 
+                                            {0.f, 0.f, 0.f}, 
+                                            {0.8f, 0.1f, 0.f}, 
+                                            &ressourceManager.get<Shader>("White"), 
+                                            {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
+                                            &ressourceManager.get<Mesh>("Plane1"),
+                                            "lifeBarBGIndicator"};
+        scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
+
+    sphere.addComponent<PhysicalObject>();
+    sphere.getComponent<PhysicalObject>()->SetMass(10);
+    sphere.addComponent<SphereCollider>();
+    sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 }
 
