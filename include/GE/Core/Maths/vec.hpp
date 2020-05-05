@@ -142,7 +142,6 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec3
 	{	
-
 		float 		dotProduct	 	(const Vec3& other) const;
 
 		//same as get magnitude

@@ -215,6 +215,9 @@ void Input::pollEventKeyboard (SDL_Event* event)
 	if(event == NULL)
 		return;
 
+	if (event->type == SDL_KEYDOWN)
+		keyboard.key = event->key.keysym.sym;
+
 	keyboard.isDown[event->key.keysym.scancode] = (event->type == SDL_KEYDOWN);
 
 	if(!keyboard.isDown[SDL_SCANCODE_ESCAPE] && keyboard.flagEscIsRelease)

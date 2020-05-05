@@ -14,6 +14,8 @@
 #include "GE/Ressources/sample.hpp"
 #include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
+#include "GE/Ressources/ui.hpp"
+#include "Game/define.h"
 
 #ifndef _GE_H
 #define _GE_H
@@ -53,15 +55,6 @@ namespace Engine
 
             #pragma endregion //!accessor
 
-            #pragma region mutator
-            #pragma endregion //!mutator
-
-            #pragma region operator
-            #pragma endregion //!operator
-
-            #pragma region convertor
-            #pragma endregion //!convertor
-
         public:
 
             #pragma region attribut
@@ -72,14 +65,17 @@ namespace Engine
             Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, 
                                                 Engine::Ressources::Shader, 
                                                 Engine::Ressources::Material, 
+                                                Engine::Ressources::Text,
+                                                Engine::Ressources::Texture,    
                                                 Engine::Ressources::Sample, 
-                                                Engine::Ressources::Music, 
-                                                Engine::Ressources::Font>    ressourceManager_;
+                                                Engine::Ressources::Music,
+                                                Engine::Ressources::Font,
+                                                Engine::Ressources::Button,
+                                                Engine::Ressources::TextField>    ressourceManager_;
+
+            E_GAME_STATE gameState;
 
             #pragma endregion //!attribut
-
-            #pragma region methods
-            #pragma endregion //!methods
 
         private:
     };

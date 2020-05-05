@@ -9,6 +9,12 @@
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "GE/Core/System/UISystem.hpp"
+#include "GE/Ressources/ui.hpp"
+#include "Game/define.h"
+
+#include "../src/stb_image.h"
+
 
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
@@ -17,14 +23,16 @@
 #include "glad/glad.h"
 
 using namespace Game;
-using namespace Engine::Ressources;
-using namespace Engine::Core::Parsers;
-using namespace Engine::Core::Maths;
-using namespace Engine::Core::DataStructure;
-using namespace Engine::LowRenderer;
+using namespace Engine;
 using namespace Engine::Physics;
+using namespace Engine::Ressources;
+using namespace Engine::LowRenderer;
 using namespace Engine::Core::Time;
+using namespace Engine::Core::Maths;
+using namespace Engine::Core::Parsers;
 using namespace Engine::Core::System;
+using namespace Engine::Core::Systems;
+using namespace Engine::Core::DataStructure;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -32,9 +40,10 @@ Demo::Demo(Engine::GE& gameEngine)
         scene_              (),
         flagleftClicIsDown  (false),
         flagF1IsDown        (false),
-        mouseForPlayer1     (true),
+        usingMouse          (true),
         dirCamera          {0.f, 0.f, -1.f}
 {
+
     loadGeneralRessource(gameEngine_.ressourceManager_);
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -48,35 +57,52 @@ Demo::Demo(Engine::GE& gameEngine)
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+    UISystem::isActive = true;
+
 }
 
 
 void Demo::update     () noexcept
 {
-    updateControl (gameEngine_.inputManager_);     
+    UISystem::update(gameEngine_);
+    updateControl(gameEngine_.inputManager_);
+ 
+    if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+    {
+        PhysicSystem::update();
+        ScriptSystem::update();
 
-    PhysicSystem::update();
-    ScriptSystem::update();
-
-    scene_.update();
+        scene_.update();
+    }
 }
 
 void Demo::display    () const noexcept
 {
     Size sizeWin = gameEngine_.getWinSize();
 
-    glViewport(0, 0, sizeWin.width, sizeWin.heigth);
-    scene_.draw();
+    if (gameEngine_.gameState == E_GAME_STATE::RUNNING || gameEngine_.gameState == E_GAME_STATE::PAUSE)
+    {
+        glViewport(0, 0, sizeWin.width, sizeWin.heigth);
+        static_cast<Camera*>(mainCamera->entity.get())->use();
+        
+        scene_.draw();
+    }
+    
+    UISystem::draw(gameEngine_);
     
     glUseProgram(0);
 }
 
 void Demo::loadGeneralRessource   (Ressources& ressourceManager)
-{
-        //Load Camera
+{    
+    loadUI(gameEngine_.ressourceManager_);
+
+    //Load Camera
     Camera  camP1Arg ({0.f, 0.f, 15.f},
                     {0.f, 0.f, 0.f}, 
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
+
 
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
     static_cast<Camera*>(mainCamera->entity.get())->use();
@@ -153,6 +179,71 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     sphere.addComponent<SphereCollider>();
     sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+
+                    functGlCheckAndLogError();
+
+}
+
+void Demo::loadUI      (Ressources& ressourceManager)
+{
+    FontCreateArg fontarg {"./ressources/opensans.ttf", 40};
+    Font * pfont = &ressourceManager.add<Font>("font1", fontarg);
+    Shader* buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
+
+    int tempX = gameEngine_.getWinSize().width / 2.0f;
+    int tempY = gameEngine_.getWinSize().heigth / 2.0f;
+
+
+
+    ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader, 
+                                            tempX - 35, tempY - 200, 
+                                            150.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Start",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::RUNNING;
+        usingMouse = false;
+    };
+
+    ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
+                                            tempX - 35, tempY - 100, 
+                                            150.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        
+    };
+
+    ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
+                                            tempX - 55, tempY, 
+                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Option",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        
+    };
+
+    ressourceManager.add<Button>("MenuQuitButton", pfont, buttonShader,
+                                            tempX - 35, tempY + 100, 
+                                            150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::EXIT;
+    };
+    ressourceManager.add<Button>("PausePlayButton", pfont, buttonShader,
+                                            tempX - 35, tempY - 100, 
+                                            150.0f, 60.0f, SDL_Color{170, 80, 170, 0}, "Play",
+                                            E_GAME_STATE::PAUSE).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::RUNNING;
+        usingMouse = false;
+    };
+    ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
+                                            tempX - 45, tempY, 
+                                            150.0f, 60.0f, SDL_Color{80, 170, 80, 0}, "Menu",
+                                            E_GAME_STATE::PAUSE).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::STARTING;
+        usingMouse = true;
+    };
+
 }
 
 void Demo::loadLights      (Ressources& ressourceManager)
@@ -187,9 +278,46 @@ void Demo::loadLights      (Ressources& ressourceManager)
     static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
 
-void Demo::updateControl(const Engine::Core::InputSystem::Input& input)
+void Demo::updateControl(Engine::Core::InputSystem::Input& input)
 {
     
+    if (input.keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
+    {
+        if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+        {
+            gameEngine_.gameState = E_GAME_STATE::PAUSE;
+            usingMouse = true;
+        }
+        else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
+        {
+            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            usingMouse = false;
+        }
+        else if (gameEngine_.gameState == E_GAME_STATE::STARTING)
+        {
+            gameEngine_.gameState = E_GAME_STATE::EXIT;
+        }
+    }
+
+    if (input.keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    {
+        usingMouse = !usingMouse;
+        flagF1IsDown = true;
+    }
+    else
+    {
+        flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
+    }    
+    if (!usingMouse)
+    {
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    else
+    {
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
 
     // static int exFrameWheelVal = input.mouse.wheel_scrolling;
 
