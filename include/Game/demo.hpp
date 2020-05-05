@@ -36,7 +36,7 @@ namespace Game
             
             Demo ()                         = delete;
             Demo (const Demo& other)		= default;
-            Demo (Demo&& other)				= default;
+            Demo (Demo&& other)				= default;  
             virtual ~Demo ()				= default;
 
             #pragma endregion //!constructor/destructor

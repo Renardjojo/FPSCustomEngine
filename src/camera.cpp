@@ -1,5 +1,6 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Core/Debug/log.hpp"
+#include <iostream>
 
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
@@ -72,7 +73,7 @@ Camera::Camera (const Engine::Core::Maths::Vec3& position,
 }
 
 void Camera::update () noexcept
-{
+{ 
     if (!isDirty_)
         return;
 
@@ -98,7 +99,8 @@ void Camera::update (const Engine::Core::Maths::Mat4& parentMeshMatrix) noexcept
 void Camera::lookAt (const Engine::Core::Maths::Vec3& eye, const Engine::Core::Maths::Vec3& center, const Engine::Core::Maths::Vec3& up) noexcept
 {
     position_ = eye;
-    viewProjectionMatrix_ = projection_ * Mat4::createLookAtView(eye, center, up);
+    viewMatrix_ = Mat4::createLookAtView(eye, center, up);
+    viewProjectionMatrix_ = projection_ * viewMatrix_;
 }
 
 void Camera::setFovY(const float fovY) noexcept

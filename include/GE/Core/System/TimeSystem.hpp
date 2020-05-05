@@ -9,131 +9,36 @@
 
 namespace Engine::Core::Time
 {
-
-	#define DEFAULT_FPS_MAX 0xffffffff //60
-
-	class ChronoDt
-	{
-		public:
-			ChronoDt () = default;
-			ChronoDt (float delay);
-			ChronoDt (const ChronoDt& other) = default;
-			virtual ~ChronoDt ();
-
-		/*----------*/
-		/* methode  */
-		/*----------*/
-
-		//update chrono statu with delta time. If delta time == 0. So Chrono is paused
-		void update(float delta_time);
-
-		//reset chrono with same delay
-		void reset();
-
-		/*----------*/
-		/* accessor */
-		/*----------*/
-
-		//return if time delay is pass
-		bool isEnd()	const;
-
-			/*----------*/
-			/* mutator  */
-		/*----------*/
-
-			/*----------*/
-			/* operator */
-		/*----------*/
-
-			/*----------*/
-			/* convertor*/ 
-		/*----------*/
-
-		//public variable (get and set with no effect for class)
-		float delay_;
-		float time_;
-
-		protected:
-
-		bool isFinish_;			
-
-		private:
-	};
-
-	typedef struct S_FPS
-	{
-		ChronoDt		chrono 					{500};
-		unsigned int 	FPSmax					= DEFAULT_FPS_MAX;
-		unsigned int 	FPSrealCount			= 0;
-		float 			FPSTheoriqueAverage		= 0.f;
-
-	} FPS;
-
 	class TimeSystem
 	{
-		public:
+	private:
+		static bool _limitFPS;
+		static double _time;
+		static double _temp_time;
+		static double _time_acc;
 
-		#pragma region constructor/destructor
+		static unsigned int _frame_acc;
 
-		TimeSystem ()									= delete;
-		TimeSystem (const TimeSystem& other)			= delete;
-		TimeSystem (TimeSystem&& other)					= delete;
-		virtual ~TimeSystem ()							= delete;
-		TimeSystem& operator=(TimeSystem const&)		= delete;
-		TimeSystem& operator=(TimeSystem &&)			= delete;
+		static float _FPSmax;
+		static float  _sample;
+		static float _deltaTime;
+		static float _unscaledDeltaTime;
+		static float _timeScale;
 
-		#pragma endregion //!constructor/destructor
-
-		#pragma region methods
+	public:
+		TimeSystem() = delete;
+		virtual ~TimeSystem() = delete;
+		TimeSystem &operator=(TimeSystem const &) = delete;
+		TimeSystem &operator=(TimeSystem &&) = delete;
 
 		static void update();
 
-		#pragma endregion //!methods
-
-		#pragma region accessor
-
-		static float getDeltaTime()				{ return deltaTime_;}
-		static float getUnscaledDetlaTime()		{ return unscaledDetlaTime_;}
-		static float getTimeScale()				{ return timeScale_;}
-
-		#pragma endregion //!accessor
-
-		#pragma region mutator
-
-		static float setTimeScale(float timeScale)	{ return timeScale_ = timeScale; }
-
-		#pragma endregion //!mutator
-
-		#pragma region operator
-		#pragma endregion //!operator
-
-		#pragma region convertor
-		#pragma endregion //!convertor
-
-		protected:
-
-		#pragma region attribut
-
-		static float deltaTime_;
-		static float unscaledDetlaTime_;
-		static float timeScale_;
-
-		static FPS	FPS_;
-
-		#pragma endregion //!attribut
-
-		#pragma region static attribut
-		#pragma endregion //! static attribut
-
-		#pragma region methods
-
-		#pragma endregion //!methods
-
-		private:
-
-		static float timeExFrame_;
+		static float getDeltaTime() { return _deltaTime; }
+		static float getUnscaledDetlaTime() { return _unscaledDeltaTime; }
+		static float getTimeScale() { return _timeScale; }
+		static float setTimeScale(float timeScale) { return _timeScale = timeScale; }
 	};
 
-}//namespace Engine::Core::Time
+} //namespace Engine::Core::Time
 
 #endif // _GE_TIME_MANAGER_H

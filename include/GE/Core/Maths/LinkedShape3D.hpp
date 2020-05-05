@@ -22,7 +22,7 @@ namespace Engine::Core::Maths
     {
         public :
 
-        explicit LinkedAABB (const Engine::Physics::Transform& transform, float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero,)
+        explicit LinkedAABB (const Engine::Physics::Transform& transform, float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero)
             :   AABB              (upLenght, rightLenght, forwardLenght, center),
                 transform_        {transform}
         {}
