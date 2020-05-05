@@ -16,12 +16,14 @@ class PlayerController : public Engine::Core::Component::ScriptComponent
 private:
     float _playerSpeed{10.f};
     float _cameraSpeed{10.f};
-
+    float _orbity{0.f};
+    
     const Engine::Core::InputSystem::Input& _input;
-    Engine::Ressources::GameObject* _camera;
+    Engine::LowRenderer::Camera* _camera;
 
     Engine::Core::Maths::Vec3 _movement{0.f,0.f,0.f};
-    Engine::Core::Maths::Vec3 _mouseMovements{0.f,0.f,0.f};
+    Engine::Core::Maths::Vec3 _direction{0.f,0.f,0.f};
+
 
     void move();
 
