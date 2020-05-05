@@ -110,14 +110,14 @@ public:
      * @return Component& 
      */
     template <typename T>
-    Component* getComponent()
+    T* getComponent()
     {
         for (std::unique_ptr<Component> &uniquePtrComponent : components)
         {
-            Component *comp = dynamic_cast<T>(uniquePtrComponent.get());
+            Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
             if (comp) 
-                return uniquePtrComponent.get();
+                return dynamic_cast<T*>(uniquePtrComponent.get());
         }
         return nullptr;
     }

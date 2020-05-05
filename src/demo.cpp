@@ -8,7 +8,7 @@
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Ressources/type.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/TimeSystem/time.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
@@ -90,7 +90,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
-                                {5.f, 0.01f, 5.f}, 
+                                {5.f, 0.1f, 5.f}, 
                                 &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs"), 
                                 {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
                                 &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
@@ -108,8 +108,6 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 
     GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
-    sphere.addComponent<PhysicalObject>();
-
     ModelCreateArg player       {{0.f, 0.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
@@ -121,6 +119,13 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     
     playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
 
+    scene_.getGameObject("world/sphere1").addComponent<PhysicalObject>();
+
+    scene_.getGameObject("world/sphere1").getComponent<PhysicalObject>()->SetMass(10);
+
+    scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
+    scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
+    scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 }
 
 void Demo::loadLights      (Ressources& ressourceManager)

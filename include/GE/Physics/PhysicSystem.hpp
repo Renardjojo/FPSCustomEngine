@@ -8,7 +8,7 @@
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
-#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/Collider.hpp"
 
 namespace Engine::Physics
 {
@@ -76,6 +76,38 @@ namespace Engine::Physics
             }
         }
 
+        static
+        void addCollider (Collider* pCollider) noexcept
+        {
+            pColliders.push_back(pCollider);
+        }
+
+        static
+        void updateColliderPointor (Collider* newPointorCollider, Collider* exPointorCollider) noexcept
+        {
+            for (std::vector<Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            {
+                if ((*it) == exPointorCollider)
+                {
+                    *it = newPointorCollider;
+                    return;
+                }
+            }
+        }
+
+        static
+        void removeCollider (Collider* pCollider) noexcept
+        {
+            for (std::vector<Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            {
+                if ((*it) == pCollider)
+                {
+                    pColliders.erase(it);
+                    return;
+                }
+            }
+        }
+
         #pragma endregion //!mutator
 
         #pragma region operator
@@ -91,6 +123,7 @@ namespace Engine::Physics
         static Engine::Core::Maths::Vec3 gravity;
 
         static std::vector<PhysicalObject*> pPhysicalObjects;
+        static std::vector<Collider*> pColliders;
 
         #pragma endregion //!attribut
 

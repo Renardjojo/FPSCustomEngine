@@ -10,8 +10,6 @@
 #include "GE/Core/DataStructure/graph.hpp"
 #include "GE/Ressources/Component.hpp"
 
-using namespace Engine::Core::Maths;
-
 namespace Engine::Physics
 {
     class PhysicalObject : public Engine::Ressources::Component
@@ -33,17 +31,17 @@ namespace Engine::Physics
 
         #pragma region methods
 
-        void AddForce(Vec3 force);
+        void AddForce(Engine::Core::Maths::Vec3 force);
         void AddForce(float x, float y, float z);
-        void AddTorque(Vec3 force);
+        void AddTorque(Engine::Core::Maths::Vec3 force);
         void AddTorque(float x, float y, float z);
 
         #pragma endregion //!methods
 
         #pragma region accessor
 
-        Vec3 GetVelocity()          { return velocity; }
-        Vec3 GetAngularVelocity()   { return angularVelocity; }
+        Engine::Core::Maths::Vec3 GetVelocity()          { return velocity; }
+        Engine::Core::Maths::Vec3 GetAngularVelocity()   { return angularVelocity; }
         float GetMass()             { return mass; }
 
         bool IsKinematic() { return _isKinematic; }
@@ -54,7 +52,7 @@ namespace Engine::Physics
 
         #pragma region mutator
 
-        void SetVelocity(Vec3 _velocity) { velocity = _velocity; }
+        void SetVelocity(Engine::Core::Maths::Vec3 _velocity) { velocity = _velocity; }
         void SetVelocity(float x, float y, float z) { velocity.x = x; velocity.y = y; velocity.z = z;}  
         void SetMass(float _mass) { mass = _mass; } 
         void SetIsKinematic(bool state) { _isKinematic = state; }
@@ -79,8 +77,8 @@ namespace Engine::Physics
 
         #pragma region attribut
 
-        Vec3 velocity = {0,0,0};
-        Vec3 angularVelocity;
+        Engine::Core::Maths::Vec3 velocity = {0,0,0};
+        Engine::Core::Maths::Vec3 angularVelocity;
         float mass = 1;
         bool freezeTrX = false;
         bool freezeTrY = false;
