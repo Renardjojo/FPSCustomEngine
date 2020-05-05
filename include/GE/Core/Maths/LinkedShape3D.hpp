@@ -18,6 +18,20 @@
 
 namespace Engine::Core::Maths
 {
+    class LinkedAABB : public AABB
+    {
+        public :
+
+        explicit LinkedAABB (const Engine::Physics::Transform& transform, float upLenght, float rightLenght, float forwardLenght, const Vec3& center = Vec3::zero)
+            :   AABB              (upLenght, rightLenght, forwardLenght, center),
+                transform_        {transform}
+        {}
+
+        protected :
+
+        const Engine::Physics::Transform&     transform_; 
+    };
+
     class LinkedSphere : Sphere
     {
         public :

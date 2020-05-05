@@ -90,13 +90,13 @@ namespace Engine::LowRenderer
             }
 
             /**
-             * @brief Update Mesh matrix 
+             * @brief update Mesh matrix 
              * 
              */
             void update () noexcept override;
 
             /**
-             * @brief Update transform if it depend to parent Mesh view (use in inherance in scene graph)
+             * @brief update transform if it depend to parent Mesh view (use in inherance in scene graph)
              * 
              * @param parentMeshMatrix : Mesh view matrix of parent
              */
@@ -122,8 +122,7 @@ namespace Engine::LowRenderer
 
             #pragma region static methods         
 
-            static
-            const Camera* getCamUse() noexcept { return camToUse; }
+            static Camera* getCamUse() noexcept { return camToUse; }
 
             #pragma endregion //!static methods
 

@@ -46,7 +46,7 @@ namespace Game
             
             Demo ()                         = delete;
             Demo (const Demo& other)		= default;
-            Demo (Demo&& other)				= default;
+            Demo (Demo&& other)				= default;  
             virtual ~Demo ()				= default;
 
             #pragma endregion //!constructor/destructor
@@ -81,8 +81,6 @@ namespace Game
             #pragma endregion //!attribut
 
             #pragma region methods
-
-            void loadRessourceAndScene  ();
 
             void loadGeneralRessource   (Ressources& ressourceManager);
             void loadLights             (Ressources& ressourceManager);

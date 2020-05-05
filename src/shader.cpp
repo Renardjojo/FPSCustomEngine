@@ -144,6 +144,11 @@ vec3 computLight(Light[MAX_LIGHT_NUMBER] lights, int numberLightUse, vec3 normal
 
 )";
 
+
+static const char* colorFragmentShaderStr = R"(
+uniform vec4 Color;
+)";
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
     :   featureMask_ (featureMask),
         lightsUniformBuffer_ (0)
@@ -163,6 +168,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
     {
         vertexCode.insert(0, lightBlinPhongVertexShaderStr);
         fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
+    }
+    else if ((featureMask_ & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+    {
+        fragmentCode.insert(0, colorFragmentShaderStr);
     }
 
     vertexCode.insert(0, versionHeaderStr);

@@ -29,7 +29,7 @@ namespace Engine::Ressources
             #pragma region methods
 
             /**
-             * @brief Update each entity moved and these childen.
+             * @brief update each entity moved and these childen.
              * 
              */
             void update () noexcept
