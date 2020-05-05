@@ -29,20 +29,25 @@ namespace Engine::Core::InputSystem
         bool 			leftClic_down;
         bool            leftClicPressed;
 
-        bool oneLeftClick()
+        int oneLeftClick()
         {
             if (leftClic_down && !leftClicPressed)
             {
                 leftClicPressed = true;
-                return true;
+                return 1;
+            }
+            else if (leftClic_down && leftClicPressed)
+            {
+                leftClicPressed = true;
+                return 2;
             }
             else if (!leftClic_down)
             {
                 leftClicPressed = false;
-                return false;
+                return 0;
             }
             else
-                return false;
+                return 0;
         }
 
     } T_inputMouse;
@@ -56,20 +61,25 @@ namespace Engine::Core::InputSystem
         bool		escIsRelease;
         SDL_Keycode key;
 
-        bool onePressed(const SDL_Scancode key)
+        int onePressed(const SDL_Scancode key)
         {
             if (isDown[key] && !isPressed[key])
             {
                 isPressed[key] = true;
-                return true;
+                return 1;
+            }
+            else if (isDown[key] && isPressed[key])
+            {
+                isPressed[key] = true;
+                return 2;
             }
             else if (!isDown[key])
             {
                 isPressed[key] = false;
-                return false;
+                return 0;
             }
             else
-                return false;
+                return 0;
         }
 
     } T_inputKeyboard;

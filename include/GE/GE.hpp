@@ -65,8 +65,10 @@ namespace Engine
             Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, 
                                                 Engine::Ressources::Shader, 
                                                 Engine::Ressources::Material, 
+                                                Engine::Ressources::Text,
+                                                Engine::Ressources::Texture,    
                                                 Engine::Ressources::Sample, 
-                                                Engine::Ressources::Music, 
+                                                Engine::Ressources::Music,
                                                 Engine::Ressources::Font,
                                                 Engine::Ressources::Button,
                                                 Engine::Ressources::TextField>    ressourceManager_;

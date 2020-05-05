@@ -13,6 +13,8 @@
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
 
+#include "../src/stb_image.h"
+
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -37,6 +39,7 @@ Demo::Demo(Engine::GE& gameEngine)
         usingMouse          (true),
         dirCamera          {0.f, 0.f, -1.f}
 {
+
     loadRessourceAndScene();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -100,6 +103,7 @@ void Demo::loadRessourceAndScene  ()
 
 
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
+                functGlCheckAndLogError();
 
 }
 
@@ -137,54 +141,71 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     scene_.getGameObject("world/sphere1").addComponent<SphereCollider>();
     scene_.getGameObject("world/sphere1").getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+
+                    functGlCheckAndLogError();
+
 }
 
 void Demo::loadUI      (Ressources& ressourceManager)
 {
-    // FontCreateArg fontarg {"./ressources/opensans.ttf", 40};  // TODO: FONT WIP
-
-    // ressourceManager.add<TextField>("textfield1", &ressourceManager.add<Font>("font1", fontarg),
-    //                                               &ressourceManager.add<Shader>("textfieldshader", "./ressources/shader/text.vert", "./ressources/shader/texture.frag"),
-    //                                               30, 30, 100, 50, "0");
-
-    // button and textfield configuration
-
-    Shader* buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/2d.vert", "./ressources/shader/color.frag");
+    FontCreateArg fontarg {"./ressources/opensans.ttf", 40};
+    Font * pfont = &ressourceManager.add<Font>("font1", fontarg);
+    Shader* buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
     int tempX = gameEngine_.getWinSize().width / 2.0f;
     int tempY = gameEngine_.getWinSize().heigth / 2.0f;
 
-    ressourceManager.add<Button>("MenuStartButton", buttonShader,
-                                            tempX - 70, tempY - 200, 
-                                            150.0f, 60.0f, Vec3{170.0f, 170.0f, 170.0f},
+
+
+    ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader, 
+                                            tempX - 35, tempY - 200, 
+                                            150.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Start",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
     };
-    ressourceManager.add<Button>("MenuQuitButton", buttonShader,
-                                            tempX - 70, tempY + 110, 
-                                            150.0f, 60.0f, Vec3{170.0f, 170.0f, 170.0f},
+
+    ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
+                                            tempX - 35, tempY - 100, 
+                                            150.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        
+    };
+
+    ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
+                                            tempX - 55, tempY, 
+                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Option",
+                                            E_GAME_STATE::STARTING).function = [&]()
+    {
+        
+    };
+
+    ressourceManager.add<Button>("MenuQuitButton", pfont, buttonShader,
+                                            tempX - 35, tempY + 100, 
+                                            150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::EXIT;
     };
-    ressourceManager.add<Button>("PausePlayButton", buttonShader,
-                                            tempX - 70, tempY - 200, 
-                                            150.0f, 60.0f, Vec3{170.0f, 170.0f, 170.0f},
+    ressourceManager.add<Button>("PausePlayButton", pfont, buttonShader,
+                                            tempX - 35, tempY - 100, 
+                                            150.0f, 60.0f, SDL_Color{170, 80, 170, 0}, "Play",
                                             E_GAME_STATE::PAUSE).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
     };
-    ressourceManager.add<Button>("PauseMenuButton", buttonShader,
-                                            tempX - 70, tempY + 110, 
-                                            150.0f, 60.0f, Vec3{170.0f, 170.0f, 170.0f},
+    ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
+                                            tempX - 45, tempY, 
+                                            150.0f, 60.0f, SDL_Color{80, 170, 80, 0}, "Menu",
                                             E_GAME_STATE::PAUSE).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
     };
+
 }
 
 void Demo::loadLights      (Ressources& ressourceManager)
@@ -289,14 +310,19 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
         exFrameWheelVal = input.mouse.wheel_scrolling;
     }
 
-    if (input.keyboard.onePressed(SDL_SCANCODE_ESCAPE))
+    if (input.keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
     {
         if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
         {
             gameEngine_.gameState = E_GAME_STATE::PAUSE;
             usingMouse = true;
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::PAUSE || gameEngine_.gameState == E_GAME_STATE::STARTING)
+        else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
+        {
+            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            usingMouse = false;
+        }
+        else if (gameEngine_.gameState == E_GAME_STATE::STARTING)
         {
             gameEngine_.gameState = E_GAME_STATE::EXIT;
         }

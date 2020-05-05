@@ -6,6 +6,7 @@
 #include <vector>
 #include "GE/Ressources/ui.hpp"
 #include "GE/Core/InputSystem/input.hpp"
+#include "GE/Core/Maths/vec.hpp"
 #include "GE/GE.hpp"
 
 namespace Engine::Core::Systems
@@ -19,6 +20,12 @@ namespace Engine::Core::Systems
         static std::vector<Engine::Ressources::TextField *> pTextFields;
 
         static Engine::Ressources::TextField* pActiveTextfield;
+
+        static Engine::Ressources::Button* pOverredButton;
+
+        static Engine::Core::Maths::Vec2 keyboardXY;
+
+        static bool isUsingKeyboard;
 
 
     public:

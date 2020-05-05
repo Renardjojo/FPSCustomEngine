@@ -27,7 +27,9 @@ namespace Game
 
     typedef Engine::Ressources::RessourcesManager<  Engine::Ressources::Mesh, 
                                                     Engine::Ressources::Shader, 
-                                                    Engine::Ressources::Material, 
+                                                    Engine::Ressources::Material,
+                                                    Engine::Ressources::Text,
+                                                    Engine::Ressources::Texture,   
                                                     Engine::Ressources::Sample, 
                                                     Engine::Ressources::Music, 
                                                     Engine::Ressources::Font, 
@@ -85,8 +87,8 @@ namespace Game
             void loadGeneralRessource   (Ressources& ressourceManager);
             void loadLights             (Ressources& ressourceManager);
             void loadUI                 (Ressources& ressourceManager);
+            // void loadPlayers            (Ressources& ressourceManager);
             /*void loadSound              (Ressources& ressourceManager);
-            void loadPlayers            (Ressources& ressourceManager, const Engine::Ressources::Size& windowSize);
             void loadSkyBox             (Ressources& ressourceManager);
             void loadGround             (Ressources& ressourceManager);
             void loadMultipleRock       (Ressources& ressourceManager);
