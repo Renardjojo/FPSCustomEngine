@@ -17,7 +17,7 @@
 
 
 #include "GE/Core/System/ScriptSystem.hpp"
-#include "Game/PlayerController.hpp"
+#include "Game/EnnemyController.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -143,9 +143,9 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("sphere1"),
                                 "Player"};
-    scene_.add<Model>(scene_.getWorld(),player).addComponent<PlayerController>(gameEngine_.inputManager_);
+    scene_.add<Model>(scene_.getWorld(),player).addComponent<EnnemyController>(gameEngine_.inputManager_);
     
-    // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
+    // playerGameObject.addComponent<EnnemyController>(gameEngine_.inputManager_);
     /*life bar*/             
         GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
         lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
