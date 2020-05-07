@@ -82,7 +82,7 @@ namespace Engine::Core::Maths
         void                    setLocalReferential(const Referential& newRef)   { ref_  = newRef;}
         void                    setLocalExtensionValueI(float iI)                { iI_   = iI;}
         void                    setLocalExtensionValueJ(float iJ)                { iJ_   = iJ;}
-        void                    setLocalExtensionValueK(float iK)                 { iK_   = iK;}
+        void                    setLocalExtensionValueK(float iK)                { iK_   = iK;}
 
         protected :
 
