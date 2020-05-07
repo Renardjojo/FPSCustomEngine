@@ -12,6 +12,7 @@
 #include "GE/Core/System/UISystem.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
+#include "save/xmlparse.hpp"
 
 #include "../src/stb_image.h"
 
@@ -44,7 +45,17 @@ Demo::Demo(Engine::GE& gameEngine)
         dirCamera          {0.f, 0.f, -1.f}
 {
 
-    loadGeneralRessource(gameEngine_.ressourceManager_);
+    scene_ = std::make_unique<Scene>();
+
+    loadRessources(gameEngine_.ressourceManager_);
+    
+    // loadCamera(gameEngine_.ressourceManager_);
+
+    // loadEntity(gameEngine_.ressourceManager_);
+    // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
+    
+    loadUI(gameEngine_.ressourceManager_);
+
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -72,7 +83,7 @@ void Demo::update     () noexcept
         PhysicSystem::update();
         ScriptSystem::update();
 
-        scene_.update();
+        scene_->update();
     }
 }
 
@@ -85,7 +96,7 @@ void Demo::display    () const noexcept
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
         static_cast<Camera*>(mainCamera->entity.get())->use();
         
-        scene_.draw();
+        scene_->draw();
     }
     
     UISystem::draw(gameEngine_);
@@ -93,100 +104,114 @@ void Demo::display    () const noexcept
     glUseProgram(0);
 }
 
-void Demo::loadGeneralRessource   (Ressources& ressourceManager)
-{    
-    loadUI(gameEngine_.ressourceManager_);
-
-    //Load Camera
-    Camera  camP1Arg ({0.f, 0.f, 15.f},
-                    {0.f, 0.f, 0.f}, 
-                    gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
-
-
-    mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
-    static_cast<Camera*>(mainCamera->entity.get())->use();
-
+void Demo::loadRessources(t_RessourcesManager &ressourceManager)
+{
+    ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY);
 
     MaterialAndTextureCreateArg matDefault;
-    matDefault.name_                = "DefaultMaterial";
-    matDefault.pathDiffuseTexture   = nullptr;
-    matDefault.flipTexture          = false;
+    matDefault.name_ = "DefaultMaterial";
+    matDefault.pathDiffuseTexture = nullptr;
+    matDefault.flipTexture = false;
+    ressourceManager.add<Material>("DefaultMaterial", matDefault);
 
+    matDefault.name_ = "PinkMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 1.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
+
+    matDefault.name_ = "BlackMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
+
+    matDefault.name_ = "GreenMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 1.f, 0.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
+
+    ressourceManager.add<Mesh>("Cube1", Mesh::createCube(1));
+    ressourceManager.add<Mesh>("Sphere1", Mesh::createSphere(25, 25));
+    ressourceManager.add<Mesh>("Plane1", Mesh::createPlane());
+}
+
+void Demo::loadCamera(t_RessourcesManager &ressourceManager)
+{
+    Camera camP1Arg({0.f, 0.f, 30.f},
+                {0.f, 0.f, 0.f},
+                gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
+
+    mainCamera = &scene_->add<Camera>(scene_->getWorld(), camP1Arg);
+    static_cast<Camera *>(mainCamera->entity.get())->use();
+}
+
+void Demo::loadEntity(t_RessourcesManager &ressourceManager)
+{
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {5.f, 0.1f, 5.f}, 
-                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY), 
-                                {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
-                                &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
-                                "cube1"};
-
-    scene_.add<Model>(scene_.getWorld(), cube1arg);
-
-    matDefault.name_                = "PinkMaterial";
-    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 1.f, 1.f};
-
-    ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {0.5f, 0.5f, 0.5f}, 
-                                &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
-                                &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
-                                "sphere1"};
-
-    GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
-
-    ModelCreateArg player       {{0.f, 0.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("sphere1"),
-                                "Player"};
-    scene_.add<Model>(scene_.getWorld(),player).addComponent<PlayerController>(gameEngine_.inputManager_);
-    
+                                &ressourceManager.get<Mesh>("Cube1"),
+                                "cube1"};
+
+    scene_->add<Model>(scene_->getWorld(), cube1arg);
+
+    ModelCreateArg sphere1arg{{0.f, 5.f, 0.f},
+                              {0.f, 0.f, 0.f},
+                              {0.5f, 0.5f, 0.5f},
+                              &ressourceManager.get<Shader>("White"),
+                              {&ressourceManager.get<Material>("PinkMaterial")},
+                              &ressourceManager.get<Mesh>("Sphere1"),
+                              "sphere1"};
+
+    GameObject &sphere = scene_->add<Model>(scene_->getWorld(), sphere1arg);
+
+    ModelCreateArg player{{0.f, 0.f, 0.f},
+                          {0.f, 0.f, 0.f},
+                          {0.5f, 0.5f, 0.5f},
+                          &ressourceManager.get<Shader>("White"),
+                          {&ressourceManager.get<Material>("DefaultMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere1"),
+                          "Player"};
+
+    scene_->add<Model>(scene_->getWorld(), player).addComponent<PlayerController>(gameEngine_.inputManager_);
+
     // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
-    /*life bar*/             
-        GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
-        lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
-        lifeBar.entity->setName("lifeBar");
+    /*life bar*/
+    GameObject &lifeBar = scene_->add<Engine::LowRenderer::Entity>(sphere);
+    lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
+    lifeBar.entity->setName("lifeBar");
 
-        matDefault.name_                = "BlackMaterial";
-        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 0.f, 0.f, 1.f};
-        ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
-                                                {0.f, 0.f, 0.f}, 
-                                                {1.f, 0.1f, 0.2f}, 
-                                                &ressourceManager.get<Shader>("White"), 
-                                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                                &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
-                                                "lifeBarBG"};
-        scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
+    ModelCreateArg lifeBarBackGroundArg{{0.f, 0.f, 0.f},
+                                        {0.f, 0.f, 0.f},
+                                        {1.f, 0.1f, 0.2f},
+                                        &ressourceManager.get<Shader>("White"),
+                                        {&ressourceManager.get<Material>("BlackMaterial")},
+                                        &ressourceManager.get<Mesh>("Plane1"),
+                                        "lifeBarBG"};
+    scene_->add<BillBoard>(lifeBar, lifeBarBackGroundArg);
 
-        matDefault.name_                = "GreenMaterial";
-        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
-
-        ModelCreateArg lifeBarInternalArg   {{0.f, -0.05f, 0.1f}, 
-                                            {0.f, 0.f, 0.f}, 
-                                            {0.8f, 0.1f, 0.f}, 
-                                            &ressourceManager.get<Shader>("White"), 
-                                            {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                            &ressourceManager.get<Mesh>("Plane1"),
-                                            "lifeBarBGIndicator"};
-        scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
+    ModelCreateArg lifeBarInternalArg{{0.f, -0.05f, 0.1f},
+                                      {0.f, 0.f, 0.f},
+                                      {0.8f, 0.1f, 0.f},
+                                      &ressourceManager.get<Shader>("White"),
+                                      {&ressourceManager.get<Material>("GreenMaterial")},
+                                      &ressourceManager.get<Mesh>("Plane1"),
+                                      "lifeBarBGIndicator"};
+    scene_->add<BillBoard>(lifeBar, lifeBarInternalArg);
 
     sphere.addComponent<PhysicalObject>();
     sphere.getComponent<PhysicalObject>()->SetMass(10);
     sphere.addComponent<SphereCollider>();
     sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
-    scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-                    functGlCheckAndLogError();
-
+    functGlCheckAndLogError();
 }
 
-void Demo::loadUI      (Ressources& ressourceManager)
+void Demo::loadUI(t_RessourcesManager &ressourceManager)
 {
     FontCreateArg fontarg {"./ressources/opensans.ttf", 40};
     Font * pfont = &ressourceManager.add<Font>("font1", fontarg);
+    FontCreateArg fontarg2 {"./ressources/opensans.ttf", 25};
+    Font * pfont2 = &ressourceManager.add<Font>("font2", fontarg2);
     Shader* buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
     int tempX = gameEngine_.getWinSize().width / 2.0f;
@@ -194,24 +219,23 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     #pragma region Start
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader, 
-                                            tempX - 35, tempY - 200, 
-                                            150.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Start",
+                                            tempX - 90, tempY - 200, 
+                                            200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
-        gameEngine_.gameState = E_GAME_STATE::RUNNING;
-        usingMouse = false;
+        gameEngine_.gameState = E_GAME_STATE::STARTSAVE;
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
-                                            tempX - 35, tempY - 100, 
-                                            150.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load",
+                                            tempX - 95, tempY - 100, 
+                                            220.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load Game",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         
     };
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
-                                            tempX - 55, tempY, 
+                                            tempX - 65, tempY, 
                                             150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
@@ -353,10 +377,42 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     #pragma endregion
 
+    #pragma region Saves
 
+    int i = -300;
+    int j = -300;
+
+    std::string shortSaveName;
+
+    for (std::string& saves : gameEngine_.savePaths)
+    {
+        shortSaveName = saves.substr(19, saves.size() - 23);
+        ressourceManager.add<Button>(   shortSaveName,  pfont2, buttonShader,
+                                        tempX + i, tempY + j, 
+                                        75.0f, 60.0f, SDL_Color{200, 200, 200, 0}, 
+                                        shortSaveName, E_GAME_STATE::STARTSAVE).function = [&]()
+        {
+            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            usingMouse = false;
+            scene_.reset();
+            scene_ = std::make_unique<Scene>();
+            setupScene(*scene_, gameEngine_, saves.c_str());
+            mainCamera = &scene_->getGameObject("world/MainCamera");
+        };
+
+        i += 150;
+
+        if (i == 300)
+        {
+            j += 100;
+            i = -300;
+        }
+    }
+
+    #pragma endregion
 }
 
-void Demo::loadLights      (Ressources& ressourceManager)
+void Demo::loadLights      (t_RessourcesManager& ressourceManager)
 {
     ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
                                 {0.f, 0.f, 0.f},
@@ -378,11 +434,11 @@ void Demo::loadLights      (Ressources& ressourceManager)
                                     {1.f, 1.f, 1.f, 0.3f},
                                     0.f, 0.05f, 0.f, "light"};
 
-    sunLight = &scene_.add<DirectionnalLight>(scene_.getWorld(), lightArg2);
+    sunLight = &scene_->add<DirectionnalLight>(scene_->getWorld(), lightArg2);
 
-    GameObject& pl1 = scene_.add<PointLight>(scene_.getWorld(), lightArg5);
+    GameObject& pl1 = scene_->add<PointLight>(scene_->getWorld(), lightArg5);
 
-    scene_.add<Model>(pl1, lightArg);
+    scene_->add<Model>(pl1, lightArg);
 
     static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
     static_cast<PointLight*>(pl1.entity.get())->enable(true);

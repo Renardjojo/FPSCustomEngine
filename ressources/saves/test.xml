@@ -1,0 +1,18 @@
+<!-- 
+    type    name    attr    
+
+    model : shaderName; materialName; meshName
+-->
+<WORLD>
+
+    <GAMEOBJECT 
+    type="Model" name="Ground" posX="0" posY="-5" posZ="-5" rotX="0" rotY="0" rotZ="0" scaleX="5" scaleY="0.3" scaleZ="5" 
+    shaderName="White" materialName="DefaultMaterial" meshName="Cube1" componentName="OrientedBoxCollider">
+    </GAMEOBJECT>
+
+    <GAMEOBJECT 
+    type="Model" name="Player" posX="0" posY="5" posZ="-5" rotX="0" rotY="0" rotZ="0" scaleX="1" scaleY="1" scaleZ="1" 
+    shaderName="White" materialName="DefaultMaterial" meshName="Sphere1" 
+    componentName="PhysicalObject" componentName="SphereCollider" componentName="PlayerController">
+    </GAMEOBJECT>
+</WORLD>
