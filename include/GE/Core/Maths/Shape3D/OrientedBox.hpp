@@ -42,11 +42,11 @@ namespace Engine::Core::Maths::Shape3D
         #pragma endregion //!methods
         #pragma region accessor
 
-        const Referential&  getReferential()    const noexcept  { return referential_; }
-        Referential&        getReferential()          noexcept  { return referential_; }
-        const float&        getExtI()           const noexcept  { return iI_; }
-        const float&        getExtJ()           const noexcept  { return iJ_; }
-        const float&        getExtK()           const noexcept  { return iK_; }
+        virtual Referential  getReferential()    const noexcept  { return referential_; }
+        Referential&         getReferential()          noexcept  { return referential_; }
+        virtual float        getExtI()           const noexcept  { return iI_; }
+        virtual float        getExtJ()           const noexcept  { return iJ_; }
+        virtual float        getExtK()           const noexcept  { return iK_; }
 
         #pragma endregion //!accessor
 

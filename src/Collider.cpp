@@ -7,6 +7,7 @@
 using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Maths;
+using namespace Engine::Core::Maths::Shape3D::Linked;
 
 Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)

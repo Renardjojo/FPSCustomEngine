@@ -31,8 +31,8 @@ namespace Engine::Core::Maths::Shape3D
     
         #pragma region accessor
 
-        virtual const Vec3&     getCenter() const noexcept { return center_;}
-        virtual const float&    getRadius() const noexcept { return radius_;}
+        virtual Vec3     getCenter() const noexcept { return center_;}
+        virtual float    getRadius() const noexcept { return radius_;}
 
         #pragma endregion //!accessor
     

@@ -1,10 +1,9 @@
 #include "GE/Core/Maths/Collision.hpp"
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/Core/Maths/Shape3D.hpp"
-#include "GE/Core/Maths/LinkedShape3D.hpp"
-
 
 using namespace Engine::Core::Maths;
+using namespace Engine::Core::Maths::Shape3D;
+using namespace Engine::Core::Maths::Shape3D::Linked;
 
 bool Collision::IsSphereOrientedBoxCollided(Sphere sphere, OrientedBox box, CollisionPoints& _intersection)
 {
@@ -12,18 +11,18 @@ bool Collision::IsSphereOrientedBoxCollided(Sphere sphere, OrientedBox box, Coll
     //looking for a collision between the bow and the AABB of the sphere.
     Vec3 BOmega = Referential::GlobalToLocalPosition(box.getReferential(), sphere.getCenter());
 
-    if (std::abs(BOmega.x) > box.getExtensionValueI() + sphere.getRadius() ||
-        std::abs(BOmega.y) > box.getExtensionValueJ() + sphere.getRadius() ||
-        std::abs(BOmega.z) > box.getExtensionValueK() + sphere.getRadius())
+    if (std::abs(BOmega.x) > box.getExtI() + sphere.getRadius() ||
+        std::abs(BOmega.y) > box.getExtJ() + sphere.getRadius() ||
+        std::abs(BOmega.z) > box.getExtK() + sphere.getRadius())
     {
         _intersection.SetNotIntersection();
         return false;
     }
 
     /*Step 2 : find the near point from box to the sphere*/
-    Vec3 pointInBoxNearestOfSphere = Vec3({ std::clamp(BOmega.x, -box.getExtensionValueI(), box.getExtensionValueI()),
-                                            std::clamp(BOmega.y, -box.getExtensionValueJ(), box.getExtensionValueJ()),
-                                            std::clamp(BOmega.z, -box.getExtensionValueK(), box.getExtensionValueK())});
+    Vec3 pointInBoxNearestOfSphere = Vec3({ std::clamp(BOmega.x, -box.getExtI(), box.getExtI()),
+                                            std::clamp(BOmega.y, -box.getExtJ(), box.getExtJ()),
+                                            std::clamp(BOmega.z, -box.getExtK(), box.getExtK())});
 
     /*Step 3 : looking for a collision point*/
     if (std::abs(pointInBoxNearestOfSphere.length() - BOmega.length()) <= sphere.getRadius())
@@ -43,18 +42,18 @@ bool Collision::IsSphereOrientedBoxCollided(LinkedSphere sphere, LinkedOrientedB
     //looking for a collision between the bow and the AABB of the sphere.
     Vec3 BOmega = Referential::GlobalToLocalPosition(box.getReferential(), sphere.getCenter());
 
-    if (std::abs(BOmega.x) > box.getExtensionValueI() + sphere.getRadius() ||
-        std::abs(BOmega.y) > box.getExtensionValueJ() + sphere.getRadius() ||
-        std::abs(BOmega.z) > box.getExtensionValueK() + sphere.getRadius())
+    if (std::abs(BOmega.x) > box.getExtI() + sphere.getRadius() ||
+        std::abs(BOmega.y) > box.getExtJ() + sphere.getRadius() ||
+        std::abs(BOmega.z) > box.getExtK() + sphere.getRadius())
     {
         _intersection.SetNotIntersection();
         return false;
     }
 
     /*Step 2 : find the near point from box to the sphere*/
-    Vec3 pointInBoxNearestOfSphere = Vec3({ std::clamp(BOmega.x, -box.getExtensionValueI(), box.getExtensionValueI()),
-                                            std::clamp(BOmega.y, -box.getExtensionValueJ(), box.getExtensionValueJ()),
-                                            std::clamp(BOmega.z, -box.getExtensionValueK(), box.getExtensionValueK())});
+    Vec3 pointInBoxNearestOfSphere = Vec3({ std::clamp(BOmega.x, -box.getExtI(), box.getExtI()),
+                                            std::clamp(BOmega.y, -box.getExtJ(), box.getExtJ()),
+                                            std::clamp(BOmega.z, -box.getExtK(), box.getExtK())});
 
     /*Step 3 : looking for a collision point*/
     if (std::abs(pointInBoxNearestOfSphere.length() - BOmega.length()) <= sphere.getRadius())
@@ -71,9 +70,9 @@ bool Collision::GetFirstCollisionPointSphereBox(LinkedOrientedBox box, LinkedSph
 {
     CollisionPoints collisionPoint;
 
-    box.setLocalExtensionValueI(box.getLocalExtensionValueI() + sphere.getRadius());
-    box.setLocalExtensionValueJ(box.getLocalExtensionValueJ() + sphere.getRadius());
-    box.setLocalExtensionValueK(box.getLocalExtensionValueK() + sphere.getRadius());
+    box.setLocalExtI(box.getLocalExtI() + sphere.getRadius());
+    box.setLocalExtJ(box.getLocalExtJ() + sphere.getRadius());
+    box.setLocalExtK(box.getLocalExtK() + sphere.getRadius());
 
     // if (!Collision::IsSegmentIntersectingOrientedBox(sphere, box, collisionPoint))
     //     return false;

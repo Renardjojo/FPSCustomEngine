@@ -22,13 +22,12 @@ namespace Engine::Core::Maths::Shape3D
         AABB& operator=(AABB const& other)		= default;
         AABB& operator=(AABB && other)			= default;
 
-        AABB(Vec3 center, float iI, float iJ, float iK)
-        {
-            center_ = center;
-            iI_ = iI;
-            iJ_ = iJ;
-            iK_ = iK;
-        }
+        AABB(const Vec3& center, float iI, float iJ, float iK)
+            :   center_  {center},
+                iI_     {iI},
+                iJ_     {iJ},
+                iK_     {iK}
+        {}
 
         #pragma endregion //!constructor/destructor
 
@@ -37,10 +36,10 @@ namespace Engine::Core::Maths::Shape3D
 
         #pragma region accessor
 
-        const Vec3&  getCenter() const noexcept  { return center_; }
-        const float& getExtI()   const noexcept  { return iI_; }
-        const float& getExtJ()   const noexcept  { return iJ_; }
-        const float& getExtK()   const noexcept  { return iK_; }
+        virtual Vec3    getCenter() const noexcept  { return center_; }
+        const float&    getExtI()   const noexcept  { return iI_; }
+        const float&    getExtJ()   const noexcept  { return iJ_; }
+        const float&    getExtK()   const noexcept  { return iK_; }
 
         #pragma endregion //!accessor
 

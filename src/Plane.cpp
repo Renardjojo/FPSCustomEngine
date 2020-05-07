@@ -3,6 +3,7 @@
 #include <limits>
 
 using namespace Engine::Core::Maths;
+using namespace Engine::Core::Maths::Shape3D;
 
 Plane::Plane (float distance, const Vec3& normal)
     :   normal_     (normal.getNormalize()),
