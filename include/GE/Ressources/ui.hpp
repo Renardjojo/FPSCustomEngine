@@ -2,7 +2,6 @@
 #define __UI_HPP__
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include <SDL2/SDL_ttf.h>
 
