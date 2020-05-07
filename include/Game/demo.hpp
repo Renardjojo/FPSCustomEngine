@@ -34,7 +34,8 @@ namespace Game
                                                     Engine::Ressources::Music, 
                                                     Engine::Ressources::Font, 
                                                     Engine::Ressources::Button, 
-                                                    Engine::Ressources::TextField> Ressources;
+                                                    Engine::Ressources::TextField,
+                                                    Engine::Ressources::Title> Ressources;
 
     class Demo
     {

@@ -59,7 +59,6 @@ Demo::Demo(Engine::GE& gameEngine)
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     UISystem::isActive = true;
-
 }
 
 
@@ -193,8 +192,7 @@ void Demo::loadUI      (Ressources& ressourceManager)
     int tempX = gameEngine_.getWinSize().width / 2.0f;
     int tempY = gameEngine_.getWinSize().heigth / 2.0f;
 
-
-
+    #pragma region Start
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader, 
                                             tempX - 35, tempY - 200, 
                                             150.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Start",
@@ -214,10 +212,10 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
                                             tempX - 55, tempY, 
-                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Option",
+                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
-        
+        gameEngine_.gameState = E_GAME_STATE::OPTION;
     };
 
     ressourceManager.add<Button>("MenuQuitButton", pfont, buttonShader,
@@ -227,6 +225,11 @@ void Demo::loadUI      (Ressources& ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::EXIT;
     };
+    
+    #pragma endregion 
+
+    #pragma region Pause
+
     ressourceManager.add<Button>("PausePlayButton", pfont, buttonShader,
                                             tempX - 35, tempY - 100, 
                                             150.0f, 60.0f, SDL_Color{170, 80, 170, 0}, "Play",
@@ -243,6 +246,113 @@ void Demo::loadUI      (Ressources& ressourceManager)
         gameEngine_.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
     };
+    
+    #pragma endregion
+
+    #pragma region Option
+
+    ressourceManager.add<Title>("OptionForwardTitle",   pfont, buttonShader,
+                                                    tempX - 155, tempY - 300, 
+                                                    175.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Forward :",
+                                                    E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionForwardButton",  pfont, buttonShader,
+                                                    tempX + 50, tempY - 300, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.up)),
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            gameEngine_.inputManager_.keyboard.up = key;
+            ressourceManager.get<Button>("OptionForwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionForwardButton").updateTexture();
+            gameEngine_.inputManager_.resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionBackwardTitle",   pfont, buttonShader,
+                                                    tempX - 185, tempY - 200, 
+                                                    200.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Backward :",
+                                                    E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionBackwardButton",  pfont, buttonShader,
+                                                    tempX + 50, tempY - 200, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.down)),
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            gameEngine_.inputManager_.keyboard.down = key;
+            ressourceManager.get<Button>("OptionBackwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionBackwardButton").updateTexture();
+            gameEngine_.inputManager_.resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionLeftTitle",   pfont, buttonShader,
+                                                    tempX - 75, tempY - 100, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Left :",
+                                                    E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionLeftButton",  pfont, buttonShader,
+                                                    tempX + 50, tempY - 100, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.left)),
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            gameEngine_.inputManager_.keyboard.left = key;
+            ressourceManager.get<Button>("OptionLeftButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionLeftButton").updateTexture();
+            gameEngine_.inputManager_.resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionRightTitle",   pfont, buttonShader,
+                                                    tempX - 100, tempY, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Right :",
+                                                    E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionRightButton",  pfont, buttonShader,
+                                                    tempX + 50, tempY, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.right)),
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            gameEngine_.inputManager_.keyboard.right = key;
+            ressourceManager.get<Button>("OptionRightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionRightButton").updateTexture();
+            gameEngine_.inputManager_.resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionJumpTitle",   pfont, buttonShader,
+                                                    tempX - 105, tempY + 100, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Jump :",
+                                                    E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionJumpButton",  pfont, buttonShader,
+                                                    tempX + 50, tempY + 100, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.jump)),
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            gameEngine_.inputManager_.keyboard.jump = key;
+            ressourceManager.get<Button>("OptionJumpButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionJumpButton").updateTexture();
+            gameEngine_.inputManager_.resetKeyDown();
+        }
+    };
+
+    #pragma endregion
+
 
 }
 
@@ -292,6 +402,10 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
         {
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
+        }
+        else if (gameEngine_.gameState == E_GAME_STATE::OPTION)
+        {
+            gameEngine_.gameState = E_GAME_STATE::STARTING;
         }
         else if (gameEngine_.gameState == E_GAME_STATE::STARTING)
         {

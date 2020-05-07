@@ -59,31 +59,7 @@ namespace Engine::Ressources
 
             #pragma endregion //!methods
 
-            #pragma region static methods
-            #pragma endregion //!static methods
-
-            #pragma region accessor
-            #pragma endregion //!accessor
-
-            #pragma region mutator
-            #pragma endregion //!mutator
-
-            #pragma region operator
-            #pragma endregion //!operator
-
-            #pragma region convertor
-            #pragma endregion //!convertor
-
         protected:
-
-            #pragma region attribut
-            #pragma endregion //!attribut
-
-            #pragma region static attribut
-            #pragma endregion //! static attribut
-
-            #pragma region methods
-            #pragma endregion //!methods
 
         private:
 

@@ -47,19 +47,28 @@ namespace Engine::Core::InputSystem
                 return 0;
             }
             else
+            {
+                leftClicPressed = false;
                 return 0;
+            }
         }
 
     } T_inputMouse;
 
     typedef struct S_inputKeyboard
     {	
+        SDL_Keycode key;
+        SDL_Scancode up = SDL_SCANCODE_UP;
+        SDL_Scancode down = SDL_SCANCODE_DOWN;
+        SDL_Scancode right = SDL_SCANCODE_RIGHT;
+        SDL_Scancode left = SDL_SCANCODE_LEFT;
+        SDL_Scancode jump = SDL_SCANCODE_SPACE;
+
         bool 		isTouch;
         bool 		isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
         bool        isPressed[SDL_NUM_SCANCODES];
         bool		flagEscIsRelease;
         bool		escIsRelease;
-        SDL_Keycode key;
 
         int onePressed(const SDL_Scancode key)
         {
@@ -143,6 +152,13 @@ namespace Engine::Core::InputSystem
             T_inputMouse	mouse;
             T_inputKeyboard	keyboard;
 
+            SDL_Scancode waitForKey();
+
+            void resetKeyDown()
+            {
+                keyboard.isDown[SDL_SCANCODE_RETURN] = false;
+                mouse.leftClic_down = false;
+            }
 
         protected:
 
