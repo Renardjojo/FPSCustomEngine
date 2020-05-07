@@ -212,7 +212,7 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
                                             tempX - 55, tempY, 
-                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Option",
+                                            150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::OPTION;

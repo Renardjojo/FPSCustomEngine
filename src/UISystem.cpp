@@ -100,7 +100,6 @@ void UISystem::update(Engine::GE& gameEngine) noexcept
     else
     {
         int state = gameEngine.inputManager_.mouse.oneLeftClick();
-        std::cout << state << std::endl;
 
         for (Button *button : pButtons)
         {
