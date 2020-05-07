@@ -11,7 +11,7 @@
 
 namespace Engine::Core::Maths::Shape3D::Linked
 {
-    class LinkedSphere : Sphere
+    class LinkedSphere : public Sphere
     {
         public :
 
@@ -26,6 +26,11 @@ namespace Engine::Core::Maths::Shape3D::Linked
 
         float           getRadius        ()             const noexcept override  { return transform_.getScale().x + radius_;}
         const float&    getLocalRadius   (float radius) const noexcept           { return radius_;}
+
+        Sphere getGlobalSphere()//return the global sphere
+        {
+            return Sphere{transform_.getScale().x + radius_, transform_.getPosition() + center_};
+        }
 
         protected :
 

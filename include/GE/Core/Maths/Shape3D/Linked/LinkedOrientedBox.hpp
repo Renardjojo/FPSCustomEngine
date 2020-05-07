@@ -12,7 +12,7 @@
 
 namespace Engine::Core::Maths::Shape3D::Linked
 {
-    class LinkedOrientedBox : OrientedBox
+    class LinkedOrientedBox : public OrientedBox
     {
         public :
 
@@ -42,6 +42,11 @@ namespace Engine::Core::Maths::Shape3D::Linked
         void                    setLocalExtI(float iI) noexcept              { iI_   = iI;}
         void                    setLocalExtJ(float iJ) noexcept              { iJ_   = iJ;}
         void                    setLocalExtK(float iK) noexcept              { iK_   = iK;}
+
+        OrientedBox getGlobalOrientedBox() const noexcept //return the global oriented box
+        {
+            return OrientedBox{getReferential(), getExtI(), getExtJ(), getExtK()};
+        }
 
         protected :
 

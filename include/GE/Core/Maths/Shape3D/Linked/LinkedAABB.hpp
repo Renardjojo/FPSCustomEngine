@@ -20,8 +20,25 @@ namespace Engine::Core::Maths::Shape3D::Linked
                 transform_        {transform}
         {}
 
-        Vec3            getCenter()     const noexcept final     { return transform_.getPosition() + center_; }
-        const Vec3&     getLocalCenter() const noexcept          { return center_; }
+        Vec3                    getCenter()     const noexcept final     { return transform_.getPosition() + center_; }
+        float                   getExtI()    const noexcept final       { return iI_ + transform_.getScale().x / 2.f;}
+        float                   getExtJ()    const noexcept final       { return iJ_ + transform_.getScale().y / 2.f;}
+        float                   getExtK()    const noexcept final       { return iK_ + transform_.getScale().z / 2.f;}
+        
+        const Vec3&             getLocalCenter() const noexcept         { return center_; }
+        const float&            getLocalExtI() const noexcept           { return iI_;}
+        const float&            getLocalExtJ() const noexcept           { return iJ_;}
+        const float&            getLocalExtK() const noexcept           { return iK_;}
+ 
+        void                    setLocalCenter(const Vec3& newCenter) noexcept  { center_  = newCenter;}
+        void                    setLocalExtI(float iI) noexcept              { iI_   = iI;}
+        void                    setLocalExtJ(float iJ) noexcept              { iJ_   = iJ;}
+        void                    setLocalExtK(float iK) noexcept              { iK_   = iK;}
+
+        AABB getGlobalAABB() const noexcept //return the global AABB
+        {
+            return AABB{getCenter(), getExtI(), getExtJ(), getExtK()};
+        }
 
         protected :
 

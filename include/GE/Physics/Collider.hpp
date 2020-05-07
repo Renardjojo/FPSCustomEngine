@@ -7,7 +7,6 @@
 
 #include "GE/Ressources/Component.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
-#include "GE/Core/Maths/Collision.hpp"
 #include "GE/Core/Maths/Shape3D/Linked/LinkedAABB.hpp"
 #include "GE/Core/Maths/Shape3D/Linked/LinkedOrientedBox.hpp"
 #include "GE/Core/Maths/Shape3D/Linked/LinkedSphere.hpp"

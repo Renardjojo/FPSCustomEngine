@@ -49,9 +49,9 @@ namespace Engine::Core::Maths::Shape3D
         #pragma region accessor
 
         virtual Vec3    getCenter() const noexcept  { return center_; }
-        const float&    getExtI()   const noexcept  { return iI_; }
-        const float&    getExtJ()   const noexcept  { return iJ_; }
-        const float&    getExtK()   const noexcept  { return iK_; }
+        virtual float   getExtI()   const noexcept  { return iI_; }
+        virtual float   getExtJ()   const noexcept  { return iJ_; }
+        virtual float   getExtK()   const noexcept  { return iK_; }
 
         #pragma endregion //!accessor
 
