@@ -27,6 +27,28 @@ namespace Engine::Core::InputSystem
         bool 			rightClic_down;
         bool 			doubleLeftClic;	//if interval of 2click is under 0.2s
         bool 			leftClic_down;
+        bool            leftClicPressed;
+
+        int oneLeftClick()
+        {
+            if (leftClic_down && !leftClicPressed)
+            {
+                leftClicPressed = true;
+                return 1;
+            }
+            else if (leftClic_down && leftClicPressed)
+            {
+                leftClicPressed = true;
+                return 2;
+            }
+            else if (!leftClic_down)
+            {
+                leftClicPressed = false;
+                return 0;
+            }
+            else
+                return 0;
+        }
 
     } T_inputMouse;
 
@@ -34,8 +56,31 @@ namespace Engine::Core::InputSystem
     {	
         bool 		isTouch;
         bool 		isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
+        bool        isPressed[SDL_NUM_SCANCODES];
         bool		flagEscIsRelease;
         bool		escIsRelease;
+        SDL_Keycode key;
+
+        int onePressed(const SDL_Scancode key)
+        {
+            if (isDown[key] && !isPressed[key])
+            {
+                isPressed[key] = true;
+                return 1;
+            }
+            else if (isDown[key] && isPressed[key])
+            {
+                isPressed[key] = true;
+                return 2;
+            }
+            else if (!isDown[key])
+            {
+                isPressed[key] = false;
+                return 0;
+            }
+            else
+                return 0;
+        }
 
     } T_inputKeyboard;
 

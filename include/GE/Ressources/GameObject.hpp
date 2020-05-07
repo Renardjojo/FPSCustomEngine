@@ -25,14 +25,14 @@ class GameObject
 {
 public:
 
-    GameObject() = default;
-    GameObject(const GameObject &other) = default;
-    GameObject(GameObject &&other) = default;
-    virtual ~GameObject() = default;
-    GameObject &operator=(GameObject const &other) = default;
-    GameObject &operator=(GameObject &&other) = default;
-    std::unique_ptr<Engine::LowRenderer::Entity> entity;
+    GameObject()                                        = default;
+    GameObject(const GameObject &other)                 = default;
+    GameObject(GameObject &&other)                      = default;
+    virtual ~GameObject()                               = default;
+    GameObject &operator=(GameObject const &other)      = default;
+    GameObject &operator=(GameObject &&other)           = default;
 
+    std::unique_ptr<Engine::LowRenderer::Entity> entity;
     std::list<GameObject> children;
     /**
          * @brief update entity and these child if current entity is dirty
@@ -45,7 +45,7 @@ public:
             if (i->entity->isDirty())
             {
                 i->entity->update(entity->getModelMatrix());
-                i->forceUpdate();
+                i->forceupdate();
             }
             else
             {
@@ -58,12 +58,12 @@ public:
          * @brief Force the update of entity without check if entity is dirty
          * 
          */
-    void forceUpdate()
+    void forceupdate()
     {
         for (auto i = children.begin(); i != children.end(); i++)
         {
             i->entity->update(entity->getModelMatrix());
-            i->forceUpdate();
+            i->forceupdate();
         }
     }
 
