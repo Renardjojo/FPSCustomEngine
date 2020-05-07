@@ -1,11 +1,10 @@
-#ifndef __PLAYERCONTROLLER_HPP__
-#define __PLAYERCONTROLLER_HPP__
+#ifndef __ENNEMYCONTROLLER_HPP__
+#define __ENNEMYCONTROLLER_HPP__
+
 
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/camera.hpp"
 
 namespace Game
 {
@@ -20,9 +19,9 @@ namespace Game
 
     private:
         float _radius{5.f};
-        float _exclusionRadius{0.5f};
-        float _speed{10.f};
-        GameObject* _player{nullptr};
+        float _exclusionRadius{0.6f};
+        float _speed{5.f};
+        Engine::Ressources::GameObject* _player;
         States _state{States::Idle};
 
         void idle();
