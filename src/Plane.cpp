@@ -1,6 +1,5 @@
 #include "GE/Core/Maths/Shape3D/Plane.hpp"
 #include "GE/Core/Maths/mat.hpp"
-#include <limits>
 
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Maths::Shape3D;

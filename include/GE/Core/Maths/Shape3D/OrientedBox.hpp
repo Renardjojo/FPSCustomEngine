@@ -36,6 +36,13 @@ namespace Engine::Core::Maths::Shape3D
             referential_.unitK = rotationMatrix.getVectorForward();
         }
 
+        explicit OrientedBox(const Referential& referential, float rightLenght, float upLenght, float forwardLenght)
+            :   referential_    {referential},
+                iI_             {rightLenght}, 
+                iJ_             {upLenght}, 
+                iK_             {forwardLenght}
+        {}
+
         #pragma endregion //!constructor/destructor
 
         #pragma region methods

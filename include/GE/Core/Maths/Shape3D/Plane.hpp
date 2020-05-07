@@ -48,15 +48,10 @@ namespace Engine::Core::Maths::Shape3D
             
             /**
              * @brief Get the Signed Distance To Plane object with a point
-             * 
-             * @param plane 
-             * @param point 
-             * @return float 
              */
-            static
-            float getSignedDistanceToPlane(const Plane& plane, const Vec3& point)
+            float getSignedDistanceToPlane(const Vec3& point)
             {
-                return Vec3::dot(point, plane.normal_) - plane.distance_;
+                return Vec3::dot(point, normal_) - distance_;
             }
 
             /**

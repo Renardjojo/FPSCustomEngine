@@ -65,6 +65,11 @@ namespace Engine::Core::Maths::Shape3D
             return Sphere(radius_, segment_.getPt2());
         }
 
+        bool isInside(const Vec3& pt) const noexcept
+        {
+            return segment_.getDistanceWithPoint(pt) <= radius_;
+        }
+
         #pragma endregion //!methods
 
         #pragma region accessor

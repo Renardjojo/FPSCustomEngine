@@ -15,11 +15,11 @@
 
 namespace Engine::Core::Maths::Shape3D
 {
-    #define QUAD_OUTCODE_INSIDE   0;  // 0000
-    #define QUAD_OUTCODE_LEFT     1;  // 0001
-    #define QUAD_OUTCODE_RIGHT    2;  // 0010
-    #define QUAD_OUTCODE_BOTTOM   4;  // 0100
-    #define QUAD_OUTCODE_TOP      8;  // 1000
+    #define QUAD_OUTCODE_INSIDE   0  // 0000
+    #define QUAD_OUTCODE_LEFT     1  // 0001
+    #define QUAD_OUTCODE_RIGHT    2  // 0010
+    #define QUAD_OUTCODE_BOTTOM   4  // 0100
+    #define QUAD_OUTCODE_TOP      8  // 1000
     
     class Quad
     {
@@ -104,7 +104,7 @@ namespace Engine::Core::Maths::Shape3D
 
         #pragma region convertor
 
-        explicit operator Plane() //use static_cast<Plane>(quad) to convert quad to plane
+        explicit operator Plane() const noexcept //use static_cast<Plane>(quad) to convert quad to plane
         {
             return Plane(referential_.origin, referential_.unitK);
         }

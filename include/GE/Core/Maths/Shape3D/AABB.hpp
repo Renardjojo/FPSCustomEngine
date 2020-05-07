@@ -6,6 +6,7 @@
 #define _AABB_H
 
 #include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Maths/MathTools.hpp"
 
 namespace Engine::Core::Maths::Shape3D
 {
@@ -32,6 +33,17 @@ namespace Engine::Core::Maths::Shape3D
         #pragma endregion //!constructor/destructor
 
         #pragma region methods
+
+        bool isInside(Vec3 pt) const noexcept
+        {
+            Vec3 localPt = pt - center_;
+            const float espilon = 0.0001f; /*The standard float espsilone his enought in this case. The float value has chang to much*/
+
+            return  isBetween(localPt.x, -iI_ - espilon, iI_ + espilon) &&
+                    isBetween(localPt.y, -iJ_ - espilon, iJ_ + espilon) &&
+                    isBetween(localPt.z, -iK_ - espilon, iK_ + espilon);
+        }
+
         #pragma endregion //!methods
 
         #pragma region accessor
