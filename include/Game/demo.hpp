@@ -62,6 +62,8 @@ namespace Game
             Engine::Ressources::GameObject* player1;
             Engine::Ressources::GameObject* player2;*/
 
+            float testLifePLayer = 100.f;
+
             Engine::Core::Maths::Vec3 dirCamera;
             Engine::Ressources::GameObject* mainCamera;
 

@@ -13,6 +13,7 @@
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
 #include "save/xmlparse.hpp"
+#include "Game/BarIndicatorController.hpp"
 
 #include "../src/stb_image.h"
 
@@ -185,23 +186,23 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
     lifeBar.entity->setName("lifeBar");
 
-    ModelCreateArg lifeBarBackGroundArg{{0.f, 0.f, 0.f},
-                                        {0.f, 0.f, 0.f},
-                                        {1.f, 0.1f, 0.2f},
-                                        &ressourceManager.get<Shader>("White"),
-                                        {&ressourceManager.get<Material>("BlackMaterial")},
-                                        &ressourceManager.get<Mesh>("Plane1"),
-                                        "lifeBarBG"};
-    scene_->add<BillBoard>(lifeBar, lifeBarBackGroundArg);
+    // ModelCreateArg lifeBarBackGroundArg{{0.f, 0.f, 0.f},
+    //                                     {0.f, 0.f, 0.f},
+    //                                     {1.f, 0.1f, 0.2f},
+    //                                     &ressourceManager.get<Shader>("White"),
+    //                                     {&ressourceManager.get<Material>("BlackMaterial")},
+    //                                     &ressourceManager.get<Mesh>("Plane1"),
+    //                                     "lifeBarBG"};
+    // scene_->add<BillBoard>(lifeBar, lifeBarBackGroundArg);
 
-    ModelCreateArg lifeBarInternalArg{{0.f, -0.05f, 0.1f},
+    ModelCreateArg lifeBarInternalArg{{0.f, 0.f, 0.1f},
                                       {0.f, 0.f, 0.f},
-                                      {0.8f, 0.1f, 0.f},
+                                      {1.f, 0.001f, 0.1f},
                                       &ressourceManager.get<Shader>("White"),
                                       {&ressourceManager.get<Material>("GreenMaterial")},
                                       &ressourceManager.get<Mesh>("Plane1"),
                                       "lifeBarBGIndicator"};
-    scene_->add<BillBoard>(lifeBar, lifeBarInternalArg);
+    GameObject& lifeBarINternal = scene_->add<BillBoard>(lifeBar, lifeBarInternalArg);
 
     sphere.addComponent<PhysicalObject>();
     sphere.getComponent<PhysicalObject>()->SetMass(10);
@@ -209,7 +210,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-    functGlCheckAndLogError();
+    lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
@@ -455,7 +456,8 @@ void Demo::loadLights      (t_RessourcesManager& ressourceManager)
 
 void Demo::updateControl(Engine::Core::InputSystem::Input& input)
 {
-    
+    testLifePLayer -= 0.1;
+
     if (input.keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
     {
         if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
