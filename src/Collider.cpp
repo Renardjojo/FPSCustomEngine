@@ -63,7 +63,7 @@ bool SphereCollider::isCollidingWith(Collider& collider)
     OrientedBoxCollider* boxCollider = dynamic_cast<OrientedBoxCollider*>(&collider);
 
     if (boxCollider)
-        return SphereOrientedBox::IsSphereOrientedBoxCollided(sphere_.getGlobalSphere(), boxCollider->GetBox(), intersection);
+        return SphereOrientedBox::isSphereOrientedBoxCollided(sphere_.getGlobalSphere(), boxCollider->GetBox(), intersection);
     
     return false;
 }
@@ -72,7 +72,7 @@ bool SphereCollider::isCollidingWith(Collider& collider)
 // {
 //     CollisionPoints intersection;
 
-//     return Collision::IsSphereOrientedBoxCollided(sphere_, collider.GetBox(), intersection);
+//     return Collision::isSphereOrientedBoxCollided(sphere_, collider.GetBox(), intersection);
 
 // }
 
@@ -105,7 +105,7 @@ bool OrientedBoxCollider::isCollidingWith(Collider& collider)
 
     SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(&collider);
     if (sphereCollider)
-        return SphereOrientedBox::IsSphereOrientedBoxCollided(sphereCollider->GetSphere().getGlobalSphere(), orientedbox_, intersection);
+        return SphereOrientedBox::isSphereOrientedBoxCollided(sphereCollider->GetSphere().getGlobalSphere(), orientedbox_, intersection);
 
     return false;
 

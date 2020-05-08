@@ -16,7 +16,7 @@ namespace Engine::Core::Maths
         Vec3	unitJ; //y
         Vec3	unitK; //z
 
-        static Vec3 GlobalToLocalPosition(const Referential& refLocal, const Vec3& point)
+        static Vec3 globalToLocalPosition(const Referential& refLocal, const Vec3& point)
         {
             //O'Mw 	= OMw  - OO'w
             Vec3 OlocalM = point - refLocal.origin;
@@ -27,7 +27,7 @@ namespace Engine::Core::Maths
             return Vec3({OlocalM.dotProduct(refLocal.unitI), OlocalM.dotProduct(refLocal.unitJ), OlocalM.dotProduct(refLocal.unitK)});
         }
 
-        static Vec3 LocalToGlobalPosition(const Referential&  refLocal, const Vec3& point)
+        static Vec3 localToGlobalPosition(const Referential&  refLocal, const Vec3& point)
         {
             //O'Mw  = x' * i' + y' * j' + z' * k'
             Vec3 vectorOlocalM = refLocal.unitI * point.x + refLocal.unitJ * point.y + refLocal.unitK * point.z;
@@ -36,7 +36,7 @@ namespace Engine::Core::Maths
             return refLocal.origin  + vectorOlocalM;
         }
 
-        static Vec3 GlobalToLocalVector(const Referential&  refLocal, const Vec3& vector)
+        static Vec3 globalToLocalVector(const Referential&  refLocal, const Vec3& vector)
         {
             //U'x = U * i
             //U'y = U * j
@@ -44,7 +44,7 @@ namespace Engine::Core::Maths
             return Vec3({Vec3::dot(vector, refLocal.unitI), Vec3::dot(vector, refLocal.unitJ), Vec3::dot(vector, refLocal.unitK)});
         }
 
-        static Vec3 LocalToGlobalVector(const Referential&  refLocal, const Vec3& vector)
+        static Vec3 localToGlobalVector(const Referential&  refLocal, const Vec3& vector)
         {
             //vect(U) = u'x * i'(world) + u'y * j'(world) + u'z * k'(world)
             return (refLocal.unitI * vector.x) + (refLocal.unitJ * vector.y) + (refLocal.unitK * vector.z);
