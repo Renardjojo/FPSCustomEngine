@@ -56,15 +56,14 @@ void PhysicSystem::update() noexcept
                         dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox(), 
                         vectSpeed, intersection))
                     {
-                        std::cout << "test" << std::endl;
                         collider1->gameObject.entity->setTranslation(intersection.intersection1);
                         collider1->GetAttachedPhysicalObject()->SetVelocity(-collider1->GetAttachedPhysicalObject()->GetVelocity() * collider1->GetBounciness());
+                        continue;
                     }
-                    // std::cout << dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere().getCenter() << std::endl;
-                    // std::cout << dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox().getExtI() << std::endl;
-                    // std::cout << dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox().getExtJ() << std::endl;
-                    // std::cout << dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox().getExtK() << std::endl;
-                    // std::cout << std::endl;
+                    if (collider1->isCollidingWith(*collider2))
+                    {
+                        collider1->GetAttachedPhysicalObject()->SetVelocity({0,0,0});
+                    }
                 }
             }
         }
