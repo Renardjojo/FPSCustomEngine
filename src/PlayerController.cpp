@@ -23,11 +23,12 @@ void PlayerController::update()
 {
     move();
 }
-Vec3 coord(float r, float angle)
+Vec3 coord(float r, float angle,const Vec3& pos)
 {
-    Vec3 res{0.f, 0.f, 0.f};
+    Vec3 res{0.f,0.f, 0.f};
     sincosf(angle - M_PI/2, &res.z, &res.x);
     res *= 10;
+    res.y=pos.y;
     return res;
 }
 
@@ -35,7 +36,7 @@ void PlayerController::move()
 {    
     //orbit
     _orbity += (_input.mouse.motion.x * M_PI / 180);
-    _camera->setTranslation(coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition());
+    _camera->setTranslation(coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity,_camera->getPosition()) + gameObject.entity.get()->getPosition());
     _camera->update();
     
     //lookat

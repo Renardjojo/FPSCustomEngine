@@ -18,6 +18,7 @@
 
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
+#include "Game/EnnemyController.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -98,7 +99,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     loadUI(gameEngine_.ressourceManager_);
 
     //Load Camera
-    Camera  camP1Arg ({0.f, 0.f, 15.f},
+    Camera  camP1Arg ({0.f, 5.f, 15.f},
                     {0.f, 0.f, 0.f}, 
                     gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
 
@@ -142,36 +143,51 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("sphere1"),
                                 "Player"};
-    scene_.add<Model>(scene_.getWorld(),player).addComponent<PlayerController>(gameEngine_.inputManager_);
+    GameObject& playerGo = scene_.add<Model>(scene_.getWorld(),player);
+    playerGo.addComponent<PlayerController>(gameEngine_.inputManager_);
+
+
+    matDefault.name_                = "Red";
+    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 0.f, 1.f};
+
+    ModelCreateArg ennemies   {{0.f, 0.f, 4.5f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {0.5f, 0.5f, 0.5f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
+                                &ressourceManager.get<Mesh>("sphere1"),
+                                "ennemy1"};
+    scene_.add<Model>(scene_.getWorld(), ennemies).addComponent<EnnemyController>(&playerGo);
+
     
-    // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
+    // playerGameObject.addComponent<EnnemyController>(gameEngine_.inputManager_);
     /*life bar*/             
-        GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
-        lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
-        lifeBar.entity->setName("lifeBar");
+    GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
+    lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
+    lifeBar.entity->setName("lifeBar");
 
-        matDefault.name_                = "BlackMaterial";
-        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 0.f, 0.f, 1.f};
-        ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
-                                                {0.f, 0.f, 0.f}, 
-                                                {1.f, 0.1f, 0.2f}, 
-                                                &ressourceManager.get<Shader>("White"), 
-                                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                                &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
-                                                "lifeBarBG"};
-        scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
-
-        matDefault.name_                = "GreenMaterial";
-        matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
-
-        ModelCreateArg lifeBarInternalArg   {{0.f, -0.05f, 0.1f}, 
+    matDefault.name_                = "BlackMaterial";
+    matDefault.comp_.ambient.rgbi   = Vec4{0.f, 0.f, 0.f, 1.f};
+    ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
                                             {0.f, 0.f, 0.f}, 
-                                            {0.8f, 0.1f, 0.f}, 
+                                            {1.f, 0.1f, 0.2f}, 
                                             &ressourceManager.get<Shader>("White"), 
                                             {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                            &ressourceManager.get<Mesh>("Plane1"),
-                                            "lifeBarBGIndicator"};
-        scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
+                                            &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
+                                            "lifeBarBG"};
+    scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
+
+    matDefault.name_                = "GreenMaterial";
+    matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
+
+    ModelCreateArg lifeBarInternalArg   {{0.f, -0.05f, 0.1f}, 
+                                        {0.f, 0.f, 0.f}, 
+                                        {0.8f, 0.1f, 0.f}, 
+                                        &ressourceManager.get<Shader>("White"), 
+                                        {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
+                                        &ressourceManager.get<Mesh>("Plane1"),
+                                        "lifeBarBGIndicator"};
+    scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
 
     sphere.addComponent<PhysicalObject>();
     sphere.getComponent<PhysicalObject>()->SetMass(10);
@@ -179,7 +195,8 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-                    functGlCheckAndLogError();
+
+    functGlCheckAndLogError();
 
 }
 
