@@ -29,7 +29,7 @@ namespace Engine::Core::Maths::ShapeRelation
 
         #pragma region static methods
 
-        static bool isSegmentAABBCollided(Shape3D::Segment seg, Shape3D::AABB AABB, Intersection intersection);
+        static bool isSegmentAABBCollided(Shape3D::Segment seg, Shape3D::AABB AABB, Intersection& intersection);
 
         #pragma endregion //!static methods
 
