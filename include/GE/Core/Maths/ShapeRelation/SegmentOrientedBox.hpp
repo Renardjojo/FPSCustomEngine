@@ -5,12 +5,9 @@
 #ifndef _SEGMENT_ORIENTED_BOX_H
 #define _SEGMENT_ORIENTED_BOX_H
 
-#include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
 #include "GE/Core/Maths/Shape3D/Segment.hpp"
 #include "GE/Core/Maths/Shape3D/OrientedBox.hpp"
-#include "GE/Core/Maths/Shape3D/AABB.hpp"
-#include "GE/Core/Maths/ShapeRelation/SegmentAABB.hpp"
 
 namespace Engine::Core::Maths::ShapeRelation
 {
@@ -31,35 +28,7 @@ namespace Engine::Core::Maths::ShapeRelation
 
         #pragma region static methods
 
-        static bool IsSegmentOrientedBoxCollided(const Shape3D::Segment& seg, const Shape3D::OrientedBox& orientedBox, Intersection& intersection)
-        {
-            /*Transform the segment from global referential to the local referential of the oriented box*/
-            Shape3D::Segment localSegment { Referential::GlobalToLocalPosition(orientedBox.getReferential(), seg.getPt1()),
-                                            Referential::GlobalToLocalPosition(orientedBox.getReferential(), seg.getPt2())};
-
-            Shape3D::AABB orientedBoxAxisAligned {Referential::GlobalToLocalPosition(orientedBox.getReferential(), orientedBox.getReferential().origin), orientedBox.getExtI(), orientedBox.getExtJ(), orientedBox.getExtK()};
-
-            if(SegmentAABB::IsSegmentAABBCollided(localSegment, orientedBoxAxisAligned, intersection))
-            {
-                intersection.intersection1 = Referential::LocalToGlobalPosition(orientedBox.getReferential(), intersection.intersection1);
-                
-                if (intersection.intersectionType == EIntersectionType::TwoIntersectiont)
-                    intersection.intersection2 = Referential::LocalToGlobalPosition(orientedBox.getReferential(), intersection.intersection2);
-
-                intersection.normalI1 = Referential::LocalToGlobalVector(orientedBox.getReferential(), intersection.normalI1);
-
-                if (intersection.intersectionType == EIntersectionType::TwoIntersectiont)
-                {
-                    intersection.normalI2 = Referential::LocalToGlobalVector(orientedBox.getReferential(), intersection.normalI2);
-                }
-
-                return true;
-            }
-
-            intersection.intersectionType = EIntersectionType::NoIntersection;
-            return false;
-        }
-
+        static bool isSegmentOrientedBoxCollided(const Shape3D::Segment& seg, const Shape3D::OrientedBox& orientedBox, Intersection& intersection);
 
         #pragma endregion //!static methods
 
