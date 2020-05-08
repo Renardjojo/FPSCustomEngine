@@ -19,7 +19,7 @@ CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
 VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
-LIBSGL=-lGL -lGLU -ldl
+LIBSGL= -lGLU -ldl
 LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
