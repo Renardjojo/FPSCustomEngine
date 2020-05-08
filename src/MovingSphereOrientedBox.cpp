@@ -14,7 +14,6 @@ bool MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(const Sphere& sp
     OrientedBox minkowskiSumOBB = getMinkowskiSumOBB(box, sphere.getRadius());
     Segment spherePt1ToPt2 {sphere.getCenter(), sphere.getCenter() + sphereVelocity};
 
-
     /*Step 1, check if the segment collid with the Minkowski sum box*/
     if (!SegmentOrientedBox::isSegmentOrientedBoxCollided(spherePt1ToPt2, minkowskiSumOBB, intersection))
     {
@@ -102,7 +101,7 @@ void MovingSphereOrientedBox::applyVeronoiRegionCorrection(const OrientedBox& bo
             applyVeronoiRegionCorrectionWithOutCode(box, intersection, seg, sphereRadius, topVeronoiOutCodePt2, rightVeronoiOutCodePt2, forwardVeronoiOutCodePt2, false);
             applyVeronoiRegionCorrectionWithOutCode(box, intersection, seg, sphereRadius, topVeronoiOutCodePt1, rightVeronoiOutCodePt1, forwardVeronoiOutCodePt1, true);
         }
-    }
+    }        
 }
 
 void MovingSphereOrientedBox::applyVeronoiRegionCorrectionWithOutCode(const OrientedBox& box, Intersection& intersection, const Segment& seg, float sphereRadius, int topOutCode, int rightOutCode, int forwardOutCode, bool checkFirstIntersection)
