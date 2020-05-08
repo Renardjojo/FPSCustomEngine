@@ -142,8 +142,8 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec3
 	{	
-
 		float 		dotProduct	 	(const Vec3& other) const;
+		static float dot(const Vec3& vec1, const Vec3& vec2) { return vec1.dotProduct(vec2); }
 
 		//same as get magnitude
 		float 		length		 	() 					const;
@@ -153,8 +153,9 @@ namespace Engine::Core::Maths
 		Vec3 	getNormalize	() const;
 
 		//cross product between 2 vectors
-		void 	cross		(const Vec3& other);
-		Vec3 	getCross	(const Vec3& other) const;
+		void 			cross		(const Vec3& other);
+		static Vec3 	cross		(const Vec3& vec1, const Vec3& vec2) { return vec1.getCross(vec2); }
+		Vec3 			getCross	(const Vec3& other) const;
 
 		//this function return true if vector is colineaire this other vector. 
 		//Comput dot product. If dot product is near of zero, vectors is colinear
@@ -169,6 +170,7 @@ namespace Engine::Core::Maths
 		//This function rotate vector around another unit vector. This function assert if axis is not unit
 		void rotateArroundAxis (const Vec3& unitAxis, float angleRad);
 		Vec3 getRotateArroundAxis (const Vec3& unitAxis, float angleRad) const;
+
 
 		/*----------*/
 		/* operator */

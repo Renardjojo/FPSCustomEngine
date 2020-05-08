@@ -4,6 +4,9 @@ OUTPUT=./bin/exe
 #Include path
 IDIR=-Iinclude
 
+#exclude from clean
+EXCLUDE= src/glad.o
+
 #Relase or debug option
 CCXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 CCXXFLAGSDEBUG=-O3 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
@@ -16,7 +19,7 @@ CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -W -Wno-unknown-pragmas $(IDIR)
 VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
-LIBSGL=-lGL -lGLU -ldl
+LIBSGL= -lGLU -ldl
 LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
@@ -78,10 +81,11 @@ launcher :
 	echo "Comment[en_US]=Game                             # comment which appears as a tooltip. " >> game.desktop
 
 cleanAll:
-	rm -rf $(OBJS) $(OBJS:.o=.d) $(OUTPUT)
+	rm -f $(OBJS) $(OBJS:.o=.d) $(OUTPUT)
 
+#SRC_FILES = $(filter-out src/bar.cpp, $(wildcard src/*.cpp))
 clean :
-	rm -rf $(OBJS) $(OBJS:.o=.d)
+	rm -f $(filter-out $(EXCLUDE) $(EXCLUDE:.o=.d),$(OBJS:.o=.d) $(OBJS))
 
 re : clean all
 

@@ -16,6 +16,7 @@
 #include "GE/Ressources/material.hpp"
 #include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
+#include "GE/Ressources/ui.hpp"
 #include "GE/Core/Maths/vec.hpp"
 
 #include "GE/Physics/PhysicalObject.hpp"
@@ -24,7 +25,17 @@
 namespace Game
 {
 
-    typedef Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, Engine::Ressources::Shader, Engine::Ressources::Material, Engine::Ressources::Sample, Engine::Ressources::Music, Engine::Ressources::Font> Ressources;
+    typedef Engine::Ressources::RessourcesManager<  Engine::Ressources::Mesh, 
+                                                    Engine::Ressources::Shader, 
+                                                    Engine::Ressources::Material,
+                                                    Engine::Ressources::Text,
+                                                    Engine::Ressources::Texture,   
+                                                    Engine::Ressources::Sample, 
+                                                    Engine::Ressources::Music, 
+                                                    Engine::Ressources::Font, 
+                                                    Engine::Ressources::Button, 
+                                                    Engine::Ressources::TextField,
+                                                    Engine::Ressources::Title> Ressources;
 
     class Demo
     {
@@ -36,7 +47,7 @@ namespace Game
             
             Demo ()                         = delete;
             Demo (const Demo& other)		= default;
-            Demo (Demo&& other)				= default;
+            Demo (Demo&& other)				= default;  
             virtual ~Demo ()				= default;
 
             #pragma endregion //!constructor/destructor
@@ -48,21 +59,6 @@ namespace Game
 
             #pragma endregion //!methods
 
-            #pragma region static methods
-            #pragma endregion //!static methods
-
-            #pragma region accessor
-            #pragma endregion //!accessor
-
-            #pragma region mutator
-            #pragma endregion //!mutator
-
-            #pragma region operator
-            #pragma endregion //!operator
-
-            #pragma region convertor
-            #pragma endregion //!convertor
-
         protected:
 
             #pragma region attribut
@@ -72,7 +68,7 @@ namespace Game
 
             bool flagleftClicIsDown;
             bool flagF1IsDown;
-            bool mouseForPlayer1;
+            bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
@@ -85,18 +81,13 @@ namespace Game
             Engine::Physics::PhysicalObject* physictest;
             #pragma endregion //!attribut
 
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
-
             #pragma region methods
-
-            void loadRessourceAndScene  ();
 
             void loadGeneralRessource   (Ressources& ressourceManager);
             void loadLights             (Ressources& ressourceManager);
+            void loadUI                 (Ressources& ressourceManager);
+            // void loadPlayers            (Ressources& ressourceManager);
             /*void loadSound              (Ressources& ressourceManager);
-            void loadPlayers            (Ressources& ressourceManager, const Engine::Ressources::Size& windowSize);
             void loadSkyBox             (Ressources& ressourceManager);
             void loadGround             (Ressources& ressourceManager);
             void loadMultipleRock       (Ressources& ressourceManager);
@@ -105,7 +96,7 @@ namespace Game
             void loadTree               (Ressources& ressourceManager);
             void loadCloud              (Ressources& ressourceManager);*/
 
-            void updateControl          (const Engine::Core::InputSystem::Input& input);
+            void updateControl          (Engine::Core::InputSystem::Input& input);
 
             #pragma endregion //!methods
 

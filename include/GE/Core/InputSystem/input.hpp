@@ -27,15 +27,69 @@ namespace Engine::Core::InputSystem
         bool 			rightClic_down;
         bool 			doubleLeftClic;	//if interval of 2click is under 0.2s
         bool 			leftClic_down;
+        bool            leftClicPressed;
+
+        int oneLeftClick()
+        {
+            if (leftClic_down && !leftClicPressed)
+            {
+                leftClicPressed = true;
+                return 1;
+            }
+            else if (leftClic_down && leftClicPressed)
+            {
+                leftClicPressed = true;
+                return 2;
+            }
+            else if (!leftClic_down)
+            {
+                leftClicPressed = false;
+                return 0;
+            }
+            else
+            {
+                leftClicPressed = false;
+                return 0;
+            }
+        }
 
     } T_inputMouse;
 
     typedef struct S_inputKeyboard
     {	
+        SDL_Keycode key;
+        SDL_Scancode up = SDL_SCANCODE_UP;
+        SDL_Scancode down = SDL_SCANCODE_DOWN;
+        SDL_Scancode right = SDL_SCANCODE_RIGHT;
+        SDL_Scancode left = SDL_SCANCODE_LEFT;
+        SDL_Scancode jump = SDL_SCANCODE_SPACE;
+
         bool 		isTouch;
         bool 		isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
+        bool        isPressed[SDL_NUM_SCANCODES];
         bool		flagEscIsRelease;
         bool		escIsRelease;
+
+        int onePressed(const SDL_Scancode key)
+        {
+            if (isDown[key] && !isPressed[key])
+            {
+                isPressed[key] = true;
+                return 1;
+            }
+            else if (isDown[key] && isPressed[key])
+            {
+                isPressed[key] = true;
+                return 2;
+            }
+            else if (!isDown[key])
+            {
+                isPressed[key] = false;
+                return 0;
+            }
+            else
+                return 0;
+        }
 
     } T_inputKeyboard;
 
@@ -98,6 +152,13 @@ namespace Engine::Core::InputSystem
             T_inputMouse	mouse;
             T_inputKeyboard	keyboard;
 
+            SDL_Scancode waitForKey();
+
+            void resetKeyDown()
+            {
+                keyboard.isDown[SDL_SCANCODE_RETURN] = false;
+                mouse.leftClic_down = false;
+            }
 
         protected:
 
