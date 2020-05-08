@@ -49,9 +49,9 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadRessources(gameEngine_.ressourceManager_);
     
-    // loadCamera(gameEngine_.ressourceManager_);
+    loadCamera(gameEngine_.ressourceManager_);
 
-    // loadEntity(gameEngine_.ressourceManager_);
+    loadEntity(gameEngine_.ressourceManager_);
     // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
     
     loadUI(gameEngine_.ressourceManager_);
@@ -145,7 +145,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
     ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
-                                {5.f, 0.1f, 5.f}, 
+                                {5.f, 1.f, 5.f}, 
                                 &ressourceManager.get<Shader>("White"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube1"),
@@ -172,6 +172,10 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                           "Player"};
 
     scene_->add<Model>(scene_->getWorld(), player).addComponent<PlayerController>(gameEngine_.inputManager_);
+    scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
+    scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
+    scene_->getGameObject("world/Player").addComponent<SphereCollider>();
+    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(1);
 
     // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
     /*life bar*/
@@ -223,7 +227,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                             200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
-        gameEngine_.gameState = E_GAME_STATE::STARTSAVE;
+        gameEngine_.gameState = E_GAME_STATE::RUNNING;
+        usingMouse = false;
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
