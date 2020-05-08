@@ -137,7 +137,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
 
     GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
 
-    ModelCreateArg player       {{0.f, 0.f, 0.f}, 
+    ModelCreateArg player       {{0.f, 1.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
