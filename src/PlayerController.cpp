@@ -2,9 +2,11 @@
 #include "Game/PlayerController.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 #include <math.h>
 
 using namespace Game;
+using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
@@ -23,19 +25,22 @@ void PlayerController::update()
 {
     move();
 }
-Vec3 coord(float r, float angle)
+Vec3 coord(float r, float angle,const Vec3& pos)
 {
-    Vec3 res{0.f, 0.f, 0.f};
+    Vec3 res{0.f,0.f, 0.f};
     sincosf(angle - M_PI/2, &res.z, &res.x);
     res *= 10;
+    res.y=pos.y;
     return res;
 }
 
 void PlayerController::move()
 {    
+    std::cout << _camera->getPosition() << std::endl;
     //orbit
+    _camera->setTranslation({_camera->getPosition().x, 5.f, _camera->getPosition().z});
     _orbity += (_input.mouse.motion.x * M_PI / 180);
-    _camera->setTranslation(coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition());
+    _camera->setTranslation(coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity,_camera->getPosition()) + gameObject.entity.get()->getPosition());
     _camera->update();
     
     //lookat
@@ -65,7 +70,6 @@ void PlayerController::move()
     }
 
     gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-
 
     _movement = {0.f, 0.f, 0.f};
 }

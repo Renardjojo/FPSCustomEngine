@@ -20,7 +20,7 @@ void PhysicSystem::update() noexcept
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->IsKinematic())
+        if (!object || object->IsKinematic() || object->IsSleeping())
             continue;
 
         if (object->UseGravity())
@@ -62,7 +62,7 @@ void PhysicSystem::update() noexcept
                     }
                     if (collider1->isCollidingWith(*collider2))
                     {
-                        collider1->GetAttachedPhysicalObject()->SetVelocity({0,0,0});
+                       
                     }
                 }
             }

@@ -58,6 +58,8 @@ void PhysicalObject::AddForce(Vec3 force)
     if (_isKinematic)
         return;
 
+    _sleep = false;
+
     if (!freezeTrX)
         velocity.x += force.x; 
     else
@@ -78,6 +80,8 @@ void PhysicalObject::AddForce(float x, float y, float z)
 {
     if (_isKinematic)
         return;
+
+    _sleep = false;
 
     if (!freezeRotX)
         velocity.x += x;

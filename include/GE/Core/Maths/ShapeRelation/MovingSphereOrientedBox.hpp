@@ -87,7 +87,7 @@ namespace Engine::Core::Maths::ShapeRelation
 
         #pragma endregion //!static methods
 
-        #pragma region static methods
+        #pragma region static attribut
 
         //OutCode for detect the position of a point with the capsule
         static const int BOTTOM_LEFT_BACKWARD  = 0;    // 0000
@@ -104,7 +104,7 @@ namespace Engine::Core::Maths::ShapeRelation
         static const int ON_RIGHT_MASK         = 1;    // 0010
         static const int ON_FORWARD_MASK       = 2;    // 0100
 
-        #pragma endregion //!static methods
+        #pragma endregion //!static attribut
     };
 
 } /*namespace Engine::Core::Maths::ShapeRelation*/

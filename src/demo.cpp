@@ -19,6 +19,7 @@
 
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
+#include "Game/EnnemyController.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include "glad/glad.h"
@@ -171,7 +172,8 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                           &ressourceManager.get<Mesh>("Sphere1"),
                           "Player"};
 
-    scene_->add<Model>(scene_->getWorld(), player).addComponent<PlayerController>(gameEngine_.inputManager_);
+    scene_->add<Model>(scene_->getWorld(), player);
+    scene_->getGameObject("world/Player").addComponent<PlayerController>(gameEngine_.inputManager_);
     scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
     scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
     scene_->getGameObject("world/Player").addComponent<SphereCollider>();
