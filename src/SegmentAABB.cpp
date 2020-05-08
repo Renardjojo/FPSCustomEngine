@@ -6,7 +6,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Core::Maths::Shape3D;
 using namespace Engine::Core::Maths::ShapeRelation;
 
-bool SegmentAABB::isSegmentAABBCollided(Segment seg, AABB AABB, Intersection intersection)
+bool SegmentAABB::isSegmentAABBCollided(Segment seg, AABB AABB, Intersection& intersection)
 {
     Vec3 AB = seg.getPt2() - seg.getPt1();
     float tx0, tx1, ty0, ty1, tz0, tz1, tempT;
