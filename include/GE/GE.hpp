@@ -71,7 +71,8 @@ namespace Engine
                                                 Engine::Ressources::Music,
                                                 Engine::Ressources::Font,
                                                 Engine::Ressources::Button,
-                                                Engine::Ressources::TextField>    ressourceManager_;
+                                                Engine::Ressources::TextField,
+                                                Engine::Ressources::Title>    ressourceManager_;
 
             E_GAME_STATE gameState;
 

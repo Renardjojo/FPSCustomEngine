@@ -2,7 +2,6 @@
 #define __UI_HPP__
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include <SDL2/SDL_ttf.h>
 
@@ -23,15 +22,13 @@
 
 namespace Engine::Ressources
 {
-    class Button
+    class Title
     {
     private:
         Font *font;
         Engine::Ressources::Shader* shader;
         SDL_Color color;
-        SDL_Color currentColor;
         GLuint VAO;
-        int buttonState = 0;
 
         float x;
         float y;
@@ -40,6 +37,44 @@ namespace Engine::Ressources
 
     public:        
         GLuint texture;
+        std::string value;
+        std::unique_ptr<Engine::Physics::Transform> transform;
+        E_GAME_STATE whenIsActive;
+        bool isActive;
+
+        Title(Font*, Engine::Ressources::Shader*, float, float, float, float, SDL_Color, const std::string&,  E_GAME_STATE);
+        // Title(const Title &other) = delete;
+        // Title(Title &&other) = delete;
+        virtual ~Title();
+
+        Title() = delete;
+        Title &operator=(Title const &other) = delete;
+        Title &operator=(Title &&other) = delete;
+
+        void draw();
+        void updateTexture();
+
+        Engine::Core::Maths::Vec2 getPos() { return Engine::Core::Maths::Vec2{x, y}; }
+    };
+
+    class Button
+    {
+    private:
+        Font *font;
+        Engine::Ressources::Shader* shader;
+        SDL_Color color;
+        GLuint texture;
+        GLuint VAO;
+
+        float x;
+        float y;
+        float w;
+        float h;
+
+        SDL_Color currentColor;
+        int buttonState = 0;
+
+    public:        
         std::string value;
         std::unique_ptr<Engine::Physics::Transform> transform;
         E_GAME_STATE whenIsActive;
@@ -58,9 +93,10 @@ namespace Engine::Ressources
 
         void draw();
         void updateTexture();
-        bool isButtonPressed(float x, float y, int state);
 
+        int isButtonPressed(float x, float y, int state);
         Engine::Core::Maths::Vec2 getPos() { return Engine::Core::Maths::Vec2{x, y}; }
+
     };
 
     class TextField

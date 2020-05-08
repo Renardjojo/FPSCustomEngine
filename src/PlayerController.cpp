@@ -48,18 +48,18 @@ void PlayerController::move()
     _direction.z=-cosf(_orbity);
 
     //movement
-    if (_input.keyboard.isDown[SDL_SCANCODE_UP])
+    if (_input.keyboard.isDown[_input.keyboard.up])
         _movement -= _direction;
 
-    if (_input.keyboard.isDown[SDL_SCANCODE_DOWN])
+    if (_input.keyboard.isDown[_input.keyboard.down])
         _movement += _direction;
     
-    if (_input.keyboard.isDown[SDL_SCANCODE_LEFT])
+    if (_input.keyboard.isDown[_input.keyboard.left])
     {
         _movement.x -= _direction.z;
         _movement.z += _direction.x;
     }
-    if (_input.keyboard.isDown[SDL_SCANCODE_RIGHT])
+    if (_input.keyboard.isDown[_input.keyboard.right])
     {
         _movement.x += _direction.z;
         _movement.z -= _direction.x;

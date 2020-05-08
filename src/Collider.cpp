@@ -1,5 +1,6 @@
 #include "GE/Physics/Collider.hpp"
-#include "GE/Core/Maths/Collision.hpp"
+#include "GE/Core/Maths/ShapeRelation/SphereOrientedBox.hpp"
+#include "GE/Core/Maths/Shape3D/Sphere.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
 
 #include "GE/Ressources/Component.hpp"
@@ -7,6 +8,9 @@
 using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Maths;
+using namespace Engine::Core::Maths::ShapeRelation;
+using namespace Engine::Core::Maths::Shape3D;
+using namespace Engine::Core::Maths::Shape3D::Linked;
 
 Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)
@@ -54,11 +58,12 @@ SphereCollider::SphereCollider (SphereCollider&& other)
 
 bool SphereCollider::isCollidingWith(Collider& collider)
 {
-    CollisionPoints intersection;
+    Intersection intersection;
 
     OrientedBoxCollider* boxCollider = dynamic_cast<OrientedBoxCollider*>(&collider);
+
     if (boxCollider)
-        return Collision::IsSphereOrientedBoxCollided(sphere_, boxCollider->GetBox(), intersection);
+        return SphereOrientedBox::isSphereOrientedBoxCollided(sphere_.getGlobalSphere(), boxCollider->GetBox(), intersection);
     
     return false;
 }
@@ -67,7 +72,7 @@ bool SphereCollider::isCollidingWith(Collider& collider)
 // {
 //     CollisionPoints intersection;
 
-//     return Collision::IsSphereOrientedBoxCollided(sphere_, collider.GetBox(), intersection);
+//     return Collision::isSphereOrientedBoxCollided(sphere_, collider.GetBox(), intersection);
 
 // }
 
@@ -96,11 +101,11 @@ OrientedBoxCollider::OrientedBoxCollider (OrientedBoxCollider&& other)
 
 bool OrientedBoxCollider::isCollidingWith(Collider& collider)
 {
-    CollisionPoints intersection;
+    Intersection intersection;
 
     SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(&collider);
     if (sphereCollider)
-        return Collision::IsSphereOrientedBoxCollided(sphereCollider->GetSphere(), orientedbox_, intersection);
+        return SphereOrientedBox::isSphereOrientedBoxCollided(sphereCollider->GetSphere().getGlobalSphere(), orientedbox_, intersection);
 
     return false;
 

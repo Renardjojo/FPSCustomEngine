@@ -213,7 +213,9 @@ void Input::pollEventMouse (SDL_Event* event)
 void Input::pollEventKeyboard (SDL_Event* event)
 {
 	if(event == NULL)
+	{
 		return;
+	}
 
 	if (event->type == SDL_KEYDOWN)
 		keyboard.key = event->key.keysym.sym;
@@ -228,4 +230,23 @@ void Input::pollEventKeyboard (SDL_Event* event)
 
 	if(keyboard.isDown[SDL_SCANCODE_ESCAPE])
 		keyboard.flagEscIsRelease	= true;
+}
+
+SDL_Scancode Input::waitForKey()
+{
+	SDL_Event event;
+	while ((!keyboard.isTouch || keyboard.isDown[SDL_SCANCODE_RETURN]))
+	{
+		SDL_PollEvent(&event);
+		if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+		{
+			return SDL_SCANCODE_UNKNOWN;
+		}
+
+		if (event.type == SDL_KEYDOWN)
+		{
+			return event.key.keysym.scancode;
+		}
+	}
+	return SDL_SCANCODE_UNKNOWN;
 }

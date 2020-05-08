@@ -18,6 +18,7 @@ namespace Engine::Core::Systems
 
         static std::vector<Engine::Ressources::Button *> pButtons;
         static std::vector<Engine::Ressources::TextField *> pTextFields;
+        static std::vector<Engine::Ressources::Title *> pTitles;
 
         static Engine::Ressources::TextField* pActiveTextfield;
 
@@ -96,6 +97,23 @@ namespace Engine::Core::Systems
                 if ((*it) == pButton)
                 {
                     pButtons.erase(it);
+                    return;
+                }
+            }
+        }
+
+        static void addTitle(Engine::Ressources::Title *pTitle) noexcept
+        {
+            pTitles.push_back(pTitle);
+        }
+
+        static void removeTitle(Engine::Ressources::Title *pTitle) noexcept
+        {
+            for (std::vector<Engine::Ressources::Title *>::iterator it = pTitles.begin(); it != pTitles.end(); it++)
+            {
+                if ((*it) == pTitle)
+                {
+                    pTitles.erase(it);
                     return;
                 }
             }
