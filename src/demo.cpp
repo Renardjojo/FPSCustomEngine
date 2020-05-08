@@ -386,6 +386,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     for (std::string& saves : gameEngine_.savePaths)
     {
+        if (saves.size() < 23) // TODO: assert
+            return;
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(   shortSaveName,  pfont2, buttonShader,
                                         tempX + i, tempY + j, 
@@ -459,7 +461,9 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::OPTION)
+        else if (gameEngine_.gameState == E_GAME_STATE::OPTION 
+             ||  gameEngine_.gameState == E_GAME_STATE::LOADSAVE 
+             ||  gameEngine_.gameState == E_GAME_STATE::STARTSAVE)
         {
             gameEngine_.gameState = E_GAME_STATE::STARTING;
         }
