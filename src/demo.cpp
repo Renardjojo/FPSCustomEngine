@@ -169,7 +169,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                           {0.f, 0.f, 0.f},
                           {1.0f, 1.0f, 1.0f},
                           &ressourceManager.get<Shader>("White"),
-                          {&ressourceManager.get<Material>("DefaultMaterial")},
+                          {&ressourceManager.get<Material>("BlackMaterial")},
                           &ressourceManager.get<Mesh>("Sphere1"),
                           "Player"};
 
@@ -178,7 +178,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
     scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
     scene_->getGameObject("world/Player").addComponent<SphereCollider>();
-    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.1f);
+    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.5f);
 
     // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
     /*life bar*/
