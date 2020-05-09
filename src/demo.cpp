@@ -197,6 +197,8 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
     lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
+
+    loadSkateBoard(gameEngine_.ressourceManager_);
 }
 
 void Demo::loadUI      (Ressources& ressourceManager)
@@ -371,6 +373,41 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
 
 }
+
+void Demo::loadSkateBoard         (Ressources& ressourceManager)
+{
+    //ressourceManager.add<Shader>("LightAndTexture", "./resources/shader/vTexture2.vs", "./resources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
+    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
+
+    //Load Character
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materials;
+    
+    loadObjWithMTL("./ressources/obj/11703_skateboard_v1_L3.obj", &attrib, &shape, &materials);
+    
+    Mesh& meshMan = ressourceManager.add<Mesh>("SkateBoard", attrib, shape);
+    std::vector<Material*> pMaterial;
+    pMaterial.reserve(materials.size());
+
+    for (size_t i = 0; i < materials.size(); i++)
+    {
+        Material& material = ressourceManager.add<Material>(std::string("SkateBoard") + std::to_string(i), materials[i]);
+        pMaterial.push_back(&material);               
+    }
+
+    ModelCreateArg manArg     { {0.f, -1.f, 0.f},
+                                {-M_PI_2, 0.f, 0.f}, 
+                                {0.05f, 0.05f, 0.05f}, 
+                                &ressourceManager.get<Shader>("TextureOnly"),
+                                pMaterial,
+                                &meshMan, 
+                                "Man",
+                                true};
+
+    scene_.add<Model>(scene_.getGameObject("world/Player"), manArg);
+}
+
 
 void Demo::loadLights      (Ressources& ressourceManager)
 {

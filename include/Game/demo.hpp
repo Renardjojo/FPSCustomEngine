@@ -88,6 +88,8 @@ namespace Game
             void loadGeneralRessource   (Ressources& ressourceManager);
             void loadLights             (Ressources& ressourceManager);
             void loadUI                 (Ressources& ressourceManager);
+
+            void loadSkateBoard         (Ressources& ressourceManager);
             // void loadPlayers            (Ressources& ressourceManager);
             /*void loadSound              (Ressources& ressourceManager);
             void loadSkyBox             (Ressources& ressourceManager);
