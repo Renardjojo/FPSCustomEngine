@@ -71,10 +71,10 @@ void Demo::update     () noexcept
  
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
+        scene_.update();
+
         PhysicSystem::update();
         ScriptSystem::update();
-
-        scene_.update();
     }
 }
 

@@ -15,8 +15,8 @@ using namespace Engine::LowRenderer;
 PlayerController::PlayerController(GameObject &gameObject, const Input &input) : ScriptComponent{gameObject},
                                                                                  _input{input},
                                                                                  _camera{Camera::getCamUse()}
-{
-}
+{}
+
 PlayerController::~PlayerController() {}
 
 void PlayerController::update()
