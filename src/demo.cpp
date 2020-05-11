@@ -108,23 +108,15 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
     static_cast<Camera*>(mainCamera->entity.get())->use();
 
+    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
+    ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY);
+    loadGround(ressourceManager);
+    loadSkyBox(ressourceManager);
 
     MaterialAndTextureCreateArg matDefault;
     matDefault.name_                = "DefaultMaterial";
     matDefault.pathDiffuseTexture   = nullptr;
     matDefault.flipTexture          = false;
-
-    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {5.f, 0.1f, 5.f}, 
-                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY), 
-                                {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
-                                &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
-                                "cube1"};
-
-    scene_.add<Model>(scene_.getWorld(), cube1arg);
-
-    matDefault.name_                = "PinkMaterial";
     matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 1.f, 1.f};
 
     ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
@@ -141,7 +133,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
                                 {0.f, 0.f, 0.f}, 
                                 {0.5f, 0.5f, 0.5f}, 
                                 &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                {&ressourceManager.get<Material>(matDefault.name_)}, 
                                 &ressourceManager.get<Mesh>("sphere1"),
                                 "Player"};
     GameObject& playerGo = scene_.add<Model>(scene_.getWorld(),player);
@@ -194,7 +186,7 @@ void Demo::loadGeneralRessource   (Ressources& ressourceManager)
     sphere.getComponent<PhysicalObject>()->SetMass(10);
     sphere.addComponent<SphereCollider>();
     sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
-    scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    scene_.getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
 
     lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
 
@@ -374,10 +366,57 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
 }
 
+void Demo::loadSkyBox             (Ressources& ressourceManager)
+{
+    MaterialAndTextureCreateArg matSKB;
+    matSKB.name_                = "SkyBox";
+    matSKB.pathDiffuseTexture   = "./ressources/texture/skb.bmp";
+    matSKB.flipTexture          = false;
+    matSKB.filterType           = E_FilterType::LINEAR;
+
+    Material&   materialSKB = ressourceManager.add<Material>("materialSKB", matSKB);
+    Mesh&       SKBMesh     = ressourceManager.add<Mesh>("SKBMesh", "./ressources/obj/skybox.obj");
+    Shader&     skyboxShader= ressourceManager.add<Shader>("skyboxShader", "./ressources/shader/vSkybox.vs", "./ressources/shader/fSkybox.fs", SKYBOX);
+
+    ModelCreateArg skyboxArg    {{0.f, 0.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {10.f, 10.f, 10.f}, 
+                                &skyboxShader,
+                                {&materialSKB}, 
+                                &SKBMesh,
+                                "Skybox",
+                                true, false};
+
+    scene_.add<Model>(scene_.getWorld(), skyboxArg);
+}
+
+void Demo::loadGround             (Ressources& ressourceManager)
+{
+    MaterialAndTextureCreateArg matGround;
+    matGround.name_                = "Ground";
+    matGround.comp_.shininess      = 1.f;
+    matGround.comp_.specular.rgbi  = {1.f, 1.f, 1.f, 0.2f};
+    matGround.pathDiffuseTexture   = "./ressources/texture/ground.jpg";
+    matGround.wrapType             = E_WrapType::MIRRORED_REPEAT;
+
+    Material& materialGround    = ressourceManager.add<Material>("materialGround" ,matGround);
+    //Mesh&     ground            = ressourceManager.add<Mesh>("ground" ,Mesh::createPlane(50));
+
+    ModelCreateArg groundArg    {{0.f, -5.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {50.f, 0.1f, 50.f}, 
+                                &ressourceManager.get<Shader>("TextureOnly"), 
+                                {&materialGround},
+                                &ressourceManager.add<Mesh>("cube1", Mesh::createCube(10)), 
+                                "Ground", 
+                                true, false};
+
+    scene_.add<Model>(scene_.getWorld(), groundArg);
+}
+
 void Demo::loadSkateBoard         (Ressources& ressourceManager)
 {
     //ressourceManager.add<Shader>("LightAndTexture", "./resources/shader/vTexture2.vs", "./resources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
-    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     //Load Character
     Attrib                      attrib;
@@ -407,7 +446,6 @@ void Demo::loadSkateBoard         (Ressources& ressourceManager)
 
     scene_.add<Model>(scene_.getGameObject("world/Player"), manArg);
 }
-
 
 void Demo::loadLights      (Ressources& ressourceManager)
 {

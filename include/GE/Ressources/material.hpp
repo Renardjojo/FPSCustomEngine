@@ -19,7 +19,7 @@ namespace Engine::Ressources
         MaterialComponent   comp_       = { {1.f, 1.f, 1.f, 0.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 1.f};
-        const char*         pathDiffuseTexture ;
+        const char*         pathDiffuseTexture = nullptr;
         E_WrapType          wrapType = E_WrapType::REPEAT;
         E_FilterType        filterType = E_FilterType::LINEAR;
         bool                flipTexture = true;
