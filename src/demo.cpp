@@ -54,9 +54,9 @@ Demo::Demo(Engine::GE& gameEngine)
     loadCamera(gameEngine_.ressourceManager_);
 
     loadEntity(gameEngine_.ressourceManager_);
-    loadSkateBoard(gameEngine_.ressourceManager_);
+    // loadSkateBoard(gameEngine_.ressourceManager_);
     loadGround(gameEngine_.ressourceManager_);
-    loadSkyBox(gameEngine_.ressourceManager_);
+    // loadSkyBox(gameEngine_.ressourceManager_);
     
     loadUI(gameEngine_.ressourceManager_);
 

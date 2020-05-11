@@ -51,13 +51,12 @@ void PhysicSystem::update() noexcept
                         dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox(), 
                         vectSpeed, intersection))
                     {
-                        collider1->gameObject.entity->setTranslation(intersection.intersection1 + (intersection.normalI1 * 0.00001f));
 
                         Vec3 currentVelocity = collider1->GetAttachedPhysicalObject()->GetVelocity();
                         
                         Vec3 newVelocity = collider1->GetBounciness() * -(2 * (currentVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - currentVelocity);
                         
-                        std::cout << "velocity : " << currentVelocity.length() << "    " << newVelocity.length() << "  " << (currentVelocity.length() - newVelocity.length()) << "   " << (gravity * collider1->GetAttachedPhysicalObject()->GetMass() * TimeSystem::getFixedDeltaTime()).length() << std::endl;
+                        collider1->gameObject.entity->setTranslation(intersection.intersection1 + (newVelocity * 0.0001f));
 
                         if (currentVelocity.length() - newVelocity.length() > (gravity * collider1->GetAttachedPhysicalObject()->GetMass() * TimeSystem::getFixedDeltaTime()).length())
                         {
@@ -65,15 +64,14 @@ void PhysicSystem::update() noexcept
                         }
                         else
                         {
-                            currentVelocity.y = 0.f;
-                            collider1->GetAttachedPhysicalObject()->SetVelocity(currentVelocity);
+                            collider1->GetAttachedPhysicalObject()->SetVelocity(newVelocity);
                         }
                         continue;
                     }
                 }
             }
         }
-
+    }
     for (PhysicalObject* object : pPhysicalObjects)
     {
         if (!object || object->IsKinematic() || object->IsSleeping())
@@ -81,7 +79,7 @@ void PhysicSystem::update() noexcept
         
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getFixedDeltaTime());
-    }
+
 
     }
 }
