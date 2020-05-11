@@ -49,6 +49,8 @@ Demo::Demo(Engine::GE& gameEngine)
 
     scene_ = std::make_unique<Scene>();
 
+    // TimeSystem::setTimeScale(0.3f);
+
     loadRessources(gameEngine_.ressourceManager_);
     
     loadCamera(gameEngine_.ressourceManager_);
@@ -90,6 +92,7 @@ void Demo::update     () noexcept
      
         scene_->update();
     }
+
 }
 
 void Demo::display    () const noexcept
@@ -160,38 +163,38 @@ void Demo::loadCamera(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    // ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
-    //                             {0.f, 0.f, 45.f}, 
-    //                             {5.f, 1.f, 5.f}, 
-    //                             &ressourceManager.get<Shader>("White"), 
-    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
-    //                             &ressourceManager.get<Mesh>("Cube1"),
-    //                             "cube1"};
+    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
+                                {0.f, 0.f, 45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube1"),
+                                "cube1"};
 
-    // scene_->add<Model>(scene_->getWorld(), cube1arg);
-    // scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    scene_->add<Model>(scene_->getWorld(), cube1arg);
+    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-    // ModelCreateArg cube2arg     {{-5.f, -8.f, 0.f}, 
-    //                             {0.f, 0.f, -45.f}, 
-    //                             {5.f, 1.f, 5.f}, 
-    //                             &ressourceManager.get<Shader>("White"), 
-    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
-    //                             &ressourceManager.get<Mesh>("Cube1"),
-    //                             "cube2"};
+    ModelCreateArg cube2arg     {{-5.f, -10.f, 0.f}, 
+                                {0.f, 0.f, -45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube1"),
+                                "cube2"};
 
-    // scene_->add<Model>(scene_->getWorld(), cube2arg);
-    // scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+    scene_->add<Model>(scene_->getWorld(), cube2arg);
+    scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
-    // ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
-    //                             {0.f, 0.f, 45.f}, 
-    //                             {5.f, 1.f, 5.f}, 
-    //                             &ressourceManager.get<Shader>("White"), 
-    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
-    //                             &ressourceManager.get<Mesh>("Cube1"),
-    //                             "cube3"};
+    ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
+                                {0.f, 0.f, 45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("White"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube1"),
+                                "cube3"};
 
-    // scene_->add<Model>(scene_->getWorld(), cube3arg);
-    // scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+    scene_->add<Model>(scene_->getWorld(), cube3arg);
+    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
     ModelCreateArg player{{0.f, 0.f, 0.f},
                           {0.f, 0.f, 0.f},
@@ -206,7 +209,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
     scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
     scene_->getGameObject("world/Player").addComponent<SphereCollider>();
-    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.5f);
+    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
 
 }
 
