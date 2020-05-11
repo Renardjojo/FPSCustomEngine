@@ -145,25 +145,59 @@ void Demo::loadCamera(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
+    // ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
+    //                             {0.f, 0.f, 45.f}, 
+    //                             {5.f, 1.f, 5.f}, 
+    //                             &ressourceManager.get<Shader>("White"), 
+    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
+    //                             &ressourceManager.get<Mesh>("Cube1"),
+    //                             "cube1"};
+
+    // scene_->add<Model>(scene_->getWorld(), cube1arg);
+    // scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+
+    // ModelCreateArg cube2arg     {{-5.f, -8.f, 0.f}, 
+    //                             {0.f, 0.f, -45.f}, 
+    //                             {5.f, 1.f, 5.f}, 
+    //                             &ressourceManager.get<Shader>("White"), 
+    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
+    //                             &ressourceManager.get<Mesh>("Cube1"),
+    //                             "cube2"};
+
+    // scene_->add<Model>(scene_->getWorld(), cube2arg);
+    // scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+
+    // ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
+    //                             {0.f, 0.f, 45.f}, 
+    //                             {5.f, 1.f, 5.f}, 
+    //                             &ressourceManager.get<Shader>("White"), 
+    //                             {&ressourceManager.get<Material>("DefaultMaterial")}, 
+    //                             &ressourceManager.get<Mesh>("Cube1"),
+    //                             "cube3"};
+
+    // scene_->add<Model>(scene_->getWorld(), cube3arg);
+    // scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+
+    ModelCreateArg cube4arg     {{-5.f, -18.f, 0.f}, 
                                 {0.f, 0.f, 0.f}, 
-                                {5.f, 1.f, 5.f}, 
+                                {15.f, 1.f, 15.f}, 
                                 &ressourceManager.get<Shader>("White"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube1"),
-                                "cube1"};
+                                "cube4"};
 
-    scene_->add<Model>(scene_->getWorld(), cube1arg);
+    scene_->add<Model>(scene_->getWorld(), cube4arg);
+    scene_->getGameObject("world/cube4").addComponent<OrientedBoxCollider>();
 
-    ModelCreateArg sphere1arg{{0.f, 5.f, 0.f},
-                              {0.f, 0.f, 0.f},
-                              {1.0f, 1.0f, 1.0f},
-                              &ressourceManager.get<Shader>("White"),
-                              {&ressourceManager.get<Material>("PinkMaterial")},
-                              &ressourceManager.get<Mesh>("Sphere1"),
-                              "sphere1"};
+    // ModelCreateArg sphere1arg{{0.f, 5.f, 0.f},
+    //                           {0.f, 0.f, 0.f},
+    //                           {1.0f, 1.0f, 1.0f},
+    //                           &ressourceManager.get<Shader>("White"),
+    //                           {&ressourceManager.get<Material>("PinkMaterial")},
+    //                           &ressourceManager.get<Mesh>("Sphere1"),
+    //                           "sphere1"};
 
-    GameObject &sphere = scene_->add<Model>(scene_->getWorld(), sphere1arg);
+    // GameObject &sphere = scene_->add<Model>(scene_->getWorld(), sphere1arg);
 
     ModelCreateArg player{{0.f, 0.f, 0.f},
                           {0.f, 0.f, 0.f},
@@ -182,9 +216,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     // playerGameObject.addComponent<PlayerController>(gameEngine_.inputManager_);
     /*life bar*/
-    GameObject &lifeBar = scene_->add<Engine::LowRenderer::Entity>(sphere);
-    lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
-    lifeBar.entity->setName("lifeBar");
+    // GameObject &lifeBar = scene_->add<Engine::LowRenderer::Entity>(sphere);
+    // lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
+    // lifeBar.entity->setName("lifeBar");
 
     // ModelCreateArg lifeBarBackGroundArg{{0.f, 0.f, 0.f},
     //                                     {0.f, 0.f, 0.f},
@@ -195,22 +229,21 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     //                                     "lifeBarBG"};
     // scene_->add<BillBoard>(lifeBar, lifeBarBackGroundArg);
 
-    ModelCreateArg lifeBarInternalArg{{0.f, 0.f, 0.1f},
-                                      {0.f, 0.f, 0.f},
-                                      {1.f, 0.001f, 0.1f},
-                                      &ressourceManager.get<Shader>("White"),
-                                      {&ressourceManager.get<Material>("GreenMaterial")},
-                                      &ressourceManager.get<Mesh>("Plane1"),
-                                      "lifeBarBGIndicator"};
-    GameObject& lifeBarINternal = scene_->add<BillBoard>(lifeBar, lifeBarInternalArg);
+    // ModelCreateArg lifeBarInternalArg{{0.f, 0.f, 0.1f},
+    //                                   {0.f, 0.f, 0.f},
+    //                                   {1.f, 0.001f, 0.1f},
+    //                                   &ressourceManager.get<Shader>("White"),
+    //                                   {&ressourceManager.get<Material>("GreenMaterial")},
+    //                                   &ressourceManager.get<Mesh>("Plane1"),
+    //                                   "lifeBarBGIndicator"};
+    // GameObject& lifeBarINternal = scene_->add<BillBoard>(lifeBar, lifeBarInternalArg);
 
-    sphere.addComponent<PhysicalObject>();
-    sphere.getComponent<PhysicalObject>()->SetMass(10);
-    sphere.addComponent<SphereCollider>();
-    sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
-    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    // sphere.addComponent<PhysicalObject>();
+    // sphere.getComponent<PhysicalObject>()->SetMass(10);
+    // sphere.addComponent<SphereCollider>();
+    // sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
 
-    lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
+    // lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)

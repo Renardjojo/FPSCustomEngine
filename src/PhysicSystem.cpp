@@ -22,14 +22,10 @@ void PhysicSystem::update() noexcept
     {
         if (!object || object->IsKinematic() || object->IsSleeping())
             continue;
-
-        if (object->UseGravity())
-            object->AddForce(gravity * object->GetMass() * TimeSystem::getDeltaTime());
         
-        /*update movement induct by the differente force on the object*/
-        object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getDeltaTime());
+        if (object->UseGravity())
+            object->AddForce(gravity * object->GetMass() * 0.01f);
     }
-
     for (Collider* collider1 : pColliders)
     {
 
@@ -50,22 +46,41 @@ void PhysicSystem::update() noexcept
                 if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
                 {
                     Intersection intersection;
+                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->GetVelocity() / collider1->GetAttachedPhysicalObject()->GetMass()) * 0.01f;
 
-                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->GetVelocity() / collider1->GetAttachedPhysicalObject()->GetMass()) * TimeSystem::getDeltaTime();
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox(), 
                         vectSpeed, intersection))
                     {
-                        collider1->gameObject.entity->setTranslation(intersection.intersection1 + Vec3{0.f,0.001f, 0.f});
-                        collider1->GetAttachedPhysicalObject()->SetVelocity(-collider1->GetAttachedPhysicalObject()->GetVelocity() * collider1->GetBounciness());
+                        collider1->gameObject.entity->setTranslation(intersection.intersection1 + (intersection.normalI1 * 0.00001f));
+
+                        Vec3 newVelocity = collider1->GetBounciness() * -(2 * (collider1->GetAttachedPhysicalObject()->GetVelocity().dotProduct(intersection.normalI1)) * intersection.normalI1 - collider1->GetAttachedPhysicalObject()->GetVelocity());
+                        Vec3 currentVelocity = collider1->GetAttachedPhysicalObject()->GetVelocity();
+                        std::cout << "velocity : " << currentVelocity.length() << "    " << newVelocity.length() << "  " << (currentVelocity.length() - newVelocity.length()) << "   " <<  std::endl;
+
+                        if (currentVelocity.length() - newVelocity.length() > (gravity * collider1->GetAttachedPhysicalObject()->GetMass() * 0.01f).length())
+                        {
+                            collider1->GetAttachedPhysicalObject()->SetVelocity(newVelocity);
+                        }
+                        else
+                        {
+                            currentVelocity.y = 0.f;
+                            collider1->GetAttachedPhysicalObject()->SetVelocity(currentVelocity);
+                        }
                         continue;
                     }
-                    // if (collider1->isCollidingWith(*collider2))
-                    // {
-                        
-                    // }
                 }
             }
         }
+
+    for (PhysicalObject* object : pPhysicalObjects)
+    {
+        if (!object || object->IsKinematic() || object->IsSleeping())
+            continue;
+        
+        /*update movement induct by the differente force on the object*/
+        object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * 0.01f);
+    }
+
     }
 }
