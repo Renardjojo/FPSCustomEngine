@@ -2,7 +2,9 @@
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/Rendering/Renderer/rendererSDLOpGl33.hpp"
 #include "Game/define.h"
+#include "save/saves.hpp"
 
+using namespace Ressoures::Save;
 
 using namespace Engine;
 using namespace Engine::Core::Debug;
@@ -28,6 +30,8 @@ GE::GE ()
     srand(time(NULL));
     
     gameState = E_GAME_STATE::STARTING;
+
+    initSavePaths(savePaths, "./ressources/saves/LevelPaths");
 }
 
 GE::~GE ()

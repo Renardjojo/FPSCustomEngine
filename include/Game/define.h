@@ -18,6 +18,8 @@ namespace Engine
         RUNNING,
         PAUSE,
         OPTION,
+        STARTSAVE,
+        LOADSAVE,
         EXIT
     };
 

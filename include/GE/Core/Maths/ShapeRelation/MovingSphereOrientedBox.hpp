@@ -44,9 +44,9 @@ namespace Engine::Core::Maths::ShapeRelation
 
         static void applyVeronoiRegionCorrection(const Shape3D::OrientedBox& box, Intersection& intersection, const Shape3D::Segment& seg, float sphereRadius);
 
-        static void applyVeronoiRegionCorrectionWithOutCode(const Shape3D::OrientedBox& box, Intersection& intersection, const Shape3D::Segment& seg, float sphereRadius, int topOutCode, int rightOutCode, int forwardOutCode, bool checkFirstIntersection);
+        static bool applyVeronoiRegionCorrectionWithOutCode(const Shape3D::OrientedBox& box, Intersection& intersection, const Shape3D::Segment& seg, float sphereRadius, int topOutCode, int rightOutCode, int forwardOutCode, bool checkFirstIntersection);
 
-        static void applyCapsuleCorrection(const Shape3D::Segment& seg, const Shape3D::Capsule& _capsule, Intersection& intersection, bool checkFirstIntersection);
+        static bool applyCapsuleCorrection(const Shape3D::Segment& seg, const Shape3D::Capsule& _capsule, Intersection& intersection, bool checkFirstIntersection);
 
         /*Sub component of minkowski sum*/
         static Shape3D::Capsule getTopLeftVeronoiCapsule(const Shape3D::OrientedBox& box, float sphereRadius);

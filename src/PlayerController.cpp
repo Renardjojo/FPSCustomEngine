@@ -2,9 +2,11 @@
 #include "Game/PlayerController.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 #include <math.h>
 
 using namespace Game;
+using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
@@ -68,7 +70,6 @@ void PlayerController::move()
 
     gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
     gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-
 
     _movement = {0.f, 0.f, 0.f};
 }

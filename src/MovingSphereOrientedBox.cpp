@@ -101,76 +101,94 @@ void MovingSphereOrientedBox::applyVeronoiRegionCorrection(const OrientedBox& bo
             applyVeronoiRegionCorrectionWithOutCode(box, intersection, seg, sphereRadius, topVeronoiOutCodePt2, rightVeronoiOutCodePt2, forwardVeronoiOutCodePt2, false);
             applyVeronoiRegionCorrectionWithOutCode(box, intersection, seg, sphereRadius, topVeronoiOutCodePt1, rightVeronoiOutCodePt1, forwardVeronoiOutCodePt1, true);
         }
-    }        
+    } 
+    else if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
+    {
+        int topVeronoiOutCodeSegPt1 = getTopVeronoiFace(box, sphereRadius).isPointInsideQuadZoneOutCode(seg.getPt1());
+        int rightVeronoiOutCodeSegPt1 = getRightVeronoiFace(box, sphereRadius).isPointInsideQuadZoneOutCode(seg.getPt1());
+        int forwardVeronoiOutCodeSegPt1 = getFowardVeronoiFace(box, sphereRadius).isPointInsideQuadZoneOutCode(seg.getPt1());
+
+        if (!(topVeronoiOutCodeSegPt1 == QUAD_OUTCODE_INSIDE || rightVeronoiOutCodeSegPt1 == QUAD_OUTCODE_INSIDE || forwardVeronoiOutCodeSegPt1 == QUAD_OUTCODE_INSIDE))
+        {
+            if (applyVeronoiRegionCorrectionWithOutCode(box, intersection, seg, sphereRadius, topVeronoiOutCodeSegPt1, rightVeronoiOutCodeSegPt1, forwardVeronoiOutCodeSegPt1, true))
+            {
+                intersection.intersectionType = EIntersectionType::OneIntersectiont;
+            }
+            else
+            {
+                intersection.intersectionType = EIntersectionType::NoIntersection;
+            }
+        }
+    }     
 }
 
-void MovingSphereOrientedBox::applyVeronoiRegionCorrectionWithOutCode(const OrientedBox& box, Intersection& intersection, const Segment& seg, float sphereRadius, int topOutCode, int rightOutCode, int forwardOutCode, bool checkFirstIntersection)
+bool MovingSphereOrientedBox::applyVeronoiRegionCorrectionWithOutCode(const OrientedBox& box, Intersection& intersection, const Segment& seg, float sphereRadius, int topOutCode, int rightOutCode, int forwardOutCode, bool checkFirstIntersection)
 {
     if (topOutCode == QUAD_OUTCODE_INSIDE || rightOutCode == QUAD_OUTCODE_INSIDE || forwardOutCode == QUAD_OUTCODE_INSIDE)
     {
-        return;
+        return true;
     }
 
     if ((forwardOutCode & QUAD_OUTCODE_TOP) == QUAD_OUTCODE_TOP)
     {
         if ((topOutCode & QUAD_OUTCODE_TOP) == QUAD_OUTCODE_TOP)
         {
-            applyCapsuleCorrection(seg, getTopForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getTopForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & QUAD_OUTCODE_BOTTOM) == QUAD_OUTCODE_BOTTOM)
         {
-            applyCapsuleCorrection(seg, getTopBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getTopBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & QUAD_OUTCODE_LEFT) == QUAD_OUTCODE_LEFT)
         {
-            applyCapsuleCorrection(seg, getTopLeftVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getTopLeftVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else
-        {
-            applyCapsuleCorrection(seg, getTopRightVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+        {               
+            return applyCapsuleCorrection(seg, getTopRightVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
     }
     else if ((forwardOutCode& QUAD_OUTCODE_BOTTOM) == QUAD_OUTCODE_BOTTOM)
     {
         if ((topOutCode & QUAD_OUTCODE_TOP) == QUAD_OUTCODE_TOP)
         {
-            applyCapsuleCorrection(seg, getBottomForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getBottomForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & QUAD_OUTCODE_BOTTOM) == QUAD_OUTCODE_BOTTOM)
         {
-            applyCapsuleCorrection(seg, getBottomBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getBottomBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & QUAD_OUTCODE_LEFT) == QUAD_OUTCODE_LEFT)
         {
-            applyCapsuleCorrection(seg, getBottomLeftVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getBottomLeftVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else
         {
-            applyCapsuleCorrection(seg, getBottomRightVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getBottomRightVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
     }
     else /*On the center*/
     {
         if ((topOutCode & (QUAD_OUTCODE_TOP | QUAD_OUTCODE_LEFT)) == QUAD_OUTCODE_TOP + QUAD_OUTCODE_LEFT)
         {
-            applyCapsuleCorrection(seg, getLeftForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getLeftForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & (QUAD_OUTCODE_TOP | QUAD_OUTCODE_RIGHT)) == QUAD_OUTCODE_TOP + QUAD_OUTCODE_RIGHT)
         {
-            applyCapsuleCorrection(seg, getRightForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getRightForwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else if ((topOutCode & (QUAD_OUTCODE_BOTTOM | QUAD_OUTCODE_LEFT)) == QUAD_OUTCODE_BOTTOM + QUAD_OUTCODE_LEFT)
         {
-            applyCapsuleCorrection(seg, getLeftBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getLeftBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
         else
         {
-            applyCapsuleCorrection(seg, getRightBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
+            return applyCapsuleCorrection(seg, getRightBackwardVeronoiCapsule(box, sphereRadius), intersection, checkFirstIntersection);
         }
     }
 }
 
-void MovingSphereOrientedBox::applyCapsuleCorrection(const Segment& seg, const Capsule& _capsule, Intersection& intersection, bool checkFirstIntersection)
+bool MovingSphereOrientedBox::applyCapsuleCorrection(const Segment& seg, const Capsule& _capsule, Intersection& intersection, bool checkFirstIntersection)
 {
     Intersection shapeIntersection;
     if (SegmentCapsule::isSegmentCapsuleCollided(seg, _capsule, shapeIntersection))
@@ -185,6 +203,7 @@ void MovingSphereOrientedBox::applyCapsuleCorrection(const Segment& seg, const C
             intersection.intersection2 = shapeIntersection.intersection2;
             intersection.normalI2 = shapeIntersection.normalI2;
         }
+        return true;
     }
     else
     {
@@ -196,6 +215,7 @@ void MovingSphereOrientedBox::applyCapsuleCorrection(const Segment& seg, const C
         {
             intersection.removeSecondIntersection();
         }
+    return false;
     }
 }
 
@@ -209,6 +229,7 @@ Capsule MovingSphereOrientedBox::getTopLeftVeronoiCapsule(const OrientedBox& box
 Capsule MovingSphereOrientedBox::getTopRightVeronoiCapsule(const OrientedBox& box, float sphereRadius)
 {
     Vec3 capsuleCenter = box.getReferential().origin + box.getReferential().unitI * box.getExtI() + box.getReferential().unitJ * box.getExtJ();
+        std::cout << capsuleCenter<< "  "   << box.getReferential().origin << std::endl;  
     return Capsule{capsuleCenter, box.getReferential().unitK, box.getExtK()* 2.f, sphereRadius};
 }
 
