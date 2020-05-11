@@ -15,8 +15,8 @@ using namespace Engine::LowRenderer;
 PlayerController::PlayerController(GameObject &gameObject, const Input &input) : ScriptComponent{gameObject},
                                                                                  _input{input},
                                                                                  _camera{Camera::getCamUse()}
-{
-}
+{}
+
 PlayerController::~PlayerController() {}
 
 void PlayerController::update()
@@ -34,7 +34,7 @@ Vec3 coord(float r, float angle)
 void PlayerController::move()
 {    
     //orbit
-    _orbity += (_input.mouse.motion.x * M_PI / 180);
+    _orbity += (_input.mouse.motion.x * M_PI / 180.f);
     Vec3 coordinates =coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
     coordinates.y+=_cameraYoffset;
     _camera->setTranslation(coordinates);
@@ -66,6 +66,7 @@ void PlayerController::move()
         _movement.z -= _direction.x;
     }
 
+    gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
     gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
 
 

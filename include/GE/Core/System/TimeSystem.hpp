@@ -5,7 +5,8 @@
 #ifndef _GE_TIME_MANAGER_H
 #define _GE_TIME_MANAGER_H
 
-#include <algorithm>
+#include <functional>
+#include "GE/Core/Debug/log.hpp"
 
 namespace Engine::Core::Time
 {
@@ -19,11 +20,14 @@ namespace Engine::Core::Time
 
 		static unsigned int _frame_acc;
 
-		static float _FPSmax;
-		static float  _sample;
-		static float _deltaTime;
-		static float _unscaledDeltaTime;
-		static float _timeScale;
+		static double _FPSmax;
+		static double  _sample;
+		static double _deltaTime;
+		static double _unscaledDeltaTime;
+		static double _timeScale;
+		static double _fixedDetlaTime;
+		static double _fixedUnscaledDetlaTime;
+		static bool  _logFPS;
 
 	public:
 		TimeSystem() = delete;
@@ -31,12 +35,40 @@ namespace Engine::Core::Time
 		TimeSystem &operator=(TimeSystem const &) = delete;
 		TimeSystem &operator=(TimeSystem &&) = delete;
 
-		static void update();
+		static void update(); //Only update the time
 
-		static float getDeltaTime() { return _deltaTime; }
-		static float getUnscaledDetlaTime() { return _unscaledDeltaTime; }
-		static float getTimeScale() { return _timeScale; }
-		static float setTimeScale(float timeScale) { return _timeScale = timeScale; }
+		/**
+		 * @brief Update the time, update system and renderSystem. The update function will call with accumulator to be call a fixed time by second
+		 * 
+		 * @param fixedUpdateFunction : lambda that contain all fixed update function (that use fixed deltaTime)
+		 * @param updateFunction : lambda that contain all update function (physic update, scene, update...)
+		 * @param renderFunction : lambda that contain all render function (clear screen, display elements, display screen...)
+		 */
+		static void update(std::function<void()> fixedUpdateFunction, std::function<void()> updateFunction, std::function<void()> renderFunction);
+
+		static double getFixedDeltaTime() { return _fixedDetlaTime; }
+
+		static double getFixedUnscaledDeltaTime() { return _fixedUnscaledDetlaTime; }
+		static void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime)
+		{ 
+			if (newFixedUnscaledDetlaTime > 1.)
+				Engine::Core::Debug::SLog::logWarning("New fixed unscaled detla time > 1.");
+
+			_fixedUnscaledDetlaTime = newFixedUnscaledDetlaTime;
+		}
+
+		static bool getLogFPS() { return _logFPS; }
+		static void setLogFPS(bool newLogFPSFlag) { _logFPS = newLogFPSFlag; }
+
+		static double getDeltaTime() { return _deltaTime; }
+		static double getUnscaledDetlaTime() { return _unscaledDeltaTime; }
+
+		static double getTimeScale() { return _timeScale; }
+		static void setTimeScale(double newtimeScale)
+		{ 
+			_timeScale = newtimeScale;
+			_fixedDetlaTime = _fixedUnscaledDetlaTime * _timeScale;
+		}
 	};
 
 } //namespace Engine::Core::Time
