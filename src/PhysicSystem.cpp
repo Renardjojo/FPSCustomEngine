@@ -18,8 +18,6 @@ Engine::Core::Maths::Vec3       PhysicSystem::gravity = {0,-9.81f,0};
 
 void PhysicSystem::update() noexcept
 {
-        std::cout << TimeSystem::getFixedDeltaTime() << std::endl;
-
     for (PhysicalObject* object : pPhysicalObjects)
     {
         if (!object || object->IsKinematic() || object->IsSleeping())
@@ -30,7 +28,6 @@ void PhysicSystem::update() noexcept
     }
     for (Collider* collider1 : pColliders)
     {
-
         // if (collider1->GetAttachedPhysicalObject())
         // {
         //     if (collider1->GetAttachedPhysicalObject()->IsKinematic())
@@ -47,8 +44,9 @@ void PhysicSystem::update() noexcept
                 if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
                 {
                     Intersection intersection;
-                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->GetVelocity() / collider1->GetAttachedPhysicalObject()->GetMass()) * TimeSystem::getFixedDeltaTime();
+                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->GetVelocity() / collider1->GetAttachedPhysicalObject()->GetMass()) * TimeSystem::getFixedUnscaledDeltaTime();
 
+                    //std::cout << dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere().getCenter()<< std::endl;
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox(), 
                         vectSpeed, intersection))
@@ -76,7 +74,5 @@ void PhysicSystem::update() noexcept
         
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getFixedDeltaTime());
-
-
     }
 }

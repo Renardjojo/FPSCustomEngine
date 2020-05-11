@@ -163,7 +163,7 @@ void Demo::loadCamera(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
+    ModelCreateArg cube1arg     {{-0.7f, -5.f, 0.f}, 
                                 {0.f, 0.f, 45.f}, 
                                 {5.f, 1.f, 5.f}, 
                                 &ressourceManager.get<Shader>("White"), 
@@ -576,6 +576,15 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
         SDL_ShowCursor(true);
         SDL_SetRelativeMouseMode(SDL_FALSE);
     }
+
+    // if (input.keyboard.isDown[SDL_SCANCODE_SPACE])
+    // {
+    //     TimeSystem::setTimeScale(0.f);
+    // }
+    // else
+    // {
+    //     TimeSystem::setTimeScale(0.5f);
+    // }
 
     // static int exFrameWheelVal = input.mouse.wheel_scrolling;
 
