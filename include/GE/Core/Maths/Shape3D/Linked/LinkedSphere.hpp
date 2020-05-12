@@ -24,12 +24,12 @@ namespace Engine::Core::Maths::Shape3D::Linked
         const Vec3&     getLocalCenter()    const noexcept              { return center_;}
         // set local
 
-        float           getRadius        ()             const noexcept override  { return transform_.getScale().x + radius_;}
+        float           getRadius        ()             const noexcept override  { return transform_.getScale().x / 2.f + radius_;}
         const float&    getLocalRadius   (float radius) const noexcept           { return radius_;}
 
         Sphere getGlobalSphere()//return the global sphere
         {
-            return Sphere{transform_.getScale().x + radius_, transform_.getPosition() + center_};
+            return Sphere{transform_.getScale().x / 2.f + radius_, transform_.getPosition() + center_};
         }
 
         protected :

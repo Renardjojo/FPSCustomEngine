@@ -70,7 +70,7 @@ namespace Engine::Core::Maths::ShapeRelation
                 intersection1 = intersection2;
                 normalI1 = normalI2;
             }
-            else if (intersectionType == EIntersectionType::OneIntersectiont)
+            else
             {
                 intersectionType = EIntersectionType::NoIntersection;
             }

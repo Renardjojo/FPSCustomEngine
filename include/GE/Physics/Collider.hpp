@@ -58,9 +58,9 @@ public:
     
     Engine::Core::Maths::Shape3D::Linked::LinkedSphere& GetSphere() { return sphere_; }
 
+    Engine::Core::Maths::Shape3D::Linked::LinkedSphere sphere_;
 private:
 
-    Engine::Core::Maths::Shape3D::Linked::LinkedSphere sphere_;
 
 };
 
@@ -81,9 +81,9 @@ public:
 
     Engine::Core::Maths::Shape3D::Linked::LinkedOrientedBox& GetBox() { return orientedbox_; }
 
+    Engine::Core::Maths::Shape3D::Linked::LinkedOrientedBox orientedbox_;
 private:
 
-    Engine::Core::Maths::Shape3D::Linked::LinkedOrientedBox orientedbox_;
 
 };
 

@@ -34,6 +34,5 @@ bool SegmentOrientedBox::isSegmentOrientedBoxCollided(const Segment& seg, const 
         return true;
     }
 
-    intersection.intersectionType = EIntersectionType::NoIntersection;
-    return false;
+    return intersection.intersectionType != EIntersectionType::NoIntersection;
 }

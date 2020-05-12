@@ -5,7 +5,6 @@
 
 #include <SDL2/SDL_ttf.h>
 
-#include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/shader.hpp"
 #include "GE/Ressources/texture.hpp"
 #include "GE/Ressources/text.hpp"

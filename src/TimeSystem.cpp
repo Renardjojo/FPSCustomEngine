@@ -69,12 +69,12 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 		unFixedUpdateFrameCount = 0;
 	}
 
-    while (_time_acc >= _fixedDetlaTime )
+    while (_time_acc >= _fixedUnscaledDetlaTime )
     {
 		fixedUpdateFrameCount++;
 
         fixedUpdateFunction ();
-        _time_acc -= _fixedDetlaTime;
+        _time_acc -= _fixedUnscaledDetlaTime;
     }
 
 	unFixedUpdateFrameCount++;

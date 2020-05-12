@@ -24,9 +24,9 @@ namespace Engine::Core::Maths::Shape3D::Linked
         Referential       getReferential()     const noexcept final       
         { 
             return Referential {referential_.origin + transform_.getPosition(),
-                                (referential_.unitI + Mat3(transform_.getModelMatrix()).getVectorRight()).normalize(),
-                                (referential_.unitJ + Mat3(transform_.getModelMatrix()).getVectorUp()).normalize(),
-                                (referential_.unitK + Mat3(transform_.getModelMatrix()).getVectorForward()).normalize()};
+                                (Mat3(transform_.getModelMatrix()).getVectorRight()).normalize(),
+                                (Mat3(transform_.getModelMatrix()).getVectorUp()).normalize(),
+                                (Mat3(transform_.getModelMatrix()).getVectorForward()).normalize()};
         }
         
         float                   getExtI()    const noexcept final       { return iI_ + transform_.getScale().x / 2.f;}
