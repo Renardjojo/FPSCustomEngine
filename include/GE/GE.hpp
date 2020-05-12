@@ -62,18 +62,11 @@ namespace Engine
             std::unique_ptr<Engine::Core::Renderer::IRenderer>  ren_;
             Engine::Core::InputSystem::Input                    inputManager_;
 
-            Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, 
-                                                Engine::Ressources::Shader, 
-                                                Engine::Ressources::Material, 
-                                                Engine::Ressources::Text,
-                                                Engine::Ressources::Texture,    
-                                                Engine::Ressources::Sample, 
-                                                Engine::Ressources::Music,
-                                                Engine::Ressources::Font,
-                                                Engine::Ressources::Button,
-                                                Engine::Ressources::TextField>    ressourceManager_;
+            Engine::Ressources::t_RessourcesManager ressourceManager_;
 
             E_GAME_STATE gameState;
+
+            std::vector<std::string> savePaths;
 
             #pragma endregion //!attribut
 

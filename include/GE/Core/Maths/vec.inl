@@ -23,7 +23,11 @@ float Vec2::dotProduct (const Vec2& other) const
 inline
 float Vec2::length () const
 {
+#if __cplusplus >= 201402L
+	return std::hypotf(x, y);
+#else
 	return sqrt(x * x + y * y);
+#endif
 }
 
 inline
@@ -357,7 +361,12 @@ float Vec3::dotProduct (const Vec3& other) const
 inline
 float Vec3::length () const
 {
+#if __cplusplus >= 201703L
+	return std::hypot(x, y, z);
+#else
 	return sqrt(x * x + y * y + z * z);
+#endif
+
 }
 
 inline
@@ -646,7 +655,11 @@ float Vec4::length () const
 	float yHomo = y / w;
 	float zHomo = z / w;
 
+#if __cplusplus >= 201703L
+	return std::hypot(xHomo, yHomo, zHomo);
+#else
 	return sqrt(xHomo*xHomo + yHomo*yHomo + zHomo*zHomo);
+#endif
 }
 
 inline

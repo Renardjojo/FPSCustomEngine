@@ -16,6 +16,7 @@ class PlayerController : public Engine::Core::Component::ScriptComponent
 private:
     float _playerSpeed{10.f};
     float _cameraSpeed{10.f};
+    float _cameraYoffset{5.f};
     float _orbity{0.f};
     
     const Engine::Core::InputSystem::Input& _input;

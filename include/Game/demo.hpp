@@ -24,18 +24,6 @@
 
 namespace Game
 {
-
-    typedef Engine::Ressources::RessourcesManager<  Engine::Ressources::Mesh, 
-                                                    Engine::Ressources::Shader, 
-                                                    Engine::Ressources::Material,
-                                                    Engine::Ressources::Text,
-                                                    Engine::Ressources::Texture,   
-                                                    Engine::Ressources::Sample, 
-                                                    Engine::Ressources::Music, 
-                                                    Engine::Ressources::Font, 
-                                                    Engine::Ressources::Button, 
-                                                    Engine::Ressources::TextField> Ressources;
-
     class Demo
     {
         public:
@@ -63,7 +51,7 @@ namespace Game
             #pragma region attribut
 
             Engine::GE& gameEngine_;
-            Engine::Ressources::Scene scene_;
+            std::unique_ptr<Engine::Ressources::Scene> scene_;
 
             bool flagleftClicIsDown;
             bool flagF1IsDown;
@@ -74,6 +62,8 @@ namespace Game
             Engine::Ressources::GameObject* player1;
             Engine::Ressources::GameObject* player2;*/
 
+            float testLifePLayer = 100.f;
+
             Engine::Core::Maths::Vec3 dirCamera;
             Engine::Ressources::GameObject* mainCamera;
 
@@ -82,18 +72,14 @@ namespace Game
 
             #pragma region methods
 
-            void loadGeneralRessource   (Ressources& ressourceManager);
-            void loadLights             (Ressources& ressourceManager);
-            void loadUI                 (Ressources& ressourceManager);
-            // void loadPlayers            (Ressources& ressourceManager);
-            /*void loadSound              (Ressources& ressourceManager);
-            void loadSkyBox             (Ressources& ressourceManager);
-            void loadGround             (Ressources& ressourceManager);
-            void loadMultipleRock       (Ressources& ressourceManager);
-            void loadMultipleCrash      (Ressources& ressourceManager);
-            void loadTowerGuard         (Ressources& ressourceManager);
-            void loadTree               (Ressources& ressourceManager);
-            void loadCloud              (Ressources& ressourceManager);*/
+            void loadRessources         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadCamera             (Engine::Ressources::t_RessourcesManager& ressourceManager);
 
             void updateControl          (Engine::Core::InputSystem::Input& input);
 

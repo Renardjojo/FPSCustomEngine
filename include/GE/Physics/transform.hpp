@@ -100,7 +100,7 @@ namespace Engine::Physics
 
             virtual void scale (Engine::Core::Maths::Vec3 scale)
             {
-                rotation_ += scale;
+                scale_ += scale;
                 isDirty_ = true;
             }
 
@@ -125,7 +125,7 @@ namespace Engine::Physics
 
             virtual void setScale (Engine::Core::Maths::Vec3 scale)
             {
-                rotation_ = scale;
+                scale_ = scale;
                 isDirty_ = true;
             }
 

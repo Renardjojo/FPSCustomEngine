@@ -10,6 +10,7 @@ using namespace Engine::Core::Debug;
 
 std::vector<Button *> UISystem::pButtons;
 std::vector<TextField *> UISystem::pTextFields;
+std::vector<Title *> UISystem::pTitles;
 TextField * UISystem::pActiveTextfield;
 Button * UISystem::pOverredButton;
 Engine::Core::Maths::Vec2 UISystem::keyboardXY;
@@ -25,22 +26,26 @@ void UISystem::update(Engine::GE& gameEngine) noexcept
     if (gameEngine.inputManager_.keyboard.isTouch && !isUsingKeyboard)
     {
         isUsingKeyboard = true;
-        Button* tempButton = nullptr;
-        for (Button *button : pButtons)
+
+        if (!pOverredButton)
         {
-            if (button->whenIsActive == gameEngine.gameState)
+            Button *tempButton = nullptr;
+            for (Button *button : pButtons)
             {
-                if (!tempButton || tempButton->getPos().length() > button->getPos().length())
-                    tempButton = button;
+                if (button->whenIsActive == gameEngine.gameState)
+                {
+                    if (!tempButton || tempButton->getPos().length() > button->getPos().length())
+                        tempButton = button;
+                }
             }
+            if (!tempButton)
+            {
+                isUsingKeyboard = false;
+                return;
+            }
+            keyboardXY = tempButton->getPos();
+            pOverredButton = tempButton;
         }
-        if (!tempButton)
-        {
-            isUsingKeyboard = false;
-            return;
-        }
-        keyboardXY = tempButton->getPos();
-        pOverredButton = tempButton;
     }
     if (gameEngine.inputManager_.mouse.isTouch)
     {
@@ -53,7 +58,7 @@ void UISystem::update(Engine::GE& gameEngine) noexcept
         
         Button* tempButton = nullptr;
 
-        if (gameEngine.inputManager_.keyboard.onePressed(SDL_SCANCODE_DOWN) == 1)
+        if (gameEngine.inputManager_.keyboard.onePressed(gameEngine.inputManager_.keyboard.down) == 1)
         {
             for (Button *button : pButtons)
             {
@@ -68,7 +73,7 @@ void UISystem::update(Engine::GE& gameEngine) noexcept
                 }
             }
         }
-        if (gameEngine.inputManager_.keyboard.onePressed(SDL_SCANCODE_UP) == 1)
+        if (gameEngine.inputManager_.keyboard.onePressed(gameEngine.inputManager_.keyboard.up) == 1)
         {
             for (Button *button : pButtons)
             {
@@ -100,7 +105,11 @@ void UISystem::update(Engine::GE& gameEngine) noexcept
         {
             if (!button->isActive || button->whenIsActive != gameEngine.gameState)
                     continue;
-            button->isButtonPressed(gameEngine.inputManager_.mouse.position.x, gameEngine.inputManager_.mouse.position.y, state);
+            if (button->isButtonPressed(gameEngine.inputManager_.mouse.position.x, gameEngine.inputManager_.mouse.position.y, state) == 3)
+            {
+                pOverredButton = button;
+                keyboardXY = button->getPos();
+            }
         }   
     }
 
@@ -141,5 +150,11 @@ void UISystem::draw(Engine::GE& gameEngine) noexcept
     for (TextField *textField : pTextFields)
     {
         textField->draw();
+    }
+    for (Title *title : pTitles)
+    {
+        if (!title->isActive || title->whenIsActive != gameEngine.gameState)
+                continue;
+        title->draw();
     }
 }

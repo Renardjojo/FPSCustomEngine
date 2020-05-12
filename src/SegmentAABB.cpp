@@ -62,7 +62,17 @@ bool SegmentAABB::isSegmentAABBCollided(Segment seg, AABB AABB, Intersection& in
         }
     }
 
-    return (intersection.intersectionType == EIntersectionType::OneIntersectiont);
+        if (intersection.intersectionType != EIntersectionType::OneIntersectiont)
+        {
+            /*Check if segment is inside*/
+            if (AABB.isInside(seg.getPt1()) && AABB.isInside(seg.getPt2()))
+            {
+                intersection.intersectionType = EIntersectionType::InfinyIntersection;
+                return true;
+            }
+            return false;
+        }
+        return true;
 }
 
 bool SegmentAABB::addIntersectionWithScalerIfOnAABBAndReturnIfFull(const Segment& seg, const AABB& AABB, Intersection& intersection, float scaler, float& tempT, Vec3 faceNormal)

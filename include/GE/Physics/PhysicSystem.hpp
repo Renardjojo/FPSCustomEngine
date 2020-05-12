@@ -125,6 +125,8 @@ namespace Engine::Physics
         static std::vector<PhysicalObject*> pPhysicalObjects;
         static std::vector<Collider*> pColliders;
 
+        static float test;
+
         #pragma endregion //!attribut
 
         #pragma region static attribut
