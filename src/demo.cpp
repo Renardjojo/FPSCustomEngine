@@ -88,9 +88,9 @@ void Demo::update     () noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         PhysicSystem::update();
-        ScriptSystem::update();
-     
         scene_->update();
+        
+        ScriptSystem::update();
     }
 
 }
@@ -210,7 +210,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
     scene_->getGameObject("world/Player").addComponent<SphereCollider>();
     scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
-
 }
 
 
@@ -230,7 +229,7 @@ void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
                                 {0.f, 0.f, 0.f}, 
                                 {10.f, 10.f, 10.f}, 
                                 &skyboxShader,
-                                {&materialSKB}, 
+                                {&materialSKB},
                                 &SKBMesh,
                                 "Skybox",
                                 true, false};
