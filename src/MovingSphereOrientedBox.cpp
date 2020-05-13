@@ -228,8 +228,7 @@ Capsule MovingSphereOrientedBox::getTopLeftVeronoiCapsule(const OrientedBox& box
 
 Capsule MovingSphereOrientedBox::getTopRightVeronoiCapsule(const OrientedBox& box, float sphereRadius)
 {
-    Vec3 capsuleCenter = box.getReferential().origin + box.getReferential().unitI * box.getExtI() + box.getReferential().unitJ * box.getExtJ();
-        std::cout << capsuleCenter<< "  "   << box.getReferential().origin << std::endl;  
+    Vec3 capsuleCenter = box.getReferential().origin + box.getReferential().unitI * box.getExtI() + box.getReferential().unitJ * box.getExtJ();  
     return Capsule{capsuleCenter, box.getReferential().unitK, box.getExtK()* 2.f, sphereRadius};
 }
 

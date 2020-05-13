@@ -59,6 +59,7 @@ Demo::Demo(Engine::GE& gameEngine)
     // loadSkateBoard(gameEngine_.ressourceManager_);
     loadGround(gameEngine_.ressourceManager_);
     // loadSkyBox(gameEngine_.ressourceManager_);
+    loadLights(gameEngine_.ressourceManager_);
     
     loadUI(gameEngine_.ressourceManager_);
 
@@ -88,9 +89,9 @@ void Demo::update     () noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         PhysicSystem::update();
-        ScriptSystem::update();
-     
         scene_->update();
+        
+        ScriptSystem::update();
     }
 
 }
@@ -114,7 +115,7 @@ void Demo::display    () const noexcept
 
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
-    ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY);
+    ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     MaterialAndTextureCreateArg matDefault;
@@ -136,7 +137,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Material>(matDefault.name_, matDefault);
 
     ressourceManager.add<Mesh>("Cube1", Mesh::createCube(1));
-    ressourceManager.add<Mesh>("Sphere1", Mesh::createSphere(25, 25));
+    ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
     ressourceManager.add<Mesh>("Plane1", Mesh::createPlane());
         
     MaterialAndTextureCreateArg matGround;
@@ -147,9 +148,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     matGround.wrapType             = E_WrapType::MIRRORED_REPEAT;
 
     ressourceManager.add<Material>("materialGround" ,matGround);
-
 }
-
 
 void Demo::loadCamera(t_RessourcesManager &ressourceManager)
 {
@@ -166,7 +165,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg cube1arg     {{-0.7f, -5.f, 0.f}, 
                                 {0.f, 0.f, 45.f}, 
                                 {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("White"), 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube1"),
                                 "cube1"};
@@ -177,7 +176,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg cube2arg     {{-5.f, -10.f, 0.f}, 
                                 {0.f, 0.f, -45.f}, 
                                 {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("White"), 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube1"),
                                 "cube2"};
@@ -188,7 +187,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
                                 {0.f, 0.f, 45.f}, 
                                 {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("White"), 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube1"),
                                 "cube3"};
@@ -199,9 +198,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg player{{0.f, 0.f, 0.f},
                           {0.f, 0.f, 0.f},
                           {1.0f, 1.0f, 1.0f},
-                          &ressourceManager.get<Shader>("White"),
-                          {&ressourceManager.get<Material>("BlackMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere1"),
+                          &ressourceManager.get<Shader>("ColorWithLight"),
+                          {&ressourceManager.get<Material>("GreenMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere"),
                           "Player"};
 
     scene_->add<Model>(scene_->getWorld(), player);
@@ -210,9 +209,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
     scene_->getGameObject("world/Player").addComponent<SphereCollider>();
     scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
-
 }
-
 
 void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
 {
@@ -230,7 +227,7 @@ void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
                                 {0.f, 0.f, 0.f}, 
                                 {10.f, 10.f, 10.f}, 
                                 &skyboxShader,
-                                {&materialSKB}, 
+                                {&materialSKB},
                                 &SKBMesh,
                                 "Skybox",
                                 true, false};
@@ -293,13 +290,13 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
     ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
                                 {0.f, 0.f, 0.f},
                                 {1.f, 1.f, 1.f},
-                                &ressourceManager.get<Shader>("White"),
+                                &ressourceManager.get<Shader>("ColorWithLight"),
                                 {&ressourceManager.get<Material>("DefaultMaterial")},
                                 &ressourceManager.get<Mesh>("Sphere"),
                                 "Ground",
                                 true};
 
-    DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, 1.f},
+    DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, -1.f},
                                         {1.f, 1.f, 1.f, 0.1f},
                                         {1.f, 1.f, 1.f, 0.7f},
                                         {1.f, 1.f, 1.f, 1.f}, "light"};
@@ -317,7 +314,7 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
     scene_->add<Model>(pl1, lightArg);
 
     static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
-    static_cast<PointLight*>(pl1.entity.get())->enable(true);
+    //static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)

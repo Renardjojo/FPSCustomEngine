@@ -158,7 +158,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
 
     parseName(vertexPath, nameVertex_);
     parseName(fragmentPath, nameFragment_);
-    loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode);
+    if (loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode))
+    {
+        return;
+    }
 
     //parse shader : If #include "path" is found, replace by code
     ShaderParser::parse(vertexCode);
@@ -169,7 +172,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
         vertexCode.insert(0, lightBlinPhongVertexShaderStr);
         fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
     }
-    else if ((featureMask_ & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+    
+    if ((featureMask_ & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
         fragmentCode.insert(0, colorFragmentShaderStr);
     }
@@ -308,7 +312,7 @@ void Shader::setMaterialBlock   (const MaterialComponent& material)
     }    
 }
 
-void Shader::loadFile(const char* vertexPath, std::string& vertexCode,  const char* fragmentPath, std::string& fragmentCode)
+bool Shader::loadFile(const char* vertexPath, std::string& vertexCode,  const char* fragmentPath, std::string& fragmentCode)
 {
     // retrieve the vertex/fragment source code from filePath
     std::ifstream vShaderFile;
@@ -319,12 +323,17 @@ void Shader::loadFile(const char* vertexPath, std::string& vertexCode,  const ch
     if (!vShaderFile)
     {
         functError((std::string("Impossible to load shader : ") + vertexPath).c_str());
+        vShaderFile.close();
+        return true;
     }
 
     fShaderFile.open(fragmentPath);
     if (!vShaderFile)
     {
         functError((std::string("Impossible to load shader : ") + fragmentPath).c_str());
+        vShaderFile.close();
+        fShaderFile.close();
+        return true;
     }
 
     // read file's buffer contents into streams
@@ -341,6 +350,8 @@ void Shader::loadFile(const char* vertexPath, std::string& vertexCode,  const ch
     // convert stream into string
     vertexCode   = vShaderStream.str().c_str();
     fragmentCode = fShaderStream.str().c_str();
+
+    return false;
 }
 
 void Shader::compile(std::string& vertexCode, std::string& fragmentCode)

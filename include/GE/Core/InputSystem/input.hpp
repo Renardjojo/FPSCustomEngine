@@ -75,20 +75,20 @@ namespace Engine::Core::InputSystem
             if (isDown[key] && !isPressed[key])
             {
                 isPressed[key] = true;
-                return 1;
+                return 1; //Is pressed
             }
             else if (isDown[key] && isPressed[key])
             {
                 isPressed[key] = true;
-                return 2;
+                return 2; //isDown
             }
             else if (!isDown[key])
             {
                 isPressed[key] = false;
-                return 0;
+                return 0; //not press
             }
             else
-                return 0;
+                return 0; //not press
         }
 
     } T_inputKeyboard;
