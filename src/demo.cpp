@@ -547,7 +547,7 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
                         &ressourceManager.get<Mesh>("Cube"),
                         "Ennemy2"};
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3::zero, 2.f, 1.f, 0.2f);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3::zero, 2.f, 0.1f, 0.f);
 }
 
 void Demo::updateControl(Engine::Core::InputSystem::Input& input)
