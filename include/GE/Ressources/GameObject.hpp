@@ -35,9 +35,9 @@ public:
     std::unique_ptr<Engine::LowRenderer::Entity> entity;
     std::list<GameObject> children;
     /**
-         * @brief update entity and these child if current entity is dirty
-         * 
-         */
+     * @brief update entity and these child if current entity is dirty
+     * 
+     */
     void update()
     {
         for (auto i = children.begin(); i != children.end(); i++)
@@ -55,9 +55,9 @@ public:
     }
 
     /**
-         * @brief Force the update of entity without check if entity is dirty
-         * 
-         */
+     * @brief Force the update of entity without check if entity is dirty
+     * 
+     */
     void forceupdate()
     {
         for (auto i = children.begin(); i != children.end(); i++)
@@ -68,9 +68,9 @@ public:
     }
 
     /**
-         * @brief Draw entity if entity is drawable
-         * 
-         */
+     * @brief Draw entity if entity is drawable
+     * 
+     */
     void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model *> &mapElemSortedByDistance) const
     {
         for (auto i = children.begin(); i != children.end(); i++)
@@ -120,6 +120,82 @@ public:
                 return dynamic_cast<T*>(uniquePtrComponent.get());
         }
         return nullptr;
+    }
+
+    /**
+     * @brief Get the first gameObject with path in arg
+     * 
+     * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
+     * @return GraphEntity& 
+     */
+    Engine::Ressources::GameObject* getChildren (const std::string& path) noexcept
+    {
+        GE_assert(!path.empty());
+
+        std::stringstream sPath(path);
+        std::string word;
+        Engine::Ressources::GameObject* currentEntity = this;
+
+        while (std::getline(sPath, word, '/'))
+        {
+            if (word.empty() || word == "." || word == entity->getName()) continue;
+
+            bool isFound = false;
+            for (auto&& child : currentEntity->children)
+            {
+                if (child.entity->getName() == word)
+                {
+                    currentEntity = &child;
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+            {
+                Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                return nullptr;
+            }
+        }
+        return currentEntity;
+    }
+
+    /**
+     * @brief Destroye the first gameObject with path in arg
+     * 
+     * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
+     * @return GraphEntity& 
+     */
+    void destroyChildren (const std::string& path) noexcept
+    {
+        GE_assert(!path.empty());
+
+        std::stringstream sPath(path);
+        std::string word;
+        Engine::Ressources::GameObject* parentEntity = this;
+        Engine::Ressources::GameObject* currentEntity = this;
+
+        while (std::getline(sPath, word, '/'))
+        {
+            if (word.empty() || word == "." || word == entity->getName()) continue;
+
+            bool isFound = false;
+            parentEntity = currentEntity;
+            for (auto&& child : parentEntity->children)
+            {
+                if (child.entity->getName() == word)
+                {
+                    currentEntity = &child;
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+            {
+                Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                return;
+            }
+        }
+        parentEntity->children.remove(*currentEntity);
     }
 
     // TODO: Component[] getComponents()
