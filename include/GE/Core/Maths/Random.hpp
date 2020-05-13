@@ -58,7 +58,7 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = float> 
-        auto unitValue() -> std::enable_if_t<std::is_floating_point<T>::value, T>
+        static auto unitValue() -> std::enable_if_t<std::is_floating_point<T>::value, T>
         {
             return static_cast <T> (rand()) / static_cast <T> (RAND_MAX);
         } 
@@ -71,7 +71,7 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = int> 
-        auto unitValue() -> std::enable_if_t<std::is_integral<T>::value, T>
+        static auto unitValue() -> std::enable_if_t<std::is_integral<T>::value, T>
         {
             return static_cast<T>(rand() % 2);
         }
@@ -84,7 +84,7 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = float>
-        T ranged(T max)
+        static T ranged(const T& max)
         {
             return static_cast <T> (rand()) / (static_cast <T> (RAND_MAX / max));
         }
@@ -98,7 +98,7 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = float>
-        T ranged(T min, T max)
+        static T ranged(const T& min, const T& max)
         {
             return min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(max - min)));
         }
@@ -106,17 +106,17 @@ namespace Engine::Core::Maths
 #pragma region Cicular
 
         template<typename T = float>
-        Vec2 circularCoordonate(Vec2 center, T range)
+        static Vec2 peripheralCircularCoordinate(const Vec2& center, const T& range)
         {
             T randValue = static_cast<T>(rand());
-            return Vec2{center.x + range * std::cos<T>(randValue), center.y + range * std::sin<T>(randValue)};
+            return Vec2{center.x + range * std::cos(randValue), center.y + range * std::sin(randValue)};
         }
 
         template<typename T = float>
-        Vec2 unitCircularValue()
+        static Vec2 unitPeripheralCircularCoordinate()
         {
             T randValue = static_cast<T>(rand());
-            return Vec2{std::cos<T>(randValue), std::sin<T>(randValue)};
+            return Vec2{std::cos(randValue), std::sin(randValue)};
         }
 
 #pragma endregion //!Cicular
@@ -124,21 +124,21 @@ namespace Engine::Core::Maths
 #pragma region Spherique
 
         template<typename T = float>
-        Vec3 spheriqueValue(Vec3 center, T range)
+        static Vec3 peripheralSphericalCoordinate(const Vec3& center, const T& range)
         {
-            T phi = rangedRandom<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
-            T theta = rangedRandom<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
-            return Vec3{center.x + (range * std::::sin<T>(phi) * std::cos<T>(theta)),
-                        center.y + (range * std::::sin<T>(phi) * std::sin<T>(theta)), 
-                        center.z + (range * std::::cos<T>(phi))};
+            T phi = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
+            T theta = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
+            return Vec3{center.x + (range * std::sin(phi) * std::cos(theta)),
+                        center.y + (range * std::sin(phi) * std::sin(theta)), 
+                        center.z + (range * std::cos(phi))};
         }
 
         template<typename T = float>
-        Vec3 unitSpheriqueCoordonate()
+        static Vec3 unitPeripheralSphericalCoordonate()
         {
-            T phi = rangedRandom<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
-            T theta = rangedRandom<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
-            return Vec3{std::sin<T>(phi) * std::cos<T>(theta), std::::sin<T>(phi) * std::sin<T>(theta), std::::cos<T>(phi)};
+            T phi = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
+            T theta = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI));
+            return Vec3{std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi)};
         }
 
 #pragma endregion //!Spherique
@@ -155,7 +155,7 @@ namespace Engine::Core::Maths
          * @return Vec2 
          */
         template<typename T = float>
-        Vec2 squareCoordonate(Vec2 center, T extX, T extY)
+        static Vec2 peripheralSquareCoordinate(const Vec2& center, const T& extX, const T& extY)
         {           
             return Vec2{center.x + ranged<T>(-extX, extX), center.y + ranged<T>(-extY, extY)};
         }
@@ -167,9 +167,9 @@ namespace Engine::Core::Maths
          * @return Vec2 
          */
         template<typename T = float>
-        Vec2 unitSquareValue()
+        static Vec2 unitPeripheralSquareCoordinate()
         {
-            return Vec2{unitValue<T>(), unitValue<T>())};
+            return Vec2{unitValue<T>(), unitValue<T>()};
         }
 
 #pragma endregion //!Square
@@ -187,7 +187,7 @@ namespace Engine::Core::Maths
          * @return Vec3 
          */
         template<typename T = float>
-        Vec3 cubiqueCoordonate(Vec3 center, T extX, T extY,T extZ)
+        static Vec3 peripheralCubiqueCoordinate(const Vec3& center, const T& extX, const T& extY, const T& extZ)
         {           
             return Vec3{center.x + ranged<T>(-extX, extX), center.y + ranged<T>(-extY, extY), center.y + ranged<T>(-extZ, extZ)};
         }
@@ -199,9 +199,9 @@ namespace Engine::Core::Maths
          * @return Vec3 
          */
         template<typename T = float>
-        Vec3 unitCubiqueValue()
+        static Vec3 unitPeripheralCubiqueCoordinate()
         {
-            return Vec3{unitValue<T>(), unitValue<T>(), unitValue<T>())};
+            return Vec3{unitValue<T>(), unitValue<T>(), unitValue<T>()};
         }
 
 #pragma endregion //!Cubique
@@ -215,9 +215,9 @@ namespace Engine::Core::Maths
          * @return false 
          */
         template<typename T = float>
-        bool ranPercentProba(T percent)
+        static bool ranPercentProba(const T& percent)
         { 
-            return rangedRandom<T>(static_cast<T>(0), static_cast<T>(100)) <= percent;
+            return ranged<T>(static_cast<T>(0), static_cast<T>(100)) <= percent;
         }
 
         #pragma endregion //!methods

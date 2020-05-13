@@ -10,7 +10,7 @@ using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
-using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 

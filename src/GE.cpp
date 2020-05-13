@@ -3,10 +3,12 @@
 #include "GE/Core/Rendering/Renderer/rendererSDLOpGl33.hpp"
 #include "Game/define.h"
 #include "save/saves.hpp"
+#include "GE/Core/Maths/Random.hpp"
 
 using namespace Ressoures::Save;
 
 using namespace Engine;
+using namespace Engine::Core::Maths;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::InputSystem;
 
@@ -27,7 +29,7 @@ GE::GE ()
     ren_->initialize(winArg);
 
     //init random value
-    srand(time(NULL));
+    Random::initSeed();
     
     gameState = E_GAME_STATE::STARTING;
 

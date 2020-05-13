@@ -9,7 +9,7 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/GE.hpp"
 
-namespace Engine::Core::Systems
+namespace Engine::Core::System
 {
     class UISystem
     {
