@@ -12,6 +12,13 @@
 
 namespace Engine::LowRenderer
 {
+    typedef struct S_EntityCreateArg
+    {
+        std::string         name            = "";
+        Engine::Physics::TransformCreateArg  transformArg    = {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one};
+        
+    } EntityCreateArg;
+
     class Entity
         : public Engine::Physics::Transform
     {
@@ -19,16 +26,29 @@ namespace Engine::LowRenderer
     
             #pragma region constructor/destructor
 
-            Entity ()                                        = default;    
+            Entity ()
+                :   Transform   {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one},
+                    name_       ("")
+            {}
 
-            Entity (Engine::Core::Maths::Vec3 position, 
-                    Engine::Core::Maths::Vec3 rotation, 
-                    Engine::Core::Maths::Vec3 scale,
+            Entity (const char* name)
+                :   Transform   {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one},
+                    name_       {name}
+            {}
+
+            Entity (const Engine::Core::Maths::Vec3& position, 
+                    const Engine::Core::Maths::Vec3& rotation, 
+                    const Engine::Core::Maths::Vec3& scale,
                     const char* name)
                     :   Transform   {position, rotation, scale},
                         name_       (name)
                     {}
  
+            Entity (const EntityCreateArg& arg)
+                    :   Transform   {arg.transformArg},
+                        name_       (arg.name)
+                    {}
+
             Entity (const Entity& other) = default;
             virtual ~Entity ()            = default;
     

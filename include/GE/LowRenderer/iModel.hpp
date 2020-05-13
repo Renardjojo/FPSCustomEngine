@@ -24,7 +24,7 @@ namespace Engine::LowRenderer
                     const char* name)
                     :   Entity          (position, rotation, scale, name),
                         isLoadInGPU_    (false)
-                    {}
+            {}
 
 
 

@@ -37,7 +37,7 @@ namespace Engine
             #pragma region methods
 
             void pollEvent              () { inputManager_.pollEvent(ren_->getWin()->getId());}
-            void updateTime             () { Engine::Core::Time::TimeSystem::update();}
+            void updateTime             () { Engine::Core::System::TimeSystem::update();}
             void clearRenderer          () { ren_->clear(); }
             void renderPresent          () { ren_->draw();  }
 
@@ -51,7 +51,7 @@ namespace Engine
 
             const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
 
-            float   getDeltaTime() { return Engine::Core::Time::TimeSystem::getDeltaTime(); };
+            float   getDeltaTime() { return Engine::Core::System::TimeSystem::getDeltaTime(); };
 
             #pragma endregion //!accessor
 

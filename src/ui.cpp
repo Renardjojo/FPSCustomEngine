@@ -10,7 +10,7 @@ using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Debug;
-using namespace Engine::Core::Systems;
+using namespace Engine::Core::System;
 
 
 Title::Title(Font * _font, Engine::Ressources::Shader* _shader,

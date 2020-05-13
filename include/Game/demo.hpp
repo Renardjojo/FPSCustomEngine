@@ -58,6 +58,7 @@ namespace Game
             bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;
+            Engine::Ressources::GameObject* enemiesContener;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
             Engine::Ressources::GameObject* player1;
             Engine::Ressources::GameObject* player2;*/
@@ -76,6 +77,7 @@ namespace Game
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
