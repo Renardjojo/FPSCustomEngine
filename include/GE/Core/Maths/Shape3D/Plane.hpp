@@ -19,7 +19,7 @@ namespace Engine::Core::Maths::Shape3D
             Plane (const Vec3& p1, const Vec3& p2, const Vec3& p3);
             Plane (const Vec3& p1, const Vec3& normal);
 
-            Plane ()					    = delete;
+            Plane ()					    = default;
             Plane (const Plane& other)		= default;
             Plane (Plane&& other)			= default;
             virtual ~Plane ()				= default;
@@ -77,7 +77,6 @@ namespace Engine::Core::Maths::Shape3D
             {
                 return point + getSignedDistanceToPlane(plane, point) * plane.normal_;
             }
-
 
             /**
              * @brief Get the Distance From Point To Plan object

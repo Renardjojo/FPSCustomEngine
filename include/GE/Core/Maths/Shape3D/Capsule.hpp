@@ -70,6 +70,11 @@ namespace Engine::Core::Maths::Shape3D
             return segment_.getDistanceWithPoint(pt) <= radius_;
         }
 
+        Vec3 getCenter() const noexcept
+        {
+            return segment_.getCenter();
+        }
+
         #pragma endregion //!methods
 
         #pragma region accessor

@@ -25,6 +25,11 @@ namespace Engine::Core::Maths::Shape3D
         Cylinder& operator=(Cylinder const&)  = default;
         Cylinder& operator=(Cylinder &&)      = default;
 
+        explicit Cylinder (const Vec3& center, const Vec3& normal, float height, float radius)
+            :   segment_  {Vec3(center - normal * (height / 2.f)), Vec3(center + normal * (height / 2.f))},
+                radius_   {radius}
+        {}
+
         explicit Cylinder (const Segment& segment, float radius)
         :   segment_    {segment},
             radius_     {radius}
@@ -52,6 +57,11 @@ namespace Engine::Core::Maths::Shape3D
         Plane RightPlane () const noexcept
         {
             return Plane(segment_.getPt2(), (segment_.getPt2() - segment_.getPt1()).getNormalize());
+        }
+
+        Vec3 getCenter() const noexcept
+        {
+            return segment_.getCenter();
         }
 
         #pragma endregion //!methods

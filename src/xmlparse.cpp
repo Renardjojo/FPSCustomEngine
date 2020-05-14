@@ -5,7 +5,10 @@
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "Game/PlayerController.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
-#include "GE/Physics/Collider.hpp"
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
+#include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
+#include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
+#include "GE/Physics/ColliderShape/AABBCollider.hpp"
 #include "GE/LowRenderer/camera.hpp"
 
 using namespace rapidxml;
@@ -13,6 +16,7 @@ using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Game;
 
 void setupScene(Scene& scene, Engine::GE& gameEngine, const char* filePath)
