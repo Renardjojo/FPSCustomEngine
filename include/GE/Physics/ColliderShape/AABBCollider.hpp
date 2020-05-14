@@ -5,8 +5,6 @@
 #ifndef _AABB_COLLIDER_H
 #define _AABB_COLLIDER_H
 
-#include "GE/Ressources/Component.hpp"
-#include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Core/Maths/Shape3D/AABB.hpp"
 

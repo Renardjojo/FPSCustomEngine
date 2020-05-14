@@ -2,11 +2,11 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-04-30 - 09 h 51
 
-#ifndef _CAPSULE_COLLIDER_H
-#define _CAPSULE_COLLIDER_H
+#ifndef _INFINITE_CYLINDER_COLLIDER_H
+#define _INFINITE_CYLINDER_COLLIDER_H
 
 #include "GE/Physics/ColliderShape/Collider.hpp"
-#include "GE/Core/Maths/Shape3D/Capsule.hpp"
+#include "GE/Core/Maths/Shape3D/InfiniteCylinder.hpp"
 
 namespace Engine::Physics::ColliderShape
 {
@@ -17,69 +17,65 @@ namespace Engine::Physics::ColliderShape
         ForwardAxe
     };
 
-    class CapsuleCollider : public Collider
+    class InfiniteCylinderCollider : public Collider
     {
 
     public:
 
-        CapsuleCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
+        InfiniteCylinderCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
             :   Collider        (refGameObject),
-                capsule_        (),
+            InfiniteCylinder_        (),
                 directionAxe_   (directionAxe)
         {}
 
-        CapsuleCollider (const CapsuleCollider& other)
+        InfiniteCylinderCollider (const InfiniteCylinderCollider& other)
             :   Collider    (*this),
-                capsule_       (other.capsule_),
+            InfiniteCylinder_       (other.InfiniteCylinder_),
                 directionAxe_   (other.directionAxe_)
         {}
 
-        CapsuleCollider (CapsuleCollider&& other)
+        InfiniteCylinderCollider (InfiniteCylinderCollider&& other)
             :   Collider        (*this),
-                capsule_        (std::move(other.capsule_)),
+            InfiniteCylinder_        (std::move(other.InfiniteCylinder_)),
                 directionAxe_   (std::move(other.directionAxe_))
         {}
 
-        CapsuleCollider() = delete;
-        virtual ~CapsuleCollider() = default;
+        InfiniteCylinderCollider() = delete;
+        virtual ~InfiniteCylinderCollider() = default;
         
-        Engine::Core::Maths::Shape3D::Capsule        getGlobalCapsule() const noexcept
+        Engine::Core::Maths::Shape3D::InfiniteCylinder        getGlobalInfiniteCylinder() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() + capsule_.getCenter();
-            Engine::Core::Maths::Vec3 globalDirection = capsule_.getCenter();
-            float globalHeight = capsule_.getSegment().getLenght();
-            float globalRadius = capsule_.getRadius();
+            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() +InfiniteCylinder_.getLine().getOrigin();
+            Engine::Core::Maths::Vec3 globalDirection =InfiniteCylinder_.getLine().getOrigin();
+            float globalRadius =InfiniteCylinder_.getRadius();
 
             if (directionAxe_ == EDirectionnalAxes::ForwardAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
-                globalHeight    += gameObject.entity->getScale().z;
                 globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().y) / 2.f;
             }
             else if (directionAxe_ == EDirectionnalAxes::RightAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
-                globalHeight    += gameObject.entity->getScale().x;
                 globalRadius    += (gameObject.entity->getScale().z + gameObject.entity->getScale().y) / 2.f;
             }
             else
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorUp();
-                globalHeight    += gameObject.entity->getScale().y;
                 globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().z) / 2.f;
             }
 
-            return Engine::Core::Maths::Shape3D::Capsule{globalCenter, globalDirection.getNormalize(), globalHeight, globalRadius};
+            return Engine::Core::Maths::Shape3D::InfiniteCylinder{globalCenter, globalDirection.getNormalize(), globalRadius};
         }
         
-        const Engine::Core::Maths::Shape3D::Capsule& getLocalCapsule()  const noexcept
+        const Engine::Core::Maths::Shape3D::InfiniteCylinder& getLocalInfiniteCylinder()  const noexcept
         { 
-            return capsule_;
+            return InfiniteCylinder_;
         }
 
     private:
 
-        Engine::Core::Maths::Shape3D::Capsule   capsule_;
+        Engine::Core::Maths::Shape3D::InfiniteCylinder  InfiniteCylinder_;
         EDirectionnalAxes                       directionAxe_;
 
     };
@@ -87,4 +83,4 @@ namespace Engine::Physics::ColliderShape
 
 } /*namespace Engine::Physics::Collider*/
 
-#endif //_CAPSULE_COLLIDER_H
+#endif //_INFINITE_CYLINDER_COLLIDER_H

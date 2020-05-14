@@ -2,11 +2,11 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-04-30 - 09 h 51
 
-#ifndef _CAPSULE_COLLIDER_H
-#define _CAPSULE_COLLIDER_H
+#ifndef _CYLINDER_COLLIDER_H
+#define _CYLINDER_COLLIDER_H
 
 #include "GE/Physics/ColliderShape/Collider.hpp"
-#include "GE/Core/Maths/Shape3D/Capsule.hpp"
+#include "GE/Core/Maths/Shape3D/Cylinder.hpp"
 
 namespace Engine::Physics::ColliderShape
 {
@@ -17,38 +17,38 @@ namespace Engine::Physics::ColliderShape
         ForwardAxe
     };
 
-    class CapsuleCollider : public Collider
+    class CylinderCollider : public Collider
     {
 
     public:
 
-        CapsuleCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
+        CylinderCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
             :   Collider        (refGameObject),
-                capsule_        (),
+            cylinder_        (),
                 directionAxe_   (directionAxe)
         {}
 
-        CapsuleCollider (const CapsuleCollider& other)
+        CylinderCollider (const CylinderCollider& other)
             :   Collider    (*this),
-                capsule_       (other.capsule_),
+            cylinder_       (other.cylinder_),
                 directionAxe_   (other.directionAxe_)
         {}
 
-        CapsuleCollider (CapsuleCollider&& other)
+        CylinderCollider (CylinderCollider&& other)
             :   Collider        (*this),
-                capsule_        (std::move(other.capsule_)),
+            cylinder_        (std::move(other.cylinder_)),
                 directionAxe_   (std::move(other.directionAxe_))
         {}
 
-        CapsuleCollider() = delete;
-        virtual ~CapsuleCollider() = default;
+        CylinderCollider() = delete;
+        virtual ~CylinderCollider() = default;
         
-        Engine::Core::Maths::Shape3D::Capsule        getGlobalCapsule() const noexcept
+        Engine::Core::Maths::Shape3D::Cylinder        getGlobalCylinder() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() + capsule_.getCenter();
-            Engine::Core::Maths::Vec3 globalDirection = capsule_.getCenter();
-            float globalHeight = capsule_.getSegment().getLenght();
-            float globalRadius = capsule_.getRadius();
+            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() +cylinder_.getCenter();
+            Engine::Core::Maths::Vec3 globalDirection =cylinder_.getCenter();
+            float globalHeight =cylinder_.getSegment().getLenght();
+            float globalRadius =cylinder_.getRadius();
 
             if (directionAxe_ == EDirectionnalAxes::ForwardAxe)
             {
@@ -69,17 +69,17 @@ namespace Engine::Physics::ColliderShape
                 globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().z) / 2.f;
             }
 
-            return Engine::Core::Maths::Shape3D::Capsule{globalCenter, globalDirection.getNormalize(), globalHeight, globalRadius};
+            return Engine::Core::Maths::Shape3D::Cylinder{globalCenter, globalDirection.getNormalize(), globalHeight, globalRadius};
         }
         
-        const Engine::Core::Maths::Shape3D::Capsule& getLocalCapsule()  const noexcept
+        const Engine::Core::Maths::Shape3D::Cylinder& getLocalCylinder()  const noexcept
         { 
-            return capsule_;
+            return cylinder_;
         }
 
     private:
 
-        Engine::Core::Maths::Shape3D::Capsule   capsule_;
+        Engine::Core::Maths::Shape3D::Cylinder  cylinder_;
         EDirectionnalAxes                       directionAxe_;
 
     };
@@ -87,4 +87,4 @@ namespace Engine::Physics::ColliderShape
 
 } /*namespace Engine::Physics::Collider*/
 
-#endif //_CAPSULE_COLLIDER_H
+#endif //_CYLINDER_COLLIDER_H
