@@ -10,19 +10,23 @@
 
 namespace Engine::Physics::ColliderShape
 {
-    enum class EDirectionnalAxes
+
+#ifndef _DIRECTIONAL_AXES_MESH
+#define _DIRECTIONAL_AXES_MESH    
+    enum class EPositiveDirectionnalAxes
     {
         RightAxe,
         UpAxe,
         ForwardAxe
     };
+#endif //_DIRECTIONAL_AXES_MESH
 
     class CylinderCollider : public Collider
     {
 
     public:
 
-        CylinderCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
+        CylinderCollider (Engine::Ressources::GameObject& refGameObject, EPositiveDirectionnalAxes directionAxe = EPositiveDirectionnalAxes::ForwardAxe)
             :   Collider        (refGameObject),
             cylinder_        (),
                 directionAxe_   (directionAxe)
@@ -50,13 +54,13 @@ namespace Engine::Physics::ColliderShape
             float globalHeight =cylinder_.getSegment().getLenght();
             float globalRadius =cylinder_.getRadius();
 
-            if (directionAxe_ == EDirectionnalAxes::ForwardAxe)
+            if (directionAxe_ == EPositiveDirectionnalAxes::ForwardAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
                 globalHeight    += gameObject.entity->getScale().z;
                 globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().y) / 2.f;
             }
-            else if (directionAxe_ == EDirectionnalAxes::RightAxe)
+            else if (directionAxe_ == EPositiveDirectionnalAxes::RightAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
                 globalHeight    += gameObject.entity->getScale().x;
@@ -80,7 +84,7 @@ namespace Engine::Physics::ColliderShape
     private:
 
         Engine::Core::Maths::Shape3D::Cylinder  cylinder_;
-        EDirectionnalAxes                       directionAxe_;
+        EPositiveDirectionnalAxes                       directionAxe_;
 
     };
 

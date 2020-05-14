@@ -18,6 +18,10 @@
 #include "GE/Physics/ColliderShape/AABBCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
 #include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
+#include "GE/Physics/ColliderShape/CylinderCollider.hpp"
+#include "GE/Physics/ColliderShape/InifiteCylinderCollider.hpp"
+#include "GE/Physics/ColliderShape/PlaneCollider.hpp"
+#include "GE/Physics/ColliderShape/QuadCollider.hpp"
 
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
@@ -92,37 +96,146 @@ void PhysicSystem::update() noexcept
     }
 }
 
-bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, CollisionHit& collisionHit) noexcept
+inline 
+bool ifCollisionAffectPhysicalObject(bool collision, PhysicalObject* physicalObject, RayHitInfo& rayHitInfo)
 {
-    for (Collider* collider1 : pColliders)
+    if (collision)
     {
-        for (Collider* collider2 : pColliders)
+        rayHitInfo.optionnalPhysicalObjectPtr = physicalObject;
+        return true;
+    }
+    return false;
+}
+
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, RayHitInfo& rayHitInfo) noexcept
+{
+    for (Collider* collider : pColliders)
+    {
+        if (!collider->GetAttachedPhysicalObject())
+            continue;
+
+        AABBCollider* aabbColliderPtr = dynamic_cast<AABBCollider*>(collider);
+        if (aabbColliderPtr != nullptr)
         {
-            if (collider1 != collider2)
+            if(SegmentAABB::isSegmentAABBCollided(ray, aabbColliderPtr->getGlobalAABB(), rayHitInfo.intersectionsInfo))
             {
-                if (!collider1->GetAttachedPhysicalObject())
-                    continue;
+                rayHitInfo.optionnalPhysicalObjectPtr = aabbColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
 
-                if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
-                {
+        SphereCollider* sphereColliderPtr = dynamic_cast<SphereCollider*>(collider);
+        if (sphereColliderPtr != nullptr)
+        {
+            if (SegmentSphere::isSegmentSphereCollided(ray, sphereColliderPtr->getGlobalSphere(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = sphereColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
 
-                }
+        OrientedBoxCollider* orientedBoxColliderPtr = dynamic_cast<OrientedBoxCollider*>(collider);
+        if (orientedBoxColliderPtr != nullptr)
+        {
+            if (SegmentOrientedBox::isSegmentOrientedBoxCollided(ray, orientedBoxColliderPtr->getGlobalOrientedBox(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = orientedBoxColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
+
+        PlaneCollider* planeColliderPtr = dynamic_cast<PlaneCollider*>(collider);
+        if (planeColliderPtr != nullptr)
+        {
+            if (SegmentPlane::isSegmentPlaneCollided(ray, planeColliderPtr->getGlobalPlane(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = planeColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
+
+        QuadCollider* quadColliderPtr = dynamic_cast<QuadCollider*>(collider);
+        if (quadColliderPtr != nullptr)
+        {
+            if (SegmentQuad::isSegmentQuadCollided(ray, quadColliderPtr->getGlobalQuad(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = quadColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
+
+        CapsuleCollider* capsuleColliderPtr = dynamic_cast<CapsuleCollider*>(collider);
+        if (capsuleColliderPtr != nullptr)
+        {
+            if (SegmentCapsule::isSegmentCapsuleCollided(ray, capsuleColliderPtr->getGlobalCapsule(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = capsuleColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
+
+        InfiniteCylinderCollider* infiniteCylinderColliderPtr = dynamic_cast<InfiniteCylinderCollider*>(collider);
+        if (infiniteCylinderColliderPtr != nullptr)
+        {
+            if (SegmentInfiniteCylinder::isSegmentInfiniteCylinderCollided(ray, infiniteCylinderColliderPtr->getGlobalInfiniteCylinder(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = infiniteCylinderColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
+            }
+        }
+
+        CylinderCollider* cylinderColliderPtr = dynamic_cast<CylinderCollider*>(collider);
+        if (cylinderColliderPtr != nullptr)
+        {
+            if (SegmentCylinder::isSegmentCylinderCollided(ray, cylinderColliderPtr->getGlobalCylinder(), rayHitInfo.intersectionsInfo))
+            {
+                rayHitInfo.optionnalPhysicalObjectPtr = cylinderColliderPtr->GetAttachedPhysicalObject();
+                return true;
+            }
+            else 
+            {
+                continue;
             }
         }
     }
+
+    return false;
 }
 
-bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, CollisionHit& collisionHit) noexcept
+bool PhysicSystem::rayCast(const Vec3& origin, const Vec3& direction, float maxDistance, RayHitInfo& rayHitInfo) noexcept
 {
-
+    return rayCast(Segment{origin, origin + maxDistance * direction}, rayHitInfo);
 }
 
-bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance) noexcept
+bool PhysicSystem::rayCast(const Vec3& pt1, const Vec3& pt2, RayHitInfo& rayHitInfo) noexcept
 {
-Intersection intersection;
-}
-
-bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept
-{
-Intersection intersection;
+    return rayCast(Segment{pt1, pt2}, rayHitInfo);
 }

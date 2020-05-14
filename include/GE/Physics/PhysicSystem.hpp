@@ -10,15 +10,22 @@
 #include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
+#include "GE/Core/Maths/Shape3D/Segment.hpp"
 
 namespace Engine::Physics
 {
     
-    struct CollisionHit
+    struct CollisionHitInfos
     {
         Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
         PhysicalObject*                                     optionnalPhysicalObjectPtr1;
         PhysicalObject*                                     optionnalPhysicalObjectPtr2;
+    };
+
+    struct RayHitInfo
+    {
+        Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
+        PhysicalObject*                                     optionnalPhysicalObjectPtr;
     };
 
     class PhysicSystem
@@ -118,16 +125,24 @@ namespace Engine::Physics
         }
 
         static
-        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, CollisionHit& collisionHit) noexcept;
+        bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, RayHitInfo& rayHitInfo) noexcept;
 
         static
-        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, CollisionHit& collisionHit) noexcept;
+        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, RayHitInfo& rayHitInfo) noexcept;
+
+        static
+        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, RayHitInfo& rayHitInfo) noexcept;
+
+        /*TODO: Can be implemented if all segment/Shape have the good collision function implemented without intersection
+        static
+        bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray) noexcept;
 
         static
         bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance) noexcept;
 
         static
         bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept;
+        */
 
         #pragma endregion //!mutator
 

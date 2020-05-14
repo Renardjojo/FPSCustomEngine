@@ -10,19 +10,23 @@
 
 namespace Engine::Physics::ColliderShape
 {
-    enum class EDirectionnalAxes
+
+#ifndef _DIRECTIONAL_AXES_MESH
+#define _DIRECTIONAL_AXES_MESH    
+    enum class EPositiveDirectionnalAxes
     {
         RightAxe,
         UpAxe,
         ForwardAxe
     };
+#endif //_DIRECTIONAL_AXES_MESH
 
     class InfiniteCylinderCollider : public Collider
     {
 
     public:
 
-        InfiniteCylinderCollider (Engine::Ressources::GameObject& refGameObject, EDirectionnalAxes directionAxe = EDirectionnalAxes::ForwardAxe)
+        InfiniteCylinderCollider (Engine::Ressources::GameObject& refGameObject, EPositiveDirectionnalAxes directionAxe = EPositiveDirectionnalAxes::ForwardAxe)
             :   Collider        (refGameObject),
             InfiniteCylinder_        (),
                 directionAxe_   (directionAxe)
@@ -49,12 +53,12 @@ namespace Engine::Physics::ColliderShape
             Engine::Core::Maths::Vec3 globalDirection =InfiniteCylinder_.getLine().getOrigin();
             float globalRadius =InfiniteCylinder_.getRadius();
 
-            if (directionAxe_ == EDirectionnalAxes::ForwardAxe)
+            if (directionAxe_ == EPositiveDirectionnalAxes::ForwardAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
                 globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().y) / 2.f;
             }
-            else if (directionAxe_ == EDirectionnalAxes::RightAxe)
+            else if (directionAxe_ == EPositiveDirectionnalAxes::RightAxe)
             {
                 globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
                 globalRadius    += (gameObject.entity->getScale().z + gameObject.entity->getScale().y) / 2.f;
@@ -76,7 +80,7 @@ namespace Engine::Physics::ColliderShape
     private:
 
         Engine::Core::Maths::Shape3D::InfiniteCylinder  InfiniteCylinder_;
-        EDirectionnalAxes                       directionAxe_;
+        EPositiveDirectionnalAxes                       directionAxe_;
 
     };
 
