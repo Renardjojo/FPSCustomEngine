@@ -70,6 +70,16 @@ namespace Engine::Core::Maths::Shape3D
             }
         }
 
+        Vec3 getCenter() const noexcept
+        {
+            return pt1_ + 0.5f * (pt2_ - pt1_);
+        }
+
+        float getLenght() const noexcept
+        {
+            return (pt2_ - pt1_).length();
+        }
+
         #pragma endregion //!methods
 
         #pragma region accessor

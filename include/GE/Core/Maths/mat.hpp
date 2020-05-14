@@ -516,6 +516,27 @@ namespace Engine::Core::Maths
 			 * brief : return the cofactor matrix of the current matrix. Assert if is square
 			 */
 			Mat4		getCoMatrix		() const;
+
+			/**
+			 * @brief Get the Vector Up object
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorUp() 		const;
+
+			/**
+			 * @brief Get the Vector Right object. For indirect referential
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorRight() 	const;
+
+			/**
+			 * @brief Get the Vector Forward object
+			 * 
+			 * @return Vec3 
+			 */
+			Vec3 	getVectorForward() 	const;
 		
 			/**
 			 * function : getCoMatrix

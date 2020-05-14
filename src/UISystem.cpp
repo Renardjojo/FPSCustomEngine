@@ -4,8 +4,7 @@
 #include "GE/GE.hpp"
 
 using namespace Engine::Ressources;
-using namespace Engine::Core::Systems;
-using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 using namespace Engine::Core::Debug;
 
 std::vector<Button *> UISystem::pButtons;

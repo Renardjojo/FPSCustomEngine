@@ -10,8 +10,21 @@
 #include <utility>
 #include "GE/Core/Debug/log.hpp"
 
+#include "GE/Ressources/ui.hpp"
+#include "GE/Ressources/music.hpp"
+#include "GE/Ressources/mesh.hpp"
+#include "GE/Ressources/shader.hpp"
+#include "GE/Ressources/material.hpp"
+#include "GE/Ressources/texture.hpp"
+#include "GE/Ressources/text.hpp"
+#include "GE/Ressources/sample.hpp"
+#include "GE/Ressources/font.hpp"
+
+
 namespace Engine::Ressources
 {
+
+
     //Technical inspired about understanding example found from stackOverFlow : https://stackoverflow.com/questions/27941661/generating-one-class-member-per-variadic-template-argument/53112843#53112843?newreg=f97a957ca4ca467bab0d0ce1cc6ea7b2
 
     //Variadic template class
@@ -142,6 +155,18 @@ namespace Engine::Ressources
         private:
 
     };
+
+    typedef RessourcesManager<  Engine::Ressources::Mesh,
+                                Engine::Ressources::Shader,
+                                Engine::Ressources::Material,
+                                Engine::Ressources::Text,
+                                Engine::Ressources::Texture,
+                                Engine::Ressources::Sample,
+                                Engine::Ressources::Music,
+                                Engine::Ressources::Font,
+                                Engine::Ressources::Title,
+                                Engine::Ressources::Button,
+                                Engine::Ressources::TextField> t_RessourcesManager;
 
 }// namespaceEngine::Ressources
 

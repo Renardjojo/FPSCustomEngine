@@ -837,6 +837,24 @@ Mat4		Mat4::getCoMatrix		() const
 }
 
 inline
+Vec3 	Mat4::getVectorUp() 		const
+{
+	return Vec3{mat[1], mat[5], mat[9]};
+}
+
+inline 
+Vec3 	Mat4::getVectorRight() 	const
+{
+	return Vec3{mat[0], mat[4], mat[8]};
+}
+
+inline
+Vec3 	Mat4::getVectorForward() 	const
+{
+	return Vec3{mat[2], mat[6], mat[10]};
+}
+
+inline
 void		Mat4::tranformCoMatToAdjointMat		()
 {
 	transpose();

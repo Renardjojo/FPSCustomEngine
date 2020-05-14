@@ -128,7 +128,8 @@ void Model::draw () const noexcept
             {
                 pShader_->setMaterialBlock((pMaterialToUse_[part])->getMaterialComponent());
             }
-            else if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+            
+            if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
             {
                pShader_->setVec4("Color",  (pMaterialToUse_[part])->getMaterialComponent().ambient.kr, 
                                             (pMaterialToUse_[part])->getMaterialComponent().ambient.kg,
@@ -145,7 +146,8 @@ void Model::draw () const noexcept
             {
                 pShader_->setMaterialBlock((pMaterial_[0])->getMaterialComponent());
             }
-            else if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+            
+            if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
             {
                pShader_->setVec4("Color",  (pMaterial_[0])->getMaterialComponent().ambient.kr, 
                                             (pMaterial_[0])->getMaterialComponent().ambient.kg,

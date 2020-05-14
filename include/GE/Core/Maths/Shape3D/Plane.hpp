@@ -19,7 +19,7 @@ namespace Engine::Core::Maths::Shape3D
             Plane (const Vec3& p1, const Vec3& p2, const Vec3& p3);
             Plane (const Vec3& p1, const Vec3& normal);
 
-            Plane ()					    = delete;
+            Plane ()					    = default;
             Plane (const Plane& other)		= default;
             Plane (Plane&& other)			= default;
             virtual ~Plane ()				= default;
@@ -78,7 +78,6 @@ namespace Engine::Core::Maths::Shape3D
                 return point + getSignedDistanceToPlane(plane, point) * plane.normal_;
             }
 
-
             /**
              * @brief Get the Distance From Point To Plan object
              * 
@@ -132,8 +131,8 @@ namespace Engine::Core::Maths::Shape3D
 
             #pragma region mutator
 
-            void getNormal   (const Vec3& newNormal)   noexcept { normal_ = newNormal.getNormalize();}
-            void getDistance (const Vec3& newDistance) noexcept { distance_ = distance_;}
+            void setNormal   (const Vec3& newNormal)   noexcept { normal_ = newNormal.getNormalize();}
+            void setDistance (const Vec3& newDistance) noexcept { distance_ = distance_;}
 
             #pragma endregion //!mutator
 

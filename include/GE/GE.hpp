@@ -37,7 +37,7 @@ namespace Engine
             #pragma region methods
 
             void pollEvent              () { inputManager_.pollEvent(ren_->getWin()->getId());}
-            void updateTime             () { Engine::Core::Time::TimeSystem::update();}
+            void updateTime             () { Engine::Core::System::TimeSystem::update();}
             void clearRenderer          () { ren_->clear(); }
             void renderPresent          () { ren_->draw();  }
 
@@ -51,7 +51,7 @@ namespace Engine
 
             const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
 
-            float   getDeltaTime() { return Engine::Core::Time::TimeSystem::getDeltaTime(); };
+            float   getDeltaTime() { return Engine::Core::System::TimeSystem::getDeltaTime(); };
 
             #pragma endregion //!accessor
 
@@ -62,19 +62,11 @@ namespace Engine
             std::unique_ptr<Engine::Core::Renderer::IRenderer>  ren_;
             Engine::Core::InputSystem::Input                    inputManager_;
 
-            Engine::Ressources::RessourcesManager<Engine::Ressources::Mesh, 
-                                                Engine::Ressources::Shader, 
-                                                Engine::Ressources::Material, 
-                                                Engine::Ressources::Text,
-                                                Engine::Ressources::Texture,    
-                                                Engine::Ressources::Sample, 
-                                                Engine::Ressources::Music,
-                                                Engine::Ressources::Font,
-                                                Engine::Ressources::Button,
-                                                Engine::Ressources::TextField,
-                                                Engine::Ressources::Title>    ressourceManager_;
+            Engine::Ressources::t_RessourcesManager ressourceManager_;
 
             E_GAME_STATE gameState;
+
+            std::vector<std::string> savePaths;
 
             #pragma endregion //!attribut
 

@@ -14,47 +14,60 @@ namespace Engine::Physics
 {
     class PhysicalObject : public Engine::Ressources::Component
     {
-        public:
+    public:
+#pragma region constructor / destructor
 
-        #pragma region constructor/destructor
+        PhysicalObject(Engine::Ressources::GameObject &refGameObject);
+        PhysicalObject(const PhysicalObject &other);
+        PhysicalObject(PhysicalObject &&other);
+        virtual ~PhysicalObject();
 
-        PhysicalObject (Engine::Ressources::GameObject& refGameObject);
-        PhysicalObject (const PhysicalObject& other);
-        PhysicalObject (PhysicalObject&& other);
-        virtual ~PhysicalObject ();
-        
-        PhysicalObject ()                                       = delete;
-        PhysicalObject& operator=(PhysicalObject const& other)  = delete;
-        PhysicalObject& operator=(PhysicalObject && other)      = delete;
+        PhysicalObject() = delete;
+        PhysicalObject &operator=(PhysicalObject const &other) = delete;
+        PhysicalObject &operator=(PhysicalObject &&other) = delete;
 
-        #pragma endregion //!constructor/destructor
+#pragma endregion //!constructor/destructor
 
-        #pragma region methods
+#pragma region methods
 
         void AddForce(Engine::Core::Maths::Vec3 force);
         void AddForce(float x, float y, float z);
         void AddTorque(Engine::Core::Maths::Vec3 force);
         void AddTorque(float x, float y, float z);
 
-        #pragma endregion //!methods
+#pragma endregion //!methods
 
-        #pragma region accessor
+#pragma region accessor
 
-        Engine::Core::Maths::Vec3 GetVelocity()          { return velocity; }
-        Engine::Core::Maths::Vec3 GetAngularVelocity()   { return angularVelocity; }
-        float GetMass()             { return mass; }
+        Engine::Core::Maths::Vec3 GetVelocity()
+        {
+            return velocity;
+        }
+        Engine::Core::Maths::Vec3 GetAngularVelocity() { return angularVelocity; }
+        float GetMass() { return mass; }
 
         bool IsKinematic() { return _isKinematic; }
         bool UseGravity() { return _useGravity; }
-        Engine::Ressources::GameObject& getGameObject () { return gameObject;}
+        bool IsSleeping() { return _sleep; }
+        Engine::Ressources::GameObject &getGameObject() { return gameObject; }
 
-        #pragma endregion //!accessor
+#pragma endregion //!accessor
 
-        #pragma region mutator
+#pragma region mutator
 
-        void SetVelocity(Engine::Core::Maths::Vec3 _velocity) { velocity = _velocity; }
-        void SetVelocity(float x, float y, float z) { velocity.x = x; velocity.y = y; velocity.z = z;}  
-        void SetMass(float _mass) { mass = _mass; } 
+        void SetVelocity(Engine::Core::Maths::Vec3 _velocity)
+        {
+            _sleep = false;
+            velocity = _velocity;
+        }
+        void SetVelocity(float x, float y, float z)
+        {
+            _sleep = false;
+            velocity.x = x;
+            velocity.y = y;
+            velocity.z = z;
+        }
+        void SetMass(float _mass) { mass = _mass; }
         void SetIsKinematic(bool state) { _isKinematic = state; }
         void SetUseGravity(bool state) { _useGravity = state; }
         void SetFreezeTrX(bool state) { freezeTrX = state; }
@@ -64,20 +77,22 @@ namespace Engine::Physics
         void SetFreezeRotY(bool state) { freezeRotY = state; }
         void SetFreezeRotZ(bool state) { freezeRotZ = state; }
 
-        #pragma endregion //!mutator
-
-        #pragma region operator
-        #pragma endregion //!operator
-
-        #pragma region convertor
-        #pragma endregion //!convertor
+        void Sleep() { _sleep = true; }
+        void WakeUp() { _sleep = false; }
 
 
-        protected:
+#pragma endregion //!mutator
 
-        #pragma region attribut
+#pragma region operator
+#pragma endregion //!operator
 
-        Engine::Core::Maths::Vec3 velocity = {0,0,0};
+#pragma region convertor
+#pragma endregion //!convertor
+
+    protected:
+#pragma region attribut
+
+        Engine::Core::Maths::Vec3 velocity = {0, 0, 0};
         Engine::Core::Maths::Vec3 angularVelocity;
         float mass = 1;
         bool freezeTrX = false;
@@ -88,18 +103,18 @@ namespace Engine::Physics
         bool freezeRotZ = false;
         bool _isKinematic = false;
         bool _useGravity = true;
+        bool _sleep = false; 
 
-        #pragma endregion //!attribut
+#pragma endregion //!attribut
 
-        #pragma region static attribut
-        #pragma endregion //! static attribut
+#pragma region static attribut
+#pragma endregion //! static attribut
 
-        #pragma region methods
-        #pragma endregion //!methods
+#pragma region methods
+#pragma endregion //!methods
 
-        private:
-
+    private:
     };
-}
+} // namespace Engine::Physics
 
 #endif //_PHYSICAL_OBJECT_H

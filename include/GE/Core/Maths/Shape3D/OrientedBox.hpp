@@ -8,6 +8,7 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/Referential.hpp"
+#include "GE/Core/Maths/Shape3D/AABB.hpp"
 
 namespace Engine::Core::Maths::Shape3D
 {
@@ -46,7 +47,29 @@ namespace Engine::Core::Maths::Shape3D
         #pragma endregion //!constructor/destructor
 
         #pragma region methods
+
+        Shape3D::AABB getAABB() const noexcept
+        {
+            Vec3 vecIi = referential_.unitI * iI_;
+            Vec3 vecIj = referential_.unitJ * iJ_;
+            Vec3 vecIk = referential_.unitK * iK_;
+            float AABBiI = std::abs(Vec3::dot(Vec3::right, vecIi)) + std::abs(Vec3::dot(Vec3::right, vecIj)) + std::abs(Vec3::dot(Vec3::right, vecIk));
+            float AABBiJ = std::abs(Vec3::dot(Vec3::up, vecIi)) + std::abs(Vec3::dot(Vec3::up, vecIj)) + std::abs(Vec3::dot(Vec3::up, vecIk));
+            float AABBiK = std::abs(Vec3::dot(Vec3::forward, vecIi)) + std::abs(Vec3::dot(Vec3::forward, vecIj)) + std::abs(Vec3::dot(Vec3::forward, vecIk));
+            return Shape3D::AABB{referential_.origin, AABBiI, AABBiJ, AABBiK};
+        }
+
+        Vec3 ptForwardTopLeft     () const noexcept { return referential_.origin - (referential_.unitI * iI_) + (referential_.unitJ * iJ_) + (referential_.unitK * iK_); }
+        Vec3 ptForwardTopRight    () const noexcept { return referential_.origin + (referential_.unitI * iI_) + (referential_.unitJ * iJ_) + (referential_.unitK * iK_); }
+        Vec3 ptForwardBottomLeft  () const noexcept { return referential_.origin - (referential_.unitI * iI_) - (referential_.unitJ * iJ_) + (referential_.unitK * iK_); }
+        Vec3 ptForwardBottomRight () const noexcept { return referential_.origin + (referential_.unitI * iI_) - (referential_.unitJ * iJ_) + (referential_.unitK * iK_); }
+        Vec3 ptBackTopLeft        () const noexcept { return referential_.origin - (referential_.unitI * iI_) + (referential_.unitJ * iJ_) - (referential_.unitK * iK_); }
+        Vec3 ptBackTopRight       () const noexcept { return referential_.origin + (referential_.unitI * iI_) + (referential_.unitJ * iJ_) - (referential_.unitK * iK_); }
+        Vec3 ptBackBottomLeft     () const noexcept { return referential_.origin - (referential_.unitI * iI_) - (referential_.unitJ * iJ_) - (referential_.unitK * iK_); }
+        Vec3 ptBackBottomRight    () const noexcept { return referential_.origin + (referential_.unitI * iI_) - (referential_.unitJ * iJ_) - (referential_.unitK * iK_); }
+
         #pragma endregion //!methods
+
         #pragma region accessor
 
         virtual Referential  getReferential()    const noexcept  { return referential_; }
@@ -78,7 +101,6 @@ namespace Engine::Core::Maths::Shape3D
         private:
 
     };
-
 } /*namespace Engine::Core::Maths::Shape3D*/
 
 #endif //_ORIENTED_BOX_H

@@ -12,7 +12,14 @@
 #include "GE/Core/System/UISystem.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
+#include "save/xmlparse.hpp"
 #include "Game/BarIndicatorController.hpp"
+#include "Game/CircularEnemiesSpawner.hpp"
+
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
+#include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
+#include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
+#include "GE/Physics/ColliderShape/AABBCollider.hpp"
 
 #include "../src/stb_image.h"
 
@@ -27,13 +34,12 @@
 using namespace Game;
 using namespace Engine;
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
-using namespace Engine::Core::Time;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
 using namespace Engine::Core::System;
-using namespace Engine::Core::Systems;
 using namespace Engine::Core::DataStructure;
 
 
@@ -46,7 +52,25 @@ Demo::Demo(Engine::GE& gameEngine)
         dirCamera          {0.f, 0.f, -1.f}
 {
 
-    loadGeneralRessource(gameEngine_.ressourceManager_);
+    scene_ = std::make_unique<Scene>();
+
+    // TimeSystem::setTimeScale(0.3f);
+
+    loadRessources(gameEngine_.ressourceManager_);
+    
+    loadCamera(gameEngine_.ressourceManager_);
+
+    loadEntity(gameEngine_.ressourceManager_);
+    // loadSkateBoard(gameEngine_.ressourceManager_);
+    loadGround(gameEngine_.ressourceManager_);
+    // loadSkyBox(gameEngine_.ressourceManager_);
+    loadLights(gameEngine_.ressourceManager_);
+    
+    loadUI(gameEngine_.ressourceManager_);
+
+    loadEnemies(gameEngine_.ressourceManager_);
+
+    // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -72,10 +96,11 @@ void Demo::update     () noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         PhysicSystem::update();
+        scene_->update();
+        
         ScriptSystem::update();
-
-        scene_.update();
     }
+
 }
 
 void Demo::display    () const noexcept
@@ -87,7 +112,7 @@ void Demo::display    () const noexcept
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
         static_cast<Camera*>(mainCamera->entity.get())->use();
         
-        scene_.draw();
+        scene_->draw();
     }
     
     UISystem::draw(gameEngine_);
@@ -95,114 +120,216 @@ void Demo::display    () const noexcept
     glUseProgram(0);
 }
 
-void Demo::loadGeneralRessource   (Ressources& ressourceManager)
-{    
-    loadUI(gameEngine_.ressourceManager_);
-
-    //Load Camera
-    Camera  camP1Arg ({0.f, 5.f, 15.f},
-                    {0.f, 0.f, 0.f}, 
-                    gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
-
-
-    mainCamera = &scene_.add<Camera>(scene_.getWorld(), camP1Arg);
-    static_cast<Camera*>(mainCamera->entity.get())->use();
-
+void Demo::loadRessources(t_RessourcesManager &ressourceManager)
+{
+    ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
+    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     MaterialAndTextureCreateArg matDefault;
-    matDefault.name_                = "DefaultMaterial";
-    matDefault.pathDiffuseTexture   = nullptr;
-    matDefault.flipTexture          = false;
+    matDefault.name_ = "DefaultMaterial";
+    matDefault.pathDiffuseTexture = nullptr;
+    matDefault.flipTexture = false;
+    ressourceManager.add<Material>("DefaultMaterial", matDefault);
 
-    ModelCreateArg cube1arg     {{0.f, -5.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {5.f, 0.1f, 5.f}, 
-                                &ressourceManager.add<Shader>("White", "./ressources/shader/vLightObj.vs", "./ressources/shader/fLightObj.fs", AMBIANTE_COLOR_ONLY), 
-                                {&ressourceManager.add<Material>("DefaultMaterial", matDefault)}, 
-                                &ressourceManager.add<Mesh>("cube1", Mesh::createCube(1)),
-                                "cube1"};
+    matDefault.name_ = "PinkMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 1.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
 
-    scene_.add<Model>(scene_.getWorld(), cube1arg);
+    matDefault.name_ = "BlackMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
 
-    matDefault.name_                = "PinkMaterial";
-    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 1.f, 1.f};
+    matDefault.name_ = "GreenMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 1.f, 0.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
 
-    ModelCreateArg sphere1arg   {{0.f, 5.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {0.5f, 0.5f, 0.5f}, 
-                                &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
-                                &ressourceManager.add<Mesh>("sphere1", Mesh::createSphere(25,25)),
-                                "sphere1"};
+    ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
+    ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
+    ressourceManager.add<Mesh>("Plane1", Mesh::createPlane());
+        
+    MaterialAndTextureCreateArg matGround;
+    matGround.name_                = "Ground";
+    matGround.comp_.shininess      = 1.f;
+    matGround.comp_.specular.rgbi  = {1.f, 1.f, 1.f, 0.2f};
+    matGround.pathDiffuseTexture   = "./ressources/texture/ground.jpg";
+    matGround.wrapType             = E_WrapType::MIRRORED_REPEAT;
 
-    GameObject& sphere = scene_.add<Model>(scene_.getWorld(), sphere1arg);
-
-    ModelCreateArg player       {{0.f, 0.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {0.5f, 0.5f, 0.5f}, 
-                                &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("sphere1"),
-                                "Player"};
-    GameObject& playerGo = scene_.add<Model>(scene_.getWorld(),player);
-    playerGo.addComponent<PlayerController>(gameEngine_.inputManager_);
-
-
-    matDefault.name_                = "Red";
-    matDefault.comp_.ambient.rgbi   = Vec4{1.f, 0.f, 0.f, 1.f};
-
-    ModelCreateArg ennemies   {{0.f, 0.f, 4.5f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {0.5f, 0.5f, 0.5f}, 
-                                &ressourceManager.get<Shader>("White"), 
-                                {&ressourceManager.add<Material>(matDefault.name_, matDefault)},  
-                                &ressourceManager.get<Mesh>("sphere1"),
-                                "ennemy1"};
-    scene_.add<Model>(scene_.getWorld(), ennemies).addComponent<EnnemyController>(&playerGo);
-
-    
-    // playerGameObject.addComponent<EnnemyController>(gameEngine_.inputManager_);
-    /*life bar*/             
-    GameObject& lifeBar = scene_.add<Engine::LowRenderer::Entity>(sphere);       
-    lifeBar.entity->setTranslation({0.f, 1.f, 0.f});
-    lifeBar.entity->setName("lifeBar");
-/*
-    matDefault.name_                = "BlackMaterial";
-    matDefault.comp_.ambient.rgbi   = Vec4  {0.f, 0.f, 0.f, 1.f};
-    ModelCreateArg lifeBarBackGroundArg     {{0.f, 0.f, 0.f}, 
-                                            {0.f, 0.f, 0.f}, 
-                                            {1.f, 0.1f, 0.2f}, 
-                                            &ressourceManager.get<Shader>("White"), 
-                                            {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                            &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
-                                            "lifeBarBG"};
-    scene_.add<BillBoard>(lifeBar, lifeBarBackGroundArg);
-*/
-    matDefault.name_                = "GreenMaterial";
-    matDefault.comp_.ambient.rgbi   = Vec4{0.f, 1.f, 0.f, 1.f};
-
-    ModelCreateArg lifeBarInternalArg   {{0.f, 0.f, 0.1f}, 
-                                        {0.f, 0.f, 0.f}, 
-                                        {1.f, 0.001f, 0.1f}, 
-                                        &ressourceManager.get<Shader>("White"), 
-                                        {&ressourceManager.add<Material>(matDefault.name_, matDefault)}, 
-                                        &ressourceManager.add<Mesh>("Plane1", Mesh::createPlane()),
-                                        "lifeBarBGIndicator"};
-    GameObject& lifeBarINternal = scene_.add<BillBoard>(lifeBar, lifeBarInternalArg);
-
-    sphere.addComponent<PhysicalObject>();
-    sphere.getComponent<PhysicalObject>()->SetMass(10);
-    sphere.addComponent<SphereCollider>();
-    sphere.getComponent<SphereCollider>()->SetBounciness(0.5f);
-    scene_.getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
-
-    lifeBarINternal.addComponent<BarIndicatorController<float>>(testLifePLayer, testLifePLayer);
+    ressourceManager.add<Material>("materialGround" ,matGround);
 }
 
-void Demo::loadUI      (Ressources& ressourceManager)
+void Demo::loadCamera(t_RessourcesManager &ressourceManager)
+{
+    Camera camP1Arg({0.f, 0.f, 30.f},
+                {0.f, 0.f, 0.f},
+                gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
+
+    mainCamera = &scene_->add<Camera>(scene_->getWorld(), camP1Arg);
+    static_cast<Camera *>(mainCamera->entity.get())->use();
+}
+
+void Demo::loadEntity(t_RessourcesManager &ressourceManager)
+{
+    ModelCreateArg cube1arg     {{-0.7f, -5.f, 0.f}, 
+                                {0.f, 0.f, 45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "cube1"};
+
+    scene_->add<Model>(scene_->getWorld(), cube1arg);
+    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+
+    ModelCreateArg cube2arg     {{-5.f, -10.f, 0.f}, 
+                                {0.f, 0.f, -45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "cube2"};
+
+    scene_->add<Model>(scene_->getWorld(), cube2arg);
+    scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+
+    ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
+                                {0.f, 0.f, 45.f}, 
+                                {5.f, 1.f, 5.f}, 
+                                &ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "cube3"};
+
+    scene_->add<Model>(scene_->getWorld(), cube3arg);
+    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+
+    ModelCreateArg player{{0.f, 0.f, 0.f},
+                          {0.f, 0.f, 0.f},
+                          {1.0f, 1.0f, 1.0f},
+                          &ressourceManager.get<Shader>("ColorWithLight"),
+                          {&ressourceManager.get<Material>("GreenMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere"),
+                          "Player"};
+
+    scene_->add<Model>(scene_->getWorld(), player);
+    scene_->getGameObject("world/Player").addComponent<PlayerController>(gameEngine_.inputManager_);
+    scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
+    scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
+    scene_->getGameObject("world/Player").addComponent<SphereCollider>();
+    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
+}
+
+void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
+{
+    MaterialAndTextureCreateArg matSKB;
+    matSKB.name_                = "SkyBox";
+    matSKB.pathDiffuseTexture   = "./ressources/texture/skb.bmp";
+    matSKB.flipTexture          = false;
+    matSKB.filterType           = E_FilterType::LINEAR;
+
+    Material&   materialSKB = ressourceManager.add<Material>("materialSKB", matSKB);
+    Mesh&       SKBMesh     = ressourceManager.add<Mesh>("SKBMesh", "./ressources/obj/skybox.obj");
+    Shader&     skyboxShader= ressourceManager.add<Shader>("skyboxShader", "./ressources/shader/vSkybox.vs", "./ressources/shader/fSkybox.fs", SKYBOX);
+
+    ModelCreateArg skyboxArg    {{0.f, 0.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {10.f, 10.f, 10.f}, 
+                                &skyboxShader,
+                                {&materialSKB},
+                                &SKBMesh,
+                                "Skybox",
+                                true, false};
+
+    scene_->add<Model>(scene_->getWorld(), skyboxArg);
+}
+
+void Demo::loadGround             (t_RessourcesManager &ressourceManager)
+{
+    //Mesh&     ground            = ressourceManager.add<Mesh>("ground" ,Mesh::createPlane(50));
+
+    ModelCreateArg groundArg    {{0.f, -20.f, 0.f}, 
+                                {0.f, 0.f, 0.f}, 
+                                {50.f, 0.1f, 50.f}, 
+                                &ressourceManager.get<Shader>("TextureOnly"), 
+                                {&ressourceManager.get<Material>("materialGround")},
+                                &ressourceManager.get<Mesh>("Cube"), 
+                                "Ground", 
+                                true, false};
+
+    scene_->add<Model>(scene_->getWorld(), groundArg);
+    scene_->getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
+}
+
+void Demo::loadSkateBoard         (t_RessourcesManager &ressourceManager)
+{
+    //ressourceManager.add<Shader>("LightAndTexture", "./resources/shader/vTexture2.vs", "./resources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
+
+    //Load Character
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materials;
+    
+    loadObjWithMTL("./ressources/obj/11703_skateboard_v1_L3.obj", &attrib, &shape, &materials);
+    
+    Mesh& meshMan = ressourceManager.add<Mesh>("SkateBoard", attrib, shape);
+    std::vector<Material*> pMaterial;
+    pMaterial.reserve(materials.size());
+
+    for (size_t i = 0; i < materials.size(); i++)
+    {
+        Material& material = ressourceManager.add<Material>(std::string("SkateBoard") + std::to_string(i), materials[i]);
+        pMaterial.push_back(&material);               
+    }
+
+    ModelCreateArg manArg     { {0.f, -1.f, 0.f},
+                                {-M_PI_2, 0.f, 0.f}, 
+                                {0.05f, 0.05f, 0.05f}, 
+                                &ressourceManager.get<Shader>("TextureOnly"),
+                                pMaterial,
+                                &meshMan, 
+                                "Man",
+                                true};
+
+    scene_->add<Model>(scene_->getGameObject("world/Player"), manArg);
+}
+
+void Demo::loadLights      (t_RessourcesManager &ressourceManager)
+{
+    ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
+                                {0.f, 0.f, 0.f},
+                                {1.f, 1.f, 1.f},
+                                &ressourceManager.get<Shader>("ColorWithLight"),
+                                {&ressourceManager.get<Material>("DefaultMaterial")},
+                                &ressourceManager.get<Mesh>("Sphere"),
+                                "Ground",
+                                true};
+
+    DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, -1.f},
+                                        {1.f, 1.f, 1.f, 0.1f},
+                                        {1.f, 1.f, 1.f, 0.7f},
+                                        {1.f, 1.f, 1.f, 1.f}, "light"};
+
+    PointLightCreateArg lightArg5 { {50.f, 20.f, -50.f},
+                                    {1.f, 1.f, 1.f, 0.f},
+                                    {0.f, 1.f, 0.f, 0.7f},
+                                    {1.f, 1.f, 1.f, 0.3f},
+                                    0.f, 0.05f, 0.f, "light"};
+
+    sunLight = &scene_->add<DirectionnalLight>(scene_->getWorld(), lightArg2);
+
+    GameObject& pl1 = scene_->add<PointLight>(scene_->getWorld(), lightArg5);
+
+    scene_->add<Model>(pl1, lightArg);
+
+    static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
+    //static_cast<PointLight*>(pl1.entity.get())->enable(true);
+}
+
+void Demo::loadUI(t_RessourcesManager &ressourceManager)
 {
     FontCreateArg fontarg {"./ressources/opensans.ttf", 40};
     Font * pfont = &ressourceManager.add<Font>("font1", fontarg);
+    FontCreateArg fontarg2 {"./ressources/opensans.ttf", 25};
+    Font * pfont2 = &ressourceManager.add<Font>("font2", fontarg2);
     Shader* buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
     int tempX = gameEngine_.getWinSize().width / 2.0f;
@@ -210,8 +337,8 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     #pragma region Start
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader, 
-                                            tempX - 35, tempY - 200, 
-                                            150.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Start",
+                                            tempX - 90, tempY - 200, 
+                                            200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
@@ -219,15 +346,15 @@ void Demo::loadUI      (Ressources& ressourceManager)
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
-                                            tempX - 35, tempY - 100, 
-                                            150.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load",
+                                            tempX - 95, tempY - 100, 
+                                            220.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load Game",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
         
     };
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader, 
-                                            tempX - 55, tempY, 
+                                            tempX - 65, tempY, 
                                             150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                             E_GAME_STATE::STARTING).function = [&]()
     {
@@ -369,39 +496,64 @@ void Demo::loadUI      (Ressources& ressourceManager)
 
     #pragma endregion
 
+    #pragma region Saves
 
+    int i = -300;
+    int j = -300;
+
+    std::string shortSaveName;
+
+    for (std::string& saves : gameEngine_.savePaths)
+    {
+        if (saves.size() < 23) // TODO: assert
+            return;
+        shortSaveName = saves.substr(19, saves.size() - 23);
+        ressourceManager.add<Button>(   shortSaveName,  pfont2, buttonShader,
+                                        tempX + i, tempY + j, 
+                                        75.0f, 60.0f, SDL_Color{200, 200, 200, 0}, 
+                                        shortSaveName, E_GAME_STATE::STARTSAVE).function = [&]()
+        {
+            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            usingMouse = false;
+            scene_.reset();
+            scene_ = std::make_unique<Scene>();
+            setupScene(*scene_, gameEngine_, saves.c_str());
+            mainCamera = &scene_->getGameObject("world/MainCamera");
+        };
+
+        i += 150;
+
+        if (i == 300)
+        {
+            j += 100;
+            i = -300;
+        }
+    }
+
+    #pragma endregion
 }
 
-void Demo::loadLights      (Ressources& ressourceManager)
+void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManager)
 {
-    ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
-                                {0.f, 0.f, 0.f},
-                                {1.f, 1.f, 1.f},
-                                &ressourceManager.get<Shader>("White"),
-                                {&ressourceManager.get<Material>("DefaultMaterial")},
-                                &ressourceManager.get<Mesh>("Sphere"),
-                                "Ground",
-                                true};
+    enemiesContener = &scene_->add<Engine::LowRenderer::Entity>(scene_->getWorld(), "EnemiesContener");
 
-    DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, 1.f},
-                                        {1.f, 1.f, 1.f, 0.1f},
-                                        {1.f, 1.f, 1.f, 0.7f},
-                                        {1.f, 1.f, 1.f, 1.f}, "light"};
+    ModelCreateArg modelArg{{0.f, 0.f, 0.f},
+                          {0.f, 0.f, 0.f},
+                          {1.0f, 1.0f, 1.0f},
+                          &ressourceManager.get<Shader>("ColorWithLight"),
+                          {&ressourceManager.get<Material>("GreenMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere"),
+                          "Ennemy"};
 
-    PointLightCreateArg lightArg5 { {50.f, 20.f, -50.f},
-                                    {1.f, 1.f, 1.f, 0.f},
-                                    {0.f, 1.f, 0.f, 0.7f},
-                                    {1.f, 1.f, 1.f, 0.3f},
-                                    0.f, 0.05f, 0.f, "light"};
+    ModelCreateArg modelArg2{{0.f, 0.f, 0.f},
+                        {0.f, 0.f, 0.f},
+                        {1.0f, 1.0f, 1.0f},
+                        &ressourceManager.get<Shader>("ColorWithLight"),
+                        {&ressourceManager.get<Material>("PinkMaterial")},
+                        &ressourceManager.get<Mesh>("Cube"),
+                        "Ennemy2"};
 
-    sunLight = &scene_.add<DirectionnalLight>(scene_.getWorld(), lightArg2);
-
-    GameObject& pl1 = scene_.add<PointLight>(scene_.getWorld(), lightArg5);
-
-    scene_.add<Model>(pl1, lightArg);
-
-    static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
-    static_cast<PointLight*>(pl1.entity.get())->enable(true);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3::zero, 2.f, 0.1f, 0.f);
 }
 
 void Demo::updateControl(Engine::Core::InputSystem::Input& input)
@@ -420,7 +572,9 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::OPTION)
+        else if (gameEngine_.gameState == E_GAME_STATE::OPTION 
+             ||  gameEngine_.gameState == E_GAME_STATE::LOADSAVE 
+             ||  gameEngine_.gameState == E_GAME_STATE::STARTSAVE)
         {
             gameEngine_.gameState = E_GAME_STATE::STARTING;
         }
@@ -449,6 +603,15 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
         SDL_ShowCursor(true);
         SDL_SetRelativeMouseMode(SDL_FALSE);
     }
+
+    // if (input.keyboard.isDown[SDL_SCANCODE_SPACE])
+    // {
+    //     TimeSystem::setTimeScale(0.f);
+    // }
+    // else
+    // {
+    //     TimeSystem::setTimeScale(0.5f);
+    // }
 
     // static int exFrameWheelVal = input.mouse.wheel_scrolling;
 
