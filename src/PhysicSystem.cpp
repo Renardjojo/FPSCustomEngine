@@ -3,7 +3,15 @@
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Core/Maths/ShapeRelation/MovingSphereOrientedBox.hpp"
 #include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
-
+#include "GE/Core/Maths/ShapeRelation/SegmentAABB.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentCapsule.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentCylinder.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentInfiniteCylinder.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentOrientedBox.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentPlane.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentQuad.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentSegment.hpp"
+#include "GE/Core/Maths/ShapeRelation/SegmentSphere.hpp"
 
 using namespace Engine::Physics;
 using namespace Engine::Core::System;
@@ -75,4 +83,41 @@ void PhysicSystem::update() noexcept
         /*update movement induct by the differente force on the object*/
         object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getFixedDeltaTime());
     }
+}
+
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, CollisionHit& collisionHit) noexcept
+{
+    for (Collider* collider1 : pColliders)
+    {
+        for (Collider* collider2 : pColliders)
+        {
+            if (collider1 != collider2)
+            {
+                if (!collider1->GetAttachedPhysicalObject())
+                    continue;
+
+                if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
+                {
+                    
+
+
+                }
+            }
+        }
+    }
+}
+
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, CollisionHit& collisionHit) noexcept
+{
+
+}
+
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance) noexcept
+{
+Intersection intersection;
+}
+
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept
+{
+Intersection intersection;
 }

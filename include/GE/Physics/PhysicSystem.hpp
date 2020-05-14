@@ -7,11 +7,20 @@
 
 #include <vector>
 #include "GE/Core/Maths/vec.hpp"
+#include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
-#include "GE/Physics/Collider.hpp"
+#include "GE/Physics/ColliderShape/Collider.hpp"
 
 namespace Engine::Physics
 {
+    
+    struct CollisionHit
+    {
+        Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
+        PhysicalObject*                                     optionnalPhysicalObjectPtr1;
+        PhysicalObject*                                     optionnalPhysicalObjectPtr2;
+    };
+
     class PhysicSystem
     {
         public:
@@ -77,15 +86,15 @@ namespace Engine::Physics
         }
 
         static
-        void addCollider (Collider* pCollider) noexcept
+        void addCollider (ColliderShape::Collider* pCollider) noexcept
         {
             pColliders.push_back(pCollider);
         }
 
         static
-        void updateColliderPointor (Collider* newPointorCollider, Collider* exPointorCollider) noexcept
+        void updateColliderPointor (ColliderShape::Collider* newPointorCollider, ColliderShape::Collider* exPointorCollider) noexcept
         {
-            for (std::vector<Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            for (std::vector<ColliderShape::Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
             {
                 if ((*it) == exPointorCollider)
                 {
@@ -96,9 +105,9 @@ namespace Engine::Physics
         }
 
         static
-        void removeCollider (Collider* pCollider) noexcept
+        void removeCollider (ColliderShape::Collider* pCollider) noexcept
         {
-            for (std::vector<Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            for (std::vector<ColliderShape::Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
             {
                 if ((*it) == pCollider)
                 {
@@ -107,6 +116,18 @@ namespace Engine::Physics
                 }
             }
         }
+
+        static
+        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, CollisionHit& collisionHit) noexcept;
+
+        static
+        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, CollisionHit& collisionHit) noexcept;
+
+        static
+        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance) noexcept;
+
+        static
+        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept;
 
         #pragma endregion //!mutator
 
@@ -123,7 +144,7 @@ namespace Engine::Physics
         static Engine::Core::Maths::Vec3 gravity;
 
         static std::vector<PhysicalObject*> pPhysicalObjects;
-        static std::vector<Collider*> pColliders;
+        static std::vector<ColliderShape::Collider*> pColliders;
 
         static float test;
 

@@ -78,7 +78,6 @@ namespace Engine::Core::Maths::Shape3D
                 return point + getSignedDistanceToPlane(plane, point) * plane.normal_;
             }
 
-
             /**
              * @brief Get the Distance From Point To Plan object
              * 
