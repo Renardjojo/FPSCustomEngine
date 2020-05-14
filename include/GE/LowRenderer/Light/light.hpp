@@ -69,6 +69,7 @@ namespace Engine::LowRenderer
     
             #pragma region accessor
 
+            virtual const Engine::Core::Maths::Vec3&                        getPos()                   const noexcept { return position_; }
             virtual const Engine::Ressources::AmbiantComponent&             getAmbient()               const noexcept { return ambientComp_; }
             virtual const Engine::Ressources::DiffuseComponent&             getDiffuse()               const noexcept { return diffuseComp_; }
             virtual const Engine::Ressources::SpecularComponent&            getSpecular()              const noexcept { return specularComp_; }
@@ -95,6 +96,11 @@ namespace Engine::LowRenderer
     
             #pragma region convertor
             #pragma endregion //!convertor
+
+            static void resetLight()
+            {
+                lightsToUse.clear();
+            }
     
         protected:
     

@@ -9,10 +9,11 @@
 #include <iostream>
 #include <fstream>
 
-namespace Ressoures::Save
+namespace Engine::Ressources::Save
 {
 
     void initSavePaths(std::vector<std::string>& savePaths, const char* path);
 
 } /*namespace */
+
 #endif //_SAVES_H

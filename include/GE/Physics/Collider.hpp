@@ -37,7 +37,7 @@ protected:
 
     PhysicalObject* attachedPhysicalObject;
 
-    float bounciness_;
+    float bounciness_ = 0.f;
     float friction_;
 
 };

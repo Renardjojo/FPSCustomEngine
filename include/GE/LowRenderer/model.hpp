@@ -18,10 +18,14 @@ namespace Engine::LowRenderer
     typedef struct S_ModelCreateArg
     {
         Engine::Core::Maths::Vec3                       position, rotation, scale;
-        Engine::Ressources::Shader*                      pShader                = nullptr;
-        std::vector<Engine::Ressources::Material*>       pMaterials;
-        Engine::Ressources::Mesh*                        pMesh                  = nullptr;
+        Engine::Ressources::Shader*                     pShader                = nullptr;
+        std::vector<Engine::Ressources::Material*>      pMaterials;
+        Engine::Ressources::Mesh*                       pMesh                  = nullptr;
         const char*                                     name;
+
+        std::string                                     shaderName;
+        std::vector<std::string>                        materialName; 
+        std::string                                     meshName; 
          
         bool                                            loadInGPU               = true;
         bool                                            enableBackFaceCulling   = true;
@@ -71,17 +75,12 @@ namespace Engine::LowRenderer
 
             bool isOpaque () const noexcept { return isOpaque_; }
 
+            std::string getShaderName() { return shaderName_; }
+            std::vector<std::string>& getMaterialName() { return materialName_; }
+            std::string getMeshName() { return meshName_; }
+
             #pragma endregion //!accessor
     
-            #pragma region mutator
-
-            #pragma endregion //!mutator
-    
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
     
         protected:
     
@@ -91,6 +90,10 @@ namespace Engine::LowRenderer
             std::vector<Engine::Ressources::Material*>   pMaterial_; //contain the texture and material data
             std::vector<Engine::Ressources::Material*>   pMaterialToUse_; //contain pointor to the material to use when model is display.
             Engine::Ressources::Mesh*                    pMesh_;
+
+            std::string                                  shaderName_;
+            std::vector<std::string>                     materialName_; 
+            std::string                                  meshName_; 
 
             bool                                        enableBackFaceCulling_;
             bool                                        isOpaque_;

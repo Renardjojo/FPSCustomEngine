@@ -38,7 +38,10 @@ Model::Model (const ModelCreateArg& arg)
         pMaterial_  (arg.pMaterials),
         pMesh_      (arg.pMesh),
         enableBackFaceCulling_ (arg.enableBackFaceCulling),
-        isOpaque_   (arg.isOpaque)
+        isOpaque_       (arg.isOpaque),
+        shaderName_     (arg.shaderName),
+        materialName_   (arg.materialName),
+        meshName_       (arg.meshName)
 {
     initTextureBufferWithMTLId();
 

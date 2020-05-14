@@ -1,6 +1,6 @@
-#include "save/saves.hpp"
+#include "GE/Ressources/Saves.hpp"
 
-void Ressoures::Save::initSavePaths(std::vector<std::string>& savePaths, const char* path)
+void Engine::Ressources::Save::initSavePaths(std::vector<std::string>& savePaths, const char* path)
 {
     std::string head;
 
