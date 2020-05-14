@@ -3,6 +3,9 @@
 #include "GE/Core/Rendering/Window/windowSDL.hpp"
 #include <SDL2/SDL_hints.h>
 
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 using namespace Engine::Core::Renderer;
 using namespace Engine::Core::Debug;
 using namespace std;
@@ -44,6 +47,16 @@ void    RendererSDLOpGl33::initialize  (const WindowCreateArg& winArg)
     }
 
     SLog::logInitializationEnd("SDL/OpenGL 4.6 Renderer");
+
+    SLog::logInitializationStart("init IMGUI for SDL2/OpenGL 4.6");
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplSDL2_InitForOpenGL((SDL_Window*)pWin->get(), openGlContext_);
+    const char* glsl_version = "#version 330 core";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    SLog::logInitializationEnd("init IMGUI for SDL2/OpenGL 4.6");
 }
 
 void   RendererSDLOpGl33::release   ()

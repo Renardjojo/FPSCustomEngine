@@ -26,9 +26,10 @@ LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
 #Cpp and C wildcard
-SRCPPS=$(wildcard src/*.cpp)
-SRCS=$(wildcard src/*.c)
-OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) 
+LIBIMGUI = $(wildcard include/imgui/*.cpp)
+SRCPPS=$(wildcard src/*.cpp) 
+SRCS=$(wildcard src/*.c) 
+OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) $(LIBIMGUI:.cpp=.o)
 
 all: $(OUTPUT)
 

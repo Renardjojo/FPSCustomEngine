@@ -1,5 +1,7 @@
 #include  "GE/Core/InputSystem/input.hpp"
 
+#include "imgui/imgui_impl_sdl.h"
+
 using namespace Engine::Core::InputSystem;
 
 Input::Input()
@@ -59,6 +61,8 @@ void   Input::pollEvent		(Uint32 windowID)
 
 	while (SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
+
 		switch (event.type)
 		{
 			case SDL_MOUSEMOTION :

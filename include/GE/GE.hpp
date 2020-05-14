@@ -50,6 +50,7 @@ namespace Engine
             const Engine::Core::InputSystem::T_inputKeyboard&	getKeyboardEvent() const noexcept    { return inputManager_.keyboard; };
 
             const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
+            Engine::Core::Renderer::IRenderer* getRenderer () { return ren_.get(); }
 
             float   getDeltaTime() { return Engine::Core::System::TimeSystem::getDeltaTime(); };
 
