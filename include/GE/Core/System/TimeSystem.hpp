@@ -8,7 +8,7 @@
 #include <functional>
 #include "GE/Core/Debug/log.hpp"
 
-namespace Engine::Core::Time
+namespace Engine::Core::System
 {
 	class TimeSystem
 	{

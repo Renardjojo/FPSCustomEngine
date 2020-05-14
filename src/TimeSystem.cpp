@@ -3,7 +3,7 @@
 #include <SDL2/SDL_timer.h>
 #include <string>
 
-using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 using namespace Engine::Core::Debug;
 
 bool TimeSystem::_limitFPS = false;

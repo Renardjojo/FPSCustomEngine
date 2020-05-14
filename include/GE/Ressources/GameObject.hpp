@@ -2,8 +2,8 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-04-29 - 19 h 27
 
-#ifndef _GAMEOBJECT_H
-#define _GAMEOBJECT_H
+#ifndef _GAME_OBJECT_H
+#define _GAME_OBJECT_H
 
 #include <list>
 #include <map>
@@ -20,113 +20,215 @@
 
 namespace Engine::Ressources
 {
+    class GameObject
+    {
+    public:
 
-class GameObject
-{
-public:
+        GameObject()                                        = default;
+        GameObject(const GameObject &other)                 = default;
+        GameObject(GameObject &&other)                      = default;
+        virtual ~GameObject()                               = default;
+        GameObject &operator=(GameObject const &other)      = default;
+        GameObject &operator=(GameObject &&other)           = default;
 
-    GameObject()                                        = default;
-    GameObject(const GameObject &other)                 = default;
-    GameObject(GameObject &&other)                      = default;
-    virtual ~GameObject()                               = default;
-    GameObject &operator=(GameObject const &other)      = default;
-    GameObject &operator=(GameObject &&other)           = default;
-
-    std::unique_ptr<Engine::LowRenderer::Entity> entity;
-    std::list<GameObject> children;
-    /**
+        std::unique_ptr<Engine::LowRenderer::Entity> entity;
+        std::list<GameObject> children;
+        /**
          * @brief update entity and these child if current entity is dirty
          * 
          */
-    void update()
-    {
-        for (auto i = children.begin(); i != children.end(); i++)
+        void update()
         {
-            if (i->entity->isDirty())
+            for (auto i = children.begin(); i != children.end(); i++)
             {
-                i->entity->update(entity->getModelMatrix());
-                i->forceupdate();
-            }
-            else
-            {
-                i->update();
+                if (i->entity->isDirty())
+                {
+                    i->entity->update(entity->getModelMatrix());
+                    i->forceUpdate();
+                }
+                else
+                {
+                    i->update();
+                }
             }
         }
-    }
 
-    /**
+        /**
          * @brief Force the update of entity without check if entity is dirty
          * 
          */
-    void forceupdate()
-    {
-        for (auto i = children.begin(); i != children.end(); i++)
+        void forceUpdate()
         {
-            i->entity->update(entity->getModelMatrix());
-            i->forceupdate();
+            for (auto i = children.begin(); i != children.end(); i++)
+            {
+                i->entity->update(entity->getModelMatrix());
+                i->forceUpdate();
+            }
         }
-    }
 
-    /**
+        /**
          * @brief Draw entity if entity is drawable
          * 
          */
-    void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model *> &mapElemSortedByDistance) const
-    {
-        for (auto i = children.begin(); i != children.end(); i++)
+        void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model *> &mapElemSortedByDistance) const
         {
-            Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model *>(i->entity.get());
-            if (model != nullptr)
+            for (auto i = children.begin(); i != children.end(); i++)
             {
-                if (model->isOpaque())
-                    model->draw();
-                else
+                Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model *>(i->entity.get());
+                if (model != nullptr)
                 {
-                    float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - model->getPosition()).length();
-                    mapElemSortedByDistance[distance] = model;
+                    if (model->isOpaque())
+                        model->draw();
+                    else
+                    {
+                        float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - model->getPosition()).length();
+                        mapElemSortedByDistance[distance] = model;
+                    }
+                }
+
+                i->sortAndDrawOpqueElement(mapElemSortedByDistance);
+            }
+        }
+
+        /**
+         * @brief add a Component to the gameobject
+         * 
+         * @tparam T 
+         * @tparam Args 
+         * @param args 
+         */
+        template <typename T, typename... Args>
+        void addComponent(Args &&... args) noexcept
+        {
+            components.emplace_back(std::make_unique<T>(*this, args...));
+        }
+
+        /**
+         * @brief Get the first Component type object
+         * 
+         * @tparam T 
+         * @return Component& 
+         */
+        template <typename T>
+        T* getComponent()
+        {
+            for (std::unique_ptr<Component> &uniquePtrComponent : components)
+            {
+                Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
+
+                if (comp) 
+                    return dynamic_cast<T*>(uniquePtrComponent.get());
+            }
+            return nullptr;
+        }
+
+        /**
+         * @brief Get the first gameObject with path in arg
+         * 
+         * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
+         * @return GraphEntity& 
+         */
+        Engine::Ressources::GameObject* getChild (const std::string& path) noexcept
+        {
+            GE_assert(!path.empty());
+
+            std::stringstream sPath(path);
+            std::string word;
+            Engine::Ressources::GameObject* currentEntity = this;
+
+            while (std::getline(sPath, word, '/'))
+            {
+                if (word.empty() || word == "." || word == entity->getName()) continue;
+
+                bool isFound = false;
+                for (auto&& child : currentEntity->children)
+                {
+                    if (child.entity->getName() == word)
+                    {
+                        currentEntity = &child;
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (!isFound)
+                {
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    return nullptr;
                 }
             }
-
-            i->sortAndDrawOpqueElement(mapElemSortedByDistance);
+            return currentEntity;
         }
-    }
-    /**
-     * @brief add a Component to the gameobject
-     * 
-     * @tparam T 
-     * @tparam Args 
-     * @param args 
-     */
-    template <typename T, typename... Args>
-    void addComponent(Args &&... args) noexcept
-    {
-        components.emplace_back(std::make_unique<T>(*this, args...));
-    }
 
-    /**
-     * @brief Get the first Component type object
-     * 
-     * @tparam T 
-     * @return Component& 
-     */
-    template <typename T>
-    T* getComponent()
-    {
-        for (std::unique_ptr<Component> &uniquePtrComponent : components)
+        /**
+         * @brief Destroye the first gameObject with path in arg
+         * 
+         * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
+         * @return GraphEntity& 
+         */
+        void destroyChild (const std::string& path) noexcept
         {
-            Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
+            GE_assert(!path.empty());
 
-            if (comp) 
-                return dynamic_cast<T*>(uniquePtrComponent.get());
+            std::stringstream sPath(path);
+            std::string word;
+            Engine::Ressources::GameObject* parentEntity = this;
+            Engine::Ressources::GameObject* currentEntity = this;
+
+            while (std::getline(sPath, word, '/'))
+            {
+                if (word.empty() || word == "." || word == entity->getName()) continue;
+
+                bool isFound = false;
+                parentEntity = currentEntity;
+                for (auto&& child : parentEntity->children)
+                {
+                    if (child.entity->getName() == word)
+                    {
+                        currentEntity = &child;
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (!isFound)
+                {
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    return;
+                }
+            }
+            parentEntity->children.remove(*currentEntity);
         }
-        return nullptr;
-    }
 
-    // TODO: Component[] getComponents()
-private:
-    std::vector<std::unique_ptr<Component>> components;
-};
+            /**
+             * @brief add specific entity to the graph with arg to construct it and return his id
+             * 
+             * @tparam T 
+             * @tparam Args 
+             * @param args 
+             * @param dependenceEntity&
+             * @return GameObject&
+             */
+            template<typename T, typename ...Args>
+            Engine::Ressources::GameObject& addChild(Args&&... args) noexcept
+            {
+                (*this).children.push_back({});
+                (*this).children.back().entity = std::make_unique<T>(args...);
+                (*this).children.back().children = std::list<Engine::Ressources::GameObject>();
+                (*this).children.back().entity->update((*this).entity->getModelMatrix());
+
+                return (*this).children.back();
+            }
+
+        bool 		operator==		(GameObject const& other)
+        {
+            return entity->getName() == other.entity->getName();
+        }
+
+        // TODO: Component[] getComponents()
+    private:
+        std::vector<std::unique_ptr<Component>> components;
+    };
+
 
 } // namespace Engine::Ressources
 
-#endif //_GAMEOBJECT_H
+#endif //_GAME_OBJECT_H

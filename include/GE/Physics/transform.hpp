@@ -11,6 +11,12 @@
 
 namespace Engine::Physics
 {
+    typedef struct S_TransformCreateArg
+    {
+        Engine::Core::Maths::Vec3 position, rotation, scale;
+        
+    } TransformCreateArg;
+
     //class inline only
     class Transform
     {
@@ -20,9 +26,9 @@ namespace Engine::Physics
 
             Transform () = default;
 
-            Transform ( Engine::Core::Maths::Vec3 position, 
-                        Engine::Core::Maths::Vec3 rotation, 
-                        Engine::Core::Maths::Vec3 scale)
+            Transform ( const Engine::Core::Maths::Vec3& position, 
+                        const Engine::Core::Maths::Vec3& rotation, 
+                        const Engine::Core::Maths::Vec3& scale)
                 : position_ (position),
                   rotation_ (rotation),
                   scale_    (scale),
@@ -31,6 +37,10 @@ namespace Engine::Physics
             {
                 update();
             }
+
+            Transform (const TransformCreateArg& arg)
+                : Transform (arg.position, arg.rotation, arg.scale)
+            {}
 
             Transform (const Transform& other) = default;
             ~Transform () = default;

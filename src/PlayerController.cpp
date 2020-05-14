@@ -10,11 +10,11 @@ using namespace Engine::Physics;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
-using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 
-PlayerController::PlayerController(GameObject &gameObject, const Input &input) : ScriptComponent{gameObject},
+PlayerController::PlayerController(GameObject &gameObject, Input &input) : ScriptComponent{gameObject},
                                                                                  _input{input},
                                                                                  _camera{Camera::getCamUse()}
 {}
@@ -25,6 +25,7 @@ void PlayerController::update()
 {
     move();
 }
+
 Vec3 coord(float r, float angle)
 {
     Vec3 res{0.f,0.f, 0.f};
@@ -68,8 +69,14 @@ void PlayerController::move()
         _movement.z -= _direction.x;
     }
 
+    if (_input.keyboard.onePressed(_input.keyboard.jump) == 1)
+    {
+        gameObject.getComponent<PhysicalObject>()->AddForce(0.f, 10.f, 0.f);
+    }
+
     gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
-    gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+    //gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+    gameObject.getComponent<PhysicalObject>()->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
 
     _movement = {0.f, 0.f, 0.f};
 }

@@ -7,9 +7,23 @@
 
 #include "GE/Core/Maths/vec.hpp"
 
+#include <limits>
+
 namespace Engine::Core::Maths
 {
-    #define isBetween(number, low, up) (number >= low && number <= up)
+    /*isBetween(5, 0, 10)*/
+    template<class T = float>
+    T isBetween(T number, T low, T up)
+    {
+        return number >= low && number <= up;
+    }
+
+    /*isBetween<0, 10>(5)*/
+    template<typename T = float, T Min, T Max>
+    auto isBetween(T value) -> std::enable_if_t<Min <= Max, bool>
+    {
+        return value >= Min && value <= Max;
+    }
 }
 
 #endif //!_MATHS_TOOLS_H

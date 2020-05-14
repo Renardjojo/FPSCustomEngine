@@ -94,8 +94,9 @@ namespace Engine::Ressources
          * @param vertexCode 
          * @param fragmentPath 
          * @param fragmentCode 
+         * @return bool true is error happend
          */
-        void loadFile(const char* vertexPath, std::string& vertexCode,  const char* fragmentPath, std::string& fragmentCode);
+        bool loadFile(const char* vertexPath, std::string& vertexCode,  const char* fragmentPath, std::string& fragmentCode);
 
         /**
          * @brief Compile 

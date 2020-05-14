@@ -4,7 +4,7 @@
 
 using namespace Engine::Ressources;
 using namespace Engine;
-using namespace Engine::Core::Time;
+using namespace Engine::Core::System;
 
 Game::Game::Game (Engine::GE& gameEngine)
     : gameEngine_ {gameEngine}
@@ -19,11 +19,10 @@ void Game::Game::run ()
         TimeSystem::update([&]()
                             { 
                                 demo.update();
+                                gameEngine_.pollEvent();
                             }, 
                             [&]() 
-                            { 
-                                gameEngine_.pollEvent();
-                            },
+                            {},
                             [&]()
                             {      
                                 gameEngine_.clearRenderer();
