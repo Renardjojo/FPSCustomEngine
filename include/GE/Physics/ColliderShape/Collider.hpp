@@ -21,7 +21,7 @@ namespace Engine::Physics::ColliderShape
         
         Collider() = delete;
 
-        virtual bool isCollidingWith(Collider& collider) { return false; }
+        //virtual bool isCollidingWith(Collider& collider) { return false; }
         //virtual bool isCollidingWith(OrientedBoxCollider& collider) { return false; }
 
         PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }

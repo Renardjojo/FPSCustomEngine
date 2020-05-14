@@ -1,6 +1,7 @@
 #include "GE/Physics/PhysicSystem.hpp"
 #include "GE/Core/Debug/log.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+
 #include "GE/Core/Maths/ShapeRelation/MovingSphereOrientedBox.hpp"
 #include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
 #include "GE/Core/Maths/ShapeRelation/SegmentAABB.hpp"
@@ -13,7 +14,13 @@
 #include "GE/Core/Maths/ShapeRelation/SegmentSegment.hpp"
 #include "GE/Core/Maths/ShapeRelation/SegmentSphere.hpp"
 
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
+#include "GE/Physics/ColliderShape/AABBCollider.hpp"
+#include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
+#include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
+
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Core::System;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Maths;
@@ -56,10 +63,10 @@ void PhysicSystem::update() noexcept
 
                     //std::cout << dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere().getCenter()<< std::endl;
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
-                        dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->GetBox().getGlobalOrientedBox(), 
+                        dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                         vectSpeed, intersection))
                     {
-                        Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere().getCenter();
+                        Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
                         Vec3 AB = OA + vectSpeed;
 
                         float t = (OA + AB - intersection.intersection1).length() / AB.length();
@@ -98,8 +105,6 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Vec3& origin, const Engine
 
                 if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
                 {
-                    
-
 
                 }
             }

@@ -16,6 +16,11 @@
 #include "Game/BarIndicatorController.hpp"
 #include "Game/CircularEnemiesSpawner.hpp"
 
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
+#include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
+#include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
+#include "GE/Physics/ColliderShape/AABBCollider.hpp"
+
 #include "../src/stb_image.h"
 
 
@@ -29,6 +34,7 @@
 using namespace Game;
 using namespace Engine;
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;

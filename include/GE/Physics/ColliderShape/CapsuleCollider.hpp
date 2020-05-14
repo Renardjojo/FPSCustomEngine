@@ -12,7 +12,7 @@
 
 namespace Engine::Physics::ColliderShape
 {
-    enum EDirectionnalAxes
+    enum class EDirectionnalAxes
     {
         RightAxe,
         UpAxe,
