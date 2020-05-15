@@ -19,7 +19,6 @@ private:
     float _cameraYoffset{5.f};
     float _orbity{0.f};
     
-    Engine::Core::InputSystem::Input& _input;
     Engine::LowRenderer::Camera* _camera;
 
     Engine::Core::Maths::Vec3 _movement{0.f,0.f,0.f};
@@ -29,7 +28,7 @@ private:
     void move();
 
 public:
-    PlayerController(Engine::Ressources::GameObject &gameObject, Engine::Core::InputSystem::Input& input);
+    PlayerController(Engine::Ressources::GameObject &gameObject);
     ~PlayerController();
 
     void update() override;
