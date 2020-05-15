@@ -29,6 +29,7 @@ public:
     //virtual bool isCollidingWith(OrientedBoxCollider& collider) { return false; }
 
     PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
+    void SetAttachedPhysicalObject(PhysicalObject* newPhysicalBody) { attachedPhysicalObject = newPhysicalBody; }
 
     float GetBounciness() { return bounciness_; }
     void SetBounciness(float bounciness) { bounciness_ = bounciness; }
@@ -37,8 +38,8 @@ protected:
 
     PhysicalObject* attachedPhysicalObject;
 
-    float bounciness_ = 0.f;
-    float friction_;
+    float bounciness_{0.5};
+    float friction_{0};
 
 };
 

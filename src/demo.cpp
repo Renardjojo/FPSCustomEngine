@@ -12,7 +12,7 @@
 #include "GE/Core/System/UISystem.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
-#include "save/SceneSetup.hpp"
+#include "GE/Ressources/Saves.hpp"
 #include "Game/BarIndicatorController.hpp"
 #include "Game/CircularEnemiesSpawner.hpp"
 
@@ -30,6 +30,7 @@ using namespace Game;
 using namespace Engine;
 using namespace Engine::Physics;
 using namespace Engine::Ressources;
+using namespace Engine::Ressources::Save;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
@@ -303,7 +304,7 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
                                 &ressourceManager.get<Shader>("ColorWithLight"),
                                 {&ressourceManager.get<Material>("DefaultMaterial")},
                                 &ressourceManager.get<Mesh>("Sphere"),
-                                "Ground",
+                                "PointLight",
                                 "ColorWithLight",
                                 {"DefaultMaterial"},
                                 "Sphere",
@@ -646,9 +647,9 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
     //     flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
     // }    
     
-    if (input.keyboard.onePressed(SDL_SCANCODE_F6))
+    if (input.keyboard.onePressed(SDL_SCANCODE_F6) == 1)
     {
-        saveScene(*scene_, gameEngine_, "ressources/saves/testtest.xml");
+        saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
 
 }

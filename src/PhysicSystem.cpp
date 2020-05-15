@@ -4,6 +4,7 @@
 #include "GE/Core/Maths/ShapeRelation/MovingSphereOrientedBox.hpp"
 #include "GE/Core/Maths/ShapeRelation/Intersection.hpp"
 
+#include <cmath>
 
 using namespace Engine::Physics;
 using namespace Engine::Core::System;
@@ -22,7 +23,7 @@ void PhysicSystem::update() noexcept
     {
         if (!object || object->IsKinematic() || object->IsSleeping())
             continue;
-        
+
         if (object->UseGravity())
             object->AddForce(gravity * object->GetMass() * TimeSystem::getFixedDeltaTime());
     }

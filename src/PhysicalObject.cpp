@@ -11,6 +11,8 @@ using namespace Engine::Ressources;
 PhysicalObject::PhysicalObject (GameObject& refGameObject)
     : Component(refGameObject)
 {
+    if (gameObject.getComponent<Collider>())
+        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
 }
 
@@ -28,6 +30,8 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
         _isKinematic        (other._isKinematic),
         _useGravity         (other._useGravity)
 {
+    if (gameObject.getComponent<Collider>())
+        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
 }
 
@@ -45,6 +49,8 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
         _isKinematic        (std::move(other._isKinematic)),
         _useGravity         (std::move(other._useGravity))
 {
+    if (gameObject.getComponent<Collider>())
+        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }
 

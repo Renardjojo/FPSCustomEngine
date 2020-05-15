@@ -8,11 +8,11 @@ IDIR=-Iinclude
 EXCLUDE= src/glad.o
 
 #Relase or debug option
-CCXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CCXXFLAGSDEBUG=-O0 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CCXXFLAGSDEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 CCXXFLAGSDEBUG=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
 
-CXXFLAGSDEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXXFLAGSDEBUG=-O0 -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXXFLAGSDEBUGERROR=-Og -std=gnu++17 -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
 
