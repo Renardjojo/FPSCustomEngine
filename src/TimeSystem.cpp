@@ -52,6 +52,10 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 	static int unFixedUpdateFrameCount = 0;
 	static double chronoFPSLog = 0.;
 
+	/*First render the current frame*/
+    renderFunction();
+
+	/*Second, prepar the next frame*/
 	_temp_time = SDL_GetTicks() / 1000.0;
 	_unscaledDeltaTime = _temp_time - _time;
 	_time = _temp_time;
@@ -60,6 +64,7 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 
 	chronoFPSLog += _unscaledDeltaTime;
 
+	/*Display FPS*/
 	if (_logFPS && chronoFPSLog >= _sample)
 	{
 		std::cout << "FPS (fixedUpdate): " << fixedUpdateFrameCount << std::endl;
@@ -69,6 +74,7 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 		unFixedUpdateFrameCount = 0;
 	}
 
+	/*Fixed update*/
     while (_time_acc >= _fixedUnscaledDetlaTime )
     {
 		fixedUpdateFrameCount++;
@@ -80,6 +86,7 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 	unFixedUpdateFrameCount++;
 	_deltaTime = _unscaledDeltaTime * _timeScale;
 
-    updateFunction ();
-    renderFunction();
+	/*unfixed update*/
+    updateFunction();
+
 }

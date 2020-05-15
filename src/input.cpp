@@ -1,6 +1,8 @@
 #include "GE/Core/InputSystem/input.hpp"
 
+#ifndef DNEDITOR
 #include "imgui/imgui_impl_sdl.h"
+#endif
 
 using namespace Engine::Core::InputSystem;
 
@@ -34,7 +36,9 @@ void Input::pollEvent(Uint32 windowID)
 
 	while (SDL_PollEvent(&event))
 	{
+#ifndef DNEDITOR
 		ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 
 		switch (event.type)
 		{
