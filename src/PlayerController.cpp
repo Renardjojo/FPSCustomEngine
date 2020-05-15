@@ -13,11 +13,12 @@ using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
+using namespace Engine::Core::InputSystem;
 
-PlayerController::PlayerController(GameObject &gameObject, Input &input) : ScriptComponent{gameObject},
-                                                                                 _input{input},
-                                                                                 _camera{Camera::getCamUse()}
-{}
+PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
+                                                             _camera{Camera::getCamUse()}
+{
+}
 
 PlayerController::~PlayerController() {}
 
@@ -28,48 +29,48 @@ void PlayerController::update()
 
 Vec3 coord(float r, float angle)
 {
-    Vec3 res{0.f,0.f, 0.f};
-    sincosf(angle - M_PI/2, &res.z, &res.x);
+    Vec3 res{0.f, 0.f, 0.f};
+    sincosf(angle - M_PI / 2, &res.z, &res.x);
     res *= 10;
     return res;
 }
 
 void PlayerController::move()
-{    
+{
     //orbit
-    _orbity += (_input.mouse.motion.x * M_PI / 180.f);
-    Vec3 coordinates =coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
-    coordinates.y+=_cameraYoffset;
+    _orbity += (Input::mouse.motion.x * M_PI / 180.f);
+    Vec3 coordinates = coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
+    coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
-    
+
     //lookat
     _camera->lookAt(_camera->getPosition(), gameObject.entity.get()->getPosition(), Vec3{0.f, 1.f, 0.f});
 
     //movements
-    _direction.x=sinf(_orbity);
+    _direction.x = sinf(_orbity);
     _direction.y = 0;
-    _direction.z=-cosf(_orbity);
+    _direction.z = -cosf(_orbity);
 
     //movement
-    if (_input.keyboard.isDown[_input.keyboard.up])
+    if (Input::keyboard.isDown[Input::keyboard.up])
         _movement -= _direction;
 
-    if (_input.keyboard.isDown[_input.keyboard.down])
+    if (Input::keyboard.isDown[Input::keyboard.down])
         _movement += _direction;
-    
-    if (_input.keyboard.isDown[_input.keyboard.left])
+
+    if (Input::keyboard.isDown[Input::keyboard.left])
     {
         _movement.x -= _direction.z;
         _movement.z += _direction.x;
     }
-    if (_input.keyboard.isDown[_input.keyboard.right])
+    if (Input::keyboard.isDown[Input::keyboard.right])
     {
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
 
-    if (_input.keyboard.onePressed(_input.keyboard.jump) == 1)
+    if (Input::keyboard.onePressed(Input::keyboard.jump) == 1)
     {
         gameObject.getComponent<PhysicalObject>()->AddForce(0.f, 10.f, 0.f);
     }

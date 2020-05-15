@@ -15,34 +15,30 @@ namespace Engine::Core::System
     {
 
     protected:
-
         static std::vector<Engine::Ressources::Button *> pButtons;
         static std::vector<Engine::Ressources::TextField *> pTextFields;
         static std::vector<Engine::Ressources::Title *> pTitles;
 
-        static Engine::Ressources::TextField* pActiveTextfield;
+        static Engine::Ressources::TextField *pActiveTextfield;
 
-        static Engine::Ressources::Button* pOverredButton;
+        static Engine::Ressources::Button *pOverredButton;
 
         static Engine::Core::Maths::Vec2 keyboardXY;
 
         static bool isUsingKeyboard;
 
-
     public:
-
         UISystem() = delete;
         UISystem(const UISystem &other) = delete;
         UISystem(UISystem &&other) = delete;
         virtual ~UISystem() = delete;
         UISystem &operator=(UISystem const &) = delete;
         UISystem &operator=(UISystem &&) = delete;
-        
+
         static bool isActive;
 
-        static void update(Engine::GE& gameEngine) noexcept;
-
-        static void draw(Engine::GE& gameEngine) noexcept;
+        static void update(Engine::GE &gameEngine) noexcept;
+        static void draw(Engine::GE &gameEngine) noexcept;
 
         static void addTextField(Engine::Ressources::TextField *pTextField) noexcept
         {
@@ -119,6 +115,6 @@ namespace Engine::Core::System
             }
         }
     };
-}
+} // namespace Engine::Core::System
 
 #endif //_UISYSTEM_H

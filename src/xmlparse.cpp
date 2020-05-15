@@ -108,7 +108,7 @@ void initEntity(Scene& scene, Engine::Ressources::GameObject& parent, Engine::GE
                 newGameObject->addComponent<OrientedBoxCollider>();
             
             else if (componentName.compare("PlayerController") == 0)
-                newGameObject->addComponent<PlayerController>(gameEngine.inputManager_);
+                newGameObject->addComponent<PlayerController>();
         }
     }
     else if (str.compare("Camera") == 0)
