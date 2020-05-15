@@ -83,7 +83,7 @@ namespace Game
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             (Engine::Ressources::t_RessourcesManager& ressourceManager);
 
-            void updateControl          (Engine::Core::InputSystem::Input& input);
+            void updateControl          ();
 
             #pragma endregion //!methods
 
