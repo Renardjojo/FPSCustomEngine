@@ -46,6 +46,7 @@ namespace Engine
             #pragma region accessor
 
             const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
+            Engine::Core::Renderer::IRenderer* getRenderer () { return ren_.get(); }
 
             float   getDeltaTime() { return Core::System::TimeSystem::getDeltaTime(); };
 

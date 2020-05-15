@@ -54,6 +54,7 @@ namespace Engine::Core::DataStructure
              * @return GraphEntity* 
              */
             Engine::Ressources::GameObject& getWorld() noexcept { return world_;}
+            const Engine::Ressources::GameObject& getWorld() const noexcept { return world_;}
 
             /**
              * @brief Get the Entity object in function of path in arg

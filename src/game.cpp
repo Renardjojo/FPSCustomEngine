@@ -18,11 +18,13 @@ void Game::Game::run ()
     {   
         TimeSystem::update([&]()
                             { 
-                                demo.update();
+                                demo.fixedUpdate();
                                 gameEngine_.pollEvent();
                             }, 
                             [&]() 
-                            {},
+                            {
+                                demo.update();
+                            },
                             [&]()
                             {      
                                 gameEngine_.clearRenderer();

@@ -38,7 +38,7 @@ Vec3 coord(float r, float angle)
 void PlayerController::move()
 {
     //orbit
-    _orbity += (Input::mouse.motion.x * M_PI / 180.f);
+    _orbity += (Input::mouse.motion.x * M_PI / 180.f * 15.f * TimeSystem::getDeltaTime());
     Vec3 coordinates = coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);

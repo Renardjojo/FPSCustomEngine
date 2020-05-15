@@ -23,6 +23,10 @@
 
 #include "../src/stb_image.h"
 
+#ifndef DNEDITOR
+#include "GE/LowRenderer/GraphicsDeviceInterface/SceneGraphWindow.hpp"
+using namespace Engine::LowRenderer::GraphicsDeviceInterface;
+#endif
 
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
@@ -93,15 +97,24 @@ void Demo::update     () noexcept
 {
     UISystem::update(gameEngine_);
     updateControl();
- 
+
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
-        PhysicSystem::update();
         scene_->update();
-        
         ScriptSystem::update();
     }
 
+#ifndef DNEDITOR
+    updateEditor();
+#endif
+}
+
+void Demo::fixedUpdate    () noexcept
+{
+    if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+    {
+        PhysicSystem::update();
+    }
 }
 
 void Demo::display    () const noexcept
@@ -588,12 +601,16 @@ void Demo::updateControl()
     if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
     {
         usingMouse = !usingMouse;
+#ifndef DNEDITOR
+        displaySceneGraphWindows = !displaySceneGraphWindows;
+#endif
         flagF1IsDown = true;
     }
     else
     {
         flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
-    }    
+    } 
+
     if (!usingMouse)
     {
         SDL_ShowCursor(false);
@@ -640,3 +657,15 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
 }
+
+#ifndef DNEDITOR
+
+void Demo::updateEditor()
+{
+    if (displaySceneGraphWindows)
+    {
+        SceneGraphWindow::update(*scene_);
+    }
+}
+
+#endif
