@@ -222,17 +222,30 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                             {0.f, 0.f, 0.f},
                                             {1.0f, 1.0f, 1.0f}}};
 
-    ModelCreateArg player{&ressourceManager.get<Shader>("ColorWithLight"),
+    ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                           {&ressourceManager.get<Material>("PinkMaterial")},
                           &ressourceManager.get<Mesh>("Sphere")};
 
-    scene_->add<GameObject>(scene_->getWorld(), playerGameObject).addComponent<Model>(player);
+    GameObject& player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
+    player.addComponent<Model>(playerModel);
 
-    scene_->getGameObject("world/Player").addComponent<PlayerController>();
-    scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
-    scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
-    scene_->getGameObject("world/Player").addComponent<SphereCollider>();
-    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
+    /*Add life bar on player*/
+    GameObjectCreateArg lifeBarGameObject {"lifeBar",
+                                         {{0.f, 2.f, 0.f},
+                                         {0.f, 0.f, 0.f},
+                                         {1.f, 0.3f, 0.1f}}};
+
+    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("ColorWithLight"),
+                                {&ressourceManager.get<Material>("GreenMaterial")},
+                                &ressourceManager.get<Mesh>("Cube")};
+
+    scene_->add<GameObject>(player, lifeBarGameObject).addComponent<BillBoard>(billBoardArg);
+
+    player.addComponent<PlayerController>();
+    player.addComponent<PhysicalObject>();
+    player.getComponent<PhysicalObject>()->SetMass(1);
+    player.addComponent<SphereCollider>();
+    player.getComponent<SphereCollider>()->SetBounciness(0.4f);
 }
 
 void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)

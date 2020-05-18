@@ -21,8 +21,7 @@ namespace Engine::LowRenderer
             #pragma region constructor/destructor
     
             BillBoard (Engine::Ressources::GameObject &refGameObject, const ModelCreateArg& arg)
-                : Model (refGameObject, arg),
-                  posParent_()
+                : Model (refGameObject, arg)
             {}
 
             BillBoard (const BillBoard& other)        = default;
@@ -56,17 +55,17 @@ namespace Engine::LowRenderer
     
             #pragma region attribut     
 
-            Engine::Core::Maths::Vec3 posParent_;
-
             #pragma endregion //!attribut
     
             #pragma region methods
 
             void sendToShaderModelMatrix () const noexcept final
             {
+                Engine::Core::Maths::Vec3 globalposition = {gameObject.getModelMatrix()[3][0], gameObject.getModelMatrix()[3][1], gameObject.getModelMatrix()[3][2]};
+
                 Engine::Core::Maths::Mat4 modelMat =
-                Engine::Core::Maths::Mat4::createTranslationMatrix(gameObject.getPosition()) * 
-                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(gameObject.getPosition(), Camera::getCamUse()->getPosition(), {0.f, 1.f, 0.f})) *
+                Engine::Core::Maths::Mat4::createTranslationMatrix(globalposition) * 
+                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(globalposition, Camera::getCamUse()->getPosition(), {0.f, 1.f, 0.f})) *
                 Engine::Core::Maths::Mat4::createXRotationMatrix(M_PI_2) * 
                 Engine::Core::Maths::Mat4::createScaleMatrix(gameObject.getScale());
 
