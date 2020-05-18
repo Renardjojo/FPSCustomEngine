@@ -6,24 +6,21 @@
 #define _GE_INTERFACE_Model_H
 
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
+#include "GE/Core/Component/RenderingObject.hpp"
 
 namespace Engine::LowRenderer
 {
     class IModel
-        : public Entity
+        : public Engine::Core::Component::RenderingObject
     {
         public:
     
             #pragma region constructor/destructor
 
             IModel ()                                        = default;    
-            IModel ( Engine::Core::Maths::Vec3 position, 
-                    Engine::Core::Maths::Vec3 rotation, 
-                    Engine::Core::Maths::Vec3 scale, 
-                    const char* name)
-                    :   Entity          (position, rotation, scale, name),
-                        isLoadInGPU_    (false)
+            IModel ()
+               :    Engine::Core::Component::RenderingObject    (),
+                    isLoadInGPU_                                (false)
             {}
 
 

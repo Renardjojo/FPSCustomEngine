@@ -18,9 +18,9 @@ namespace Engine::LowRenderer
     typedef struct S_ModelCreateArg
     {
         Engine::Core::Maths::Vec3                       position, rotation, scale;
-        Engine::Ressources::Shader*                      pShader                = nullptr;
-        std::vector<Engine::Ressources::Material*>       pMaterials;
-        Engine::Ressources::Mesh*                        pMesh                  = nullptr;
+        Engine::Ressources::Shader*                     pShader                = nullptr;
+        std::vector<Engine::Ressources::Material*>      pMaterials;
+        Engine::Ressources::Mesh*                       pMesh                  = nullptr;
         const char*                                     name;
          
         bool                                            loadInGPU               = true;

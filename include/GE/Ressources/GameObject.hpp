@@ -6,7 +6,6 @@
 #define _GAME_OBJECT_H
 
 #include <list>
-#include <map>
 #include <string>
 #include <istream>
 #include <sstream>
@@ -14,13 +13,11 @@
 #include <memory>
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/Core/Debug/log.hpp"
-#include "GE/LowRenderer/camera.hpp"
-#include "GE/LowRenderer/model.hpp"
 #include "GE/Ressources/Component.hpp"
 
 namespace Engine::Ressources
 {
-    class GameObject
+    class GameObject : public Engine::LowRenderer::Entity
     {
     public:
 
@@ -31,19 +28,19 @@ namespace Engine::Ressources
         GameObject &operator=(GameObject const &other)      = default;
         GameObject &operator=(GameObject &&other)           = default;
 
-        std::unique_ptr<Engine::LowRenderer::Entity> entity;
         std::list<GameObject> children;
+
         /**
          * @brief update entity and these child if current entity is dirty
          * 
          */
-        void update()
+        virtual void update() noexcept
         {
             for (auto i = children.begin(); i != children.end(); i++)
             {
-                if (i->entity->isDirty())
+                if (i->isDirty())
                 {
-                    i->entity->update(entity->getModelMatrix());
+                    i->Transform::update(modelMat_);
                     i->forceUpdate();
                 }
                 else
@@ -61,32 +58,8 @@ namespace Engine::Ressources
         {
             for (auto i = children.begin(); i != children.end(); i++)
             {
-                i->entity->update(entity->getModelMatrix());
+                i->Transform::update(modelMat_);
                 i->forceUpdate();
-            }
-        }
-
-        /**
-         * @brief Draw entity if entity is drawable
-         * 
-         */
-        void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model *> &mapElemSortedByDistance) const
-        {
-            for (auto i = children.begin(); i != children.end(); i++)
-            {
-                Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model *>(i->entity.get());
-                if (model != nullptr)
-                {
-                    if (model->isOpaque())
-                        model->draw();
-                    else
-                    {
-                        float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - model->getPosition()).length();
-                        mapElemSortedByDistance[distance] = model;
-                    }
-                }
-
-                i->sortAndDrawOpqueElement(mapElemSortedByDistance);
             }
         }
 
@@ -138,12 +111,12 @@ namespace Engine::Ressources
 
             while (std::getline(sPath, word, '/'))
             {
-                if (word.empty() || word == "." || word == entity->getName()) continue;
+                if (word.empty() || word == "." || word == name_) continue;
 
                 bool isFound = false;
                 for (auto&& child : currentEntity->children)
                 {
-                    if (child.entity->getName() == word)
+                    if (child.getName() == word)
                     {
                         currentEntity = &child;
                         isFound = true;
@@ -152,7 +125,7 @@ namespace Engine::Ressources
                 }
                 if (!isFound)
                 {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
                     return nullptr;
                 }
             }
@@ -176,13 +149,13 @@ namespace Engine::Ressources
 
             while (std::getline(sPath, word, '/'))
             {
-                if (word.empty() || word == "." || word == entity->getName()) continue;
+                if (word.empty() || word == "." || word == name_) continue;
 
                 bool isFound = false;
                 parentEntity = currentEntity;
                 for (auto&& child : parentEntity->children)
                 {
-                    if (child.entity->getName() == word)
+                    if (child.getName() == word)
                     {
                         currentEntity = &child;
                         isFound = true;
@@ -191,7 +164,7 @@ namespace Engine::Ressources
                 }
                 if (!isFound)
                 {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
                     return;
                 }
             }
@@ -220,7 +193,7 @@ namespace Engine::Ressources
 
         bool 		operator==		(GameObject const& other)
         {
-            return entity->getName() == other.entity->getName();
+            return name_ == other.getName();
         }
 
         // TODO: Component[] getComponents()

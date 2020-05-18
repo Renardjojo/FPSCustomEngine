@@ -15,9 +15,7 @@ public:
 
     Component(GameObject &refGameObject)
     : gameObject (refGameObject) 
-    {
-
-    }
+    {}
 
     Component(const Component &other)               = default;
     Component(Component &&other)                    = default;
@@ -27,9 +25,12 @@ public:
     Component &operator=(Component const &other)    = delete;
     Component &operator=(Component &&other)         = delete;
 
-    GameObject& gameObject;
+    GameObject &        getGameObject() noexcept { return gameObject; }
+    const GameObject&   getGameObject() const noexcept { return gameObject; }
+
 protected:
 
+    GameObject& gameObject;
 
 };
 
