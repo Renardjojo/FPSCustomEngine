@@ -6,32 +6,38 @@
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/camera.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 
 namespace Game
 {
 
-class PlayerController : public Engine::Core::Component::ScriptComponent
-{
-    
-private:
-    float _playerSpeed{10.f};
-    float _cameraSpeed{10.f};
-    float _cameraYoffset{5.f};
-    float _orbity{0.f};
-    
-    Engine::LowRenderer::Camera* _camera;
+    class PlayerController : public Engine::Core::Component::ScriptComponent
+    {
 
-    Engine::Core::Maths::Vec3 _movement{0.f,0.f,0.f};
-    Engine::Core::Maths::Vec3 _direction{0.f,0.f,0.f};
+    private:
+        Engine::Physics::PhysicalObject* _physics;
+        float _playerSpeed{10.f};
+        float _cameraSpeed{10.f};
+        float _cameraYoffset{5.f};
+        float _orbity{0.f};
 
+        bool _jump{false};
 
-    void move();
+        Engine::LowRenderer::Camera *_camera;
 
-public:
-    PlayerController(Engine::Ressources::GameObject &gameObject);
-    ~PlayerController();
+        Engine::Core::Maths::Vec3 _movement{0.f, 0.f, 0.f};
+        Engine::Core::Maths::Vec3 _direction{0.f, 0.f, 0.f};
 
-    void update() override;
-};
-}
+        Engine::Core::Maths::Vec3 coord(float r, float angle);
+        void move();
+
+    public:
+        PlayerController(Engine::Ressources::GameObject &gameObject);
+        ~PlayerController();
+
+        void update() override;
+        void start() override;
+        void fixedUpdate() override;
+    };
+} // namespace Game
 #endif // __PLAYERCONTROLLER_HPP__

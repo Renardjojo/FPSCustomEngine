@@ -7,7 +7,7 @@
 
 namespace Engine::Ressources
 {
-class GameObject;
+    class GameObject;
 
 class Component
 {
@@ -32,8 +32,9 @@ protected:
 
     GameObject& gameObject;
 
-};
+    protected:
+    };
 
-} //
+} // namespace Engine::Ressources
 
 #endif //_COMPONENT_H

@@ -76,6 +76,8 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadEnemies(gameEngine_.ressourceManager_);
 
+    ScriptSystem::start();
+
     // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -115,6 +117,7 @@ void Demo::fixedUpdate    () noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         PhysicSystem::update();
+        ScriptSystem::fixedUpdate();
     }
 }
 
