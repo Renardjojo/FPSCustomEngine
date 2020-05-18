@@ -92,6 +92,10 @@ namespace Engine::Physics
             virtual const Engine::Core::Maths::Vec3& getRotation() const noexcept   { return rotation_; }
             virtual const Engine::Core::Maths::Vec3& getScale() const noexcept      { return scale_; }
 
+            virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }
+            virtual Engine::Core::Maths::Vec3 getGlobalRotation() const noexcept   { return rotation_; }
+            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return scale_; }
+
             #pragma endregion //!accessor
     
             #pragma region mutator

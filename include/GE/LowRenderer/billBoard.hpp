@@ -61,7 +61,7 @@ namespace Engine::LowRenderer
 
             void sendToShaderModelMatrix () const noexcept final
             {
-                Engine::Core::Maths::Vec3 globalposition = {gameObject.getModelMatrix()[3][0], gameObject.getModelMatrix()[3][1], gameObject.getModelMatrix()[3][2]};
+                Engine::Core::Maths::Vec3 globalposition = gameObject.getGlobalPosition();
 
                 Engine::Core::Maths::Mat4 modelMat =
                 Engine::Core::Maths::Mat4::createTranslationMatrix(globalposition) * 
