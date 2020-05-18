@@ -34,9 +34,8 @@ namespace Engine::Ressources
              */
             void update () noexcept
             {
-                world_.update();
+                world_.updateSelfAndChild();
             }
-
 
             // void draw () const noexcept
             // {

@@ -223,7 +223,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                             {1.0f, 1.0f, 1.0f}}};
 
     ModelCreateArg player{&ressourceManager.get<Shader>("ColorWithLight"),
-                          {&ressourceManager.get<Material>("GreenMaterial")},
+                          {&ressourceManager.get<Material>("PinkMaterial")},
                           &ressourceManager.get<Mesh>("Sphere")};
 
     scene_->add<GameObject>(scene_->getWorld(), playerGameObject).addComponent<Model>(player);
