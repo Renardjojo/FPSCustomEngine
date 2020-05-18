@@ -72,10 +72,9 @@ namespace Game
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
 
-                Engine::LowRenderer::ModelCreateArg enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
-                //Engine::Core::Maths::Vec2 newPosition = Engine::Core::Maths::Random::peripheralSquareCoordinate(Engine::Core::Maths::Vec2{enemiePrefasCopy.position.x, enemiePrefasCopy.position.y}, _zoneRadius, _zoneRadius);
+                Engine::LowRenderer::ModelCreateArg& enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
-                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {"Ennemy", {newPosition}};
+                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(gameObject.children.size()), {newPosition}};
 
                 gameObject.addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy).addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
             }

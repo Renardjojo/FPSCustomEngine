@@ -13,8 +13,9 @@ namespace Engine::Physics
 {
     typedef struct S_TransformCreateArg
     {
-        Engine::Core::Maths::Vec3 position, rotation, scale;
-        
+        Engine::Core::Maths::Vec3   position = Engine::Core::Maths::Vec3::zero, 
+                                    rotation = Engine::Core::Maths::Vec3::zero, 
+                                    scale    = Engine::Core::Maths::Vec3::one;
     } TransformCreateArg;
 
     //class inline only
