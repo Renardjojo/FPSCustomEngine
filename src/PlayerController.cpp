@@ -16,18 +16,33 @@ using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
 
 PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
-                                                             _camera{Camera::getCamUse()}
-{
-}
+                                                             _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
+
+
+void PlayerController::start()
+{
+    _physics = gameObject.getComponent<PhysicalObject>();
+};
 
 void PlayerController::update()
 {
     move();
 }
 
-Vec3 coord(float r, float angle)
+void PlayerController::fixedUpdate()
+{
+    if (_jump)
+    {
+        _physics->AddForce(0.f, 1.f, 0.f);
+        _jump = false;
+    }
+
+    _physics->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+};
+
+Vec3 PlayerController::coord(float r, float angle)
 {
     Vec3 res{0.f, 0.f, 0.f};
     sincosf(angle - M_PI / 2, &res.z, &res.x);
@@ -37,6 +52,8 @@ Vec3 coord(float r, float angle)
 
 void PlayerController::move()
 {
+    _jump = Input::keyboard.isDown[Input::keyboard.jump];
+
     //orbit
     _orbity += (Input::mouse.motion.x * M_PI / 180.f * 15.f * TimeSystem::getDeltaTime());
     Vec3 coordinates = coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
@@ -51,6 +68,8 @@ void PlayerController::move()
     _direction.x = sinf(_orbity);
     _direction.y = 0;
     _direction.z = -cosf(_orbity);
+
+    _movement = {0.f, 0.f, 0.f};
 
     //movement
     if (Input::keyboard.isDown[Input::keyboard.up])
@@ -70,14 +89,6 @@ void PlayerController::move()
         _movement.z -= _direction.x;
     }
 
-    if (Input::keyboard.onePressed(Input::keyboard.jump) == 1)
-    {
-        gameObject.getComponent<PhysicalObject>()->AddForce(0.f, 10.f, 0.f);
-    }
-
     gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
     //gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-    gameObject.getComponent<PhysicalObject>()->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-
-    _movement = {0.f, 0.f, 0.f};
 }

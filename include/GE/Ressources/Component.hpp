@@ -7,32 +7,29 @@
 
 namespace Engine::Ressources
 {
-class GameObject;
+    class GameObject;
 
-class Component
-{
-public:
-
-    Component(GameObject &refGameObject)
-    : gameObject (refGameObject) 
+    class Component
     {
+    public:
+        Component(GameObject &refGameObject)
+            : gameObject(refGameObject)
+        {
+        }
 
-    }
+        Component(const Component &other) = default;
+        Component(Component &&other) = default;
+        virtual ~Component(){};
 
-    Component(const Component &other)               = default;
-    Component(Component &&other)                    = default;
-    virtual ~Component() {};
+        Component() = delete;
+        Component &operator=(Component const &other) = delete;
+        Component &operator=(Component &&other) = delete;
 
-    Component()                                     = delete;
-    Component &operator=(Component const &other)    = delete;
-    Component &operator=(Component &&other)         = delete;
+        GameObject &gameObject;
 
-    GameObject& gameObject;
-protected:
+    protected:
+    };
 
-
-};
-
-} //
+} // namespace Engine::Ressources
 
 #endif //_COMPONENT_H
