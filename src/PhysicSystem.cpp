@@ -78,7 +78,7 @@ void PhysicSystem::update() noexcept
                         Vec3 velocityAtCollision = collider1->GetAttachedPhysicalObject()->GetVelocity() + gravity * collider1->GetAttachedPhysicalObject()->GetMass() * TimeSystem::getFixedDeltaTime() * (1 - t);
                         Vec3 newVelocity = collider1->GetBounciness() * -(2 * (velocityAtCollision.dotProduct(intersection.normalI1)) * intersection.normalI1 - velocityAtCollision);
 
-                        collider1->gameObject.entity->setTranslation(intersection.intersection1 + (newVelocity / collider1->GetAttachedPhysicalObject()->GetMass()) * TimeSystem::getFixedDeltaTime());
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + (newVelocity / collider1->GetAttachedPhysicalObject()->GetMass()) * TimeSystem::getFixedDeltaTime());
 
                         collider1->GetAttachedPhysicalObject()->SetVelocity(newVelocity);
                     }
@@ -92,7 +92,7 @@ void PhysicSystem::update() noexcept
             continue;
         
         /*update movement induct by the differente force on the object*/
-        object->getGameObject().entity->translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getFixedDeltaTime());
+        object->getGameObject().translate((object->GetVelocity() / object->GetMass()) * TimeSystem::getFixedDeltaTime());
     }
 }
 

@@ -6,6 +6,7 @@
 #define _GAME_OBJECT_H
 
 #include <list>
+#include <vector>
 #include <string>
 #include <istream>
 #include <sstream>
@@ -17,9 +18,15 @@
 
 namespace Engine::Ressources
 {
+    typedef Engine::LowRenderer::EntityCreateArg GameObjectCreateArg;
+
     class GameObject : public Engine::LowRenderer::Entity
     {
     public:
+
+        GameObject(const GameObjectCreateArg& arg)
+            :  Engine::LowRenderer::Entity {arg}
+        {}
 
         GameObject()                                        = default;
         GameObject(const GameObject &other)                 = default;
@@ -28,24 +35,24 @@ namespace Engine::Ressources
         GameObject &operator=(GameObject const &other)      = default;
         GameObject &operator=(GameObject &&other)           = default;
 
-        std::list<GameObject> children;
+        std::list<std::unique_ptr<GameObject>> children;
 
         /**
          * @brief update entity and these child if current entity is dirty
          * 
          */
-        virtual void update() noexcept
+        virtual void updateSelfAndChild() noexcept
         {
-            for (auto i = children.begin(); i != children.end(); i++)
+            for (auto&& i = children.begin(); i != children.end(); i++)
             {
-                if (i->isDirty())
+                if ((*i)->isDirty())
                 {
-                    i->Transform::update(modelMat_);
-                    i->forceUpdate();
+                    (*i)->update(modelMat_);
+                    (*i)->forceUpdate();
                 }
                 else
                 {
-                    i->update();
+                    (*i)->updateSelfAndChild();
                 }
             }
         }
@@ -56,10 +63,10 @@ namespace Engine::Ressources
          */
         void forceUpdate()
         {
-            for (auto i = children.begin(); i != children.end(); i++)
+            for (auto&& i = children.begin(); i != children.end(); i++)
             {
-                i->Transform::update(modelMat_);
-                i->forceUpdate();
+                (*i)->update(modelMat_);
+                (*i)->forceUpdate();
             }
         }
 
@@ -116,9 +123,9 @@ namespace Engine::Ressources
                 bool isFound = false;
                 for (auto&& child : currentEntity->children)
                 {
-                    if (child.getName() == word)
+                    if (child->getName() == word)
                     {
-                        currentEntity = &child;
+                        currentEntity = child.get();
                         isFound = true;
                         break;
                     }
@@ -140,7 +147,7 @@ namespace Engine::Ressources
          */
         void destroyChild (const std::string& path) noexcept
         {
-            GE_assert(!path.empty());
+           /* GE_assert(!path.empty());
 
             std::stringstream sPath(path);
             std::string word;
@@ -155,9 +162,9 @@ namespace Engine::Ressources
                 parentEntity = currentEntity;
                 for (auto&& child : parentEntity->children)
                 {
-                    if (child.getName() == word)
+                    if (child->getName() == word)
                     {
-                        currentEntity = &child;
+                        currentEntity = child.get();
                         isFound = true;
                         break;
                     }
@@ -168,7 +175,7 @@ namespace Engine::Ressources
                     return;
                 }
             }
-            parentEntity->children.remove(*currentEntity);
+            parentEntity->children.erase();*/
         }
 
             /**
@@ -183,12 +190,11 @@ namespace Engine::Ressources
             template<typename T, typename ...Args>
             Engine::Ressources::GameObject& addChild(Args&&... args) noexcept
             {
-                (*this).children.push_back({});
-                (*this).children.back().entity = std::make_unique<T>(args...);
-                (*this).children.back().children = std::list<Engine::Ressources::GameObject>();
-                (*this).children.back().entity->update((*this).entity->getModelMatrix());
+                (*this).children.emplace_back(std::make_unique<T>(args...));
+                (*this).children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
+                (*this).children.back()->update((*this).getModelMatrix());
 
-                return (*this).children.back();
+                return *(*this).children.back();
             }
 
         bool 		operator==		(GameObject const& other)

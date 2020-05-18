@@ -14,12 +14,12 @@ class Component
 public:
 
     Component(GameObject &refGameObject)
-    : gameObject (refGameObject) 
+    : gameObject {refGameObject} 
     {}
 
     Component(const Component &other)               = default;
     Component(Component &&other)                    = default;
-    virtual ~Component() {};
+    virtual ~Component()                            = default;
 
     Component()                                     = delete;
     Component &operator=(Component const &other)    = delete;

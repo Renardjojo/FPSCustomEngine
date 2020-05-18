@@ -28,18 +28,18 @@ namespace Game
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _refValue                                   {value},
                 _maxValue                                   {maxValue},
-                _maxScaleX                                  {gameObject.entity->getScale().x}
+                _maxScaleX                                  {gameObject.getScale().x}
         {}
 
         ~BarIndicatorController() = default;
 
         void update() override
         {
-            Engine::Core::Maths::Vec3 currentScale = gameObject.entity->getScale();
+            Engine::Core::Maths::Vec3 currentScale = gameObject.getScale();
             currentScale.x = (_maxScaleX * static_cast<float>(_refValue)) / static_cast<float>(_maxValue);
 
             if (currentScale.x >= 0.f)
-                gameObject.entity->setScale(currentScale);
+                gameObject.setScale(currentScale);
         }
 
 

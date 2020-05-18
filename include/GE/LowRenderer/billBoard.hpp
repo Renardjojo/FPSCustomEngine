@@ -20,8 +20,8 @@ namespace Engine::LowRenderer
     
             #pragma region constructor/destructor
     
-            BillBoard (const ModelCreateArg& arg)
-                : Model (arg),
+            BillBoard (Engine::Ressources::GameObject &refGameObject, const ModelCreateArg& arg)
+                : Model (refGameObject, arg),
                   posParent_()
             {}
 
@@ -32,28 +32,6 @@ namespace Engine::LowRenderer
             #pragma endregion //!constructor/destructor
     
             #pragma region methods
-
-            /**
-             * @brief update Mesh matrix 
-             * 
-             */
-            virtual void update () noexcept
-            {
-                isDirty_ = false;
-            }
-
-            /**
-             * @brief update transform if it depend to parent Mesh view (use in inherance in scene graph)
-             * 
-             * @param parentMeshMatrix : Mesh view matrix of parent
-             */
-            virtual void update (const Engine::Core::Maths::Mat4& parentMeshMatrix) noexcept
-            {
-                posParent_.x = parentMeshMatrix[3][0];
-                posParent_.y = parentMeshMatrix[3][1];
-                posParent_.z = parentMeshMatrix[3][2];
-                isDirty_ = false;
-            }
 
             #pragma endregion //!methods
     
@@ -87,15 +65,13 @@ namespace Engine::LowRenderer
             void sendToShaderModelMatrix () const noexcept final
             {
                 Engine::Core::Maths::Mat4 modelMat =
-                Engine::Core::Maths::Mat4::createTranslationMatrix(position_ + posParent_) * 
-                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(position_ + posParent_, Camera::getCamUse()->getPosition(), {0.f, 1.f, 0.f})) *
+                Engine::Core::Maths::Mat4::createTranslationMatrix(gameObject.getPosition()) * 
+                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(gameObject.getPosition(), Camera::getCamUse()->getPosition(), {0.f, 1.f, 0.f})) *
                 Engine::Core::Maths::Mat4::createXRotationMatrix(M_PI_2) * 
-                Engine::Core::Maths::Mat4::createScaleMatrix(scale_);
+                Engine::Core::Maths::Mat4::createScaleMatrix(gameObject.getScale());
 
                 pShader_->setMat4("model", &modelMat.mat[0]);
             }
-
-
 
             #pragma endregion //!methods
     

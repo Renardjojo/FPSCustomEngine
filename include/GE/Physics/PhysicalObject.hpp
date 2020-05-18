@@ -18,9 +18,9 @@ namespace Engine::Physics
 #pragma region constructor / destructor
 
         PhysicalObject(Engine::Ressources::GameObject &refGameObject);
-        PhysicalObject(const PhysicalObject &other)             = default;
-        PhysicalObject(PhysicalObject &&other)                  = default;
-        virtual ~PhysicalObject()                               = default;
+        PhysicalObject(const PhysicalObject &other);
+        PhysicalObject(PhysicalObject &&other);
+        virtual ~PhysicalObject();
 
         PhysicalObject()                                        = delete;
         PhysicalObject &operator=(PhysicalObject const &other)  = delete;

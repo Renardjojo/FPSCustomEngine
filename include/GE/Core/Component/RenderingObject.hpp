@@ -6,9 +6,10 @@
 #define _RENDERING_OBJECT_H
 
 #include "GE/Ressources/Component.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::Core::Component
-    {
+{
     class RenderingObject : public Engine::Ressources::Component
     {
         private:
@@ -28,22 +29,21 @@ namespace Engine::Core::Component
 
         #pragma region constructor/destructor
 
-        RenderingObject ()					                    = delete;
-        RenderingObject (const RenderingObject& other)			= delete;
-        RenderingObject (RenderingObject&& other)				= delete;
         RenderingObject& operator=(RenderingObject const&)		= delete;
         RenderingObject& operator=(RenderingObject &&)			= delete;
 
+        RenderingObject ()					                    = default;
         RenderingObject(Engine::Ressources::GameObject &refGameObject);
         RenderingObject(const RenderingObject &other);
         RenderingObject(RenderingObject &&other);
         virtual ~RenderingObject();
 
+
         #pragma endregion //!constructor/destructor
 
         #pragma region methods
 
-        virtual void draw () const noexcept = 0;
+        virtual void draw () const noexcept {}
 
         #pragma endregion //!methods
 
