@@ -24,7 +24,10 @@ namespace Engine::Core::Component
         ScriptComponent &operator=(ScriptComponent const &other) = delete;
         ScriptComponent &operator=(ScriptComponent &&other) = delete;
 
-        virtual void update() = 0;
+        virtual void start(){};
+        virtual void fixedUpdate(){};
+        virtual void update(){};
+        //virtual void onCollisionEnter();
         //Engine::Ressources::GameObject& getGameObject () { return gameObject;}
     };
 } // namespace Engine::Core::Component

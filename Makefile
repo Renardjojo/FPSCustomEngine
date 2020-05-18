@@ -8,22 +8,24 @@ IDIR=-Iinclude
 EXCLUDE= src/glad.o
 
 #Relase or debug option
-CCXXFLAGSDEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSDEBUGERROR=-Og -std=gnu++17  -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSBUILDGAMEANDEDITOR=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSBUILDGAME=-O3 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUGERROR=-Og -std=gnu++17  -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 
-CXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSDEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSBUILDGAMEANDEDITOR=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSBUILDGAME=-O3 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+CXX_EDITOR=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+CXX_BUILD=-O3 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+
+C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+C_DEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+
+C_EDITOR=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+C_BUILD=-O3 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
 #VFLAG=--leak-check=yes
 VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
-LIBSGL= -lGLU -ldl
+LIBSGL= -ldl
 LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
@@ -42,10 +44,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CCXXFLAGSDEBUG) $< -o $@
+	g++ -c $(CXX_EDITOR) $< -o $@
 
 %.o: %.c
-	gcc -c $(CXXFLAGSDEBUG) $< -o $@
+	gcc -c $(C_EDITOR) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
