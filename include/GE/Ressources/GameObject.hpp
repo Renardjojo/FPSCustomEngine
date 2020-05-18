@@ -78,9 +78,10 @@ namespace Engine::Ressources
          * @param args 
          */
         template <typename T, typename... Args>
-        void addComponent(Args &&... args) noexcept
+        GameObject& addComponent(Args &&... args) noexcept
         {
             components.emplace_back(std::make_unique<T>(*this, args...));
+            return *this;
         }
 
         /**
