@@ -49,24 +49,24 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::InfiniteCylinder        getGlobalInfiniteCylinder() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() +InfiniteCylinder_.getLine().getOrigin();
+            const Engine::Core::Maths::Vec3 globalCenter = gameObject.getPosition() +InfiniteCylinder_.getLine().getOrigin();
             Engine::Core::Maths::Vec3 globalDirection =InfiniteCylinder_.getLine().getOrigin();
             float globalRadius =InfiniteCylinder_.getRadius();
 
             if (directionAxe_ == EPositiveDirectionnalAxes::ForwardAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
-                globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().y) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorForward();
+                globalRadius    += (gameObject.getScale().x + gameObject.getScale().y) / 2.f;
             }
             else if (directionAxe_ == EPositiveDirectionnalAxes::RightAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
-                globalRadius    += (gameObject.entity->getScale().z + gameObject.entity->getScale().y) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorRight();
+                globalRadius    += (gameObject.getScale().z + gameObject.getScale().y) / 2.f;
             }
             else
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorUp();
-                globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().z) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorUp();
+                globalRadius    += (gameObject.getScale().x + gameObject.getScale().z) / 2.f;
             }
 
             return Engine::Core::Maths::Shape3D::InfiniteCylinder{globalCenter, globalDirection.getNormalize(), globalRadius};

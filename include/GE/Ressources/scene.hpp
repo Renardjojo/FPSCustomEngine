@@ -34,21 +34,7 @@ namespace Engine::Ressources
              */
             void update () noexcept
             {
-                world_.update();
-            }
-
-            void draw () const noexcept
-            {
-                std::map<float, Engine::LowRenderer::Model*> mapElemSortedByDistance;
-
-                glDisable(GL_BLEND);
-                world_.sortAndDrawOpqueElement(mapElemSortedByDistance);
-
-                glEnable(GL_BLEND);
-                for(std::map<float, Engine::LowRenderer::Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != mapElemSortedByDistance.rend(); ++it) 
-                {
-                    it->second->draw();
-                }
+                world_.updateSelfAndChild();
             }
 
             /**

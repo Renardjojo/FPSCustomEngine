@@ -9,23 +9,28 @@ namespace Engine::Ressources
 {
     class GameObject;
 
-    class Component
-    {
-    public:
-        Component(GameObject &refGameObject)
-            : gameObject(refGameObject)
-        {
-        }
+class Component
+{
+public:
 
-        Component(const Component &other) = default;
-        Component(Component &&other) = default;
-        virtual ~Component(){};
+    Component(GameObject &refGameObject)
+    : gameObject {refGameObject} 
+    {}
 
-        Component() = delete;
-        Component &operator=(Component const &other) = delete;
-        Component &operator=(Component &&other) = delete;
+    Component(const Component &other)               = default;
+    Component(Component &&other)                    = default;
+    virtual ~Component()                            = default;
 
-        GameObject &gameObject;
+    Component()                                     = delete;
+    Component &operator=(Component const &other)    = delete;
+    Component &operator=(Component &&other)         = delete;
+
+    GameObject &        getGameObject() noexcept { return gameObject; }
+    const GameObject&   getGameObject() const noexcept { return gameObject; }
+
+protected:
+
+    GameObject& gameObject;
 
     protected:
     };

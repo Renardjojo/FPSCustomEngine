@@ -56,13 +56,13 @@ void PlayerController::move()
 
     //orbit
     _orbity += (Input::mouse.motion.x * M_PI / 180.f * 15.f * TimeSystem::getDeltaTime());
-    Vec3 coordinates = coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
+    Vec3 coordinates = coord((gameObject.getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
 
     //lookat
-    _camera->lookAt(_camera->getPosition(), gameObject.entity.get()->getPosition(), Vec3{0.f, 1.f, 0.f});
+    _camera->lookAt(_camera->getPosition(), gameObject.getPosition(), Vec3{0.f, 1.f, 0.f});
 
     //movements
     _direction.x = sinf(_orbity);
@@ -89,6 +89,14 @@ void PlayerController::move()
         _movement.z -= _direction.x;
     }
 
-    gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
-    //gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+    if (Input::keyboard.onePressed(Input::keyboard.jump) == 1)
+    {
+        gameObject.getComponent<PhysicalObject>()->AddForce(0.f, 10.f, 0.f);
+    }
+
+    gameObject.setRotation({0.f, -_orbity, 0.f});
+    //gameObject.translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+    gameObject.getComponent<PhysicalObject>()->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
+
+    _movement = {0.f, 0.f, 0.f};
 }

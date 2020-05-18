@@ -32,15 +32,15 @@ namespace Engine::LowRenderer::GraphicsDeviceInterface
         {
             if (gameObject.children.empty())
             {
-                ImGui::Text(gameObject.entity->getName());
+                ImGui::Text(gameObject.getName());
             }
             else
             {
-                if (ImGui::TreeNode(gameObject.entity->getName()))
+                if (ImGui::TreeNode(gameObject.getName()))
                 {
                     for (auto&& child : gameObject.children)
                     {
-                        recursifTreeCreation (child);
+                        recursifTreeCreation(*child.get());
                     }
                     ImGui::TreePop();
                 }

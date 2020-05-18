@@ -14,7 +14,6 @@
 
 namespace Engine::Physics
 {
-    
     struct CollisionHitInfos
     {
         Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;

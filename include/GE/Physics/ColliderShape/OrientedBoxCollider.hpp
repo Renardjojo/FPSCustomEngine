@@ -38,14 +38,14 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::OrientedBox        getGlobalOrientedBox() const noexcept
         { 
-            const Engine::Core::Maths::Referential globalReferential {  orientedBox_.getReferential().origin + gameObject.entity->getPosition(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorRight()).normalize(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorUp()).normalize(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorForward()).normalize()};
+            const Engine::Core::Maths::Referential globalReferential {  orientedBox_.getReferential().origin + gameObject.getPosition(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorRight()).normalize(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorUp()).normalize(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorForward()).normalize()};
 
-            const float extIGlobal = orientedBox_.getExtI() + gameObject.entity->getScale().x / 2.f;
-            const float extJGlobal = orientedBox_.getExtJ() + gameObject.entity->getScale().y / 2.f;
-            const float extKGlobal = orientedBox_.getExtK() + gameObject.entity->getScale().z / 2.f;
+            const float extIGlobal = orientedBox_.getExtI() + gameObject.getScale().x / 2.f;
+            const float extJGlobal = orientedBox_.getExtJ() + gameObject.getScale().y / 2.f;
+            const float extKGlobal = orientedBox_.getExtK() + gameObject.getScale().z / 2.f;
 
             return Engine::Core::Maths::Shape3D::OrientedBox{globalReferential, extIGlobal, extJGlobal, extKGlobal};
         }

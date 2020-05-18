@@ -2,6 +2,7 @@
 #include "GE/Core/Maths/mat.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Ressources/Component.hpp"
+#include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "Game/PlayerController.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
@@ -92,13 +93,18 @@ void initEntity(Scene& scene, Engine::Ressources::GameObject& parent, Engine::GE
                 componentNames.push_back(attr->value());
         }
 
-        ModelCreateArg newModel =   {pos, rot, scale, 
-                                    &gameEngine.ressourceManager_.get<Shader>(shaderName), 
-                                    {&gameEngine.ressourceManager_.get<Material>(materialName)}, 
-                                    &gameEngine.ressourceManager_.get<Mesh>(meshName), 
-                                    name.c_str()};
+        GameObjectCreateArg newGameOBject =   {name.c_str(), pos, rot, scale};
 
-        newGameObject = &scene.add<Model>(parent, newModel);
+        ModelCreateArg newModel =   {&gameEngine.ressourceManager_.get<Shader>(shaderName), 
+                                    {&gameEngine.ressourceManager_.get<Material>(materialName)}, 
+                                    &gameEngine.ressourceManager_.get<Mesh>(meshName)};
+
+        newGameObject = &scene.add<GameObject>(parent, newGameOBject);
+
+        if (newGameObject != nullptr)
+        {
+            newGameObject->addComponent<Model>(newModel);
+        }
 
         for (std::string componentName : componentNames)
         {
@@ -162,10 +168,9 @@ void initEntity(Scene& scene, Engine::Ressources::GameObject& parent, Engine::GE
                 componentNames.push_back(attr->value());
         }
 
-        Camera camP1Arg(pos, rot, gameEngine.getWinSize().width / static_cast<float>(gameEngine.getWinSize().heigth), near, far, fov, name.c_str());
-
-        newGameObject = &scene.add<Camera>(scene.getWorld(), camP1Arg);
-        static_cast<Camera *>(newGameObject->entity.get())->use();
+        CameraPerspectiveCreateArg camArg {pos, rot, gameEngine.getWinSize().width / static_cast<float>(gameEngine.getWinSize().heigth), near, far, fov, name.c_str()};
+        newGameObject = &scene.add<Camera>(scene.getWorld(), camArg);
+        dynamic_cast<Camera *>(newGameObject)->use();
     }
     else if (str.compare("Entity") == 0)
     {

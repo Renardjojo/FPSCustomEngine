@@ -5,7 +5,7 @@
 #ifndef _GE_CAMERA_H
 #define _GE_CAMERA_H
 
-#include "GE/LowRenderer/entity.hpp"
+#include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/mat.hpp"
 
@@ -29,8 +29,32 @@ namespace Engine::LowRenderer
 
     } ProjectionInfo;
 
+    struct CameraPerspectiveCreateArg
+    {
+        const Engine::Core::Maths::Vec3& position; 
+        const Engine::Core::Maths::Vec3& rotation;
+        float aspect; 
+        float near; 
+        float far; 
+        float fovY = 70.f;
+        const char* name = "Camera";     
+    };
+
+    struct CameraOrthographicCreateArg
+    {
+        const Engine::Core::Maths::Vec3& position; 
+        const Engine::Core::Maths::Vec3& rotation;
+        float left; 
+        float right; 
+        float bottom; 
+        float top; 
+        float nearVal; 
+        float farVal;
+        const char* name = "Camera";     
+    };
+
     class Camera
-        : public Entity
+        : public Engine::Ressources::GameObject
     {
         public:
 
@@ -49,10 +73,7 @@ namespace Engine::LowRenderer
              * @param fovY      : by default to 70 (human FovY)
              * @param name 
              */
-            Camera (const Engine::Core::Maths::Vec3& position, 
-                    const Engine::Core::Maths::Vec3& rotation,
-                    float aspect, float near, float far, float fovY = 70.f,
-                    const char* name = "Camera");
+            Camera (const CameraPerspectiveCreateArg& arg);
 
             /**
              * @brief Construct a new orthographic camera object
@@ -67,14 +88,11 @@ namespace Engine::LowRenderer
              * @param farVal 
              * @param name 
              */
-            Camera (const Engine::Core::Maths::Vec3& position, 
-                    const Engine::Core::Maths::Vec3& rotation,
-                    float left, float right, float bottom, float top, float nearVal, float farVal,
-                    const char* name = "Camera");
+            Camera (const CameraOrthographicCreateArg& arg);
 
             Camera (const Camera& other)		= default;
             Camera (Camera&& other)				= default;
-            ~Camera ()				            = default;
+            virtual ~Camera ()				    = default;
 
             #pragma endregion //!constructor/destructor
             
