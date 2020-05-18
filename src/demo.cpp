@@ -556,7 +556,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManager)
 {
-    /*enemiesContener = &scene_->add<Engine::LowRenderer::Entity>(scene_->getWorld(), "EnemiesContener");
+    enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
     GameObjectCreateArg Ennemy1GameObjectArg    {"Ennemy"};
 
@@ -567,10 +567,10 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
     GameObjectCreateArg Ennemy2GameObjectArg    {"Ennemy2"};
 
     ModelCreateArg modelArg2{&ressourceManager.get<Shader>("ColorWithLight"),
-                        {&ressourceManager.get<Material>("PinkMaterial")},
-                        &ressourceManager.get<Mesh>("Cube")};
+                            {&ressourceManager.get<Material>("PinkMaterial")},
+                            &ressourceManager.get<Mesh>("Cube")};
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3::zero, 2.f, 0.1f, 0.f);*/
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.1f, 0.f);
 }
 
 void Demo::updateControl()
