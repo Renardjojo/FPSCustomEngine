@@ -45,42 +45,14 @@ namespace Engine::Core::System
         #pragma region methods
 
         static
-        void draw () noexcept
-        {
-            std::map<float, Engine::Core::Component::RenderingObject*> mapElemSortedByDistance;
-
-            glDisable(GL_BLEND);
-            sortAndDrawOpqueElement(mapElemSortedByDistance);
-            glEnable(GL_BLEND);
-
-            for(std::map<float, Engine::Core::Component::RenderingObject*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != mapElemSortedByDistance.rend(); ++it) 
-            {
-                it->second->draw();
-            }
-        }
+        void draw () noexcept;
 
         /**
          * @brief Draw entity if entity is drawable
          * 
          */
         static
-        void sortAndDrawOpqueElement(std::map<float, Engine::Core::Component::RenderingObject*> &mapElemSortedByDistance)
-        {
-            for (Engine::Core::Component::RenderingObject* pRenderingObject : pRenderingObjects)
-            {
-                Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model*>(pRenderingObject);
-                if (model != nullptr)
-                {
-                    if (model->isOpaque())
-                        model->draw();
-                    else
-                    {
-                        float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - (pRenderingObject->getGameObject().getPosition())).length();
-                        mapElemSortedByDistance[distance] = model;
-                    }
-                }
-            }
-        }
+        void sortAndDrawOpqueElement(std::map<float, Engine::Core::Component::RenderingObject*> &mapElemSortedByDistance);
 
         /**
          * @brief Add RenderingObject (using key word this) on the physic system. This object will be update by the physic system
@@ -88,36 +60,13 @@ namespace Engine::Core::System
          * @param pRenderingObject 
          */
         static
-        void addRenderingObject (Engine::Core::Component::RenderingObject* pRenderingObject) noexcept
-        {
-            pRenderingObjects.push_back(pRenderingObject);
-        }
+        void addRenderingObject (Engine::Core::Component::RenderingObject* pRenderingObject) noexcept;
 
         static
-        void updateRenderingObjectPointor (Engine::Core::Component::RenderingObject* newPointorRenderingObject, Engine::Core::Component::RenderingObject* exPointorRenderingObject) noexcept
-        {
-            for (std::vector<Engine::Core::Component::RenderingObject*>::iterator it = pRenderingObjects.begin(); it != pRenderingObjects.end(); it++)
-            {
-                if ((*it) == exPointorRenderingObject)
-                {
-                    *it = newPointorRenderingObject;
-                    return;
-                }
-            }
-        }
+        void updateRenderingObjectPointor (Engine::Core::Component::RenderingObject* newPointorRenderingObject, Engine::Core::Component::RenderingObject* exPointorRenderingObject) noexcept;
 
         static
-        void removeRenderingObject (Engine::Core::Component::RenderingObject* pRenderingObject) noexcept
-        {
-            for (std::vector<Engine::Core::Component::RenderingObject*>::iterator it = pRenderingObjects.begin(); it != pRenderingObjects.end(); it++)
-            {
-                if ((*it) == pRenderingObject)
-                {
-                    pRenderingObjects.erase(it);
-                    return;
-                }
-            }
-        }
+        void removeRenderingObject (Engine::Core::Component::RenderingObject* pRenderingObject) noexcept;
 
         #pragma endregion //!methods
 
