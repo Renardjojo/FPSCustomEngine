@@ -7,11 +7,27 @@
 using namespace Engine::Core::System;
 std::vector<ScriptComponent *> ScriptSystem::_scripts;
 
+void ScriptSystem::start() noexcept
+{
+    for (ScriptComponent *script : _scripts)
+    {
+        script->start();
+    }
+}
+
+
 void ScriptSystem::update() noexcept
 {
     for (ScriptComponent *script : _scripts)
     {
         script->update();
+    }
+}
+void ScriptSystem::fixedUpdate() noexcept
+{
+    for (ScriptComponent *script : _scripts)
+    {
+        script->fixedUpdate();
     }
 }
 

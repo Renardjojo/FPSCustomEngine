@@ -6,7 +6,7 @@
 #define _GAME_OBJECT_H
 
 #include <list>
-#include <map>
+#include <vector>
 #include <string>
 #include <istream>
 #include <sstream>
@@ -14,15 +14,19 @@
 #include <memory>
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/Core/Debug/log.hpp"
-#include "GE/LowRenderer/camera.hpp"
-#include "GE/LowRenderer/model.hpp"
 #include "GE/Ressources/Component.hpp"
 
 namespace Engine::Ressources
 {
-    class GameObject
+    typedef Engine::LowRenderer::EntityCreateArg GameObjectCreateArg;
+
+    class GameObject : public Engine::LowRenderer::Entity
     {
     public:
+
+        GameObject(const GameObjectCreateArg& arg)
+            :  Engine::LowRenderer::Entity {arg}
+        {}
 
         GameObject()                                        = default;
         GameObject(const GameObject &other)                 = default;
@@ -31,24 +35,24 @@ namespace Engine::Ressources
         GameObject &operator=(GameObject const &other)      = default;
         GameObject &operator=(GameObject &&other)           = default;
 
-        std::unique_ptr<Engine::LowRenderer::Entity> entity;
-        std::list<GameObject> children;
+        std::list<std::unique_ptr<GameObject>> children;
+
         /**
          * @brief update entity and these child if current entity is dirty
          * 
          */
-        void update()
+        virtual void updateSelfAndChild() noexcept
         {
-            for (auto i = children.begin(); i != children.end(); i++)
+            for (auto&& i = children.begin(); i != children.end(); i++)
             {
-                if (i->entity->isDirty())
+                if ((*i)->isDirty())
                 {
-                    i->entity->update(entity->getModelMatrix());
-                    i->forceUpdate();
+                    (*i)->update(modelMat_);
+                    (*i)->forceUpdate();
                 }
                 else
                 {
-                    i->update();
+                    (*i)->updateSelfAndChild();
                 }
             }
         }
@@ -59,34 +63,10 @@ namespace Engine::Ressources
          */
         void forceUpdate()
         {
-            for (auto i = children.begin(); i != children.end(); i++)
+            for (auto&& i = children.begin(); i != children.end(); i++)
             {
-                i->entity->update(entity->getModelMatrix());
-                i->forceUpdate();
-            }
-        }
-
-        /**
-         * @brief Draw entity if entity is drawable
-         * 
-         */
-        void sortAndDrawOpqueElement(std::map<float, Engine::LowRenderer::Model *> &mapElemSortedByDistance) const
-        {
-            for (auto i = children.begin(); i != children.end(); i++)
-            {
-                Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model *>(i->entity.get());
-                if (model != nullptr)
-                {
-                    if (model->isOpaque())
-                        model->draw();
-                    else
-                    {
-                        float distance = (Engine::LowRenderer::Camera::getCamUse()->getPosition() - model->getPosition()).length();
-                        mapElemSortedByDistance[distance] = model;
-                    }
-                }
-
-                i->sortAndDrawOpqueElement(mapElemSortedByDistance);
+                (*i)->update(modelMat_);
+                (*i)->forceUpdate();
             }
         }
 
@@ -98,9 +78,10 @@ namespace Engine::Ressources
          * @param args 
          */
         template <typename T, typename... Args>
-        void addComponent(Args &&... args) noexcept
+        GameObject& addComponent(Args &&... args) noexcept
         {
             components.emplace_back(std::make_unique<T>(*this, args...));
+            return *this;
         }
 
         /**
@@ -138,21 +119,21 @@ namespace Engine::Ressources
 
             while (std::getline(sPath, word, '/'))
             {
-                if (word.empty() || word == "." || word == entity->getName()) continue;
+                if (word.empty() || word == "." || word == name_) continue;
 
                 bool isFound = false;
                 for (auto&& child : currentEntity->children)
                 {
-                    if (child.entity->getName() == word)
+                    if (child->getName() == word)
                     {
-                        currentEntity = &child;
+                        currentEntity = child.get();
                         isFound = true;
                         break;
                     }
                 }
                 if (!isFound)
                 {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
                     return nullptr;
                 }
             }
@@ -167,7 +148,7 @@ namespace Engine::Ressources
          */
         void destroyChild (const std::string& path) noexcept
         {
-            GE_assert(!path.empty());
+           /* GE_assert(!path.empty());
 
             std::stringstream sPath(path);
             std::string word;
@@ -176,26 +157,26 @@ namespace Engine::Ressources
 
             while (std::getline(sPath, word, '/'))
             {
-                if (word.empty() || word == "." || word == entity->getName()) continue;
+                if (word.empty() || word == "." || word == name_) continue;
 
                 bool isFound = false;
                 parentEntity = currentEntity;
                 for (auto&& child : parentEntity->children)
                 {
-                    if (child.entity->getName() == word)
+                    if (child->getName() == word)
                     {
-                        currentEntity = &child;
+                        currentEntity = child.get();
                         isFound = true;
                         break;
                     }
                 }
                 if (!isFound)
                 {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + entity->getName() + "\"" + " with path : \"" + path + "\"" );
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
                     return;
                 }
             }
-            parentEntity->children.remove(*currentEntity);
+            parentEntity->children.erase();*/
         }
 
             /**
@@ -210,17 +191,16 @@ namespace Engine::Ressources
             template<typename T, typename ...Args>
             Engine::Ressources::GameObject& addChild(Args&&... args) noexcept
             {
-                (*this).children.push_back({});
-                (*this).children.back().entity = std::make_unique<T>(args...);
-                (*this).children.back().children = std::list<Engine::Ressources::GameObject>();
-                (*this).children.back().entity->update((*this).entity->getModelMatrix());
+                (*this).children.emplace_back(std::make_unique<T>(args...));
+                (*this).children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
+                (*this).children.back()->update((*this).getModelMatrix());
 
-                return (*this).children.back();
+                return *(*this).children.back();
             }
 
         bool 		operator==		(GameObject const& other)
         {
-            return entity->getName() == other.entity->getName();
+            return name_ == other.getName();
         }
 
         // TODO: Component[] getComponents()

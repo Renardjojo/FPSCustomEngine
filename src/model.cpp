@@ -3,6 +3,7 @@
 #include "GE/Core/Debug/assert.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
@@ -32,13 +33,13 @@ void Model::initTextureBufferWithMTLId ()
     }
 }
 
-Model::Model (const ModelCreateArg& arg)
-    :   IModel      (arg.position, arg.rotation, arg.scale, arg.name),
-        pShader_    (arg.pShader),
-        pMaterial_  (arg.pMaterials),
-        pMesh_      (arg.pMesh),
-        enableBackFaceCulling_ (arg.enableBackFaceCulling),
-        isOpaque_   (arg.isOpaque)
+Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
+    :   IModel                  (refGameObject),
+        pShader_                (arg.pShader),
+        pMaterial_              (arg.pMaterials),
+        pMesh_                  (arg.pMesh),
+        enableBackFaceCulling_  (arg.enableBackFaceCulling),
+        isOpaque_               (arg.isOpaque)
 {
     initTextureBufferWithMTLId();
 
@@ -99,7 +100,7 @@ void Model::draw () const noexcept
     {
         pMesh_->loadInGPU();
         pIdVAO = pMesh_->getVAOId();
-        SLog::logWarning((std::string("Model \"") + name_ + "\" was try to drawing without load in GPU").c_str());
+        SLog::logWarning((std::string("Model \"") + gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
     }
 
     if (enableBackFaceCulling_)
@@ -192,5 +193,5 @@ void Model::unloadFromGPU() noexcept
  
 void Model::sendToShaderModelMatrix () const noexcept
 {
-    pShader_->setMat4("model", &modelMat_.mat[0]);
+    pShader_->setMat4("model", &gameObject.getModelMatrix().mat[0]);
 }
