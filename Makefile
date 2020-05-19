@@ -8,17 +8,15 @@ IDIR=-Iinclude
 EXCLUDE= src/glad.o
 
 #Relase or debug option
-CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_DEBUGERROR=-Og -std=gnu++17  -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+#CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O0 -std=gnu++17  -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_EDITOR=-O2 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
-CXX_EDITOR=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-CXX_BUILD=-O3 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
-
-C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-C_DEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-
-C_EDITOR=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-C_BUILD=-O3 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+#C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+C_DEBUG=-O0 -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
+C_EDITOR=-O2 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+C_BUILD=-O2 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
 #VFLAG=--leak-check=yes
@@ -44,10 +42,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXX_EDITOR) $< -o $@
+	g++ -c $(CXX_DEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(C_EDITOR) $< -o $@
+	gcc -c $(C_DEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
@@ -55,6 +53,10 @@ $(OUTPUT): $(OBJS)
 
 run : $(OUTPUT) 
 	./$(OUTPUT)
+
+debug:
+
+buid:
 
 #display function stats
 gprof :
