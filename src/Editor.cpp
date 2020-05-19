@@ -18,11 +18,6 @@ void Editor::updateInput()
         SDL_ShowCursor(!_enable);
         SDL_SetRelativeMouseMode(_enable ? SDL_FALSE : SDL_TRUE);
     }
-
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F2) == 2)
-    {
-        ImGui::ShowDemoWindow();
-    } 
 }
 
 void Editor::update(Engine::Core::DataStructure::Graph& graph)

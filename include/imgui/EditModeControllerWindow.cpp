@@ -102,16 +102,16 @@ void EditModeControllerWindow::updateEditModeCameraControl()
 
     if (Input::mouse.motion.y != 0)
     {
-        pEditModeCamera->rotate(-Input::mouse.motion.y * 0.1f * TimeSystem::getUnscaledDetlaTime(), {1.f, 0.f, 0.f});
+        pEditModeCamera->rotate(-Input::mouse.motion.y * 0.5f * TimeSystem::getUnscaledDetlaTime(), {1.f, 0.f, 0.f});
     }
 
     if (Input::mouse.motion.x != 0)
     {
             Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-            vecDirPlayer.rotate(Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDetlaTime() * 180 / M_PI);
+            vecDirPlayer.rotate(Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDetlaTime() * 180 / M_PI);
             dirCamera.x = vecDirPlayer.x;
             dirCamera.z = vecDirPlayer.y;
-            pEditModeCamera->rotate(-Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDetlaTime(), {0.f, 1.f, 0.f});
+            pEditModeCamera->rotate(-Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDetlaTime(), {0.f, 1.f, 0.f});
     }
 
     static int exFrameWheelVal = Input::mouse.wheel_scrolling;
