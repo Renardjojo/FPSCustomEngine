@@ -24,8 +24,8 @@
 #include "../src/stb_image.h"
 
 #ifndef DNEDITOR
-#include "GE/LowRenderer/GraphicsDeviceInterface/SceneGraphWindow.hpp"
-using namespace Engine::LowRenderer::GraphicsDeviceInterface;
+#include "GE/LowRenderer/EditorTools/Editor.hpp"
+using namespace Engine::LowRenderer::EditorTools;
 #endif
 
 #include "GE/Core/System/RenderingSystem.hpp"
@@ -108,7 +108,7 @@ void Demo::update     () noexcept
     }
 
 #ifndef DNEDITOR
-    updateEditor();
+    Editor::update(*scene_);
 #endif
 }
 
@@ -620,9 +620,6 @@ void Demo::updateControl()
     if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
     {
         usingMouse = !usingMouse;
-#ifndef DNEDITOR
-        displaySceneGraphWindows = !displaySceneGraphWindows;
-#endif
         flagF1IsDown = true;
     }
     else
@@ -676,15 +673,3 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
 }
-
-#ifndef DNEDITOR
-
-void Demo::updateEditor()
-{
-    if (displaySceneGraphWindows)
-    {
-        SceneGraphWindow::update(*scene_);
-    }
-}
-
-#endif

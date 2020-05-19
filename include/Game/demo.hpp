@@ -58,10 +58,6 @@ namespace Game
             bool flagF1IsDown;
             bool usingMouse;
 
-#ifndef DNEDITOR
-            bool displaySceneGraphWindows = false;
-#endif
-
             Engine::Ressources::GameObject* sunLight;
             Engine::Ressources::GameObject* enemiesContener;
             /*Engine::Core::Maths::Vec3 dirPlayer1;

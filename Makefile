@@ -44,10 +44,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXX_EDITOR) $< -o $@
+	g++ -c $(CXX_DEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(C_EDITOR) $< -o $@
+	gcc -c $(C_DEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
