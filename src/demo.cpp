@@ -149,6 +149,7 @@ void Demo::display    () const noexcept
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
+    ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     MaterialAndTextureCreateArg matDefault;
@@ -246,7 +247,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                          {0.f, 0.f, 0.f},
                                          {1.f, 0.3f, 0.1f}}};
 
-    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("ColorWithLight"),
+    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("Color"),
                                 {&ressourceManager.get<Material>("GreenMaterial")},
                                 &ressourceManager.get<Mesh>("Cube")};
 
