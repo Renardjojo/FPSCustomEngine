@@ -17,7 +17,7 @@ namespace Engine::LowRenderer::EditorTools
     { 
         EditMode,
         GameMode,
-        Element_COUNT
+        ModeCount
     };
 
     class EditModeControllerWindow
@@ -38,7 +38,7 @@ namespace Engine::LowRenderer::EditorTools
         #pragma region methods
 
         static void update();
-        static void updateEditeModeCameraControlle();
+        static void updateEditModeCameraControl();
         static void lookAtTowardTargetOnEditMode(const Engine::Ressources::GameObject& gameObject);
 
         #pragma endregion //!methods

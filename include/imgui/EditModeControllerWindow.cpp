@@ -15,9 +15,9 @@ void EditModeControllerWindow::update()
 
     float timeScale = TimeSystem::getTimeScale();
 
-    const char* modes_names[Mode::Element_COUNT] = { "EditMode", "GameMode"};
-    const char* mode_name = (mode >= 0 && mode < Mode::Element_COUNT) ? modes_names[mode] : "Unknown";
-    if (ImGui::SliderInt("##camMode", (int*)&mode, 0, Mode::Element_COUNT - 1, mode_name))
+    const char* modes_names[Mode::ModeCount] = { "EditMode", "GameMode"};
+    const char* mode_name = (mode >= 0 && mode < Mode::ModeCount) ? modes_names[mode] : "Unknown";
+    if (ImGui::SliderInt("##camMode", (int*)&mode, 0, Mode::ModeCount - 1, mode_name))
     {
         switch (mode)
         {
@@ -45,7 +45,7 @@ void EditModeControllerWindow::update()
 
     if (mode == EditMode)
     {
-        updateEditeModeCameraControlle();
+        updateEditModeCameraControl();
     }
 
     ImGui::Text("Time scale :");
@@ -56,7 +56,7 @@ void EditModeControllerWindow::update()
     ImGui::End();
 }
 
-void EditModeControllerWindow::updateEditeModeCameraControlle()
+void EditModeControllerWindow::updateEditModeCameraControl()
 {
    if (Input::keyboard.isDown[Input::keyboard.up])
     {
