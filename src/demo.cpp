@@ -58,6 +58,17 @@ Demo::Demo(Engine::GE& gameEngine)
         dirCamera          {0.f, 0.f, -1.f}
 {
 
+    if (!usingMouse)
+    {
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    else
+    {
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+
     scene_ = std::make_unique<Scene>();
 
     // TimeSystem::setTimeScale(0.3f);
@@ -86,8 +97,6 @@ Demo::Demo(Engine::GE& gameEngine)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
-    SDL_ShowCursor(false);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
@@ -128,7 +137,6 @@ void Demo::display    () const noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING || gameEngine_.gameState == E_GAME_STATE::PAUSE)
     {
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
-        dynamic_cast<Camera*>(mainCamera)->use();
         
         RenderingSystem::draw();
     }
@@ -380,6 +388,10 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
@@ -417,6 +429,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     };
     ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
                                             tempX - 45, tempY, 
@@ -425,6 +440,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
+
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
     };
     
     #pragma endregion
@@ -556,6 +574,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             scene_ = std::make_unique<Scene>();
             setupScene(*scene_, gameEngine_, saves.c_str());
             mainCamera = &scene_->getGameObject("world/MainCamera");
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         };
 
         i += 150;
@@ -599,11 +620,17 @@ void Demo::updateControl()
         {
             gameEngine_.gameState = E_GAME_STATE::PAUSE;
             usingMouse = true;
+
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
         {
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::OPTION 
              ||  gameEngine_.gameState == E_GAME_STATE::LOADSAVE 
@@ -617,26 +644,27 @@ void Demo::updateControl()
         }
     }
 
-    if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    if (Input::keyboard.isDown[SDL_SCANCODE_F3] && !flagF1IsDown)
     {
         usingMouse = !usingMouse;
         flagF1IsDown = true;
+
+        if (!usingMouse)
+        {
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else
+        {
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
     }
     else
     {
-        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
+        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
     } 
 
-    if (!usingMouse)
-    {
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-    }
-    else
-    {
-        SDL_ShowCursor(true);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
-    }
 
     // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
     // {

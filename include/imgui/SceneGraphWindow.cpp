@@ -1,4 +1,5 @@
 #include "GE/LowRenderer/EditorTools/SceneGraphWindow.hpp"
+#include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
 
 using namespace Engine::Ressources;
 using namespace Engine::Core::DataStructure;
@@ -11,6 +12,7 @@ void SceneGraphWindow::recursifTreeCreation(GameObject& gameObject)
         if (ImGui::SmallButton(gameObject.getCName()))
         {
             pTargetGameObject = &gameObject;
+            EditModeControllerWindow::lookAtTowardTargetOnEditMode(gameObject);
         }
     }
     else
@@ -21,6 +23,7 @@ void SceneGraphWindow::recursifTreeCreation(GameObject& gameObject)
             if (ImGui::SmallButton(gameObject.getCName()))
             {
                 pTargetGameObject = &gameObject;
+                EditModeControllerWindow::lookAtTowardTargetOnEditMode(gameObject);
             }
 
             for (auto&& child : gameObject.children)

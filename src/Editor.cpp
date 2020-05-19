@@ -1,6 +1,7 @@
 #include "GE/LowRenderer/EditorTools/Editor.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/LowRenderer/EditorTools/InspectorWindow.hpp"
+#include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
 #include "imgui/imgui.h"
 
 using namespace Engine::LowRenderer::EditorTools;
@@ -14,7 +15,7 @@ void Editor::updateInput()
     {
         _enable = !_enable;
 
-        SDL_ShowCursor(_enable);
+        SDL_ShowCursor(!_enable);
         SDL_SetRelativeMouseMode(_enable ? SDL_FALSE : SDL_TRUE);
     }
 
@@ -40,4 +41,7 @@ void Editor::update(Engine::Core::DataStructure::Graph& graph)
             SceneGraphWindow::pTargetGameObject = nullptr;
         }
     }
+
+    EditModeControllerWindow::update();
+
 }
