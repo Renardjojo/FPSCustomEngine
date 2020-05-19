@@ -24,8 +24,8 @@
 #include "../src/stb_image.h"
 
 #ifndef DNEDITOR
-#include "GE/LowRenderer/GraphicsDeviceInterface/SceneGraphWindow.hpp"
-using namespace Engine::LowRenderer::GraphicsDeviceInterface;
+#include "GE/LowRenderer/EditorTools/Editor.hpp"
+using namespace Engine::LowRenderer::EditorTools;
 #endif
 
 #include "GE/Core/System/RenderingSystem.hpp"
@@ -58,6 +58,17 @@ Demo::Demo(Engine::GE& gameEngine)
         dirCamera          {0.f, 0.f, -1.f}
 {
 
+    if (!usingMouse)
+    {
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    else
+    {
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+
     scene_ = std::make_unique<Scene>();
 
     // TimeSystem::setTimeScale(0.3f);
@@ -86,8 +97,6 @@ Demo::Demo(Engine::GE& gameEngine)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
-    SDL_ShowCursor(false);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
@@ -108,7 +117,7 @@ void Demo::update     () noexcept
     }
 
 #ifndef DNEDITOR
-    updateEditor();
+    Editor::update(*scene_);
 #endif
 }
 
@@ -128,7 +137,6 @@ void Demo::display    () const noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING || gameEngine_.gameState == E_GAME_STATE::PAUSE)
     {
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
-        dynamic_cast<Camera*>(mainCamera)->use();
         
         RenderingSystem::draw();
     }
@@ -141,6 +149,7 @@ void Demo::display    () const noexcept
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
+    ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     MaterialAndTextureCreateArg matDefault;
@@ -238,7 +247,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                          {0.f, 0.f, 0.f},
                                          {1.f, 0.3f, 0.1f}}};
 
-    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("ColorWithLight"),
+    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("Color"),
                                 {&ressourceManager.get<Material>("GreenMaterial")},
                                 &ressourceManager.get<Mesh>("Cube")};
 
@@ -380,6 +389,10 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
@@ -417,6 +430,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     };
     ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
                                             tempX - 45, tempY, 
@@ -425,6 +441,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
+
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
     };
     
     #pragma endregion
@@ -556,6 +575,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             scene_ = std::make_unique<Scene>();
             setupScene(*scene_, gameEngine_, saves.c_str());
             mainCamera = &scene_->getGameObject("world/MainCamera");
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         };
 
         i += 150;
@@ -599,11 +621,17 @@ void Demo::updateControl()
         {
             gameEngine_.gameState = E_GAME_STATE::PAUSE;
             usingMouse = true;
+
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
         {
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::OPTION 
              ||  gameEngine_.gameState == E_GAME_STATE::LOADSAVE 
@@ -617,29 +645,27 @@ void Demo::updateControl()
         }
     }
 
-    if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    if (Input::keyboard.isDown[SDL_SCANCODE_F3] && !flagF1IsDown)
     {
         usingMouse = !usingMouse;
-#ifndef DNEDITOR
-        displaySceneGraphWindows = !displaySceneGraphWindows;
-#endif
         flagF1IsDown = true;
+
+        if (!usingMouse)
+        {
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else
+        {
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
     }
     else
     {
-        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
+        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
     } 
 
-    if (!usingMouse)
-    {
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-    }
-    else
-    {
-        SDL_ShowCursor(true);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
-    }
 
     // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
     // {
@@ -676,15 +702,3 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
 }
-
-#ifndef DNEDITOR
-
-void Demo::updateEditor()
-{
-    if (displaySceneGraphWindows)
-    {
-        SceneGraphWindow::update(*scene_);
-    }
-}
-
-#endif

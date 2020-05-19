@@ -123,4 +123,27 @@ void Camera::setFovY(const float fovY) noexcept
     }
 }
 
+void Camera::setAspect(const float newAspect) noexcept
+{
+    projInfo_.aspect     = newAspect;
+    projInfo_.fovX       = projInfo_.aspect * projInfo_.fovY;
+    projInfo_.left       = projInfo_.far * sinf(projInfo_.fovX / 2.f);
+    projInfo_.right      = -projInfo_.left;
+
+    switch (projInfo_.type)
+    {
+        case E_ProjectionType::ORTHOGRAPHIC:
+            projection_ = Mat4::createOrthoMatrix(projInfo_.left, projInfo_.right, projInfo_.bottom, projInfo_.top, projInfo_.near, projInfo_.far);
+        break;
+
+        case E_ProjectionType::PERSPECTIVE:
+            projection_ = Mat4::createPerspectiveMatrix(projInfo_.aspect, projInfo_.near, projInfo_.far, projInfo_.fovY);
+        break;
+    
+    default:
+        functWarning("Other projection not implemented");
+        break;
+    }
+}
+
 Camera* Camera::camToUse(nullptr);
