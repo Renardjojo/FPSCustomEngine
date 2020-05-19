@@ -16,19 +16,26 @@ CXXFLAGSDEBUG=-O0 -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXXFLAGSDEBUGERROR=-Og -std=gnu++17 -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
 CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
 
+C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+C_DEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+
+C_EDITOR=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+C_BUILD=-O3 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+
 #Valgrind flag
 #VFLAG=--leak-check=yes
 VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
-LIBSGL= -lGLU -ldl
+LIBSGL= -ldl
 LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
 #Cpp and C wildcard
-SRCPPS=$(wildcard src/*.cpp)
-SRCS=$(wildcard src/*.c)
-OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) 
+LIBIMGUI = $(wildcard include/imgui/*.cpp)
+SRCPPS=$(wildcard src/*.cpp) 
+SRCS=$(wildcard src/*.c) 
+OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) $(LIBIMGUI:.cpp=.o)
 
 all: $(OUTPUT)
 
@@ -39,10 +46,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXXFLAGSDEBUG) $< -o $@
+	g++ -c $(CXX_EDITOR) $< -o $@
 
 %.o: %.c
-	gcc -c $(CCXXFLAGSDEBUG) $< -o $@
+	gcc -c $(C_EDITOR) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin

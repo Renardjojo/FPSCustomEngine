@@ -14,7 +14,7 @@ namespace Engine::Physics
 {
     class PhysicalObject : public Engine::Ressources::Component
     {
-    public:
+        public:
 #pragma region constructor / destructor
 
         PhysicalObject(Engine::Ressources::GameObject &refGameObject);
@@ -22,9 +22,9 @@ namespace Engine::Physics
         PhysicalObject(PhysicalObject &&other);
         virtual ~PhysicalObject();
 
-        PhysicalObject() = delete;
-        PhysicalObject &operator=(PhysicalObject const &other) = delete;
-        PhysicalObject &operator=(PhysicalObject &&other) = delete;
+        PhysicalObject()                                        = delete;
+        PhysicalObject &operator=(PhysicalObject const &other)  = delete;
+        PhysicalObject &operator=(PhysicalObject &&other)       = delete;
 
 #pragma endregion //!constructor/destructor
 
@@ -49,7 +49,6 @@ namespace Engine::Physics
         bool IsKinematic() { return _isKinematic; }
         bool UseGravity() { return _useGravity; }
         bool IsSleeping() { return _sleep; }
-        Engine::Ressources::GameObject &getGameObject() { return gameObject; }
 
 #pragma endregion //!accessor
 

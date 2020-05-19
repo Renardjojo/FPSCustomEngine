@@ -10,7 +10,7 @@
 
 #include "glad/glad.h"
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
+#include "GE/Ressources/GameObject.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Ressources/shader_type.hpp"
 
@@ -27,7 +27,7 @@ namespace Engine::LowRenderer
     } LightCreateArg;
 
     class Light //TODO: Can be more optimize change information only when light is update
-        : public Entity
+        : public Engine::Ressources::GameObject
     {
         public:
     

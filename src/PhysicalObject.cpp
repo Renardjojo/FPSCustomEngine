@@ -17,7 +17,7 @@ PhysicalObject::PhysicalObject (GameObject& refGameObject)
 }
 
 PhysicalObject::PhysicalObject (const PhysicalObject& other)
-    :   Component(*this),
+    :   Component           (other.gameObject),
         velocity            (other.velocity),
         angularVelocity     (other.angularVelocity),
         mass                (other.mass),
@@ -36,7 +36,7 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
 }
 
 PhysicalObject::PhysicalObject (PhysicalObject&& other)
-    :   Component(*this),
+    :   Component           (other.gameObject),
         velocity            (std::move(other.velocity)),
         angularVelocity     (std::move(other.angularVelocity)),
         mass                (std::move(other.mass)),

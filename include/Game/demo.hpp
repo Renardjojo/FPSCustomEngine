@@ -41,8 +41,9 @@ namespace Game
 
             #pragma region methods
 
-            void update     () noexcept;
-            void display    () const noexcept;
+            void fixedUpdate    () noexcept;
+            void update         () noexcept;
+            void display        () const noexcept;
 
             #pragma endregion //!methods
 
@@ -56,6 +57,10 @@ namespace Game
             bool flagleftClicIsDown;
             bool flagF1IsDown;
             bool usingMouse;
+
+#ifndef DNEDITOR
+            bool displaySceneGraphWindows = false;
+#endif
 
             Engine::Ressources::GameObject* sunLight;
             Engine::Ressources::GameObject* enemiesContener;
@@ -83,8 +88,12 @@ namespace Game
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             (Engine::Ressources::t_RessourcesManager& ressourceManager);
 
-            void updateControl          (Engine::Core::InputSystem::Input& input);
+            void updateControl          ();
 
+#ifndef DNEDITOR
+            void updateEditor           ();
+#endif
+            
             #pragma endregion //!methods
 
         private:

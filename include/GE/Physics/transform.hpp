@@ -13,8 +13,9 @@ namespace Engine::Physics
 {
     typedef struct S_TransformCreateArg
     {
-        Engine::Core::Maths::Vec3 position, rotation, scale;
-        
+        Engine::Core::Maths::Vec3   position = Engine::Core::Maths::Vec3::zero, 
+                                    rotation = Engine::Core::Maths::Vec3::zero, 
+                                    scale    = Engine::Core::Maths::Vec3::one;
     } TransformCreateArg;
 
     //class inline only
@@ -90,6 +91,9 @@ namespace Engine::Physics
             virtual const Engine::Core::Maths::Vec3& getPosition() const noexcept   { return position_; }
             virtual const Engine::Core::Maths::Vec3& getRotation() const noexcept   { return rotation_; }
             virtual const Engine::Core::Maths::Vec3& getScale() const noexcept      { return scale_; }
+
+            virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }
+            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_[0][0], modelMat_[1][1], modelMat_[2][2]}; }
 
             #pragma endregion //!accessor
     
