@@ -15,6 +15,17 @@ namespace Engine::LowRenderer::EditorTools
 {
     class InspectorWindow
     {
+        protected : 
+
+        static
+        void updateTransform(Engine::Ressources::GameObject& gameObject);
+
+        static
+        void updateHeader(Engine::Ressources::GameObject& gameObject);
+
+        static
+        void updateComponent(Engine::Ressources::GameObject& gameObject);
+
         public:
     
         #pragma region constructor/destructor
