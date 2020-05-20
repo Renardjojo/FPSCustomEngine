@@ -208,159 +208,6 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
             newGameObject = &scene.add<Camera>(scene.getWorld(), camArg);
             dynamic_cast<Camera *>(newGameObject)->use();
         }
-        else if (str.compare("DirLight") == 0)
-        {
-            Vec3 dir;
-            Vec4 ambient;
-            Vec4 diffuse;
-            Vec4 specular;
-            std::string name;
-
-            for (; attr; attr = attr->next_attribute())
-            {
-                str = attr->name();
-
-                if (str.compare("dirX") == 0)
-                    dir.x = std::stof(attr->value());
-
-                else if (str.compare("dirY") == 0)
-                    dir.y = std::stof(attr->value());
-
-                else if (str.compare("dirZ") == 0)
-                    dir.z = std::stof(attr->value());
-
-                else if (str.compare("ambient0") == 0)
-                    ambient.x = std::stof(attr->value());
-
-                else if (str.compare("ambient1") == 0)
-                    ambient.y = std::stof(attr->value());
-
-                else if (str.compare("ambient2") == 0)
-                    ambient.z = std::stof(attr->value());
-
-                else if (str.compare("ambient3") == 0)
-                    ambient.w = std::stof(attr->value());
-
-                else if (str.compare("diffuse0") == 0)
-                    diffuse.x = std::stof(attr->value());
-
-                else if (str.compare("diffuse1") == 0)
-                    diffuse.y = std::stof(attr->value());
-
-                else if (str.compare("diffuse2") == 0)
-                    diffuse.z = std::stof(attr->value());
-
-                else if (str.compare("diffuse3") == 0)
-                    diffuse.w = std::stof(attr->value());
-
-                else if (str.compare("specular0") == 0)
-                    specular.x = std::stof(attr->value());
-
-                else if (str.compare("specular1") == 0)
-                    specular.y = std::stof(attr->value());
-
-                else if (str.compare("specular2") == 0)
-                    specular.z = std::stof(attr->value());
-
-                else if (str.compare("specular3") == 0)
-                    specular.w = std::stof(attr->value());
-
-                else if (str.compare("name") == 0)
-                    name = attr->value();
-            }
-
-            DirectionnalLightCreateArg dirLightArg{dir,
-                                                   {ambient.x, ambient.y, ambient.z, ambient.w},
-                                                   {diffuse.x, diffuse.y, diffuse.z, diffuse.w},
-                                                   {specular.x, specular.y, specular.z, specular.w},
-                                                   name.c_str()};
-
-            newGameObject = &scene.add<DirectionnalLight>(parent, dirLightArg);
-            static_cast<DirectionnalLight *>(newGameObject)->enable(true);
-        }
-        else if (str.compare("PointLight") == 0)
-        {
-            Vec3 pos;
-            Vec4 ambient;
-            Vec4 diffuse;
-            Vec4 specular;
-            Vec3 conslinQuad;
-            std::string name;
-
-            for (; attr; attr = attr->next_attribute())
-            {
-                str = attr->name();
-
-                if (str.compare("posX") == 0)
-                    pos.x = std::stof(attr->value());
-
-                else if (str.compare("posY") == 0)
-                    pos.y = std::stof(attr->value());
-
-                else if (str.compare("posZ") == 0)
-                    pos.z = std::stof(attr->value());
-
-                else if (str.compare("ambient0") == 0)
-                    ambient.x = std::stof(attr->value());
-
-                else if (str.compare("ambient1") == 0)
-                    ambient.y = std::stof(attr->value());
-
-                else if (str.compare("ambient2") == 0)
-                    ambient.z = std::stof(attr->value());
-
-                else if (str.compare("ambient3") == 0)
-                    ambient.w = std::stof(attr->value());
-
-                else if (str.compare("diffuse0") == 0)
-                    diffuse.x = std::stof(attr->value());
-
-                else if (str.compare("diffuse1") == 0)
-                    diffuse.y = std::stof(attr->value());
-
-                else if (str.compare("diffuse2") == 0)
-                    diffuse.z = std::stof(attr->value());
-
-                else if (str.compare("diffuse3") == 0)
-                    diffuse.w = std::stof(attr->value());
-
-                else if (str.compare("specular0") == 0)
-                    specular.x = std::stof(attr->value());
-
-                else if (str.compare("specular1") == 0)
-                    specular.y = std::stof(attr->value());
-
-                else if (str.compare("specular2") == 0)
-                    specular.z = std::stof(attr->value());
-
-                else if (str.compare("specular3") == 0)
-                    specular.w = std::stof(attr->value());
-
-                else if (str.compare("constant") == 0)
-                    conslinQuad.x = std::stof(attr->value());
-
-                else if (str.compare("linear") == 0)
-                    conslinQuad.y = std::stof(attr->value());
-
-                else if (str.compare("quadriatic") == 0)
-                    conslinQuad.z = std::stof(attr->value());
-
-                else if (str.compare("name") == 0)
-                    name = attr->value();
-            }
-
-            PointLightCreateArg PointLightArg{pos,
-                                              {ambient.x, ambient.y, ambient.z, ambient.w},
-                                              {diffuse.x, diffuse.y, diffuse.z, diffuse.w},
-                                              {specular.x, specular.y, specular.z, specular.w},
-                                              conslinQuad.x,
-                                              conslinQuad.y,
-                                              conslinQuad.z,
-                                              name.c_str()};
-
-            newGameObject = &scene.add<PointLight>(parent, PointLightArg);
-            static_cast<PointLight *>(newGameObject)->enable(true);
-        }
     } // Gameobject
     else if (std::string(node->name()).compare("COMPONENT") == 0)// Component
     {
@@ -380,6 +227,16 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
             parent.addComponent<SphereCollider>();
         else if (type.compare("PlayerController") == 0)
             parent.addComponent<PlayerController>();
+        else if (type.compare("DirectionnalLight") == 0)
+        {
+            parent.addComponent<DirectionnalLight>(params);
+            parent.getComponent<DirectionnalLight>()->enable(true);
+        }
+        else if (type.compare("PointLight") == 0)
+        {
+            parent.addComponent<PointLight>(params);
+            parent.getComponent<PointLight>()->enable(true);
+        }
 
 
 
@@ -427,63 +284,12 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 {
     xml_node<> *newNode = doc.allocate_node(node_element, "GAMEOBJECT");
 
-    if (dynamic_cast<DirectionnalLight*>(&gameObjectParent))
-    {
-        DirectionnalLight* dirLight = dynamic_cast<DirectionnalLight*>(&gameObjectParent);
-        newNode->append_attribute(doc.allocate_attribute("type", "DirLight"));
-        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getName()));
-        
-        newNode->append_attribute(doc.allocate_attribute("dirX", doc.allocate_string(std::to_string(dirLight->getPosition().x).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("dirY", doc.allocate_string(std::to_string(dirLight->getPosition().y).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("dirZ", doc.allocate_string(std::to_string(dirLight->getPosition().z).c_str())));
-
-        newNode->append_attribute(doc.allocate_attribute("ambient0", doc.allocate_string(std::to_string(dirLight->getAmbient().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient1", doc.allocate_string(std::to_string(dirLight->getAmbient().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient2", doc.allocate_string(std::to_string(dirLight->getAmbient().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient3", doc.allocate_string(std::to_string(dirLight->getAmbient().e[3]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse0", doc.allocate_string(std::to_string(dirLight->getDiffuse().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse1", doc.allocate_string(std::to_string(dirLight->getDiffuse().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse2", doc.allocate_string(std::to_string(dirLight->getDiffuse().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse3", doc.allocate_string(std::to_string(dirLight->getDiffuse().e[3]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular0", doc.allocate_string(std::to_string(dirLight->getSpecular().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular1", doc.allocate_string(std::to_string(dirLight->getSpecular().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular2", doc.allocate_string(std::to_string(dirLight->getSpecular().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular3", doc.allocate_string(std::to_string(dirLight->getSpecular().e[3]).c_str())));
-    
-    }
-    else if (dynamic_cast<PointLight*>(&gameObjectParent))
-    {
-        PointLight* ptLight = dynamic_cast<PointLight*>(&gameObjectParent);
-        newNode->append_attribute(doc.allocate_attribute("type", "PointLight"));
-        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getName()));
-        
-        newNode->append_attribute(doc.allocate_attribute("dirX", doc.allocate_string(std::to_string(ptLight->getPosition().x).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("dirY", doc.allocate_string(std::to_string(ptLight->getPosition().y).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("dirZ", doc.allocate_string(std::to_string(ptLight->getPosition().z).c_str())));
-
-        newNode->append_attribute(doc.allocate_attribute("ambient0", doc.allocate_string(std::to_string(ptLight->getAmbient().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient1", doc.allocate_string(std::to_string(ptLight->getAmbient().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient2", doc.allocate_string(std::to_string(ptLight->getAmbient().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("ambient3", doc.allocate_string(std::to_string(ptLight->getAmbient().e[3]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse0", doc.allocate_string(std::to_string(ptLight->getDiffuse().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse1", doc.allocate_string(std::to_string(ptLight->getDiffuse().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse2", doc.allocate_string(std::to_string(ptLight->getDiffuse().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("diffuse3", doc.allocate_string(std::to_string(ptLight->getDiffuse().e[3]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular0", doc.allocate_string(std::to_string(ptLight->getSpecular().e[0]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular1", doc.allocate_string(std::to_string(ptLight->getSpecular().e[1]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular2", doc.allocate_string(std::to_string(ptLight->getSpecular().e[2]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("specular3", doc.allocate_string(std::to_string(ptLight->getSpecular().e[3]).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("constant", doc.allocate_string(std::to_string(ptLight->getConstant()).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("linear", doc.allocate_string(std::to_string(ptLight->getLinear()).c_str())));
-        newNode->append_attribute(doc.allocate_attribute("quadriatic", doc.allocate_string(std::to_string(ptLight->getQuadratic()).c_str())));
-    
-    }
-    else if (dynamic_cast<Camera*>(&gameObjectParent))
+    if (dynamic_cast<Camera*>(&gameObjectParent))
     {
         Camera* camera = dynamic_cast<Camera*>(&gameObjectParent);
 
         newNode->append_attribute(doc.allocate_attribute("type", "Camera"));
-        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getName()));
+        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getCName()));
         
         newNode->append_attribute(doc.allocate_attribute("posX", doc.allocate_string(std::to_string(camera->getPosition().x).c_str())));
         newNode->append_attribute(doc.allocate_attribute("posY", doc.allocate_string(std::to_string(camera->getPosition().y).c_str())));
@@ -495,10 +301,10 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         newNode->append_attribute(doc.allocate_attribute("far", doc.allocate_string(std::to_string(camera->getProjectionInfo().far).c_str())));
         newNode->append_attribute(doc.allocate_attribute("fov", doc.allocate_string(std::to_string(camera->getProjectionInfo().fovX).c_str())));
     }
-    else // TODO: Assert
+    else
     {
         newNode->append_attribute(doc.allocate_attribute("type", "Empty"));
-        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getName()));
+        newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getCName()));
         
         newNode->append_attribute(doc.allocate_attribute("posX", doc.allocate_string(std::to_string(gameObjectParent.getPosition().x).c_str())));
         newNode->append_attribute(doc.allocate_attribute("posY", doc.allocate_string(std::to_string(gameObjectParent.getPosition().y).c_str())));
@@ -512,17 +318,9 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         newNode->append_attribute(doc.allocate_attribute("scaleY", doc.allocate_string(std::to_string(gameObjectParent.getScale().y).c_str())));
         newNode->append_attribute(doc.allocate_attribute("scaleZ", doc.allocate_string(std::to_string(gameObjectParent.getScale().z).c_str())));
 
-        std::cout << "entity not define in save" << std::endl;
+        std::cout << "saving : " + gameObjectParent.getName() << std::endl;
     }
 
-    // if (gameObjectParent.getComponent<PlayerController>())
-    //     newNode->append_attribute(doc.allocate_attribute("componentName", "PlayerController"));
-    // if (gameObjectParent.getComponent<OrientedBoxCollider>())
-    //     newNode->append_attribute(doc.allocate_attribute("componentName", "OrientedBoxCollider"));
-    // if (gameObjectParent.getComponent<SphereCollider>())
-    //     newNode->append_attribute(doc.allocate_attribute("componentName", "SphereCollider"));
-    // if (gameObjectParent.getComponent<PhysicalObject>())
-    //     newNode->append_attribute(doc.allocate_attribute("componentName", "PhysicalObject"));
     if (gameObjectParent.getComponent<Model>())
         gameObjectParent.getComponent<Model>()->save(doc, newNode);
 
@@ -537,6 +335,12 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 
     if (gameObjectParent.getComponent<PhysicalObject>())
         gameObjectParent.getComponent<PhysicalObject>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<PointLight>())
+        gameObjectParent.getComponent<PointLight>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<DirectionnalLight>())
+        gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
 
         
 

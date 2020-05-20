@@ -22,33 +22,34 @@ namespace Engine::Core::InputSystem
         int wheel_scrolling{1};
         bool wheelClic{false};
         bool isTouch{false};
-        bool rightClic_down{false};
+        bool rightClicDown{false};
+        bool rightClicDownOnce{false};
         bool doubleLeftClic{false};
-        bool leftClic_down{false};
-        bool leftClicPressed{false};
-        unsigned int clicks{0};
+        bool leftClicDown{false};
+        bool leftClicDownOnce{false};
+
         float timeFirstLeftClic{0.f};
+        unsigned int clicks{0};
+
+        bool oldLeftClicDown{false};
+        bool oldRightClicDown{false};
 
         int oneLeftClick()
         {
-            if (leftClic_down && !leftClicPressed)
+            if (leftClicDown && !oldLeftClicDown)
             {
-                leftClicPressed = true;
                 return 1;
             }
-            else if (leftClic_down && leftClicPressed)
+            else if (leftClicDown && oldLeftClicDown)
             {
-                leftClicPressed = true;
                 return 2;
             }
-            else if (!leftClic_down)
+            else if (!leftClicDown)
             {
-                leftClicPressed = false;
                 return 0;
             }
             else
             {
-                leftClicPressed = false;
                 return 0;
             }
         }
@@ -68,26 +69,7 @@ namespace Engine::Core::InputSystem
         bool isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
         bool isPressed[SDL_NUM_SCANCODES];
 
-        int onePressed(const SDL_Scancode key)
-        {
-            if (isDown[key] && !isPressed[key])
-            {
-                isPressed[key] = true;
-                return 1; //Is pressed
-            }
-            else if (isDown[key] && isPressed[key])
-            {
-                isPressed[key] = true;
-                return 2; //isDown
-            }
-            else if (!isDown[key])
-            {
-                isPressed[key] = false;
-                return 0; //not press
-            }
-            else
-                return 0; //not press
-        }
+        int onePressed(const SDL_Scancode key);
     };
     struct windowEvent
     {

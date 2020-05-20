@@ -19,10 +19,10 @@ void Game::Game::run ()
         TimeSystem::update([&]()
                             { 
                                 demo.fixedUpdate();
-                                gameEngine_.pollEvent();
                             }, 
                             [&]() 
                             {
+                                gameEngine_.pollEvent();
                                 demo.update();
                             },
                             [&]()

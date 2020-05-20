@@ -58,10 +58,6 @@ namespace Game
             bool flagF1IsDown;
             bool usingMouse;
 
-#ifndef DNEDITOR
-            bool displaySceneGraphWindows = false;
-#endif
-
             Engine::Ressources::GameObject* sunLight;
             Engine::Ressources::GameObject* enemiesContener;
             /*Engine::Core::Maths::Vec3 dirPlayer1;
@@ -86,7 +82,7 @@ namespace Game
             void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadCamera             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadCamera             ();
 
             void updateControl          ();
 

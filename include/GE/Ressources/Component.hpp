@@ -15,12 +15,12 @@ namespace Engine::Ressources
 {
     class GameObject;
 
-class Component
-{
-public:
+    class Component
+    {
+    public:
 
     Component(GameObject &refGameObject)
-    : gameObject {refGameObject} 
+    : _gameObject {refGameObject} 
     {}
 
     Component(const Component &other)               = default;
@@ -31,14 +31,13 @@ public:
     Component &operator=(Component const &other)    = delete;
     Component &operator=(Component &&other)         = delete;
 
-    GameObject &        getGameObject() noexcept { return gameObject; }
-    const GameObject&   getGameObject() const noexcept { return gameObject; }
-
-protected:
-
-    GameObject& gameObject;
+    GameObject &        getGameObject() noexcept { return _gameObject; }
+    const GameObject&   getGameObject() const noexcept { return _gameObject; }
 
     protected:
+
+    GameObject& _gameObject;
+
     };
 
 } // namespace Engine::Ressources

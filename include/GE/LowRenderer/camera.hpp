@@ -134,7 +134,9 @@ namespace Engine::LowRenderer
              * 
              * @param fovY 
              */
-            void setFovY(const float fovY) noexcept; 
+            void setFovY(const float fovY) noexcept;
+
+            void setAspect(const float newAspect) noexcept; 
 
             #pragma endregion //!methods
 

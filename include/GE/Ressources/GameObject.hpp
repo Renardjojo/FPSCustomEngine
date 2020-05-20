@@ -95,10 +95,12 @@ namespace Engine::Ressources
         {
             for (std::unique_ptr<Component> &uniquePtrComponent : components)
             {
-                Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
+                T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
-                if (comp) 
-                    return dynamic_cast<T*>(uniquePtrComponent.get());
+                if (comp != nullptr)
+                {
+                    return comp;
+                }
             }
             return nullptr;
         }
@@ -146,38 +148,38 @@ namespace Engine::Ressources
          * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
          * @return GraphEntity& 
          */
-        void destroyChild (const std::string& path) noexcept
-        {
-           /* GE_assert(!path.empty());
+        // void destroyChild (const std::string& path) noexcept
+        // {
+        //     GE_assert(!path.empty());
 
-            std::stringstream sPath(path);
-            std::string word;
-            Engine::Ressources::GameObject* parentEntity = this;
-            Engine::Ressources::GameObject* currentEntity = this;
+        //     std::stringstream sPath(path);
+        //     std::string word;
+        //     Engine::Ressources::GameObject* parentEntity = this;
+        //     Engine::Ressources::GameObject* currentEntity = this;
 
-            while (std::getline(sPath, word, '/'))
-            {
-                if (word.empty() || word == "." || word == name_) continue;
+        //     while (std::getline(sPath, word, '/'))
+        //     {
+        //         if (word.empty() || word == "." || word == name_) continue;
 
-                bool isFound = false;
-                parentEntity = currentEntity;
-                for (auto&& child : parentEntity->children)
-                {
-                    if (child->getName() == word)
-                    {
-                        currentEntity = child.get();
-                        isFound = true;
-                        break;
-                    }
-                }
-                if (!isFound)
-                {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
-                    return;
-                }
-            }
-            parentEntity->children.erase();*/
-        }
+        //         bool isFound = false;
+        //         parentEntity = currentEntity;
+        //         for (auto&& child : parentEntity->children)
+        //         {
+        //             if (child->getName() == word)
+        //             {
+        //                 currentEntity = child.get();
+        //                 isFound = true;
+        //                 break;
+        //             }
+        //         }
+        //         if (!isFound)
+        //         {
+        //             Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
+        //             return;
+        //         }
+        //     }
+        //     parentEntity->children.erase();
+        // }
 
             /**
              * @brief add specific entity to the graph with arg to construct it and return his id
@@ -204,8 +206,39 @@ namespace Engine::Ressources
         }
 
         // TODO: Component[] getComponents()
-    private:
-        std::vector<std::unique_ptr<Component>> components;
+
+        template <typename T>
+        std::vector<T*> getComponents()
+        {
+            std::vector<T*> toReturn;
+            for (std::unique_ptr<Component> &uniquePtrComponent : components)
+            {
+                T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
+
+                if (comp != nullptr)
+                {
+                    toReturn.push_back(comp);
+                }
+            }
+            return toReturn;
+        }
+
+        std::list<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
+        const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
+        
+        void setTag(std::string newTag) { tag = newTag; }
+        std::string& getTag() { return tag; } 
+
+        bool CompareTag(std::string toCompare)
+        {
+            if (toCompare.compare(tag) == 0)
+                return true;
+            return false;
+        }
+
+    protected:
+        std::list<std::unique_ptr<Component>> components;
+        std::string tag;
     };
 
 

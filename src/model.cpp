@@ -58,7 +58,7 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
     }
 }
 
-Model::Model(GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
+Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
     :   IModel                  (refGameObject),
         pShader_                (&ressourcesManager.get<Shader>(*params[0])),
         pMaterial_              ({&ressourcesManager.get<Material>(*params[1])}),
@@ -69,8 +69,12 @@ Model::Model(GameObject &refGameObject, const std::vector<std::unique_ptr<std::s
         materialName_           ({*params[1]}),
         meshName_               (*params[2])
 {
-    initTextureBufferWithMTLId();
+    initTextureBufferWithMTLId();   
 
+    for (std::unique_ptr<std::string>& string : params)
+        std::cout << *string << " ";
+
+    std::cout << std::endl;
     loadInGPU (); 
 }
 
@@ -125,7 +129,7 @@ void Model::draw () const noexcept
     {
         pMesh_->loadInGPU();
         pIdVAO = pMesh_->getVAOId();
-        SLog::logWarning((std::string("Model \"") + gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
+        SLog::logWarning((std::string("Model \"") + _gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
     }
 
     if (enableBackFaceCulling_)
@@ -218,7 +222,7 @@ void Model::unloadFromGPU() noexcept
  
 void Model::sendToShaderModelMatrix () const noexcept
 {
-    pShader_->setMat4("model", &gameObject.getModelMatrix().mat[0]);
+    pShader_->setMat4("model", &_gameObject.getModelMatrix().mat[0]);
 }
 
 void Model::save(xml_document<>& doc, xml_node<>* nodeParent)

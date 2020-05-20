@@ -12,13 +12,13 @@ using namespace Engine::Ressources;
 PhysicalObject::PhysicalObject (GameObject& refGameObject)
     : Component(refGameObject)
 {
-    if (gameObject.getComponent<Collider>())
-        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
+    if (_gameObject.getComponent<Collider>())
+        _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (const PhysicalObject& other)
-    :   Component           (other.gameObject),
+    :   Component           (other._gameObject),
         velocity            (other.velocity),
         angularVelocity     (other.angularVelocity),
         mass                (other.mass),
@@ -31,13 +31,13 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
         _isKinematic        (other._isKinematic),
         _useGravity         (other._useGravity)
 {
-    if (gameObject.getComponent<Collider>())
-        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
+    if (_gameObject.getComponent<Collider>())
+        _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
 }
 
 PhysicalObject::PhysicalObject (PhysicalObject&& other)
-    :   Component           (other.gameObject),
+    :   Component           (other._gameObject),
         velocity            (std::move(other.velocity)),
         angularVelocity     (std::move(other.angularVelocity)),
         mass                (std::move(other.mass)),
@@ -50,8 +50,8 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
         _isKinematic        (std::move(other._isKinematic)),
         _useGravity         (std::move(other._useGravity))
 {
-    if (gameObject.getComponent<Collider>())
-        gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
+    if (_gameObject.getComponent<Collider>())
+        _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }
 
