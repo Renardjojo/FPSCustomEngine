@@ -342,8 +342,10 @@ Quad MovingSphereOrientedBox::getFowardVeronoiFace(const OrientedBox& box, float
 Quad MovingSphereOrientedBox::getBackwardVeronoiFace(const OrientedBox& box, float sphereRadius)
 {
     Referential quadRef = box.getReferential();
-    quadRef.origin -= box.getReferential().unitK * box.getExtK();
+    
+    quadRef.origin -= box.getReferential().unitK * (sphereRadius + box.getExtK());
     quadRef.unitI = -box.getReferential().unitI;
     quadRef.unitK = -box.getReferential().unitK;
+
     return Quad{quadRef, box.getExtI(), box.getExtJ()};
 }

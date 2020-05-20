@@ -65,8 +65,8 @@ namespace Engine::LowRenderer
                         float                              quadratic,
                         const Engine::Core::Maths::Vec3&   direction,
                         float                              cutOff,
-                        float                              cutOffExponent,
-                        const char*                        name)
+                        float                              cutOffExponent)
+
             :   PointLight          (refGameObject, ambient, diffuse, specular, constant, linear, quadratic),
                 direction_          (direction),
                 cutOff_             (cosf(cutOff * M_PI / 180.f)),

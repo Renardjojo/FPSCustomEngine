@@ -132,7 +132,7 @@ namespace Engine::Core::Maths::Shape3D
             #pragma region mutator
 
             void setNormal   (const Vec3& newNormal)   noexcept { normal_ = newNormal.getNormalize();}
-            void setDistance (const Vec3& newDistance) noexcept { distance_ = distance_;}
+            void setDistance (float newDistance) noexcept { distance_ = newDistance;}
 
             #pragma endregion //!mutator
 
