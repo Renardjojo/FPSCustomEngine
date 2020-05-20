@@ -30,7 +30,7 @@ void PlayerController::update()
 {
     move();
 
-    if(Input::mouse.leftClicPressed)
+    if(Input::mouse.leftClicDownOnce)
     {
         shoot();
     }
