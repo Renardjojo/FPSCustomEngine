@@ -95,10 +95,10 @@ namespace Engine::Ressources
         {
             for (std::unique_ptr<Component> &uniquePtrComponent : components)
             {
-                Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
+                T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
                 if (comp) 
-                    return dynamic_cast<T*>(uniquePtrComponent.get());
+                    return comp;
             }
             return nullptr;
         }
