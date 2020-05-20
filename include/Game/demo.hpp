@@ -82,6 +82,7 @@ namespace Game
             void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             ();
 
             void updateControl          ();
