@@ -49,24 +49,24 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::InfiniteCylinder        getGlobalInfiniteCylinder() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = _gameObject.getPosition() +InfiniteCylinder_.getLine().getOrigin();
+            const Engine::Core::Maths::Vec3 globalCenter = gameObject.getPosition() +InfiniteCylinder_.getLine().getOrigin();
             Engine::Core::Maths::Vec3 globalDirection =InfiniteCylinder_.getLine().getOrigin();
             float globalRadius =InfiniteCylinder_.getRadius();
 
             if (directionAxe_ == EPositiveDirectionnalAxes::ForwardAxe)
             {
-                globalDirection += _gameObject.getModelMatrix().getVectorForward();
-                globalRadius    += (_gameObject.getScale().x + _gameObject.getScale().y) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorForward();
+                globalRadius    += (gameObject.getScale().x + gameObject.getScale().y) / 2.f;
             }
             else if (directionAxe_ == EPositiveDirectionnalAxes::RightAxe)
             {
-                globalDirection += _gameObject.getModelMatrix().getVectorRight();
-                globalRadius    += (_gameObject.getScale().z + _gameObject.getScale().y) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorRight();
+                globalRadius    += (gameObject.getScale().z + gameObject.getScale().y) / 2.f;
             }
             else
             {
-                globalDirection += _gameObject.getModelMatrix().getVectorUp();
-                globalRadius    += (_gameObject.getScale().x + _gameObject.getScale().z) / 2.f;
+                globalDirection += gameObject.getModelMatrix().getVectorUp();
+                globalRadius    += (gameObject.getScale().x + gameObject.getScale().z) / 2.f;
             }
 
             return Engine::Core::Maths::Shape3D::InfiniteCylinder{globalCenter, globalDirection.getNormalize(), globalRadius};

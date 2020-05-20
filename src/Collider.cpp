@@ -9,7 +9,7 @@ using namespace Engine::Ressources;
 Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)
 {
-    attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
+    attachedPhysicalObject = static_cast<PhysicalObject*>(gameObject.getComponent<PhysicalObject>());
     PhysicSystem::addCollider(this);
 }
 
