@@ -3,6 +3,7 @@
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
 #include <math.h>
 #include <algorithm>
 
@@ -15,6 +16,7 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
+using namespace Engine::Core::Maths::ShapeRelation;
 
 PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
                                                              _camera{Camera::getCamUse()} {}
@@ -138,5 +140,15 @@ void PlayerController::move()
     {
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
+    }
+
+    if (Input::keyboard.isDown[SDL_SCANCODE_Q])
+    {
+        RayHitInfo rayInfo;
+        Vec3 shootDirection = -_gameObject.getModelMatrix().getVectorForward();
+        if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
+        {
+            std::cout << rayInfo.optionnalPhysicalObjectPtr->getGameObject().getName() << std::endl;
+        }
     }
 }
