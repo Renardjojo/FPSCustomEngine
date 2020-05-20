@@ -31,6 +31,11 @@ void PlayerController::start()
 void PlayerController::update()
 {
     move();
+
+    if(Input::mouse.leftClicDownOnce)
+    {
+        shoot();
+    }
 }
 
 void PlayerController::fixedUpdate()
@@ -43,6 +48,11 @@ void PlayerController::fixedUpdate()
 
     _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 };
+
+void PlayerController::shoot()
+{
+    std::cout << " SHOOT" << std::endl;
+}
 
 void PlayerController::setCameraType(CameraType type)
 {
