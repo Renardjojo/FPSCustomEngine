@@ -264,7 +264,27 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 {&ressourceManager.get<Material>("GreenMaterial")},
                                 &ressourceManager.get<Mesh>("Cube")};
 
-    scene_->add<GameObject>(player, lifeBarGameObject).addComponent<BillBoard>(billBoardArg);
+    GameObjectCreateArg rayGameObject {"RayPt1",
+                                         {{0.f, 0.f, 0.f},
+                                         {0.f, 0.f, 0.f},
+                                         {0.2f, 0.2f, 0.2f}}};
+
+    ModelCreateArg rayArg {&ressourceManager.get<Shader>("Color"),
+                                {&ressourceManager.get<Material>("PinkMaterial")},
+                                &ressourceManager.get<Mesh>("Sphere")};
+
+    scene_->add<GameObject>(scene_->getWorld(), rayGameObject).addComponent<Model>(rayArg);
+
+    GameObjectCreateArg ray2GameObject {"RayPt2",
+                                         {{0.f, 0.f, 0.f},
+                                         {0.f, 0.f, 0.f},
+                                         {0.2f, 0.2f, 0.2f}}};
+
+    ModelCreateArg ray2Arg {&ressourceManager.get<Shader>("Color"),
+                                {&ressourceManager.get<Material>("PinkMaterial")},
+                                &ressourceManager.get<Mesh>("Sphere")};
+
+    scene_->add<GameObject>(scene_->getWorld(), ray2GameObject).addComponent<Model>(ray2Arg);
 
     player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
@@ -711,6 +731,10 @@ void Demo::updateControl()
     } 
 
 
+    GameObject& _gameObject = scene_->getGameObject("world/Player");
+    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+    scene_->getGameObject("world/RayPt1").setTranslation(_gameObject.getGlobalPosition() + shootDirection * 2.f);
+    scene_->getGameObject("world/RayPt2").setTranslation(_gameObject.getGlobalPosition() + shootDirection * 2.f + shootDirection * 50.f);
     // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
     // {
     //     TimeSystem::setTimeScale(0.f);
