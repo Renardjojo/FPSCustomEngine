@@ -12,7 +12,6 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
-#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
@@ -22,6 +21,8 @@ namespace Engine::LowRenderer
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
+
+        const char*                         name;
 
     } DirectionnalLightCreateArg;
 
@@ -34,19 +35,17 @@ namespace Engine::LowRenderer
     
             DirectionnalLight ()						            = default;
 
-            DirectionnalLight (Engine::Ressources::GameObject & refGameObject, const DirectionnalLightCreateArg& arg)
-                        :   Light               {refGameObject, arg.ambient, arg.diffuse, arg.specular},
-                            _direction          {arg.direction.getNormalize()}
+            DirectionnalLight ( const DirectionnalLightCreateArg& arg)
+                        :   Light               (arg.direction.getNormalize(), arg.ambient, arg.diffuse, arg.specular, arg.name)
             {}
 
                         
-            DirectionnalLight ( Engine::Ressources::GameObject &                       refGameObject,
-                                const Engine::Core::Maths::Vec3&                       direction,
-                                const Engine::Ressources::AmbiantComponent&            ambient, 
-                                const Engine::Ressources::DiffuseComponent&            diffuse, 
-                                const Engine::Ressources::SpecularComponent&           specular)
-            :   Light               {refGameObject, ambient, diffuse, specular},
-                _direction          {direction.getNormalize()}
+            DirectionnalLight ( const Engine::Core::Maths::Vec3&                direction,
+                         const Engine::Ressources::AmbiantComponent&            ambient, 
+                         const Engine::Ressources::DiffuseComponent&            diffuse, 
+                         const Engine::Ressources::SpecularComponent&           specular,
+                         const char*                                            name)
+            :   Light               (direction.getNormalize(), ambient, diffuse, specular, name)
             {}
             
             DirectionnalLight (const DirectionnalLight& other)		    = default;
@@ -63,7 +62,7 @@ namespace Engine::LowRenderer
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 
                                 specularComp_, 
-                                _direction, 3.f,
+                                position_, 3.f,
                                 0.f, 0.f, 0.f, 0.f,
                                 {0.f, 0.f, 0.f}, 0.f});
             }
@@ -91,7 +90,7 @@ namespace Engine::LowRenderer
         protected:
     
             #pragma region attribut
-            Engine::Core::Maths::Vec3 _direction;
+
             #pragma endregion //!attribut
 
             #pragma region static attribut

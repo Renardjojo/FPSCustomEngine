@@ -94,7 +94,7 @@ namespace Engine::Core::Maths::Shape3D
         #pragma region attribut
 
         Referential referential_;
-        float       iI_, iJ_, iK_; 
+        float       iI_ {0.f}, iJ_ {0.f}, iK_ {0.f}; 
 
         #pragma endregion //!attribut
 
