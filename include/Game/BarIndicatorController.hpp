@@ -35,11 +35,11 @@ namespace Game
 
         void update() override
         {
-            Engine::Core::Maths::Vec3 currentScale = _gameObject.getScale();
+            Engine::Core::Maths::Vec3 currentScale = gameObject.getScale();
             currentScale.x = (_maxScaleX * static_cast<float>(_refValue)) / static_cast<float>(_maxValue);
 
             if (currentScale.x >= 0.f)
-                _gameObject.setScale(currentScale);
+                gameObject.setScale(currentScale);
         }
 
 
