@@ -30,13 +30,13 @@ namespace Game
     {
         private:
         
-        Engine::Core::Maths::Vec3               _spawnPosition          = Engine::Core::Maths::Vec3::zero;
-        EnemieInfo                              _enemiePrefas;
-        float                                   _zoneRadius             = 3.f;  /*in sec*/
-        float                                   _spawnDelay             = 1.f;  /*in sec*/
-        float                                   _spawnDelayInterval     = 0.f; /*in sec*/
-        float                                   _delayCount             = 0.f;
-        float                                   _nextDelay              = _spawnDelay;
+        Engine::Core::Maths::Vec3               _spawnPosition         {Engine::Core::Maths::Vec3::zero};
+        EnemieInfo                              _enemiePrefas          {};
+        float                                   _zoneRadius            {3.f};  /*in sec*/
+        float                                   _spawnDelay            {1.f};  /*in sec*/
+        float                                   _spawnDelayInterval    {0.f}; /*in sec*/
+        float                                   _delayCount            {0.f};
+        float                                   _nextDelay             {_spawnDelay};
 
         
         public:
@@ -52,8 +52,8 @@ namespace Game
          */
         CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemieInfo& enemisPrefabs, Engine::Core::Maths::Vec3& spawnPosition, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
-                _enemiePrefas                               {enemisPrefabs},
                 _spawnPosition                              {spawnPosition},
+                _enemiePrefas                               {enemisPrefabs},
                 _zoneRadius                                 {zoneRadius},
                 _spawnDelay                                 {spawnDelay},
                 _spawnDelayInterval                         {spawnDelayInterval}, 

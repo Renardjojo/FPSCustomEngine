@@ -75,7 +75,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadRessources(gameEngine_.ressourceManager_);
     
-    loadCamera(gameEngine_.ressourceManager_);
+    loadCamera();
 
     loadEntity(gameEngine_.ressourceManager_);
     // loadSkateBoard(gameEngine_.ressourceManager_);
@@ -184,7 +184,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Material>("materialGround" ,matGround);
 }
 
-void Demo::loadCamera(t_RessourcesManager &ressourceManager)
+void Demo::loadCamera()
 {
     CameraPerspectiveCreateArg camArg {{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
     mainCamera = &scene_->add<Camera>(scene_->getWorld(), camArg);

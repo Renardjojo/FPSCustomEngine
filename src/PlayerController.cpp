@@ -60,7 +60,7 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 {
     Vec3 res{Vec3::zero};
     sincosf(angle - M_PI_2f32, &res.z, &res.x);
-    res *= 10;
+    res *= r;
     return res;
 }
 
@@ -87,7 +87,7 @@ void PlayerController::camera()
     }
 
     //Camera orbit
-    Vec3 coordinates = cylindricalCoord((gameObject.getPosition() - _camera->getPosition()).length(), _orbit.y) + gameObject.getPosition();
+    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
