@@ -41,8 +41,9 @@ namespace Game
 
             #pragma region methods
 
-            void update     () noexcept;
-            void display    () const noexcept;
+            void fixedUpdate    () noexcept;
+            void update         () noexcept;
+            void display        () const noexcept;
 
             #pragma endregion //!methods
 
@@ -81,10 +82,14 @@ namespace Game
             void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadCamera             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadCamera             ();
 
-            void updateControl          (Engine::Core::InputSystem::Input& input);
+            void updateControl          ();
 
+#ifndef DNEDITOR
+            void updateEditor           ();
+#endif
+            
             #pragma endregion //!methods
 
         private:

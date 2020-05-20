@@ -8,27 +8,30 @@ IDIR=-Iinclude
 EXCLUDE= src/glad.o
 
 #Relase or debug option
-CCXXFLAGSDEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSDEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CCXXFLAGSDEBUG=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+#CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O0 -std=gnu++17 -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_EDITOR=-O2 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
-CXXFLAGSDEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSDEBUGERROR=-Og -std=gnu++17 -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-CXXFLAGSRELEASE=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+#C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+C_DEBUG=-O0 -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
+C_EDITOR=-O2 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+C_BUILD=-O2 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
 #VFLAG=--leak-check=yes
 VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
-LIBSGL= -lGLU -ldl
+LIBSGL= -ldl
 LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
 #Cpp and C wildcard
-SRCPPS=$(wildcard src/*.cpp)
-SRCS=$(wildcard src/*.c)
-OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) 
+LIBIMGUI = $(wildcard include/imgui/*.cpp)
+SRCPPS=$(wildcard src/*.cpp) 
+SRCS=$(wildcard src/*.c) 
+OBJS=$(SRCPPS:.cpp=.o)  $(SRCS:.c=.o) $(LIBIMGUI:.cpp=.o)
 
 all: $(OUTPUT)
 
@@ -39,10 +42,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXXFLAGSDEBUG) $< -o $@
+	g++ -c $(CXX_DEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(CCXXFLAGSDEBUG) $< -o $@
+	gcc -c $(C_DEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
@@ -50,6 +53,10 @@ $(OUTPUT): $(OBJS)
 
 run : $(OUTPUT) 
 	./$(OUTPUT)
+
+debug:
+
+buid:
 
 #display function stats
 gprof :

@@ -23,7 +23,9 @@ namespace Engine::Core::System
         ScriptSystem &operator=(ScriptSystem const &) = delete;
         ScriptSystem &operator=(ScriptSystem &&) = delete;
 
+        static void start() noexcept;
         static void update() noexcept;
+        static void fixedUpdate() noexcept;
 
         static void addScript(ScriptComponent *scriptComponent);
         static void updateScript(ScriptComponent *pointer, ScriptComponent *old);

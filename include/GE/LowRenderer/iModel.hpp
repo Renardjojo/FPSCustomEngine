@@ -6,31 +6,30 @@
 #define _GE_INTERFACE_Model_H
 
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
+#include "GE/Core/Component/RenderingObject.hpp"
 
 namespace Engine::LowRenderer
 {
     class IModel
-        : public Entity
+        : public Engine::Core::Component::RenderingObject
     {
         public:
     
             #pragma region constructor/destructor
 
-            IModel ()                                        = default;    
-            IModel ( Engine::Core::Maths::Vec3 position, 
-                    Engine::Core::Maths::Vec3 rotation, 
-                    Engine::Core::Maths::Vec3 scale, 
-                    const char* name)
-                    :   Entity          (position, rotation, scale, name),
-                        isLoadInGPU_    (false)
+            IModel(Engine::Ressources::GameObject &refGameObject)
+            :   Engine::Core::Component::RenderingObject  (refGameObject), 
+                isLoadInGPU_                              {false}
             {}
 
+            IModel(const IModel &other)                             = default;  
+            IModel(IModel &&other)                                  = default;  
+            virtual ~IModel()                                       = default;
 
-
-            IModel (const IModel& other)  = default;
-            virtual ~IModel ()           = default;
-    
+            IModel()                                                = delete;
+            IModel &operator=(IModel const &other)                  = delete;
+            IModel &operator=(IModel &&other)                       = delete;
+        
             #pragma endregion //!constructor/destructor
     
             #pragma region methods
@@ -39,7 +38,7 @@ namespace Engine::LowRenderer
              * @brief Draw element only if it is load in GPU
              * 
              */
-            virtual void draw () const noexcept    = 0;
+            virtual void draw () const noexcept = 0;
 
             /**
              * @brief Load texture and Mesh from CPU to GPU. This operation can be slow.
@@ -62,7 +61,7 @@ namespace Engine::LowRenderer
 
                 #pragma region attribut
 
-                bool                               isLoadInGPU_;
+                bool isLoadInGPU_ = false;
 
                 #pragma endregion //!attribut
     };

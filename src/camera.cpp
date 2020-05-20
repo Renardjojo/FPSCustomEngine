@@ -4,28 +4,26 @@
 
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
+using namespace Engine::Ressources;
 using namespace Engine::Core::Debug; 
 
-Camera::Camera (const Engine::Core::Maths::Vec3& position, 
-        const Engine::Core::Maths::Vec3& rotation,
-        float aspect, float near, float far, float fovY,
-        const char* name)
-    : Entity (position, rotation, {1.0f, 1.0f, 1.0f}, name)
+Camera::Camera (const CameraPerspectiveCreateArg& arg)
+    : GameObject (GameObjectCreateArg{arg.name, arg.position, arg.rotation, {1.0f, 1.0f, 1.0f}})
 {
-    GE_assert(near > 0.f);
+    GE_assert(arg.near > 0.f);
 
     ProjectionInfo info;
 
-    info.name       = name;
+    info.name       = arg.name;
     info.type       = E_ProjectionType::PERSPECTIVE;
-    info.aspect     = aspect;
-    info.near       = near;
-    info.far        = far;
-    info.fovY       = fovY;
-    info.fovX       = aspect * fovY;
-    info.left       = far * sinf(info.fovX / 2.f);
+    info.aspect     = arg.aspect;
+    info.near       = arg.near;
+    info.far        = arg.far;
+    info.fovY       = arg.fovY;
+    info.fovX       = arg.aspect * arg.fovY;
+    info.left       = arg.far * sinf(info.fovX / 2.f);
     info.right      = -info.left;
-    info.top        = far * sinf(info.fovY / 2.f);
+    info.top        = arg.far * sinf(info.fovY / 2.f);
     info.bottom     = -info.top;
 
     projInfo_ = info;
@@ -34,33 +32,30 @@ Camera::Camera (const Engine::Core::Maths::Vec3& position,
     isDirty_ = true;
     update();
 
-    SLog::log((std::string("Perspective projection add with name \"") + name + "\"").c_str());
+    SLog::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
 
-Camera::Camera (const Engine::Core::Maths::Vec3& position, 
-            const Engine::Core::Maths::Vec3& rotation,
-        float left, float right, float bottom, float top, float near, float far,
-        const char* name)
-    : Entity (position, rotation, {1.0f, 1.0f, 1.0f}, name)
+Camera::Camera (const CameraOrthographicCreateArg& arg)
+    : GameObject (GameObjectCreateArg{arg.name, arg.position, arg.rotation, {1.0f, 1.0f, 1.0f}})
 {
-   GE_assert(near > 0.f);
+   GE_assert(arg.nearVal > 0.f);
 
     ProjectionInfo info;
 
-    float distLF = abs(left - right);
-    float distTB = abs(top - bottom);
+    float distLF = abs(arg.left - arg.right);
+    float distTB = abs(arg.top - arg.bottom);
 
-    info.name       = name;
+    info.name       = arg.name;
     info.type       = E_ProjectionType::ORTHOGRAPHIC;
     info.aspect     = distLF / distTB;
-    info.near       = near;
-    info.far        = far;
-    info.fovY       = far * asinf(distTB);
-    info.fovX       = far * asinf(distLF);
-    info.left       = left;
-    info.right      = right;
-    info.top        = top;
-    info.bottom     = bottom;
+    info.near       = arg.nearVal;
+    info.far        = arg.farVal;
+    info.fovY       = arg.farVal * asinf(distTB);
+    info.fovX       = arg.farVal * asinf(distLF);
+    info.left       = arg.left;
+    info.right      = arg.right;
+    info.top        = arg.top;
+    info.bottom     = arg.bottom;
 
     projInfo_ = info;
     projection_ = Mat4::createOrthoMatrix(info.left, info.right, info.bottom, info.top, info.near, info.far);
@@ -68,7 +63,7 @@ Camera::Camera (const Engine::Core::Maths::Vec3& position,
     isDirty_ = true;
     update();
 
-    SLog::log((std::string("Orthographic projection add with name \"") + name + "\"").c_str());
+    SLog::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 
 }
 
@@ -111,6 +106,29 @@ void Camera::setFovY(const float fovY) noexcept
     projInfo_.right      = -projInfo_.left;
     projInfo_.top        = projInfo_.far * sinf(projInfo_.fovY / 2.f);
     projInfo_.bottom     = -projInfo_.top;
+
+    switch (projInfo_.type)
+    {
+        case E_ProjectionType::ORTHOGRAPHIC:
+            projection_ = Mat4::createOrthoMatrix(projInfo_.left, projInfo_.right, projInfo_.bottom, projInfo_.top, projInfo_.near, projInfo_.far);
+        break;
+
+        case E_ProjectionType::PERSPECTIVE:
+            projection_ = Mat4::createPerspectiveMatrix(projInfo_.aspect, projInfo_.near, projInfo_.far, projInfo_.fovY);
+        break;
+    
+    default:
+        functWarning("Other projection not implemented");
+        break;
+    }
+}
+
+void Camera::setAspect(const float newAspect) noexcept
+{
+    projInfo_.aspect     = newAspect;
+    projInfo_.fovX       = projInfo_.aspect * projInfo_.fovY;
+    projInfo_.left       = projInfo_.far * sinf(projInfo_.fovX / 2.f);
+    projInfo_.right      = -projInfo_.left;
 
     switch (projInfo_.type)
     {

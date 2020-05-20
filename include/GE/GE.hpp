@@ -36,8 +36,8 @@ namespace Engine
 
             #pragma region methods
 
-            void pollEvent              () { inputManager_.pollEvent(ren_->getWin()->getId());}
-            void updateTime             () { Engine::Core::System::TimeSystem::update();}
+            void pollEvent              () { Core::InputSystem::Input::pollEvent(ren_->getWin()->getId());}
+            void updateTime             () { Core::System::TimeSystem::update();}
             void clearRenderer          () { ren_->clear(); }
             void renderPresent          () { ren_->draw();  }
 
@@ -45,13 +45,10 @@ namespace Engine
 
             #pragma region accessor
 
-            const Engine::Core::InputSystem::T_windowEvent&	    getWindowEvent() const noexcept      { return inputManager_.window;};
-            const Engine::Core::InputSystem::T_inputMouse&	    getMouseEvent() const noexcept       { return inputManager_.mouse;};
-            const Engine::Core::InputSystem::T_inputKeyboard&	getKeyboardEvent() const noexcept    { return inputManager_.keyboard; };
-
             const Engine::Ressources::Size getWinSize () { return ren_->getWin()->getSize(); }
+            Engine::Core::Renderer::IRenderer* getRenderer () { return ren_.get(); }
 
-            float   getDeltaTime() { return Engine::Core::System::TimeSystem::getDeltaTime(); };
+            float   getDeltaTime() { return Core::System::TimeSystem::getDeltaTime(); };
 
             #pragma endregion //!accessor
 
@@ -59,8 +56,7 @@ namespace Engine
 
             #pragma region attribut
 
-            std::unique_ptr<Engine::Core::Renderer::IRenderer>  ren_;
-            Engine::Core::InputSystem::Input                    inputManager_;
+            std::unique_ptr<Core::Renderer::IRenderer>  ren_;
 
             Engine::Ressources::t_RessourcesManager ressourceManager_;
 

@@ -12,7 +12,7 @@ Light::Light ( const Engine::Core::Maths::Vec3&    pos,
         const DiffuseComponent&             diffuse, 
         const SpecularComponent&            specular,
         const char* name)
-    :   Entity             (pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}, name),
+    :   GameObject         (GameObjectCreateArg{name, pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}}),
         ambientComp_       (ambient),
         diffuseComp_       (diffuse),
         specularComp_      (specular),
@@ -20,7 +20,7 @@ Light::Light ( const Engine::Core::Maths::Vec3&    pos,
 {}
 
 Light::Light ( const LightCreateArg&    arg)
-    :   Entity             (arg.pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}, arg.name),
+    :   GameObject         (GameObjectCreateArg{arg.name, arg.pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}}),
         ambientComp_       (arg.ambient),
         diffuseComp_       (arg.diffuse),
         specularComp_      (arg.specular),

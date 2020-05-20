@@ -27,13 +27,9 @@ namespace Engine::Core::DataStructure
             #pragma region constructor/destructor
 
             Graph ()
+                : world_ {}
             {
-                Engine::LowRenderer::Entity world ( {0.f, 0.f, 0.f},
-                                                    {0.f, 0.f, 0.f},
-                                                    {1.f, 1.f, 1.f},
-                                                    "World");
-
-                world_.entity = std::make_unique<Engine::LowRenderer::Entity>(std::move(world));
+                world_.setName("World");
             }
 
             Graph (const Graph& other)		= delete;
@@ -54,6 +50,7 @@ namespace Engine::Core::DataStructure
              * @return GraphEntity* 
              */
             Engine::Ressources::GameObject& getWorld() noexcept { return world_;}
+            const Engine::Ressources::GameObject& getWorld() const noexcept { return world_;}
 
             /**
              * @brief Get the Entity object in function of path in arg
@@ -76,9 +73,9 @@ namespace Engine::Core::DataStructure
                     bool isFound = false;
                     for (auto&& child : currentEntity->children)
                     {
-                        if (child.entity->getName() == word)
+                        if (child->getName() == word)
                         {
-                            currentEntity = &child;
+                            currentEntity = child.get();
                             isFound = true;
                             break;
                         }
@@ -108,12 +105,11 @@ namespace Engine::Core::DataStructure
             template<typename T, typename ...Args>
             Engine::Ressources::GameObject& add(Engine::Ressources::GameObject& dependenceEntity, Args&&... args) noexcept
             {
-                dependenceEntity.children.push_back({});
-                dependenceEntity.children.back().entity = std::make_unique<T>(args...);
-                dependenceEntity.children.back().children = std::list<Engine::Ressources::GameObject>();
-                dependenceEntity.children.back().entity->update(dependenceEntity.entity->getModelMatrix());
+                dependenceEntity.children.emplace_back(std::make_unique<T>(args...));
+                dependenceEntity.children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
+                dependenceEntity.children.back()->update(dependenceEntity.getModelMatrix());
 
-                return dependenceEntity.children.back();
+                return *dependenceEntity.children.back();
             }
 
             #pragma endregion //!mutator

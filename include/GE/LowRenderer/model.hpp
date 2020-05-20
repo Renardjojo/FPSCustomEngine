@@ -17,11 +17,9 @@ namespace Engine::LowRenderer
 {
     typedef struct S_ModelCreateArg
     {
-        Engine::Core::Maths::Vec3                       position, rotation, scale;
-        Engine::Ressources::Shader*                      pShader                = nullptr;
-        std::vector<Engine::Ressources::Material*>       pMaterials;
-        Engine::Ressources::Mesh*                        pMesh                  = nullptr;
-        const char*                                     name;
+        Engine::Ressources::Shader*                     pShader                = nullptr;
+        std::vector<Engine::Ressources::Material*>      pMaterials;
+        Engine::Ressources::Mesh*                       pMesh                  = nullptr;
          
         bool                                            loadInGPU               = true;
         bool                                            enableBackFaceCulling   = true;
@@ -36,12 +34,18 @@ namespace Engine::LowRenderer
     
             #pragma region constructor/destructor
     
-            Model (const ModelCreateArg& arg);
-            Model (const Model& other)        = default;
-            Model (Model&& other)             = default;
-            ~Model ();
+            Model(Engine::Ressources::GameObject &refGameObject, const ModelCreateArg& arg);
+
+            Model(const Model &other)                             = default;
+            Model(Model &&other)                                  = default;
+            virtual ~Model();
+
+            Model()                                               = delete;
+            Model &operator=(Model const &other)                  = delete;
+            Model &operator=(Model &&other)                       = delete;
+
     
-            #pragma endregion //!constructor/destructor
+            #pragma endregion //!constructor/destructors
     
             #pragma region methods
 
@@ -55,8 +59,8 @@ namespace Engine::LowRenderer
              * @brief Load texture and Mesh from CPU to GPU. This operation can be slow.
              * 
              */            
-            void loadInGPU()        noexcept final;
-            void unloadFromGPU()    noexcept final;
+            void loadInGPU()        noexcept;
+            void unloadFromGPU()    noexcept;
 
             #pragma endregion //!methods
     

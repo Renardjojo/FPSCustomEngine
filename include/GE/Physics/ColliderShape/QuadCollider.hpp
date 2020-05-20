@@ -35,13 +35,13 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::Quad        getGlobalQuad() const noexcept
         { 
-            const Engine::Core::Maths::Referential globalReferential {  quad_.getReferential().origin + gameObject.entity->getPosition(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorRight()).normalize(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorUp()).normalize(),
-                                                                        (Engine::Core::Maths::Mat3(gameObject.entity->getModelMatrix()).getVectorForward()).normalize()};
+            const Engine::Core::Maths::Referential globalReferential {  quad_.getReferential().origin + gameObject.getPosition(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorRight()).normalize(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorUp()).normalize(),
+                                                                        (Engine::Core::Maths::Mat3(gameObject.getModelMatrix()).getVectorForward()).normalize()};
 
-            const float extIGlobal = quad_.getExtI() + gameObject.entity->getScale().x / 2.f;
-            const float extJGlobal = quad_.getExtJ() + gameObject.entity->getScale().y / 2.f;
+            const float extIGlobal = quad_.getExtI() + gameObject.getScale().x / 2.f;
+            const float extJGlobal = quad_.getExtJ() + gameObject.getScale().y / 2.f;
             
             return Engine::Core::Maths::Shape3D::Quad{globalReferential, extIGlobal, extJGlobal};
         }

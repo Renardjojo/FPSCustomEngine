@@ -12,6 +12,9 @@
 #include "GE/Core/Maths/Random.hpp"
 #include "GE/LowRenderer/model.hpp"
 
+#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
+
 namespace Game
 {
 
@@ -27,13 +30,13 @@ namespace Game
     {
         private:
         
-        Engine::Core::Maths::Vec3               _spawnPosition          = Engine::Core::Maths::Vec3::zero;
-        EnemieInfo                              _enemiePrefas;
-        float                                   _zoneRadius             = 3.f;  /*in sec*/
-        float                                   _spawnDelay             = 1.f;  /*in sec*/
-        float                                   _spawnDelayInterval     = 0.f; /*in sec*/
-        float                                   _delayCount             = 0.f;
-        float                                   _nextDelay              = _spawnDelay;
+        Engine::Core::Maths::Vec3               _spawnPosition         {Engine::Core::Maths::Vec3::zero};
+        EnemieInfo                              _enemiePrefas          {};
+        float                                   _zoneRadius            {3.f};  /*in sec*/
+        float                                   _spawnDelay            {1.f};  /*in sec*/
+        float                                   _spawnDelayInterval    {0.f}; /*in sec*/
+        float                                   _delayCount            {0.f};
+        float                                   _nextDelay             {_spawnDelay};
 
         
         public:
@@ -49,8 +52,8 @@ namespace Game
          */
         CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemieInfo& enemisPrefabs, Engine::Core::Maths::Vec3& spawnPosition, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
-                _enemiePrefas                               {enemisPrefabs},
                 _spawnPosition                              {spawnPosition},
+                _enemiePrefas                               {enemisPrefabs},
                 _zoneRadius                                 {zoneRadius},
                 _spawnDelay                                 {spawnDelay},
                 _spawnDelayInterval                         {spawnDelayInterval}, 
@@ -72,14 +75,17 @@ namespace Game
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
 
-                Engine::LowRenderer::ModelCreateArg enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
-                //Engine::Core::Maths::Vec2 newPosition = Engine::Core::Maths::Random::peripheralSquareCoordinate(Engine::Core::Maths::Vec2{enemiePrefasCopy.position.x, enemiePrefasCopy.position.y}, _zoneRadius, _zoneRadius);
-                Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(enemiePrefasCopy.position, _zoneRadius);
-                enemiePrefasCopy.position.x = newPosition.x;
-                enemiePrefasCopy.position.y = newPosition.y;
-                enemiePrefasCopy.position.z = newPosition.z;
+                Engine::LowRenderer::ModelCreateArg& enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
+                Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
+                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(gameObject.children.size()), {newPosition}};
 
-                gameObject.addChild<Engine::LowRenderer::Model>(enemiePrefasCopy);
+                auto& newGo = gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy)
+                                        .addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy)
+                                        .addComponent<Engine::Physics::PhysicalObject>()
+                                        .addComponent<Engine::Physics::ColliderShape::SphereCollider>();
+                    
+                newGo.getComponent<Engine::Physics::PhysicalObject>()->SetMass(1);
+                newGo.getComponent<Engine::Physics::ColliderShape::SphereCollider>()->SetBounciness(0.4f);
             }
         }
     };

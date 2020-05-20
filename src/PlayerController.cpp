@@ -4,6 +4,7 @@
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include <math.h>
+#include <algorithm>
 
 using namespace Game;
 using namespace Engine::Physics;
@@ -13,70 +14,119 @@ using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
+using namespace Engine::Core::InputSystem;
 
-PlayerController::PlayerController(GameObject &gameObject, Input &input) : ScriptComponent{gameObject},
-                                                                                 _input{input},
-                                                                                 _camera{Camera::getCamUse()}
-{}
+PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
+                                                             _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
+
+void PlayerController::start()
+{
+    _physics = gameObject.getComponent<PhysicalObject>();
+};
 
 void PlayerController::update()
 {
     move();
 }
 
-Vec3 coord(float r, float angle)
+void PlayerController::fixedUpdate()
 {
-    Vec3 res{0.f,0.f, 0.f};
-    sincosf(angle - M_PI/2, &res.z, &res.x);
-    res *= 10;
+    if (_jump)
+    {
+        _physics->AddForce(0.f, 1.f, 0.f);
+        _jump = false;
+    }
+
+    _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+};
+
+void PlayerController::setCameraType(CameraType type)
+{
+    // if(_type!=type)
+    // {
+    //     //animation de transition de position de la camera
+    // }
+    _type = type;
+}
+
+void PlayerController::toggleCameraType()
+{
+    _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson : CameraType::FirstPerson;
+}
+
+Vec3 PlayerController::cylindricalCoord(float r, float angle)
+{
+    Vec3 res{Vec3::zero};
+    sincosf(angle - M_PI_2f32, &res.z, &res.x);
+    res *= r;
     return res;
 }
 
-void PlayerController::move()
-{    
-    //orbit
-    _orbity += (_input.mouse.motion.x * M_PI / 180.f);
-    Vec3 coordinates =coord((gameObject.entity.get()->getPosition() - _camera->getPosition()).length(), _orbity) + gameObject.entity.get()->getPosition();
-    coordinates.y+=_cameraYoffset;
+void PlayerController::camera()
+{
+    Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
+
+    mouseMotion *= TimeSystem::getDeltaTime() * _mouseSpeed;
+
+    _orbit.y += mouseMotion.x;
+    _orbit.x += mouseMotion.y;
+
+    if (_type == CameraType::FirstPerson)
+    {
+        _orbit.y = fmod(_orbit.y, M_PI * 2);
+        _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
+        gameObject.setRotation({0.f, -_orbit.y, 0.f});
+
+        _camera->setTranslation(gameObject.getPosition());
+        _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
+        _camera->update();
+
+        return;
+    }
+
+    //Camera orbit
+    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
+    coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
-    
+
     //lookat
-    _camera->lookAt(_camera->getPosition(), gameObject.entity.get()->getPosition(), Vec3{0.f, 1.f, 0.f});
+    _camera->lookAt(_camera->getPosition(), gameObject.getPosition(), Vec3::up);
+}
+
+void PlayerController::move()
+{
+    _jump = Input::keyboard.isDown[Input::keyboard.jump];
+
+    if (Input::keyboard.onePressed(SDL_SCANCODE_F2) == 1)
+        toggleCameraType();
+
+    camera();
 
     //movements
-    _direction.x=sinf(_orbity);
+    _direction.x = sinf(_orbit.y);
     _direction.y = 0;
-    _direction.z=-cosf(_orbity);
+    _direction.z = -cosf(_orbit.y);
+
+    _movement = Vec3::zero;
 
     //movement
-    if (_input.keyboard.isDown[_input.keyboard.up])
+    if (Input::keyboard.isDown[Input::keyboard.up])
         _movement -= _direction;
 
-    if (_input.keyboard.isDown[_input.keyboard.down])
+    if (Input::keyboard.isDown[Input::keyboard.down])
         _movement += _direction;
-    
-    if (_input.keyboard.isDown[_input.keyboard.left])
+
+    if (Input::keyboard.isDown[Input::keyboard.left])
     {
         _movement.x -= _direction.z;
         _movement.z += _direction.x;
     }
-    if (_input.keyboard.isDown[_input.keyboard.right])
+    if (Input::keyboard.isDown[Input::keyboard.right])
     {
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
-
-    if (_input.keyboard.onePressed(_input.keyboard.jump) == 1)
-    {
-        gameObject.getComponent<PhysicalObject>()->AddForce(0.f, 10.f, 0.f);
-    }
-
-    gameObject.entity.get()->setRotation({0.f, -_orbity, 0.f});
-    //gameObject.entity.get()->translate(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-    gameObject.getComponent<PhysicalObject>()->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
-
-    _movement = {0.f, 0.f, 0.f};
 }

@@ -23,7 +23,12 @@
 
 #include "../src/stb_image.h"
 
+#ifndef DNEDITOR
+#include "GE/LowRenderer/EditorTools/Editor.hpp"
+using namespace Engine::LowRenderer::EditorTools;
+#endif
 
+#include "GE/Core/System/RenderingSystem.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
 #include "Game/EnnemyController.hpp"
@@ -41,6 +46,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
 using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
+using namespace Engine::Core::InputSystem;
 
 
 Demo::Demo(Engine::GE& gameEngine)
@@ -52,13 +58,24 @@ Demo::Demo(Engine::GE& gameEngine)
         dirCamera          {0.f, 0.f, -1.f}
 {
 
+    if (!usingMouse)
+    {
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    else
+    {
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+
     scene_ = std::make_unique<Scene>();
 
     // TimeSystem::setTimeScale(0.3f);
 
     loadRessources(gameEngine_.ressourceManager_);
     
-    loadCamera(gameEngine_.ressourceManager_);
+    loadCamera();
 
     loadEntity(gameEngine_.ressourceManager_);
     // loadSkateBoard(gameEngine_.ressourceManager_);
@@ -70,6 +87,8 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadEnemies(gameEngine_.ressourceManager_);
 
+    ScriptSystem::start();
+
     // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -78,8 +97,6 @@ Demo::Demo(Engine::GE& gameEngine)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
-    SDL_ShowCursor(false);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
@@ -91,16 +108,26 @@ Demo::Demo(Engine::GE& gameEngine)
 void Demo::update     () noexcept
 {
     UISystem::update(gameEngine_);
-    updateControl(gameEngine_.inputManager_);
- 
+    updateControl();
+
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
-        PhysicSystem::update();
         scene_->update();
-        
         ScriptSystem::update();
     }
 
+#ifndef DNEDITOR
+    Editor::update(*scene_);
+#endif
+}
+
+void Demo::fixedUpdate    () noexcept
+{
+    if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+    {
+        PhysicSystem::update();
+        ScriptSystem::fixedUpdate();
+    }
 }
 
 void Demo::display    () const noexcept
@@ -110,9 +137,8 @@ void Demo::display    () const noexcept
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING || gameEngine_.gameState == E_GAME_STATE::PAUSE)
     {
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
-        static_cast<Camera*>(mainCamera->entity.get())->use();
         
-        scene_->draw();
+        RenderingSystem::draw();
     }
     
     UISystem::draw(gameEngine_);
@@ -123,6 +149,7 @@ void Demo::display    () const noexcept
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
+    ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
 
     MaterialAndTextureCreateArg matDefault;
@@ -157,65 +184,80 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Material>("materialGround" ,matGround);
 }
 
-void Demo::loadCamera(t_RessourcesManager &ressourceManager)
+void Demo::loadCamera()
 {
-    Camera camP1Arg({0.f, 0.f, 30.f},
-                {0.f, 0.f, 0.f},
-                gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera");
-
-    mainCamera = &scene_->add<Camera>(scene_->getWorld(), camP1Arg);
-    static_cast<Camera *>(mainCamera->entity.get())->use();
+    CameraPerspectiveCreateArg camArg {{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
+    mainCamera = &scene_->add<Camera>(scene_->getWorld(), camArg);
+    dynamic_cast<Camera *>(mainCamera)->use();
 }
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    ModelCreateArg cube1arg     {{-0.7f, -5.f, 0.f}, 
-                                {0.f, 0.f, 45.f}, 
-                                {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("ColorWithLight"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("Cube"),
-                                "cube1"};
+    GameObjectCreateArg cubeGameObject {"cube1",
+                                        {{-0.7f, -5.f, 0.f}, 
+                                        {0.f, 0.f, 45.f}, 
+                                        {5.f, 1.f, 5.f}}};
 
-    scene_->add<Model>(scene_->getWorld(), cube1arg);
+    ModelCreateArg cube1arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube")};
+
+    scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
     scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-    ModelCreateArg cube2arg     {{-5.f, -10.f, 0.f}, 
-                                {0.f, 0.f, -45.f}, 
-                                {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("ColorWithLight"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("Cube"),
-                                "cube2"};
+    GameObjectCreateArg cube2GameObject {"cube2",
+                                        {{-5.f, -10.f, 0.f}, 
+                                        {0.f, 0.f, -45.f}, 
+                                        {5.f, 1.f, 5.f}}};
 
-    scene_->add<Model>(scene_->getWorld(), cube2arg);
+    ModelCreateArg cube2arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube")};
+
+    scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
     scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
-    ModelCreateArg cube3arg     {{0.f, -11.f, 0.f}, 
-                                {0.f, 0.f, 45.f}, 
-                                {5.f, 1.f, 5.f}, 
-                                &ressourceManager.get<Shader>("ColorWithLight"), 
-                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("Cube"),
-                                "cube3"};
+    GameObjectCreateArg cube3GameObject {"cube3",
+                                        {{0.f, -11.f, 0.f}, 
+                                        {0.f, 0.f, 45.f}, 
+                                        {5.f, 1.f, 5.f}}};
 
-    scene_->add<Model>(scene_->getWorld(), cube3arg);
+    ModelCreateArg cube3arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
+                                {&ressourceManager.get<Material>("DefaultMaterial")}, 
+                                &ressourceManager.get<Mesh>("Cube")};
+
+    scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
-    ModelCreateArg player{{0.f, 0.f, 0.f},
-                          {0.f, 0.f, 0.f},
-                          {1.0f, 1.0f, 1.0f},
-                          &ressourceManager.get<Shader>("ColorWithLight"),
-                          {&ressourceManager.get<Material>("GreenMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere"),
-                          "Player"};
+    GameObjectCreateArg playerGameObject    {"Player",
+                                            {{0.f, 0.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {1.0f, 1.0f, 1.0f}}};
 
-    scene_->add<Model>(scene_->getWorld(), player);
-    scene_->getGameObject("world/Player").addComponent<PlayerController>(gameEngine_.inputManager_);
-    scene_->getGameObject("world/Player").addComponent<PhysicalObject>();
-    scene_->getGameObject("world/Player").getComponent<PhysicalObject>()->SetMass(1);
-    scene_->getGameObject("world/Player").addComponent<SphereCollider>();
-    scene_->getGameObject("world/Player").getComponent<SphereCollider>()->SetBounciness(0.4f);
+    ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
+                          {&ressourceManager.get<Material>("PinkMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere")};
+
+    GameObject& player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
+    player.addComponent<Model>(playerModel);
+
+    /*Add life bar on player*/
+    GameObjectCreateArg lifeBarGameObject {"lifeBar",
+                                         {{0.f, 2.f, 0.f},
+                                         {0.f, 0.f, 0.f},
+                                         {1.f, 0.3f, 0.1f}}};
+
+    ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("Color"),
+                                {&ressourceManager.get<Material>("GreenMaterial")},
+                                &ressourceManager.get<Mesh>("Cube")};
+
+    scene_->add<GameObject>(player, lifeBarGameObject).addComponent<BillBoard>(billBoardArg);
+
+    player.addComponent<PlayerController>();
+    player.addComponent<PhysicalObject>();
+    player.getComponent<PhysicalObject>()->SetMass(1);
+    player.addComponent<SphereCollider>();
+    player.getComponent<SphereCollider>()->SetBounciness(0.4f);
 }
 
 void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
@@ -230,32 +272,34 @@ void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
     Mesh&       SKBMesh     = ressourceManager.add<Mesh>("SKBMesh", "./ressources/obj/skybox.obj");
     Shader&     skyboxShader= ressourceManager.add<Shader>("skyboxShader", "./ressources/shader/vSkybox.vs", "./ressources/shader/fSkybox.fs", SKYBOX);
 
-    ModelCreateArg skyboxArg    {{0.f, 0.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {10.f, 10.f, 10.f}, 
-                                &skyboxShader,
+    GameObjectCreateArg skyboxArgGameObject {"Skybox",
+                                            {{0.f, 0.f, 0.f}, 
+                                            {0.f, 0.f, 0.f}, 
+                                            {10.f, 10.f, 10.f}}};
+
+    ModelCreateArg skyboxArg    {&skyboxShader,
                                 {&materialSKB},
                                 &SKBMesh,
-                                "Skybox",
                                 true, false};
 
-    scene_->add<Model>(scene_->getWorld(), skyboxArg);
+    scene_->add<GameObject>(scene_->getWorld(), skyboxArgGameObject).addComponent<Model>(skyboxArg);
 }
 
 void Demo::loadGround             (t_RessourcesManager &ressourceManager)
 {
     //Mesh&     ground            = ressourceManager.add<Mesh>("ground" ,Mesh::createPlane(50));
 
-    ModelCreateArg groundArg    {{0.f, -20.f, 0.f}, 
-                                {0.f, 0.f, 0.f}, 
-                                {50.f, 0.1f, 50.f}, 
-                                &ressourceManager.get<Shader>("TextureOnly"), 
+    GameObjectCreateArg groundArgGameObject {"Ground",
+                                            {{0.f, -20.f, 0.f}, 
+                                            {0.f, 0.f, 0.f}, 
+                                            {50.f, 0.1f, 50.f}}};
+
+    ModelCreateArg groundArg    {&ressourceManager.get<Shader>("TextureOnly"), 
                                 {&ressourceManager.get<Material>("materialGround")},
-                                &ressourceManager.get<Mesh>("Cube"), 
-                                "Ground", 
+                                &ressourceManager.get<Mesh>("Cube"),
                                 true, false};
 
-    scene_->add<Model>(scene_->getWorld(), groundArg);
+    scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject).addComponent<Model>(groundArg);
     scene_->getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
 }
 
@@ -280,28 +324,30 @@ void Demo::loadSkateBoard         (t_RessourcesManager &ressourceManager)
         pMaterial.push_back(&material);               
     }
 
-    ModelCreateArg manArg     { {0.f, -1.f, 0.f},
-                                {-M_PI_2, 0.f, 0.f}, 
-                                {0.05f, 0.05f, 0.05f}, 
-                                &ressourceManager.get<Shader>("TextureOnly"),
+    GameObjectCreateArg manArgGameObject    {"Man",
+                                            {{0.f, -1.f, 0.f},
+                                            {-M_PI_2, 0.f, 0.f}, 
+                                            {0.05f, 0.05f, 0.05f}}};
+
+    ModelCreateArg manArg     { &ressourceManager.get<Shader>("TextureOnly"),
                                 pMaterial,
-                                &meshMan, 
-                                "Man",
+                                &meshMan,
                                 true};
 
-    scene_->add<Model>(scene_->getGameObject("world/Player"), manArg);
+    scene_->add<GameObject>(scene_->getGameObject("world/Player"), manArgGameObject).addComponent<Model>(manArg);
 }
 
 void Demo::loadLights      (t_RessourcesManager &ressourceManager)
 {
-    ModelCreateArg lightArg     {{0.f, 0.f, 0.f},
-                                {0.f, 0.f, 0.f},
-                                {1.f, 1.f, 1.f},
-                                &ressourceManager.get<Shader>("ColorWithLight"),
-                                {&ressourceManager.get<Material>("DefaultMaterial")},
-                                &ressourceManager.get<Mesh>("Sphere"),
-                                "Ground",
-                                true};
+    GameObjectCreateArg lightSphereGameObjectArg    {"LightSphere",
+                                                    {{0.f, 0.f, 0.f},
+                                                    {0.f, 0.f, 0.f},
+                                                    {1.f, 1.f, 1.f}}};
+
+    ModelCreateArg lightSphereArg       {&ressourceManager.get<Shader>("ColorWithLight"),
+                                        {&ressourceManager.get<Material>("DefaultMaterial")},
+                                        &ressourceManager.get<Mesh>("Sphere"),
+                                        true};
 
     DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, -1.f},
                                         {1.f, 1.f, 1.f, 0.1f},
@@ -318,9 +364,9 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
 
     GameObject& pl1 = scene_->add<PointLight>(scene_->getWorld(), lightArg5);
 
-    scene_->add<Model>(pl1, lightArg);
+    scene_->add<GameObject>(pl1, lightSphereGameObjectArg).addComponent<Model>(lightSphereArg);
 
-    static_cast<DirectionnalLight*>(sunLight->entity.get())->enable(true);
+    dynamic_cast<DirectionnalLight*>(sunLight)->enable(true);
     //static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
 
@@ -343,6 +389,10 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader, 
@@ -380,6 +430,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
+
+        SDL_ShowCursor(false);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     };
     ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
                                             tempX - 45, tempY, 
@@ -388,6 +441,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         gameEngine_.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
+
+        SDL_ShowCursor(true);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
     };
     
     #pragma endregion
@@ -401,16 +457,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Button>("OptionForwardButton",  pfont, buttonShader,
                                                     tempX + 50, tempY - 300, 
-                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.up)),
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.up)),
                                                     E_GAME_STATE::OPTION).function = [&]()
     {
-        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
-            gameEngine_.inputManager_.keyboard.up = key;
+            Input::keyboard.up = key;
             ressourceManager.get<Button>("OptionForwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionForwardButton").updateTexture();
-            gameEngine_.inputManager_.resetKeyDown();
+            Input::resetKeyDown();
         }
     };
 
@@ -421,16 +477,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Button>("OptionBackwardButton",  pfont, buttonShader,
                                                     tempX + 50, tempY - 200, 
-                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.down)),
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.down)),
                                                     E_GAME_STATE::OPTION).function = [&]()
     {
-        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
-            gameEngine_.inputManager_.keyboard.down = key;
+            Input::keyboard.down = key;
             ressourceManager.get<Button>("OptionBackwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionBackwardButton").updateTexture();
-            gameEngine_.inputManager_.resetKeyDown();
+            Input::resetKeyDown();
         }
     };
 
@@ -441,16 +497,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Button>("OptionLeftButton",  pfont, buttonShader,
                                                     tempX + 50, tempY - 100, 
-                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.left)),
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.left)),
                                                     E_GAME_STATE::OPTION).function = [&]()
     {
-        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
-            gameEngine_.inputManager_.keyboard.left = key;
+            Input::keyboard.left = key;
             ressourceManager.get<Button>("OptionLeftButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionLeftButton").updateTexture();
-            gameEngine_.inputManager_.resetKeyDown();
+            Input::resetKeyDown();
         }
     };
 
@@ -461,16 +517,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Button>("OptionRightButton",  pfont, buttonShader,
                                                     tempX + 50, tempY, 
-                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.right)),
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.right)),
                                                     E_GAME_STATE::OPTION).function = [&]()
     {
-        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
-            gameEngine_.inputManager_.keyboard.right = key;
+            Input::keyboard.right = key;
             ressourceManager.get<Button>("OptionRightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionRightButton").updateTexture();
-            gameEngine_.inputManager_.resetKeyDown();
+            Input::resetKeyDown();
         }
     };
 
@@ -481,16 +537,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Button>("OptionJumpButton",  pfont, buttonShader,
                                                     tempX + 50, tempY + 100, 
-                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(gameEngine_.inputManager_.keyboard.jump)),
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                                     E_GAME_STATE::OPTION).function = [&]()
     {
-        SDL_Scancode key = gameEngine_.inputManager_.waitForKey();
+        SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
-            gameEngine_.inputManager_.keyboard.jump = key;
+            Input::keyboard.jump = key;
             ressourceManager.get<Button>("OptionJumpButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionJumpButton").updateTexture();
-            gameEngine_.inputManager_.resetKeyDown();
+            Input::resetKeyDown();
         }
     };
 
@@ -519,6 +575,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             scene_ = std::make_unique<Scene>();
             setupScene(*scene_, gameEngine_, saves.c_str());
             mainCamera = &scene_->getGameObject("world/MainCamera");
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         };
 
         i += 150;
@@ -535,42 +594,44 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManager)
 {
-    enemiesContener = &scene_->add<Engine::LowRenderer::Entity>(scene_->getWorld(), "EnemiesContener");
+    enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
-    ModelCreateArg modelArg{{0.f, 0.f, 0.f},
-                          {0.f, 0.f, 0.f},
-                          {1.0f, 1.0f, 1.0f},
-                          &ressourceManager.get<Shader>("ColorWithLight"),
+    GameObjectCreateArg Ennemy1GameObjectArg    {"Ennemy"};
+
+    ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
                           {&ressourceManager.get<Material>("GreenMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere"),
-                          "Ennemy"};
+                          &ressourceManager.get<Mesh>("Sphere")};
 
-    ModelCreateArg modelArg2{{0.f, 0.f, 0.f},
-                        {0.f, 0.f, 0.f},
-                        {1.0f, 1.0f, 1.0f},
-                        &ressourceManager.get<Shader>("ColorWithLight"),
-                        {&ressourceManager.get<Material>("PinkMaterial")},
-                        &ressourceManager.get<Mesh>("Cube"),
-                        "Ennemy2"};
+    GameObjectCreateArg Ennemy2GameObjectArg    {"Ennemy2"};
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3::zero, 2.f, 0.1f, 0.f);
+    ModelCreateArg modelArg2{&ressourceManager.get<Shader>("ColorWithLight"),
+                            {&ressourceManager.get<Material>("PinkMaterial")},
+                            &ressourceManager.get<Mesh>("Cube")};
+
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
 }
 
-void Demo::updateControl(Engine::Core::InputSystem::Input& input)
+void Demo::updateControl()
 {
     testLifePLayer -= 0.1;
 
-    if (input.keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
+    if (Input::keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
     {
         if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
         {
             gameEngine_.gameState = E_GAME_STATE::PAUSE;
             usingMouse = true;
+
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
         {
             gameEngine_.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
+
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
         }
         else if (gameEngine_.gameState == E_GAME_STATE::OPTION 
              ||  gameEngine_.gameState == E_GAME_STATE::LOADSAVE 
@@ -584,27 +645,29 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
         }
     }
 
-    if (input.keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    if (Input::keyboard.isDown[SDL_SCANCODE_F3] && !flagF1IsDown)
     {
         usingMouse = !usingMouse;
         flagF1IsDown = true;
-    }
-    else
-    {
-        flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
-    }    
-    if (!usingMouse)
-    {
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-    }
-    else
-    {
-        SDL_ShowCursor(true);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
-    }
 
-    // if (input.keyboard.isDown[SDL_SCANCODE_SPACE])
+        if (!usingMouse)
+        {
+            SDL_ShowCursor(false);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else
+        {
+            SDL_ShowCursor(true);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+    }
+    else
+    {
+        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
+    } 
+
+
+    // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
     // {
     //     TimeSystem::setTimeScale(0.f);
     // }
@@ -613,11 +676,11 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
     //     TimeSystem::setTimeScale(0.5f);
     // }
 
-    // static int exFrameWheelVal = input.mouse.wheel_scrolling;
+    // static int exFrameWheelVal = Input::mouse.wheel_scrolling;
 
-    // if (input.mouse.wheel_scrolling != exFrameWheelVal)
+    // if (Input::mouse.wheel_scrolling != exFrameWheelVal)
     // {
-    //     if(input.mouse.wheel_scrolling > exFrameWheelVal)
+    //     if(Input::mouse.wheel_scrolling > exFrameWheelVal)
     //     {
     //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY + 5);
     //     }
@@ -626,16 +689,16 @@ void Demo::updateControl(Engine::Core::InputSystem::Input& input)
     //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY - 5);
     //     }
         
-    //     exFrameWheelVal = input.mouse.wheel_scrolling;
+    //     exFrameWheelVal = Input::mouse.wheel_scrolling;
     // }
 
-    // if (input.keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
+    // if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
     // {
     //     mouseForPlayer1 = !mouseForPlayer1;
     //     flagF1IsDown = true;
     // }
     // else
     // {
-    //     flagF1IsDown = input.keyboard.isDown[SDL_SCANCODE_F1];
+    //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
 }
