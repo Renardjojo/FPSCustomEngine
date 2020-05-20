@@ -66,7 +66,10 @@ namespace Engine::LowRenderer
              * @return const char* 
              */
             inline
-            const char* getName() const noexcept { return name_.c_str(); }
+            std::string getName() const noexcept { return name_; }
+
+            inline
+            const char* getCName() const noexcept { return name_.c_str(); }
 
             #pragma endregion //!accessor
     
@@ -80,7 +83,6 @@ namespace Engine::LowRenderer
             inline
             void setName(const char* newName) noexcept 
             { 
-                Engine::Core::Debug::SLog::log((std::string("Entity rename from \"") + name_ + "\" to " + newName).c_str());
                 name_ = newName; 
             }
 

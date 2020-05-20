@@ -13,27 +13,40 @@ namespace Game
 
     class PlayerController : public Engine::Core::Component::ScriptComponent
     {
+        enum class CameraType
+        {
+            FirstPerson,
+            ThirdPerson
+        };
 
     private:
-        Engine::Physics::PhysicalObject* _physics;
-        float _playerSpeed{10.f};
+        Engine::Physics::PhysicalObject *_physics;
+        float _mouseSpeed{4.f};
+        float _playerForce{100.f};
+        float _playerMaxSpeed{10.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
-        float _orbity{0.f};
-
+        Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
         bool _jump{false};
+        
+        CameraType _type{CameraType::FirstPerson};
 
         Engine::LowRenderer::Camera *_camera;
 
         Engine::Core::Maths::Vec3 _movement{0.f, 0.f, 0.f};
         Engine::Core::Maths::Vec3 _direction{0.f, 0.f, 0.f};
 
-        Engine::Core::Maths::Vec3 coord(float r, float angle);
+        Engine::Core::Maths::Vec3 cylindricalCoord(float r, float angle);
+
+        void camera();
         void move();
 
     public:
         PlayerController(Engine::Ressources::GameObject &gameObject);
         ~PlayerController();
+
+        void setCameraType(CameraType type);
+        void toggleCameraType();
 
         void update() override;
         void start() override;

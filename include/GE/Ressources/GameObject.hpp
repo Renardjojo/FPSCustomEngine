@@ -95,10 +95,10 @@ namespace Engine::Ressources
         {
             for (std::unique_ptr<Component> &uniquePtrComponent : components)
             {
-                Component *comp = dynamic_cast<T*>(uniquePtrComponent.get());
+                T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
                 if (comp) 
-                    return dynamic_cast<T*>(uniquePtrComponent.get());
+                    return comp;
             }
             return nullptr;
         }
@@ -204,6 +204,10 @@ namespace Engine::Ressources
         }
 
         // TODO: Component[] getComponents()
+
+        std::vector<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
+        const std::vector<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
+        
     private:
         std::vector<std::unique_ptr<Component>> components;
     };
