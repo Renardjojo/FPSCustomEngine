@@ -16,14 +16,14 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
 
-PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
+PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
                                                              _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
 
 void PlayerController::start()
 {
-    _physics = _gameObject.getComponent<PhysicalObject>();
+    _physics = gameObject.getComponent<PhysicalObject>();
 };
 
 void PlayerController::update()
@@ -77,9 +77,9 @@ void PlayerController::camera()
     {
         _orbit.y = fmod(_orbit.y, M_PI * 2);
         _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
+        gameObject.setRotation({0.f, -_orbit.y, 0.f});
 
-        _camera->setTranslation(_gameObject.getPosition());
+        _camera->setTranslation(gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
 
@@ -93,7 +93,7 @@ void PlayerController::camera()
     _camera->update();
 
     //lookat
-    _camera->lookAt(_camera->getPosition(), _gameObject.getPosition(), Vec3::up);
+    _camera->lookAt(_camera->getPosition(), gameObject.getPosition(), Vec3::up);
 }
 
 void PlayerController::move()

@@ -339,7 +339,7 @@ void Demo::loadSkateBoard         (t_RessourcesManager &ressourceManager)
 
 void Demo::loadLights      (t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg lightSphereGameObjectArg    {"DirectionnalLight",
+    GameObjectCreateArg lightSphereGameObjectArg    {"LightSphere",
                                                     {{0.f, 0.f, 0.f},
                                                     {0.f, 0.f, 0.f},
                                                     {1.f, 1.f, 1.f}}};
@@ -352,29 +352,22 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
     DirectionnalLightCreateArg lightArg2 {   {0.f, 1.f, -1.f},
                                         {1.f, 1.f, 1.f, 0.1f},
                                         {1.f, 1.f, 1.f, 0.7f},
-                                        {1.f, 1.f, 1.f, 1.f}};
+                                        {1.f, 1.f, 1.f, 1.f}, "light"};
 
-    GameObjectCreateArg pointLightGameObjectArg     {"PointLight",
-                                                    {{50.f, 20.f, -50.f},
-                                                    {0.f, 0.f, 0.f},
-                                                    {1.f, 1.f, 1.f}}};
-
-    PointLightCreateArg lightArg5 { {1.f, 1.f, 1.f, 0.f},
+    PointLightCreateArg lightArg5 { {50.f, 20.f, -50.f},
+                                    {1.f, 1.f, 1.f, 0.f},
                                     {0.f, 1.f, 0.f, 0.7f},
                                     {1.f, 1.f, 1.f, 0.3f},
-                                    0.f, 0.05f, 0.f};
+                                    0.f, 0.05f, 0.f, "light"};
 
-    GameObject& pl = scene_->add<GameObject>(scene_->getWorld(), lightSphereGameObjectArg)
-                    .addComponent<Model>(lightSphereArg)
-                    .addComponent<DirectionnalLight>(lightArg2);
+    sunLight = &scene_->add<DirectionnalLight>(scene_->getWorld(), lightArg2);
 
-    pl.getComponent<DirectionnalLight>()->enable(true);
+    GameObject& pl1 = scene_->add<PointLight>(scene_->getWorld(), lightArg5);
 
-    GameObject& pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg)
-                        .addComponent<Model>(lightSphereArg)
-                        .addComponent<PointLight>(lightArg5);
+    scene_->add<GameObject>(pl1, lightSphereGameObjectArg).addComponent<Model>(lightSphereArg);
 
-    pl1.getComponent<PointLight>()->enable(true);
+    dynamic_cast<DirectionnalLight*>(sunLight)->enable(true);
+    //static_cast<PointLight*>(pl1.entity.get())->enable(true);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
