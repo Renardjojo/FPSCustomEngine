@@ -100,7 +100,7 @@ void Model::draw () const noexcept
     {
         pMesh_->loadInGPU();
         pIdVAO = pMesh_->getVAOId();
-        SLog::logWarning((std::string("Model \"") + _gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
+        SLog::logWarning((std::string("Model \"") + gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
     }
 
     if (enableBackFaceCulling_)
@@ -193,5 +193,5 @@ void Model::unloadFromGPU() noexcept
  
 void Model::sendToShaderModelMatrix () const noexcept
 {
-    pShader_->setMat4("model", &_gameObject.getModelMatrix().mat[0]);
+    pShader_->setMat4("model", &gameObject.getModelMatrix().mat[0]);
 }

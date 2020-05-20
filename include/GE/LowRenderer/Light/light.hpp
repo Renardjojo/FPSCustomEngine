@@ -8,9 +8,9 @@
 #include <cmath>
 #include <vector>
 
+#include "glad/glad.h"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Ressources/Component.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Ressources/shader_type.hpp"
 
@@ -18,33 +18,34 @@ namespace Engine::LowRenderer
 {
     typedef struct S_LightCreateArg
     {
+        const Engine::Core::Maths::Vec3&                 pos;
         const Engine::Ressources::AmbiantComponent&      ambient; 
         const Engine::Ressources::DiffuseComponent&      diffuse;
         const Engine::Ressources::SpecularComponent&     specular;
+        const char*                                      name;
 
     } LightCreateArg;
 
     class Light //TODO: Can be more optimize change information only when light is update
-        : public Engine::Ressources::Component
+        : public Engine::Ressources::GameObject
     {
         public:
     
             #pragma region constructor/destructor
+    
+            Light ()						= default;
 
-            Light (Engine::Ressources::GameObject &refGameObject, const LightCreateArg& arg);
+            Light (const LightCreateArg& arg);
 
-            Light ( Engine::Ressources::GameObject &refGameObject,
+            Light ( const Engine::Core::Maths::Vec3&                pos,
                     const Engine::Ressources::AmbiantComponent&     ambient, 
                     const Engine::Ressources::DiffuseComponent&     diffuse, 
-                    const Engine::Ressources::SpecularComponent&    specular);
+                    const Engine::Ressources::SpecularComponent&    specular,
+                    const char* name);
             
-            Light (const Light& other)		= delete;
-            Light (Light&& other)			= delete;
+            Light (const Light& other)		= default;
+            Light (Light&& other)			= default;
             virtual ~Light ()				= default;
-
-            Light()                               = delete;
-            Light &operator=(Light const &other)  = delete;
-            Light &operator=(Light &&other)       = delete;
     
             #pragma endregion //!constructor/destructor
     
@@ -55,7 +56,7 @@ namespace Engine::LowRenderer
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 
                                 specularComp_, 
-                                getGameObject().getGlobalPosition(), 0.f,
+                                position_, 0.f,
                                 0.f, 0.f, 0.f, 0.f,
                                 {0.f, 0.f, 0.f}, 0.f});
             }

@@ -97,10 +97,8 @@ namespace Engine::Ressources
             {
                 T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
-                if (comp != nullptr)
-                {
+                if (comp) 
                     return comp;
-                }
             }
             return nullptr;
         }
@@ -148,38 +146,38 @@ namespace Engine::Ressources
          * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
          * @return GraphEntity& 
          */
-        void destroyChild (const std::string& path) noexcept
-        {
-           /* GE_assert(!path.empty());
+        // void destroyChild (const std::string& path) noexcept
+        // {
+        //     GE_assert(!path.empty());
 
-            std::stringstream sPath(path);
-            std::string word;
-            Engine::Ressources::GameObject* parentEntity = this;
-            Engine::Ressources::GameObject* currentEntity = this;
+        //     std::stringstream sPath(path);
+        //     std::string word;
+        //     Engine::Ressources::GameObject* parentEntity = this;
+        //     Engine::Ressources::GameObject* currentEntity = this;
 
-            while (std::getline(sPath, word, '/'))
-            {
-                if (word.empty() || word == "." || word == name_) continue;
+        //     while (std::getline(sPath, word, '/'))
+        //     {
+        //         if (word.empty() || word == "." || word == name_) continue;
 
-                bool isFound = false;
-                parentEntity = currentEntity;
-                for (auto&& child : parentEntity->children)
-                {
-                    if (child->getName() == word)
-                    {
-                        currentEntity = child.get();
-                        isFound = true;
-                        break;
-                    }
-                }
-                if (!isFound)
-                {
-                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
-                    return;
-                }
-            }
-            parentEntity->children.erase();*/
-        }
+        //         bool isFound = false;
+        //         parentEntity = currentEntity;
+        //         for (auto&& child : parentEntity->children)
+        //         {
+        //             if (child->getName() == word)
+        //             {
+        //                 currentEntity = child.get();
+        //                 isFound = true;
+        //                 break;
+        //             }
+        //         }
+        //         if (!isFound)
+        //         {
+        //             Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
+        //             return;
+        //         }
+        //     }
+        //     parentEntity->children.erase();
+        // }
 
             /**
              * @brief add specific entity to the graph with arg to construct it and return his id
@@ -207,11 +205,11 @@ namespace Engine::Ressources
 
         // TODO: Component[] getComponents()
 
-        std::list<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
-        const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
+        std::vector<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
+        const std::vector<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
         
     private:
-        std::list<std::unique_ptr<Component>> components;
+        std::vector<std::unique_ptr<Component>> components;
     };
 
 
