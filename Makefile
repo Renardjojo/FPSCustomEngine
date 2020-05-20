@@ -59,6 +59,10 @@ debug:
 buid:
 
 #display function stats
+gdb :
+	gdb $(OUTPUT)
+
+#display function stats
 gprof :
 	gprof $(OUTPUT) gmon.out > output.txt
 
