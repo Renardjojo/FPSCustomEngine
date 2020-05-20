@@ -61,13 +61,13 @@ namespace Engine::LowRenderer
 
             void sendToShaderModelMatrix () const noexcept final
             {
-                Engine::Core::Maths::Vec3 globalposition = gameObject.getGlobalPosition();
+                Engine::Core::Maths::Vec3 globalposition = _gameObject.getGlobalPosition();
 
                 Engine::Core::Maths::Mat4 modelMat =
                 Engine::Core::Maths::Mat4::createTranslationMatrix(globalposition) * 
                 Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(globalposition, Camera::getCamUse()->getPosition(), {0.f, 1.f, 0.f})) *
                 Engine::Core::Maths::Mat4::createXRotationMatrix(M_PI_2) * 
-                Engine::Core::Maths::Mat4::createScaleMatrix(gameObject.getScale());
+                Engine::Core::Maths::Mat4::createScaleMatrix(_gameObject.getScale());
 
                 pShader_->setMat4("model", &modelMat.mat[0]);
             }

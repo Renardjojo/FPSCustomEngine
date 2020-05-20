@@ -9,7 +9,7 @@ EXCLUDE= src/glad.o
 
 #Relase or debug option
 #CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_DEBUG=-O0 -std=gnu++17  -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O0 -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXX_EDITOR=-O2 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
 CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
@@ -57,6 +57,10 @@ run : $(OUTPUT)
 debug:
 
 buid:
+
+#display function stats
+gdb :
+	gdb $(OUTPUT)
 
 #display function stats
 gprof :
