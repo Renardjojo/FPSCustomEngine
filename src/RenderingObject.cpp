@@ -12,13 +12,13 @@ RenderingObject::RenderingObject(GameObject &refGameObject)
 }
 
 RenderingObject::RenderingObject(const RenderingObject &other)
-    : Component  (other.gameObject)
+    : Component  (other._gameObject)
 {
     RenderingSystem::addRenderingObject(this);
 }
 
 RenderingObject::RenderingObject(RenderingObject &&other)
-    : Component  (other.gameObject)
+    : Component  (other._gameObject)
 {
     RenderingSystem::addRenderingObject(this);
 }

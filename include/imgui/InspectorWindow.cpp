@@ -50,7 +50,7 @@ void InspectorWindow::updateHeader(GameObject& gameObject)
 {
     char gameObjectName[128]; //Max name lenght
 
-    for (int i = 0; i < sizeof(gameObjectName); i++)
+    for (size_t i = 0; i < sizeof(gameObjectName); i++)
     { 
         gameObjectName[i] = gameObject.getName()[i]; 
     } 

@@ -14,8 +14,8 @@ namespace Engine::LowRenderer
 {
     typedef struct S_EntityCreateArg
     {
-        std::string         name            = "";
-        Engine::Physics::TransformCreateArg  transformArg    = {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one};
+        std::string         name                            {""};
+        Engine::Physics::TransformCreateArg  transformArg  {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one};
         
     } EntityCreateArg;
 
@@ -49,7 +49,7 @@ namespace Engine::LowRenderer
                         name_       (arg.name)
                     {}
 
-            Entity (const Entity& other) = default;
+            Entity (const Entity& other)  = default;
             virtual ~Entity ()            = default;
     
             #pragma endregion //!constructor/destructor
