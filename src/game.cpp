@@ -17,7 +17,7 @@ void Game::Game::run ()
     while(gameEngine_.gameState != E_GAME_STATE::EXIT)
     {   
         TimeSystem::update([&]()
-                            { 
+                            {
                                 demo.fixedUpdate();
                             }, 
                             [&]() 

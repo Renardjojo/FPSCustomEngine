@@ -116,6 +116,7 @@ void keepNearestGameObject(PhysicalObject*& currentPhysicalObjectHit, float& fir
     if (newIntersectionWithRayOrigineDist < firstIntersectionDistance)
     {
         currentPhysicalObjectHit = newPhysicalObjectHit;
+        firstIntersectionDistance = newIntersectionWithRayOrigineDist;
     }
 }
 

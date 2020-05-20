@@ -51,7 +51,12 @@ void PlayerController::fixedUpdate()
 
 void PlayerController::shoot()
 {
-    std::cout << " SHOOT" << std::endl;
+    RayHitInfo rayInfo;
+    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
+    {
+        rayInfo.optionnalPhysicalObjectPtr->getGameObject().setScale({0.5, 2.f, 0.5f});
+    }
 }
 
 void PlayerController::setCameraType(CameraType type)
@@ -89,7 +94,7 @@ void PlayerController::camera()
     {
         _orbit.y = fmod(_orbit.y, M_PI * 2);
         _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        _gameObject.setRotation({0.f, _orbit.y, 0.f});
+        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
 
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
@@ -140,15 +145,5 @@ void PlayerController::move()
     {
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
-    }
-
-    if (Input::keyboard.isDown[SDL_SCANCODE_Q])
-    {
-        RayHitInfo rayInfo;
-        Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-        if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
-        {
-            rayInfo.optionnalPhysicalObjectPtr->getGameObject().setScale({0.5, 2.f, 0.5f});
-        }
     }
 }
