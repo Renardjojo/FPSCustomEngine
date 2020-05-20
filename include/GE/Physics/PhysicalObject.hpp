@@ -79,6 +79,7 @@ namespace Engine::Physics
         void Sleep() { _sleep = true; }
         void WakeUp() { _sleep = false; }
 
+        void save(xml_document<>& doc, xml_node<>* nodeParent);
 
 #pragma endregion //!mutator
 

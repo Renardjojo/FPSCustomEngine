@@ -38,7 +38,7 @@ void PlayerController::fixedUpdate()
         _physics->AddForce(0.f, 1.f, 0.f);
         _jump = false;
     }
-
+    
     _physics->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
 };
 
@@ -99,4 +99,16 @@ void PlayerController::move()
     gameObject.getComponent<PhysicalObject>()->AddForce(_movement * _playerSpeed * TimeSystem::getDeltaTime());
 
     _movement = {0.f, 0.f, 0.f};
+}
+
+void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
+{
+    if (!nodeParent && !&doc)
+        return;
+    std::cout << "test" << std::endl;
+    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+std::cout << "test2" << std::endl;
+    newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
+    
+    nodeParent->append_node(newNode);
 }

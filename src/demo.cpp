@@ -65,19 +65,23 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadRessources(gameEngine_.ressourceManager_);
     
-    loadCamera(gameEngine_.ressourceManager_);
+    // loadCamera(gameEngine_.ressourceManager_);
 
-    loadEntity(gameEngine_.ressourceManager_);
-    // loadSkateBoard(gameEngine_.ressourceManager_);
-    loadGround(gameEngine_.ressourceManager_);
-    // loadSkyBox(gameEngine_.ressourceManager_);
-    loadLights(gameEngine_.ressourceManager_);
+    // loadEntity(gameEngine_.ressourceManager_);
+    // // loadSkateBoard(gameEngine_.ressourceManager_);
+    // loadGround(gameEngine_.ressourceManager_);
+    // // loadSkyBox(gameEngine_.ressourceManager_);
+    // loadLights(gameEngine_.ressourceManager_);
     
     loadUI(gameEngine_.ressourceManager_);
 
-    loadEnemies(gameEngine_.ressourceManager_);
+    // loadEnemies(gameEngine_.ressourceManager_);
 
-    ScriptSystem::start();
+    setupScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
+    mainCamera = &scene_->getGameObject("world/MainCamera");
+
+    // ScriptSystem::start();
+
 
     // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
 
@@ -193,7 +197,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg cube1arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube"),
-                                "cube1",
                                 "ColorWithLight",
                                 {"DefaultMaterial"},
                                 "Cube"};
@@ -209,7 +212,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ModelCreateArg cube2arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
                                 &ressourceManager.get<Mesh>("Cube"),
-                                "cube2",
                                 "ColorWithLight", 
                                 {"DefaultMaterial"}, 
                                 "Cube"};
@@ -229,22 +231,17 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
-  GameObjectCreateArg playerGameObject      {"Player",
+    GameObjectCreateArg playerGameObject      {"Player",
                                             {{0.f, 0.f, 0.f},
                                             {0.f, 0.f, 0.f},
                                             {1.0f, 1.0f, 1.0f}}};
                                             
-    ModelCreateArg player{&ressourceManager.get<Shader>("ColorWithLight"),
-                          {&ressourceManager.get<Material>("GreenMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere"),
-                          "Player",
-                          "ColorWithLight",
-                          {"GreenMaterial"},
-                          "Sphere"};
-
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                           {&ressourceManager.get<Material>("PinkMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere")};
+                          &ressourceManager.get<Mesh>("Sphere"),
+                          "ColorWithLight",
+                          {"PinkMaterial"},
+                          "Sphere"};
 
     GameObject& player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
@@ -288,7 +285,6 @@ void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
     ModelCreateArg skyboxArg    {&skyboxShader,
                                 {&materialSKB},
                                 &SKBMesh,
-                                "Skybox",
                                 "skyboxShader",
                                 {"materialSKB"},
                                 "SKBMesh",
@@ -309,7 +305,6 @@ void Demo::loadGround             (t_RessourcesManager &ressourceManager)
     ModelCreateArg groundArg    {&ressourceManager.get<Shader>("TextureOnly"), 
                                 {&ressourceManager.get<Material>("materialGround")},
                                 &ressourceManager.get<Mesh>("Cube"), 
-                                "Ground",
                                 "TextureOnly",
                                 {"materialGround"},
                                 "Cube", 
@@ -350,7 +345,6 @@ void Demo::loadSkateBoard         (t_RessourcesManager &ressourceManager)
     ModelCreateArg manArg     { &ressourceManager.get<Shader>("TextureOnly"),
                                 pMaterial,
                                 &meshMan, 
-                                "Man",
                                 "TextureOnly",
                                 materialName,
                                 "SkateBoard",
@@ -389,10 +383,10 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
 
     GameObject& pl1 = scene_->add<PointLight>(scene_->getWorld(), lightArg5);
 
-    scene_->add<GameObject>(pl1, lightSphereGameObjectArg).addComponent<Model>(lightSphereArg);
+    scene_->add<GameObject>(pl1, lightSphereGameObjectArg).addComponent<Model>(lighSpheretArg);
 
     dynamic_cast<DirectionnalLight*>(sunLight)->enable(true);
-    //static_cast<PointLight*>(pl1.entity.get())->enable(true);
+    // static_cast<PointLight*>(&pl1)->enable(true);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
@@ -711,7 +705,7 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
     
-    if (input.keyboard.onePressed(SDL_SCANCODE_F6) == 1)
+    if (Input::keyboard.onePressed(SDL_SCANCODE_F6) == 1)
     {
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }

@@ -44,6 +44,15 @@ namespace Engine::Physics::ColliderShape
             return sphere_;
         }
 
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", "SphereCollider"));
+            
+            nodeParent->append_node(newNode);
+        }
+
     private:
 
         Engine::Core::Maths::Shape3D::Sphere sphere_;

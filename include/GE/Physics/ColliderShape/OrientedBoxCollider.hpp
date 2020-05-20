@@ -55,6 +55,15 @@ namespace Engine::Physics::ColliderShape
             return orientedBox_;
         }
 
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", "OrientedBoxCollider"));
+            
+            nodeParent->append_node(newNode);
+        }
+
     private:
 
         Engine::Core::Maths::Shape3D::OrientedBox orientedBox_;

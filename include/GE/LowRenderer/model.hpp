@@ -12,6 +12,13 @@
 #include "GE/Ressources/texture.hpp"
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
 
 namespace Engine::LowRenderer
 {
@@ -44,6 +51,8 @@ namespace Engine::LowRenderer
             Model(Model &&other)                                  = default;
             virtual ~Model();
 
+            Model(Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params, Engine::Ressources::t_RessourcesManager& ressourcesManager); // load construtor
+
             Model()                                               = delete;
             Model &operator=(Model const &other)                  = delete;
             Model &operator=(Model &&other)                       = delete;
@@ -53,6 +62,8 @@ namespace Engine::LowRenderer
     
             #pragma region methods
 
+            void save(xml_document<>& doc, xml_node<>* nodeParent);
+            
             /**
              * @brief Draw element only if it is load in GPU
              * 

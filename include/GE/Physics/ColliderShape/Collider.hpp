@@ -24,15 +24,15 @@ namespace Engine::Physics::ColliderShape
         //virtual bool isCollidingWith(Collider& collider) { return false; }
         //virtual bool isCollidingWith(OrientedBoxCollider& collider) { return false; }
 
-        PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
-        void SetAttachedPhysicalObject(PhysicalObject* newPhysicalBody) { attachedPhysicalObject = newPhysicalBody; }
+        Engine::Physics::PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
+        void SetAttachedPhysicalObject(Engine::Physics::PhysicalObject* newPhysicalBody) { attachedPhysicalObject = newPhysicalBody; }
 
         float GetBounciness() { return bounciness_; }
         void SetBounciness(float bounciness) { bounciness_ = bounciness; }
 
     protected:
 
-        PhysicalObject* attachedPhysicalObject;
+        Engine::Physics::PhysicalObject* attachedPhysicalObject;
 
         float bounciness_{0.5};
         float friction_{0};

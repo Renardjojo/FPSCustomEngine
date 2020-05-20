@@ -38,6 +38,8 @@ namespace Game
         void update() override;
         void start() override;
         void fixedUpdate() override;
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
 } // namespace Game
 #endif // __PLAYERCONTROLLER_HPP__
