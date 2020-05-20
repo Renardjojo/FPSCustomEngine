@@ -27,7 +27,7 @@ namespace Engine::Core::Maths::ShapeRelation
 
         #pragma region static methods
 
-        static bool isBothOrientedBoxCollided(const Shape3D::OrientedBox& box1, const Shape3D::OrientedBox& box2);
+        static bool isBothOrientedBoxCollided(const Shape3D::OrientedBox& box1, const Shape3D::OrientedBox& box2, Intersection& intersection);
 
         #pragma endregion //!static methods
 

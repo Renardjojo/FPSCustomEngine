@@ -11,17 +11,10 @@ namespace Engine::Core::Maths
 {
     struct Referential
     {
-		Referential ()								        = default;
-		Referential (const Referential& other)			    = default;
-		Referential (Referential&& other)					= default;
-		~Referential ()							            = default;
-		Referential& operator=(Referential const& other)    = default;
-		Referential& operator=(Referential && other)		= default;
-
-        Vec3 	origin  {Vec3::zero};
-        Vec3	unitI   {Vec3::right};      //x
-        Vec3	unitJ   {Vec3::up};         //y
-        Vec3	unitK   {Vec3::forward};    //z
+        Vec3 	origin;
+        Vec3	unitI; //x
+        Vec3	unitJ; //y
+        Vec3	unitK; //z
 
         static Vec3 globalToLocalPosition(const Referential& refLocal, const Vec3& point)
         {
