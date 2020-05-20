@@ -16,14 +16,14 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
 
-PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
+PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
                                                              _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
 
 void PlayerController::start()
 {
-    _physics = gameObject.getComponent<PhysicalObject>();
+    _physics = _gameObject.getComponent<PhysicalObject>();
 };
 
 void PlayerController::update()
@@ -60,7 +60,7 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 {
     Vec3 res{Vec3::zero};
     sincosf(angle - M_PI_2f32, &res.z, &res.x);
-    res *= r;
+    res *= 10;
     return res;
 }
 
@@ -77,9 +77,9 @@ void PlayerController::camera()
     {
         _orbit.y = fmod(_orbit.y, M_PI * 2);
         _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        gameObject.setRotation({0.f, -_orbit.y, 0.f});
+        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
 
-        _camera->setTranslation(gameObject.getPosition());
+        _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
 
@@ -87,13 +87,13 @@ void PlayerController::camera()
     }
 
     //Camera orbit
-    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
+    Vec3 coordinates = cylindricalCoord((_gameObject.getPosition() - _camera->getPosition()).length(), _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
 
     //lookat
-    _camera->lookAt(_camera->getPosition(), gameObject.getPosition(), Vec3::up);
+    _camera->lookAt(_camera->getPosition(), _gameObject.getPosition(), Vec3::up);
 }
 
 void PlayerController::move()

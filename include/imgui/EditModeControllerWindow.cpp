@@ -72,12 +72,12 @@ void EditModeControllerWindow::updateEditModeCameraControl()
 
     if (Input::keyboard.isDown[Input::keyboard.jump])
     {
-        pEditModeCamera->translate({0.f, 20.f * static_cast<float>(TimeSystem::getUnscaledDetlaTime()), 0.f});
+        pEditModeCamera->translate({0.f, 20.f * TimeSystem::getUnscaledDetlaTime(), 0.f});
     }
 
     if (Input::keyboard.isDown[SDL_SCANCODE_LCTRL])
     {
-        pEditModeCamera->translate({0.f, -20.f * static_cast<float>(TimeSystem::getUnscaledDetlaTime()), 0.f});
+        pEditModeCamera->translate({0.f, -20.f * TimeSystem::getUnscaledDetlaTime(), 0.f});
     }
 
     if (Input::keyboard.isDown[Input::keyboard.left])

@@ -44,7 +44,7 @@ static bool isSATFoundedOnAxe(const OrientedBox& box1, const OrientedBox& box2, 
             (maxBox1 <= maxBox2 && maxBox1 >= minBox2));
 }
 
-bool OrientedBoxOrientedBox::isBothOrientedBoxCollided(const OrientedBox& box1, const OrientedBox& box2)
+bool OrientedBoxOrientedBox::isBothOrientedBoxCollided(const OrientedBox& box1, const OrientedBox& box2, Intersection& intersection)
 {
     /*Exclude the majority case of no collision*/
     if (!AabbAabb::isBothAABBCollided(box1.getAABB(), box2.getAABB()))
