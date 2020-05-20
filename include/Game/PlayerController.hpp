@@ -40,6 +40,8 @@ namespace Game
 
         void camera();
         void move();
+        void showReticle();
+        void shoot();
 
     public:
         PlayerController(Engine::Ressources::GameObject &gameObject);
