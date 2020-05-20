@@ -12,12 +12,12 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/pointLight.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_SpotLightCreateArg
     {
-        const Engine::Core::Maths::Vec3&    pos;
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
@@ -29,8 +29,6 @@ namespace Engine::LowRenderer
         const Engine::Core::Maths::Vec3&   direction;
         float                              cutOff;
         float                              cutOffExponent;
-
-        const char*                         name;
 
     } SpotLightCreateArg;
 
@@ -58,7 +56,7 @@ namespace Engine::LowRenderer
              * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
              * @param name 
              */
-            SpotLight ( const Engine::Core::Maths::Vec3&                       pos,
+            SpotLight ( Engine::Ressources::GameObject &                       refGameObject,
                         const Engine::Ressources::AmbiantComponent&            ambient, 
                         const Engine::Ressources::DiffuseComponent&            diffuse, 
                         const Engine::Ressources::SpecularComponent&           specular,
@@ -69,13 +67,14 @@ namespace Engine::LowRenderer
                         float                              cutOff,
                         float                              cutOffExponent,
                         const char*                        name)
-            :   PointLight          (pos, ambient, diffuse, specular, constant, linear, quadratic, name),
+            :   PointLight          (refGameObject, ambient, diffuse, specular, constant, linear, quadratic),
                 direction_          (direction),
                 cutOff_             (cosf(cutOff * M_PI / 180.f)),
                 cutOffExponent_     (cosf(cutOffExponent * M_PI / 180.f))
             {}
-            SpotLight (SpotLightCreateArg arg)
-            :   PointLight          (arg.pos, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic, arg.name),
+
+            SpotLight (Engine::Ressources::GameObject & refGameObject, SpotLightCreateArg arg)
+            :   PointLight          (refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic),
                 direction_          (arg.direction),
                 cutOff_             (cosf(arg.cutOff * M_PI / 180.f)),
                 cutOffExponent_     (cosf(arg.cutOffExponent * M_PI / 180.f))
@@ -94,7 +93,7 @@ namespace Engine::LowRenderer
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 
                                 specularComp_,
-                                position_, 2.f,
+                                getGameObject().getGlobalPosition(), 2.f,
                                 constant_, linear_, quadratic_, cutOffExponent_,
                                 direction_, cutOff_});
             }
