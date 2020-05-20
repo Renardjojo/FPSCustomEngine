@@ -11,14 +11,6 @@ namespace Engine::Core::Maths
 {
 	typedef struct Vec2
 	{
-
-		Vec2 ()								= default;
-		Vec2 (const Vec2& other)			= default;
-		Vec2 (Vec2&& other)					= default;
-		~Vec2 ()							= default;
-		Vec2& operator=(Vec2 const& other);
-		Vec2& operator=(Vec2 && other)		= default;
-
 		float 		dotProduct	 	(const Vec2& other) const;
 		float 		length		 	() 					const;
 		float 		cross_product	(const Vec2& other) const;
@@ -101,6 +93,7 @@ namespace Engine::Core::Maths
 		Vec2& 	operator--	();
 		Vec2 	operator--	(int);
 		Vec2 	operator-	() const;
+		Vec2& 	operator=	(const Vec2& vec);
 		Vec2& 	operator+=	(const Vec2& vec);
 		Vec2& 	operator-=	(const Vec2& vec);
 		Vec2& 	operator*=	(const float& scale);
@@ -149,13 +142,6 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec3
 	{	
-		Vec3 ()								= default;
-		Vec3 (const Vec3& other)			= default;
-		Vec3 (Vec3&& other)					= default;
-		~Vec3 ()							= default;
-		Vec3& operator=(Vec3 const& other);
-		Vec3& operator=(Vec3 && other)		= default;
-
 		float 		dotProduct	 	(const Vec3& other) const;
 		static float dot(const Vec3& vec1, const Vec3& vec2) { return vec1.dotProduct(vec2); }
 
@@ -195,6 +181,7 @@ namespace Engine::Core::Maths
 		Vec3& 	operator--	();
 		Vec3 	operator--	(int);
 		Vec3 	operator-	() const;
+		Vec3& 	operator=	(const Vec3& vec);
 		Vec3& 	operator+=	(const Vec3& vec);
 		Vec3& 	operator+=	(float scale);
 		Vec3& 	operator-=	(const Vec3& vec);
@@ -241,13 +228,6 @@ namespace Engine::Core::Maths
 
 	typedef struct Vec4
 	{	
-		Vec4 ()								= default;
-		Vec4 (const Vec4& other)			= default;
-		Vec4 (Vec4&& other)					= default;
-		~Vec4 ()							= default;
-		Vec4& operator=(Vec4 const& other);
-		Vec4& operator=(Vec4 && other)		= default;
-
 		float 		dotProduct	 	(const Vec4& other) const;
 
 		//same as get magnitude
@@ -272,6 +252,7 @@ namespace Engine::Core::Maths
 		Vec4 	operator--	(int);
 		Vec4 	operator-	() const;
 		Vec4& 	operator*=	(const Vec4& vec);
+		Vec4& 	operator=	(const Vec4& vec);
 		Vec4& 	operator+=	(const Vec4& vec);
 		Vec4& 	operator-=	(const Vec4& vec);
 		Vec4& 	operator*=	(const float& scale);

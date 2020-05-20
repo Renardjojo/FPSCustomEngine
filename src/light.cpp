@@ -7,20 +7,21 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Ressources;
 
-Light::Light ( const Engine::Core::Maths::Vec3&    pos,
-        const AmbiantComponent&             ambient, 
-        const DiffuseComponent&             diffuse, 
-        const SpecularComponent&            specular,
-        const char* name)
-    :   GameObject         (GameObjectCreateArg{name, pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}}),
+Light::Light (Engine::Ressources::GameObject &      refGameObject, 
+                const AmbiantComponent&             ambient, 
+                const DiffuseComponent&             diffuse, 
+                const SpecularComponent&            specular)
+    :   Component          {refGameObject},
         ambientComp_       (ambient),
         diffuseComp_       (diffuse),
         specularComp_      (specular),
         isEnable_          (false)
-{}
+{
 
-Light::Light ( const LightCreateArg&    arg)
-    :   GameObject         (GameObjectCreateArg{arg.name, arg.pos, {0.f, 0.f , 0.f}, {1.f, 1.f , 1.f}}),
+}
+
+Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateArg&    arg)
+    :   Component          {refGameObject},
         ambientComp_       (arg.ambient),
         diffuseComp_       (arg.diffuse),
         specularComp_      (arg.specular),
@@ -42,7 +43,7 @@ void Light::enable (bool flag) throw()
         if(isEnable_)
         {
             //load into static vector to use
-                lightsToUse.push_back(this);
+            lightsToUse.push_back(this);
         }
         else
         {

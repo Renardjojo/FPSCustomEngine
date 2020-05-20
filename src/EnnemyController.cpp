@@ -34,7 +34,7 @@ void EnnemyController::update()
 
 void EnnemyController::idle()
 {
-    float length{(_player->getPosition() - gameObject.getPosition()).length()};
+    float length{(_player->getPosition() - _gameObject.getPosition()).length()};
 
     if (length > _exclusionRadius && length <= _radius)
         _state = States::Chasing;
@@ -43,8 +43,8 @@ void EnnemyController::idle()
 void EnnemyController::chasing()
 {
 
-    Vec3 direction{_player->getPosition() - gameObject.getPosition()};
-    gameObject.translate(direction.getNormalize() * _speed * TimeSystem::getDeltaTime());
+    Vec3 direction{_player->getPosition() - _gameObject.getPosition()};
+    _gameObject.translate(direction.getNormalize() * _speed * TimeSystem::getDeltaTime());
 
     float length{direction.length()};
     if (length > _radius || length <= _exclusionRadius)

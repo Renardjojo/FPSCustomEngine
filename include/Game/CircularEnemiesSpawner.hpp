@@ -30,13 +30,13 @@ namespace Game
     {
         private:
         
-        Engine::Core::Maths::Vec3               _spawnPosition         {Engine::Core::Maths::Vec3::zero};
-        EnemieInfo                              _enemiePrefas          {};
-        float                                   _zoneRadius            {3.f};  /*in sec*/
-        float                                   _spawnDelay            {1.f};  /*in sec*/
-        float                                   _spawnDelayInterval    {0.f}; /*in sec*/
-        float                                   _delayCount            {0.f};
-        float                                   _nextDelay             {_spawnDelay};
+        Engine::Core::Maths::Vec3               _spawnPosition          = Engine::Core::Maths::Vec3::zero;
+        EnemieInfo                              _enemiePrefas;
+        float                                   _zoneRadius             = 3.f;  /*in sec*/
+        float                                   _spawnDelay             = 1.f;  /*in sec*/
+        float                                   _spawnDelayInterval     = 0.f; /*in sec*/
+        float                                   _delayCount             = 0.f;
+        float                                   _nextDelay              = _spawnDelay;
 
         
         public:
@@ -52,8 +52,8 @@ namespace Game
          */
         CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemieInfo& enemisPrefabs, Engine::Core::Maths::Vec3& spawnPosition, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
-                _spawnPosition                              {spawnPosition},
                 _enemiePrefas                               {enemisPrefabs},
+                _spawnPosition                              {spawnPosition},
                 _zoneRadius                                 {zoneRadius},
                 _spawnDelay                                 {spawnDelay},
                 _spawnDelayInterval                         {spawnDelayInterval}, 
@@ -77,9 +77,9 @@ namespace Game
 
                 Engine::LowRenderer::ModelCreateArg& enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
-                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(gameObject.children.size()), {newPosition}};
+                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(_gameObject.children.size()), {newPosition}};
 
-                auto& newGo = gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy)
+                auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy)
                                         .addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy)
                                         .addComponent<Engine::Physics::PhysicalObject>()
                                         .addComponent<Engine::Physics::ColliderShape::SphereCollider>();

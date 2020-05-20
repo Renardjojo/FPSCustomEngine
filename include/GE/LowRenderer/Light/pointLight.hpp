@@ -12,12 +12,12 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_PointLightCreateArg
     {
-        const Engine::Core::Maths::Vec3&    pos;
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
@@ -25,8 +25,6 @@ namespace Engine::LowRenderer
         float                               constant; 
         float                               linear;
         float                               quadratic;
-
-        const char*                         name;
 
     } PointLightCreateArg;
 
@@ -39,23 +37,22 @@ namespace Engine::LowRenderer
     
             PointLight ()						            = default;
 
-            PointLight ( const PointLightCreateArg& arg)
-                        :   Light               (arg.pos, arg.ambient, arg.diffuse, arg.specular, arg.name),
+            PointLight (Engine::Ressources::GameObject &refGameObject, const PointLightCreateArg& arg)
+                        :   Light               (refGameObject, arg.ambient, arg.diffuse, arg.specular),
                             constant_           (arg.constant),
                             linear_             (arg.linear),
                             quadratic_          (arg.quadratic)
             {}
 
                         
-            PointLight ( const Engine::Core::Maths::Vec3&                       pos,
+            PointLight ( Engine::Ressources::GameObject &                       refGameObject,
                          const Engine::Ressources::AmbiantComponent&            ambient, 
                          const Engine::Ressources::DiffuseComponent&            diffuse, 
                          const Engine::Ressources::SpecularComponent&           specular,
                          float                              constant, 
                          float                              linear, 
-                         float                              quadratic, 
-                         const char*                        name)
-            :   Light               (pos, ambient, diffuse, specular, name),
+                         float                              quadratic)
+            :   Light               (refGameObject, ambient, diffuse, specular),
                 constant_           (constant),
                 linear_             (linear),
                 quadratic_          (quadratic)
@@ -75,7 +72,7 @@ namespace Engine::LowRenderer
                 lb.push_back({  ambientComp_, 
                                 diffuseComp_, 
                                 specularComp_, 
-                                position_, 1.f,
+                                _gameObject.getGlobalPosition(), 1.f,
                                 constant_, linear_, quadratic_, 0.f,
                                 {0.f, 0.f, 0.f}, 0.f});
             }
