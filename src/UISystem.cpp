@@ -58,7 +58,7 @@ void UISystem::update(Engine::GE &gameEngine) noexcept
 
         Button *tempButton = nullptr;
 
-        if (Input::keyboard.onePressed(Input::keyboard.down) == 1)
+        if (Input::keyboard.getKeyState(Input::keyboard.down) == 1)
         {
             for (Button *button : pButtons)
             {
@@ -72,7 +72,7 @@ void UISystem::update(Engine::GE &gameEngine) noexcept
                 }
             }
         }
-        if (Input::keyboard.onePressed(Input::keyboard.up) == 1)
+        if (Input::keyboard.getKeyState(Input::keyboard.up) == 1)
         {
             for (Button *button : pButtons)
             {
@@ -87,7 +87,7 @@ void UISystem::update(Engine::GE &gameEngine) noexcept
             }
         }
 
-        if (Input::keyboard.onePressed(SDL_SCANCODE_RETURN) == 1)
+        if (Input::keyboard.getKeyState(SDL_SCANCODE_RETURN) == 1)
             state = 1;
 
         pOverredButton->isButtonPressed(-100, -100, 0);
@@ -97,7 +97,7 @@ void UISystem::update(Engine::GE &gameEngine) noexcept
     }
     else
     {
-        int state = Input::mouse.oneLeftClick();
+        int state = Input::mouse.getLeftClick();
 
         for (Button *button : pButtons)
         {

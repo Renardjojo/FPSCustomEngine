@@ -11,7 +11,7 @@ bool Editor::_enable = false;
 
 void Editor::updateInput()
 {
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F1) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == 1)
     {
         _enable = !_enable;
 

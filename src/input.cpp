@@ -10,25 +10,25 @@ windowEvent Input::window;
 inputMouse Input::mouse;
 inputKeyboard Input::keyboard;
 
-int inputKeyboard::onePressed(const SDL_Scancode key)
+E_KEY_STATE inputKeyboard::getKeyState(const SDL_Scancode key)
 {
 	if (isDown[key] && !isPressed[key])
 	{
 		isPressed[key] = true;
-		return 1; //Is pressed
+		return TOUCHED; //Is pressed
 	}
 	else if (isDown[key] && isPressed[key])
 	{
 		isPressed[key] = true;
-		return 2; //isDown
+		return DOWN; //isDown
 	}
 	else if (!isDown[key])
 	{
 		isPressed[key] = false;
-		return 0; //not press
+		return NOT_PRESSED; //not press
 	}
 	else
-		return 0; //not press
+		return NOT_PRESSED; //not press
 }
 
 Input::Input()

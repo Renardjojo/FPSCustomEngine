@@ -220,7 +220,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    scene_->getGameObject("world/cube1").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube2GameObject {"cube2",
@@ -236,7 +235,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    scene_->getGameObject("world/cube2").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube3GameObject {"cube3",
@@ -246,11 +244,15 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg cube3arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("Cube")};
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "ColorWithLight", 
+                                {"DefaultMaterial"}, 
+                                "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+
+
 
     GameObjectCreateArg playerGameObject      {"Player",
                                             {{0.f, 0.f, 0.f},
@@ -647,6 +649,14 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
+    ressourceManager.add<Button>("Return",  pfont, buttonShader,
+                                                    tempX - 50, tempY + 250, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::STARTING;
+    };
+
     #pragma endregion
 
     #pragma region Saves
@@ -688,6 +698,14 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     }
 
+    ressourceManager.add<Button>("ReturnSave",  pfont, buttonShader,
+                                                    tempX - 50, tempY + 250, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
+                                                    E_GAME_STATE::STARTSAVE).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::STARTING;
+    };
+
     #pragma endregion
 }
 
@@ -714,7 +732,7 @@ void Demo::updateControl()
 {
     testLifePLayer -= 0.1;
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
     {
         if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
         {
@@ -800,12 +818,12 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
     
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F6) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F6) == 1)
     {
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_P) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_P) == 1)
     {
         scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
     }
