@@ -48,7 +48,7 @@ void DirectionnalLight::save(xml_document<>& doc, xml_node<>* nodeParent)
 {
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "DirLight"));
+    newNode->append_attribute(doc.allocate_attribute("type", "DirectionnalLight"));
     
     newNode->append_attribute(doc.allocate_attribute("ambient0", doc.allocate_string(std::to_string(ambientComp_.e[0]).c_str())));
     newNode->append_attribute(doc.allocate_attribute("ambient1", doc.allocate_string(std::to_string(ambientComp_.e[1]).c_str())));
