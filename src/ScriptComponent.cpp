@@ -8,6 +8,7 @@ using namespace Engine::Physics::ColliderShape;
 
 ScriptComponent::ScriptComponent (GameObject& _gameobject):Component{_gameobject}
 {
+    _name = __FUNCTION__;
     ScriptSystem::addScript(this);
     if (_gameObject.getComponent<Collider>())
         _gameObject.getComponent<Collider>()->functions.push_back([&](HitInfo& HitInfo){onCollisionEnter(HitInfo);});

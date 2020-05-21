@@ -42,36 +42,16 @@ namespace Engine::LowRenderer::EditorTools
         static void lookAtTowardTargetOnEditMode(const Engine::Ressources::GameObject& gameObject);
 
         #pragma endregion //!methods
-    
-        #pragma region accessor
-        #pragma endregion //!accessor
-    
-        #pragma region mutator
-        #pragma endregion //!mutator
-    
-        #pragma region operator
-        #pragma endregion //!operator
-    
-        #pragma region convertor
-        #pragma endregion //!convertor
-    
+
+        static bool                                         lockElement; //Lock element in edit mode camera
+        
+        protected:
+
         static Engine::LowRenderer::Camera*                 pGameCamera;
         static std::unique_ptr<Engine::LowRenderer::Camera> pEditModeCamera;
         static Mode                                         mode;
         static Engine::Core::Maths::Vec3                    dirCamera;
         static float                                        focusRange;
-
-        protected:
-    
-        #pragma region attribut
-
-        #pragma endregion //!attribut
-    
-        #pragma region static attribut
-        #pragma endregion //! static attribut
-    
-        #pragma region methods
-        #pragma endregion //!methods
     
         private:
     

@@ -81,6 +81,10 @@ namespace Engine::Physics
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);
 
+#ifndef DNEDITOR
+        virtual void serializeOnEditor () noexcept override;
+#endif
+
 #pragma endregion //!mutator
 
     protected:
@@ -97,7 +101,7 @@ namespace Engine::Physics
         bool freezeRotZ{false};
         bool _isKinematic{false};
         bool _useGravity{true};
-        bool _sleep{false}; 
+        bool _sleep{false};
 
 #pragma endregion //!attribut
 
