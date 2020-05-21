@@ -90,6 +90,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
     // setupScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     // mainCamera = &scene_->getGameObject("world/MainCamera");
+    loadReferential(gameEngine_.ressourceManager_);
 
     ScriptSystem::start();
 
@@ -167,12 +168,20 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 1.f, 1.f};
     ressourceManager.add<Material>(matDefault.name_, matDefault);
 
-    matDefault.name_ = "BlackMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
+    matDefault.name_ = "RedMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 0.f, 1.f};
     ressourceManager.add<Material>(matDefault.name_, matDefault);
 
     matDefault.name_ = "GreenMaterial";
     matDefault.comp_.ambient.rgbi = Vec4{0.f, 1.f, 0.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
+
+    matDefault.name_ = "BlueMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 1.f, 1.f};
+    ressourceManager.add<Material>(matDefault.name_, matDefault);
+
+    matDefault.name_ = "BlackMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
     ressourceManager.add<Material>(matDefault.name_, matDefault);
 
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
@@ -211,6 +220,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
+    scene_->getGameObject("world/cube1").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube2GameObject {"cube2",
@@ -226,6 +236,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
+    scene_->getGameObject("world/cube2").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube3GameObject {"cube3",
@@ -238,6 +249,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 &ressourceManager.get<Mesh>("Cube")};
 
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
+    scene_->getGameObject("world/cube3").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg playerGameObject      {"Player",
@@ -392,18 +404,44 @@ void Demo::loadLights      (t_RessourcesManager &ressourceManager)
                                     {1.f, 1.f, 1.f, 0.3f},
                                     0.f, 0.05f, 0.f};
 
-    GameObject& pl = scene_->add<GameObject>(scene_->getWorld(), lightSphereGameObjectArg)
-                    .addComponent<Model>(lightSphereArg)
-                    .addComponent<DirectionnalLight>(lightArg2);
+    GameObject& pl = scene_->add<GameObject>(scene_->getWorld(), lightSphereGameObjectArg);
+    pl.addComponent<Model>(lightSphereArg);
+    pl.addComponent<DirectionnalLight>(lightArg2).enable(true);
 
-    pl.getComponent<DirectionnalLight>()->enable(true);
+    GameObject& pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg);
+    pl1.addComponent<Model>(lightSphereArg);
+    pl1.addComponent<PointLight>(lightArg5).enable(true);
 
-    GameObject& pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg)
-                        .addComponent<Model>(lightSphereArg)
-                        .addComponent<PointLight>(lightArg5);
-
-    pl1.getComponent<PointLight>()->enable(true);
 }
+
+void Demo::loadReferential(t_RessourcesManager &ressourceManager)
+{
+    GameObjectCreateArg refGO     {"Right ref",
+                                                    {{100.f, 0.f, 0.f},
+                                                    {0.f, 0.f, 0.f},
+                                                    {5.f, 5.f, 5.f}}};
+
+    ModelCreateArg sphereModel          {&ressourceManager.get<Shader>("ColorWithLight"),
+                                        {&ressourceManager.get<Material>("RedMaterial")},
+                                        &ressourceManager.get<Mesh>("Sphere"),
+                                        "ColorWithLight",
+                                        {"RedMaterial"},
+                                        "Sphere",
+                                        true};
+
+    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+
+    refGO.name = "Forward ref";
+    refGO.transformArg.position = {0.f, 0.f, 100.f};
+    sphereModel.pMaterials = {&ressourceManager.get<Material>("BlueMaterial")};
+    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+
+    refGO.name = "Up ref";
+    refGO.transformArg.position = {0.f, 100.f, 0.f};
+    sphereModel.pMaterials = {&ressourceManager.get<Material>("GreenMaterial")};
+    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+}
+
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
 {
@@ -598,6 +636,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     {
         if (saves.size() < 23) // TODO: assert
             return;
+
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(   shortSaveName,  pfont2, buttonShader,
                                         tempX + i, tempY + j, 
@@ -644,7 +683,7 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
                             {&ressourceManager.get<Material>("PinkMaterial")},
                             &ressourceManager.get<Mesh>("Cube")};
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 }
 
 void Demo::updateControl()

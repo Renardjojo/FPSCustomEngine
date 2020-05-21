@@ -16,7 +16,7 @@ namespace Engine::Physics::ColliderShape
     struct HitInfo
     {
         Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
-        Engine::Ressources::GameObject*                                     physicalObject;
+        Engine::Ressources::GameObject*                     gameObject;
     };
 
     class Collider : public Engine::Ressources::Component

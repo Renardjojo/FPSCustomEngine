@@ -28,7 +28,7 @@ GE::GE ()
 
     ren_->initialize(winArg);
 
-    //init random value
+    //init random value with current time
     Random::initSeed();
     
     gameState = E_GAME_STATE::STARTING;
