@@ -58,8 +58,9 @@ debug:
 
 buid:
 
-#display function stats
+#debugger. Use "run" to start
 gdb :
+	$(OUTPUT) 
 	gdb $(OUTPUT)
 
 #display function stats
@@ -67,11 +68,13 @@ gprof :
 	gprof $(OUTPUT) gmon.out > output.txt
 
 #display leak
-leak : 
+leak :
+	$(OUTPUT)
 	valgrind $(OUTPUT)
 
 #display leak detail
-leakFull : 
+leakFull :
+	$(OUTPUT) 
 	valgrind $(VFLAG) $(OUTPUT)
 
 #function to find word in project
