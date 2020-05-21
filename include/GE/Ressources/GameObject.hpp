@@ -78,10 +78,10 @@ namespace Engine::Ressources
          * @param args 
          */
         template <typename T, typename... Args>
-        GameObject& addComponent(Args &&... args) noexcept
+        T& addComponent(Args &&... args) noexcept
         {
             components.emplace_back(std::make_unique<T>(*this, args...));
-            return *this;
+            return *dynamic_cast<T*>(components.back().get());
         }
 
         /**
@@ -97,8 +97,10 @@ namespace Engine::Ressources
             {
                 T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
-                if (comp) 
+                if (comp != nullptr)
+                {
                     return comp;
+                }
             }
             return nullptr;
         }
@@ -205,11 +207,38 @@ namespace Engine::Ressources
 
         // TODO: Component[] getComponents()
 
-        std::vector<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
-        const std::vector<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
+        template <typename T>
+        std::vector<T*> getComponents()
+        {
+            std::vector<T*> toReturn;
+            for (std::unique_ptr<Component> &uniquePtrComponent : components)
+            {
+                T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
+
+                if (comp != nullptr)
+                {
+                    toReturn.push_back(comp);
+                }
+            }
+            return toReturn;
+        }
+
+        std::list<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
+        const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
         
-    private:
-        std::vector<std::unique_ptr<Component>> components;
+        void setTag(std::string newTag) { tag = newTag; }
+        std::string& getTag() { return tag; } 
+
+        bool CompareTag(std::string toCompare)
+        {
+            if (toCompare.compare(tag) == 0)
+                return true;
+            return false;
+        }
+
+    protected:
+        std::list<std::unique_ptr<Component>> components;
+        std::string tag;
     };
 
 

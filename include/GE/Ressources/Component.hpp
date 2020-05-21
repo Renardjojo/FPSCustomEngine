@@ -5,16 +5,22 @@
 #ifndef _COMPONENT_H
 #define _COMPONENT_H
 
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
+
 namespace Engine::Ressources
 {
     class GameObject;
 
-class Component
-{
-public:
+    class Component
+    {
+    public:
 
     Component(GameObject &refGameObject)
-    : gameObject {refGameObject} 
+    : _gameObject {refGameObject} 
     {}
 
     Component(const Component &other)               = default;
@@ -25,14 +31,13 @@ public:
     Component &operator=(Component const &other)    = delete;
     Component &operator=(Component &&other)         = delete;
 
-    GameObject &        getGameObject() noexcept { return gameObject; }
-    const GameObject&   getGameObject() const noexcept { return gameObject; }
-
-protected:
-
-    GameObject& gameObject;
+    GameObject &        getGameObject() noexcept { return _gameObject; }
+    const GameObject&   getGameObject() const noexcept { return _gameObject; }
 
     protected:
+
+    GameObject& _gameObject;
+
     };
 
 } // namespace Engine::Ressources

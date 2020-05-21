@@ -10,12 +10,12 @@ EXCLUDE= src/glad.o
 #Relase or debug option
 #CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXX_DEBUG=-O0 -std=gnu++17 -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_EDITOR=-O2 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+CXX_EDITOR=-O0 -std=gnu++17 -g -Wno-unknown-pragmas $(IDIR)
 CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 C_DEBUG=-O0 -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
-C_EDITOR=-O2 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
+C_EDITOR=-O0 -g -Wno-unknown-pragmas $(IDIR)
 C_BUILD=-O2 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
@@ -57,6 +57,10 @@ run : $(OUTPUT)
 debug:
 
 buid:
+
+#display function stats
+gdb :
+	gdb $(OUTPUT)
 
 #display function stats
 gprof :

@@ -3,11 +3,13 @@
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
 #include <math.h>
 #include <algorithm>
 
 using namespace Game;
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
@@ -15,20 +17,26 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
+using namespace Engine::Core::Maths::ShapeRelation;
 
-PlayerController::PlayerController(GameObject &gameObject) : ScriptComponent{gameObject},
+PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
                                                              _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
 
 void PlayerController::start()
 {
-    _physics = gameObject.getComponent<PhysicalObject>();
+    _physics = _gameObject.getComponent<PhysicalObject>();
 };
 
 void PlayerController::update()
 {
     move();
+
+    if(Input::mouse.leftClicDownOnce)
+    {
+        shoot();
+    }
 }
 
 void PlayerController::fixedUpdate()
@@ -38,9 +46,19 @@ void PlayerController::fixedUpdate()
         _physics->AddForce(0.f, 1.f, 0.f);
         _jump = false;
     }
-
+    
     _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 };
+
+void PlayerController::shoot()
+{
+    HitInfo rayInfo;
+    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
+    {
+        rayInfo.gameObject->setScale({0.5, 2.f, 0.5f});
+    }
+}
 
 void PlayerController::setCameraType(CameraType type)
 {
@@ -77,9 +95,9 @@ void PlayerController::camera()
     {
         _orbit.y = fmod(_orbit.y, M_PI * 2);
         _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        gameObject.setRotation({0.f, -_orbit.y, 0.f});
+        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
 
-        _camera->setTranslation(gameObject.getPosition());
+        _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
 
@@ -93,7 +111,7 @@ void PlayerController::camera()
     _camera->update();
 
     //lookat
-    _camera->lookAt(_camera->getPosition(), gameObject.getPosition(), Vec3::up);
+    _camera->lookAt(_camera->getPosition(), _gameObject.getPosition(), Vec3::up);
 }
 
 void PlayerController::move()
@@ -129,4 +147,19 @@ void PlayerController::move()
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
+}
+
+void PlayerController::onCollisionEnter(HitInfo& hitInfo)
+{
+}
+
+void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
+{
+    if (!nodeParent && !&doc)
+        return;
+    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+    newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
+    
+    nodeParent->append_node(newNode);
 }

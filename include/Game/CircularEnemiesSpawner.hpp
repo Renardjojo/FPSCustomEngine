@@ -77,15 +77,12 @@ namespace Game
 
                 Engine::LowRenderer::ModelCreateArg& enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
-                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(gameObject.children.size()), {newPosition}};
+                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(_gameObject.children.size()), {newPosition}};
 
-                auto& newGo = gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy)
-                                        .addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy)
-                                        .addComponent<Engine::Physics::PhysicalObject>()
-                                        .addComponent<Engine::Physics::ColliderShape::SphereCollider>();
-                    
-                newGo.getComponent<Engine::Physics::PhysicalObject>()->SetMass(1);
-                newGo.getComponent<Engine::Physics::ColliderShape::SphereCollider>()->SetBounciness(0.4f);
+                auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy);
+                newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
+                newGo.addComponent<Engine::Physics::PhysicalObject>().SetMass(1);
+                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().SetBounciness(0.4f);
             }
         }
     };

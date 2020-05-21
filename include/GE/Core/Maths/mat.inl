@@ -839,19 +839,20 @@ Mat4		Mat4::getCoMatrix		() const
 inline
 Vec3 	Mat4::getVectorUp() 		const
 {
-	return Vec3{mat[1], mat[5], mat[9]};
+	return Vec3{mat[9], mat[5], mat[1]};
 }
 
 inline 
 Vec3 	Mat4::getVectorRight() 	const
 {
-	return Vec3{mat[0], mat[4], mat[8]};
+	return Vec3{mat[10], mat[6], mat[2]};
 }
 
 inline
 Vec3 	Mat4::getVectorForward() 	const
 {
-	return Vec3{mat[2], mat[6], mat[10]};
+	return Vec3{mat[8], mat[4], mat[0]};
+
 }
 
 inline

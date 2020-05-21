@@ -7,6 +7,7 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/ColliderShape/Collider.hpp"
 
 namespace Game
 {
@@ -40,6 +41,8 @@ namespace Game
 
         void camera();
         void move();
+        void showReticle();
+        void shoot();
 
     public:
         PlayerController(Engine::Ressources::GameObject &gameObject);
@@ -51,6 +54,10 @@ namespace Game
         void update() override;
         void start() override;
         void fixedUpdate() override;
+
+        void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
 } // namespace Game
 #endif // __PLAYERCONTROLLER_HPP__

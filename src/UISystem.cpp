@@ -115,7 +115,7 @@ void UISystem::update(Engine::GE &gameEngine) noexcept
 
     for (TextField *textField : pTextFields)
     {
-        if (Input::mouse.leftClic_down && textField->isTextFieldactive(Input::mouse.position.x, Input::mouse.position.y))
+        if (Input::mouse.leftClicDown && textField->isTextFieldactive(Input::mouse.position.x, Input::mouse.position.y))
         {
             pActiveTextfield = textField;
             atLeastOneTextfieldActive = true;

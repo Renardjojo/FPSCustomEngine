@@ -36,12 +36,21 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::Sphere        getGlobalSphere()  const noexcept
         { 
-            return Engine::Core::Maths::Shape3D::Sphere{gameObject.getScale().x / 2.f + sphere_.getRadius(), gameObject.getPosition() + sphere_.getCenter()};; 
+            return Engine::Core::Maths::Shape3D::Sphere{_gameObject.getScale().x / 2.f + sphere_.getRadius(), _gameObject.getPosition() + sphere_.getCenter()};; 
         }
         
         const Engine::Core::Maths::Shape3D::Sphere& getLocalSphere()  const noexcept
         { 
             return sphere_;
+        }
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", "SphereCollider"));
+            
+            nodeParent->append_node(newNode);
         }
 
     private:
