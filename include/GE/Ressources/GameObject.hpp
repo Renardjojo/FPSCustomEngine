@@ -35,8 +35,6 @@ namespace Engine::Ressources
         GameObject &operator=(GameObject const &other)      = default;
         GameObject &operator=(GameObject &&other)           = default;
 
-        std::list<std::unique_ptr<GameObject>> children;
-
         /**
          * @brief update entity and these child if current entity is dirty
          * 
@@ -148,64 +146,65 @@ namespace Engine::Ressources
          * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3 
          * @return GraphEntity& 
          */
-        // void destroyChild (const std::string& path) noexcept
-        // {
-        //     GE_assert(!path.empty());
+        void destroyChild (const std::string& path) noexcept
+        {
+            GE_assert(!path.empty());
 
-        //     std::stringstream sPath(path);
-        //     std::string word;
-        //     Engine::Ressources::GameObject* parentEntity = this;
-        //     Engine::Ressources::GameObject* currentEntity = this;
+            std::stringstream sPath(path);
+            std::string word;
+            Engine::Ressources::GameObject* parentEntity = this;
+            Engine::Ressources::GameObject* currentEntity = this;
+            std::list<std::unique_ptr<GameObject>>::iterator it;
 
-        //     while (std::getline(sPath, word, '/'))
-        //     {
-        //         if (word.empty() || word == "." || word == name_) continue;
-
-        //         bool isFound = false;
-        //         parentEntity = currentEntity;
-        //         for (auto&& child : parentEntity->children)
-        //         {
-        //             if (child->getName() == word)
-        //             {
-        //                 currentEntity = child.get();
-        //                 isFound = true;
-        //                 break;
-        //             }
-        //         }
-        //         if (!isFound)
-        //         {
-        //             Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
-        //             return;
-        //         }
-        //     }
-        //     parentEntity->children.erase();
-        // }
-
-            /**
-             * @brief add specific entity to the graph with arg to construct it and return his id
-             * 
-             * @tparam T 
-             * @tparam Args 
-             * @param args 
-             * @param dependenceEntity&
-             * @return GameObject&
-             */
-            template<typename T, typename ...Args>
-            Engine::Ressources::GameObject& addChild(Args&&... args) noexcept
+            while (std::getline(sPath, word, '/'))
             {
-                (*this).children.emplace_back(std::make_unique<T>(args...));
-                (*this).children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
-                (*this).children.back()->update((*this).getModelMatrix());
+                if (word.empty() || word == "." || word == name_) continue;
 
-                return *(*this).children.back();
+                bool isFound = false;
+                parentEntity = currentEntity;
+
+                for (it = parentEntity->children.begin(); it != parentEntity->children.end(); it++)
+                {
+                    if ((*it)->getName() == word)
+                    {
+                        currentEntity = it->get();
+                        isFound = true;
+                        break;
+                    }
+                }
+                    
+                if (!isFound)
+                {
+                    Engine::Core::Debug::SLog::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + name_ + "\"" + " with path : \"" + path + "\"" );
+                    return;
+                }
             }
+            parentEntity->children.erase(it);
+        }
+
+        /**
+         * @brief add specific entity to the graph with arg to construct it and return his id
+         * 
+         * @tparam T 
+         * @tparam Args 
+         * @param args 
+         * @param dependenceEntity&
+         * @return GameObject&
+         */
+        template<typename T, typename ...Args>
+        Engine::Ressources::GameObject& addChild(Args&&... args) noexcept
+        {
+            (*this).children.emplace_back(std::make_unique<T>(args...));
+            (*this).children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
+            (*this).children.back()->update((*this).getModelMatrix());
+
+            return *(*this).children.back();
+        }
 
         bool 		operator==		(GameObject const& other)
         {
-            return name_ == other.getName();
+            return (this == &other);
         }
-
-        // TODO: Component[] getComponents()
 
         template <typename T>
         std::vector<T*> getComponents()
@@ -229,18 +228,20 @@ namespace Engine::Ressources
         void setTag(std::string newTag) { tag = newTag; }
         std::string& getTag() { return tag; } 
 
-        bool CompareTag(std::string toCompare)
+        bool CompareTag(const std::string& toCompare)
         {
             if (toCompare.compare(tag) == 0)
                 return true;
             return false;
         }
 
+        std::list<std::unique_ptr<GameObject>> children;
+
     protected:
+
         std::list<std::unique_ptr<Component>> components;
         std::string tag;
     };
-
 
 } // namespace Engine::Ressources
 
