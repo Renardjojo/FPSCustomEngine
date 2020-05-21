@@ -126,14 +126,15 @@ void keepNearestGameObject(GameObject*& currentGameObjectHit, float& firstInters
     if (newIntersectionWithRayOrigineDist < firstIntersectionDistance)
     {
         currentGameObjectHit = newGameObjectHit;
+        firstIntersectionDistance = newIntersectionWithRayOrigineDist;
     }
 }
 
 bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, HitInfo& rayHitInfo) noexcept
 {
-    bool collisionHappend                       = false;
+    bool collisionHappend               = false;
     GameObject* currentGameObjectHit    = nullptr;
-    float firstIntersectionDistance             = std::numeric_limits<float>().max();
+    float firstIntersectionDistance     = std::numeric_limits<float>().max();
 
     for (Collider* collider : pColliders)
     {

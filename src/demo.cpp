@@ -277,7 +277,16 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 {&ressourceManager.get<Material>("GreenMaterial")},
                                 &ressourceManager.get<Mesh>("Cube")};
 
-    scene_->add<GameObject>(player, lifeBarGameObject).addComponent<BillBoard>(billBoardArg);
+    GameObjectCreateArg rayGameObject {"Reticule",
+                                         {{0.f, 0.f, 10.f},
+                                         {0.f, 0.f, 0.f},
+                                         {0.2f, 0.2f, 0.2f}}};
+
+    ModelCreateArg rayArg   {&ressourceManager.get<Shader>("Color"),
+                            {&ressourceManager.get<Material>("PinkMaterial")},
+                            &ressourceManager.get<Mesh>("Sphere")};
+
+    scene_->add<GameObject>(player, rayGameObject).addComponent<Model>(rayArg);
 
     player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
@@ -739,8 +748,7 @@ void Demo::updateControl()
     else
     {
         flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
-    } 
-
+    }
 
     // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
     // {

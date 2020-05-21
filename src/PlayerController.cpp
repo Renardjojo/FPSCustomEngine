@@ -52,7 +52,12 @@ void PlayerController::fixedUpdate()
 
 void PlayerController::shoot()
 {
-    std::cout << " SHOOT" << std::endl;
+    HitInfo rayInfo;
+    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
+    {
+        rayInfo.gameObject->setScale({0.5, 2.f, 0.5f});
+    }
 }
 
 void PlayerController::setCameraType(CameraType type)
@@ -142,21 +147,10 @@ void PlayerController::move()
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
-
-    if (Input::keyboard.isDown[SDL_SCANCODE_Q])
-    {
-        HitInfo rayInfo;
-        Vec3 shootDirection = -_gameObject.getModelMatrix().getVectorForward();
-        if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
-        {
-            std::cout << rayInfo.gameObject->getName() << std::endl;
-        }
-    }
 }
 
 void PlayerController::onCollisionEnter(HitInfo& hitInfo)
 {
-    std::cout << "hit" << std::endl;
 }
 
 void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
