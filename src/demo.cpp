@@ -220,7 +220,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    scene_->getGameObject("world/cube1").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube2GameObject {"cube2",
@@ -236,7 +235,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    scene_->getGameObject("world/cube2").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube3GameObject {"cube3",
@@ -246,11 +244,15 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg cube3arg     {&ressourceManager.get<Shader>("ColorWithLight"), 
                                 {&ressourceManager.get<Material>("DefaultMaterial")}, 
-                                &ressourceManager.get<Mesh>("Cube")};
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "ColorWithLight", 
+                                {"DefaultMaterial"}, 
+                                "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<PhysicalObject>().SetIsKinematic(true);
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+
+
 
     GameObjectCreateArg playerGameObject      {"Player",
                                             {{0.f, 0.f, 0.f},

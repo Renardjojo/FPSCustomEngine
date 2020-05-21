@@ -228,16 +228,9 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
         else if (type.compare("PlayerController") == 0)
             parent.addComponent<PlayerController>();
         else if (type.compare("DirectionnalLight") == 0)
-        {
-            parent.addComponent<DirectionnalLight>(params);
-            parent.getComponent<DirectionnalLight>()->enable(true);
-        }
+            parent.addComponent<DirectionnalLight>(params).enable(true);
         else if (type.compare("PointLight") == 0)
-        {
-            parent.addComponent<PointLight>(params);
-            parent.getComponent<PointLight>()->enable(true);
-        }
-
+            parent.addComponent<PointLight>(params).enable(true);
 
 
         newGameObject = &parent;
