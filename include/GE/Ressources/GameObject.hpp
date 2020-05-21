@@ -47,7 +47,6 @@ namespace Engine::Ressources
                 {
                     if((*i)->_isDead)
                     {
-                        std::cout << "ok" << std::endl;
                         i = children.erase(i);
                         continue;
                     }
