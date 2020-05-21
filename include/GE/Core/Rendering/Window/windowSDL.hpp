@@ -3,6 +3,7 @@
 //Date : 09/01/2020 - 09 h 17
 
 #include <SDL2/SDL_video.h>
+#include <SDL2/SDL_mouse.h>
 #include "GE/Core/Rendering/Window/iWindow.hpp"
 
 #ifndef _GE_WINDOW_SDL_H

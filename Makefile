@@ -8,17 +8,15 @@ IDIR=-Iinclude
 EXCLUDE= src/glad.o
 
 #Relase or debug option
-CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_DEBUGERROR=-Og -std=gnu++17  -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
+#CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O0 -std=gnu++17 -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_EDITOR=-O0 -std=gnu++17 -g -Wno-unknown-pragmas $(IDIR)
+CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
-CXX_EDITOR=-O3 -std=gnu++17 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-CXX_BUILD=-O3 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
-
-C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-C_DEBUGERROR=-Og -g -pg -no-pie -MMD -W -Wall -Werror -Wno-unknown-pragmas $(IDIR)
-
-C_EDITOR=-O3 -DNDEBUG -Wno-unknown-pragmas $(IDIR)
-C_BUILD=-O3 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
+#C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+C_DEBUG=-O0 -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
+C_EDITOR=-O0 -g -Wno-unknown-pragmas $(IDIR)
+C_BUILD=-O2 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #Valgrind flag
 #VFLAG=--leak-check=yes
@@ -56,16 +54,27 @@ $(OUTPUT): $(OBJS)
 run : $(OUTPUT) 
 	./$(OUTPUT)
 
+debug:
+
+buid:
+
+#debugger. Use "run" to start
+gdb :
+	$(OUTPUT) 
+	gdb $(OUTPUT)
+
 #display function stats
 gprof :
 	gprof $(OUTPUT) gmon.out > output.txt
 
 #display leak
-leak : 
+leak :
+	$(OUTPUT)
 	valgrind $(OUTPUT)
 
 #display leak detail
-leakFull : 
+leakFull :
+	$(OUTPUT) 
 	valgrind $(VFLAG) $(OUTPUT)
 
 #function to find word in project

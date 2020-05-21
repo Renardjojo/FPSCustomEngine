@@ -10,6 +10,27 @@ windowEvent Input::window;
 inputMouse Input::mouse;
 inputKeyboard Input::keyboard;
 
+int inputKeyboard::onePressed(const SDL_Scancode key)
+{
+	if (isDown[key] && !isPressed[key])
+	{
+		isPressed[key] = true;
+		return 1; //Is pressed
+	}
+	else if (isDown[key] && isPressed[key])
+	{
+		isPressed[key] = true;
+		return 2; //isDown
+	}
+	else if (!isDown[key])
+	{
+		isPressed[key] = false;
+		return 0; //not press
+	}
+	else
+		return 0; //not press
+}
+
 Input::Input()
 {
 	for (unsigned int index = 0; index < (unsigned int)SDL_NUM_SCANCODES; index++)
@@ -33,6 +54,10 @@ void Input::pollEvent(Uint32 windowID)
 	window.isMaximized = false;
 	keyboard.escIsRelease = false;
 	mouse.motion = {0, 0};
+
+
+	mouse.oldLeftClicDown = mouse.leftClicDown;
+	mouse.oldRightClicDown = mouse.rightClicDown;
 
 	while (SDL_PollEvent(&event))
 	{
@@ -69,6 +94,18 @@ void Input::pollEvent(Uint32 windowID)
 			break;
 		}
 	}
+
+	// std::cout << "old :" << mouse.oldLeftClicDown << " New: " << mouse.leftClicDown << std::endl;
+
+	if (!mouse.oldLeftClicDown && mouse.leftClicDown)
+		mouse.leftClicDownOnce = true;
+	else
+		mouse.leftClicDownOnce = false;
+
+	if (!mouse.oldRightClicDown && mouse.rightClicDown)
+		mouse.rightClicDownOnce = true;
+	else
+		mouse.rightClicDownOnce = false;
 }
 
 void Input::pollEventWindow(SDL_Event *event, Uint32 windowID)
@@ -131,6 +168,7 @@ void Input::pollEventMouse(SDL_Event *event)
 	if (event == NULL)
 		return;
 
+
 	switch (event->type)
 	{
 	case SDL_MOUSEBUTTONDOWN:
@@ -141,11 +179,11 @@ void Input::pollEventMouse(SDL_Event *event)
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			mouse.rightClic_down = true;
+			mouse.rightClicDown = true;
 			break;
 
 		case SDL_BUTTON_LEFT:
-			mouse.leftClic_down = true;
+			mouse.leftClicDown = true;
 			break;
 		}
 		break;
@@ -158,11 +196,11 @@ void Input::pollEventMouse(SDL_Event *event)
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			mouse.rightClic_down = false;
+			mouse.rightClicDown = false;
 			break;
 
 		case SDL_BUTTON_LEFT:
-			mouse.leftClic_down = false;
+			mouse.leftClicDown = false;
 
 			if (event->button.timestamp * 0.001 - mouse.timeFirstLeftClic < 0.2)
 				mouse.doubleLeftClic = true;
@@ -216,7 +254,7 @@ void Input::pollEventKeyboard(SDL_Event *event)
 void Input::resetKeyDown()
 {
 	keyboard.isDown[SDL_SCANCODE_RETURN] = false;
-	mouse.leftClic_down = false;
+	//mouse.leftClicDown = false;
 }
 
 SDL_Scancode Input::waitForKey()

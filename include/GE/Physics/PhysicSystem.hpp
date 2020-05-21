@@ -21,12 +21,6 @@ namespace Engine::Physics
         PhysicalObject*                                     optionnalPhysicalObjectPtr2;
     };
 
-    struct RayHitInfo
-    {
-        Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
-        PhysicalObject*                                     optionnalPhysicalObjectPtr;
-    };
-
     class PhysicSystem
     {
         public:
@@ -124,13 +118,13 @@ namespace Engine::Physics
         }
 
         static
-        bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, RayHitInfo& rayHitInfo) noexcept;
+        bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
 
         static
-        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, RayHitInfo& rayHitInfo) noexcept;
+        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
 
         static
-        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, RayHitInfo& rayHitInfo) noexcept;
+        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
 
         /*TODO: Can be implemented if all segment/Shape have the good collision function implemented without intersection
         static
