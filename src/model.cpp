@@ -5,6 +5,12 @@
 #include "GE/LowRenderer/Light/light.hpp"
 #include "GE/Ressources/GameObject.hpp"
 
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
+
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Debug;
@@ -39,7 +45,10 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
         pMaterial_              (arg.pMaterials),
         pMesh_                  (arg.pMesh),
         enableBackFaceCulling_  (arg.enableBackFaceCulling),
-        isOpaque_               (arg.isOpaque)
+        isOpaque_               (arg.isOpaque),
+        shaderName_             (arg.shaderName),
+        materialName_           (arg.materialName),
+        meshName_               (arg.meshName)
 {
     initTextureBufferWithMTLId();
 
@@ -47,6 +56,26 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
     {
         loadInGPU ();
     }
+}
+
+Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
+    :   IModel                  (refGameObject),
+        pShader_                (&ressourcesManager.get<Shader>(*params[0])),
+        pMaterial_              ({&ressourcesManager.get<Material>(*params[1])}),
+        pMesh_                  (&ressourcesManager.get<Mesh>(*params[2])),
+        enableBackFaceCulling_  (true),
+        isOpaque_               (true),
+        shaderName_             (*params[0]),
+        materialName_           ({*params[1]}),
+        meshName_               (*params[2])
+{
+    initTextureBufferWithMTLId();   
+
+    for (std::unique_ptr<std::string>& string : params)
+        std::cout << *string << " ";
+
+    std::cout << std::endl;
+    loadInGPU (); 
 }
 
 Model::~Model ()
@@ -194,4 +223,20 @@ void Model::unloadFromGPU() noexcept
 void Model::sendToShaderModelMatrix () const noexcept
 {
     pShader_->setMat4("model", &_gameObject.getModelMatrix().mat[0]);
+}
+
+void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
+{ 
+    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+    newNode->append_attribute(doc.allocate_attribute("type", "Model"));
+    newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
+    if (getMaterialName().size() == 0)
+    {
+        return;
+    }
+    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName()[0].c_str())));
+    newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
+    
+    nodeParent->append_node(newNode);
 }

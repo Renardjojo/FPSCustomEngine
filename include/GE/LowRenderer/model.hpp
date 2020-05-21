@@ -12,6 +12,13 @@
 #include "GE/Ressources/texture.hpp"
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
 
 namespace Engine::LowRenderer
 {
@@ -20,6 +27,10 @@ namespace Engine::LowRenderer
         Engine::Ressources::Shader*                     pShader                = nullptr;
         std::vector<Engine::Ressources::Material*>      pMaterials;
         Engine::Ressources::Mesh*                       pMesh                  = nullptr;
+
+        std::string                                     shaderName;
+        std::vector<std::string>                        materialName; 
+        std::string                                     meshName; 
          
         bool                                            loadInGPU               = true;
         bool                                            enableBackFaceCulling   = true;
@@ -40,6 +51,8 @@ namespace Engine::LowRenderer
             Model(Model &&other)                                  = default;
             virtual ~Model();
 
+            Model(Engine::Ressources::GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, Engine::Ressources::t_RessourcesManager& ressourcesManager); // load construtor
+
             Model()                                               = delete;
             Model &operator=(Model const &other)                  = delete;
             Model &operator=(Model &&other)                       = delete;
@@ -49,6 +62,8 @@ namespace Engine::LowRenderer
     
             #pragma region methods
 
+            void save(xml_document<>& doc, xml_node<>* nodeParent);
+            
             /**
              * @brief Draw element only if it is load in GPU
              * 
@@ -75,17 +90,12 @@ namespace Engine::LowRenderer
 
             bool isOpaque () const noexcept { return isOpaque_; }
 
+            std::string getShaderName() { return shaderName_; }
+            std::vector<std::string>& getMaterialName() { return materialName_; }
+            std::string getMeshName() { return meshName_; }
+
             #pragma endregion //!accessor
     
-            #pragma region mutator
-
-            #pragma endregion //!mutator
-    
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
     
         protected:
     
@@ -95,6 +105,10 @@ namespace Engine::LowRenderer
             std::vector<Engine::Ressources::Material*>   pMaterial_; //contain the texture and material data
             std::vector<Engine::Ressources::Material*>   pMaterialToUse_; //contain pointor to the material to use when model is display.
             Engine::Ressources::Mesh*                    pMesh_;
+
+            std::string                                  shaderName_;
+            std::vector<std::string>                     materialName_; 
+            std::string                                  meshName_; 
 
             bool                                        enableBackFaceCulling_;
             bool                                        isOpaque_;

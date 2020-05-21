@@ -8,6 +8,8 @@
 #include "GE/Core/DataStructure/graph.hpp"
 #include "GE/Ressources/Component.hpp"
 #include "GE/Ressources/GameObject.hpp"
+#include "GE/Physics/ColliderShape/Collider.hpp"
+#include <functional>
 
 namespace Engine::Core::Component
 {
@@ -27,7 +29,9 @@ namespace Engine::Core::Component
         virtual void start(){};
         virtual void fixedUpdate(){};
         virtual void update(){};
-        //virtual void onCollisionEnter();
+
+        virtual void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo);
+
         //Engine::Ressources::GameObject& getGameObject () { return gameObject;}
     };
 } // namespace Engine::Core::Component
