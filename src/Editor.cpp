@@ -15,8 +15,13 @@ void Editor::updateInput()
     {
         _enable = !_enable;
 
-       //SDL_SetRelativeMouseMode(!_enable ? SDL_FALSE : SDL_TRUE);
+        SDL_SetRelativeMouseMode(_enable ? SDL_FALSE : SDL_TRUE);
         SDL_ShowCursor(_enable);
+    }
+
+    if (Input::keyboard.onePressed(SDL_SCANCODE_F8) == 2)
+    {
+        ImGui::ShowDemoWindow();
     }
 }
 

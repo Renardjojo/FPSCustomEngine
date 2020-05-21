@@ -43,7 +43,7 @@ void EditModeControllerWindow::update()
         }
     }
 
-    if (mode == EditMode)
+    if (mode == EditMode && !lockElement)
     {
         updateEditModeCameraControl();
     }
@@ -142,6 +142,7 @@ void EditModeControllerWindow::lookAtTowardTargetOnEditMode(const GameObject& ga
     }
 }
 
+bool                                         EditModeControllerWindow::lockElement      {false};
 Engine::LowRenderer::Camera*                 EditModeControllerWindow::pGameCamera      {nullptr};
 std::unique_ptr<Engine::LowRenderer::Camera> EditModeControllerWindow::pEditModeCamera  {std::make_unique<Camera>(CameraPerspectiveCreateArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, 600.f / static_cast<float>(800.f), 0.1f, 10000.0f, 45.0f, "EditModeCamera"})};
 Mode                                         EditModeControllerWindow::mode             {Mode::GameMode};

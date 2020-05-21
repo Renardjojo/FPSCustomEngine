@@ -3,6 +3,10 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include <algorithm>
 
+#ifndef DNEDITOR
+#include "imgui/imgui.h"
+#endif
+
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Ressources;
@@ -17,7 +21,7 @@ Light::Light (Engine::Ressources::GameObject &      refGameObject,
         specularComp_      (specular),
         isEnable_          (false)
 {
-
+    _name = __FUNCTION__;
 }
 
 Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateArg&    arg)
@@ -26,7 +30,9 @@ Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateAr
         diffuseComp_       (arg.diffuse),
         specularComp_      (arg.specular),
         isEnable_          (false)
-{}
+{
+    _name = __FUNCTION__;
+}
 
 void Light::enable (bool flag) throw() 
 {
@@ -35,21 +41,18 @@ void Light::enable (bool flag) throw()
     else    
         isEnable_ = flag;
 
-    //auto for iterator of Light* in vector
-    auto it = std::find(lightsToUse.begin(), lightsToUse.end(), this);
-
-    if(it == lightsToUse.end()) //if elem is store
+    for (std::vector<Engine::LowRenderer::Light*>::iterator it = lightsToUse.begin(); it != lightsToUse.end(); it++)
     {
-        if(isEnable_)
+        if (this == (*it))
         {
-            //load into static vector to use
-            lightsToUse.push_back(this);
-        }
-        else
-        {
-            lightsToUse.erase(it);
+            if (!isEnable_)
+                lightsToUse.erase(it);
+            return;
         }
     }
+
+    if (isEnable_)
+        lightsToUse.push_back(this);
 }
 
 std::vector<Engine::Ressources::light> Light::getLightsToUseInAlignasStruct ()
@@ -63,5 +66,21 @@ std::vector<Engine::Ressources::light> Light::getLightsToUseInAlignasStruct ()
 
     return lightBufferRtn;
 }
+
+#ifndef DNEDITOR
+void Light::serializeOnEditor () noexcept
+{
+    ImGui::Text("Is activate :"); ImGui::SameLine();
+    bool newEnable = isEnable_;
+    if (ImGui::Checkbox("##isEnableLight", &newEnable))
+    {
+        enable (newEnable);
+    }
+
+    ImGui::ColorEdit4("Ambiant component", ambientComp_.e);
+    ImGui::ColorEdit4("Diffuse component", diffuseComp_.e);
+    ImGui::ColorEdit4("Specular component", specularComp_.e);
+}
+#endif
 
 std::vector<Engine::LowRenderer::Light*> Light::lightsToUse(0);

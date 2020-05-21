@@ -3,6 +3,10 @@
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Ressources/Component.hpp"
 
+#ifndef DNEDITOR
+#include "imgui/imgui.h"
+#endif
+
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Core::DataStructure;
@@ -12,6 +16,7 @@ using namespace Engine::Ressources;
 PhysicalObject::PhysicalObject (GameObject& refGameObject)
     : Component(refGameObject)
 {
+    _name = __FUNCTION__;
     if (_gameObject.getComponent<Collider>())
         _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
@@ -31,6 +36,7 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
         _isKinematic        (other._isKinematic),
         _useGravity         (other._useGravity)
 {
+    _name = __FUNCTION__;
     if (_gameObject.getComponent<Collider>())
         _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::addPhysicalObject(this);
@@ -50,6 +56,7 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
         _isKinematic        (std::move(other._isKinematic)),
         _useGravity         (std::move(other._useGravity))
 {
+    _name = __FUNCTION__;
     if (_gameObject.getComponent<Collider>())
         _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
@@ -155,3 +162,41 @@ void PhysicalObject::save(xml_document<> &doc, xml_node<> *nodeParent)
 
     nodeParent->append_node(newNode);
 }
+
+#ifndef DNEDITOR
+void PhysicalObject::serializeOnEditor () noexcept
+{
+    ImGui::Text("Mass :"); ImGui::SameLine(); ImGui::DragFloat("##mass", &mass, 0.1f);
+
+    ImGui::Text("Velocity :");
+    ImGui::Columns(3);
+    ImGui::Text("X :"); ImGui::SameLine(); ImGui::DragFloat("##velX", &velocity.x, 0.1f);
+    ImGui::NextColumn();
+    ImGui::Text("Y :"); ImGui::SameLine(); ImGui::DragFloat("##velY", &velocity.y, 0.1f);
+    ImGui::NextColumn();
+    ImGui::Text("Z :"); ImGui::SameLine(); ImGui::DragFloat("##velZ", &velocity.z, 0.1f);
+    ImGui::Columns(1);
+
+    ImGui::Text("Torque :");
+    ImGui::Columns(3);
+    ImGui::Text("X :"); ImGui::SameLine(); ImGui::DragFloat("##TorqueX", &angularVelocity.x, 0.1f);
+    ImGui::NextColumn();
+    ImGui::Text("Y :"); ImGui::SameLine(); ImGui::DragFloat("##TorqueY", &angularVelocity.y, 0.1f);
+    ImGui::NextColumn();
+    ImGui::Text("Z :"); ImGui::SameLine(); ImGui::DragFloat("##TorqueZ", &angularVelocity.z, 0.1f);
+    ImGui::Columns(1);
+
+    ImGui::Text("Freeze :");        
+    ImGui::Checkbox("TrX", &freezeTrX); ImGui::SameLine();
+    ImGui::Checkbox("TrY", &freezeTrY); ImGui::SameLine();
+    ImGui::Checkbox("TrZ", &freezeTrZ);
+
+    ImGui::Checkbox("TqX", &freezeRotX); ImGui::SameLine();
+    ImGui::Checkbox("TqY", &freezeRotY); ImGui::SameLine();
+    ImGui::Checkbox("TqZ", &freezeRotZ);
+
+    ImGui::Text("Is Kinematic :"); ImGui::SameLine(); ImGui::Checkbox("##isKinematic", &_isKinematic); 
+    ImGui::Text("Use gravity :"); ImGui::SameLine(); ImGui::Checkbox("##useGravity", &_useGravity); 
+    ImGui::Text("Sleep :"); ImGui::SameLine(); ImGui::Checkbox("##sleep", &_sleep);
+}
+#endif
