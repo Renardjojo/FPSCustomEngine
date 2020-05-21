@@ -790,6 +790,11 @@ void Demo::updateControl()
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
 
+    if (Input::keyboard.onePressed(SDL_SCANCODE_P) == 1)
+    {
+        scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
+    }
+
 }
 
 // #ifndef DNEDITOR
