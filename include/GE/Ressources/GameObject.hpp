@@ -41,10 +41,17 @@ namespace Engine::Ressources
          */
         virtual void updateSelfAndChild() noexcept
         {
-            for (auto&& i = children.begin(); i != children.end(); i++)
+            for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
             {
                 if ((*i)->isDirty())
                 {
+                    if((*i)->_isDead)
+                    {
+                        std::cout << "ok" << std::endl;
+                        i = children.erase(i);
+                        continue;
+                    }
+
                     (*i)->update(modelMat_);
                     (*i)->forceUpdate();
                 }
@@ -78,8 +85,8 @@ namespace Engine::Ressources
         template <typename T, typename... Args>
         T& addComponent(Args &&... args) noexcept
         {
-            components.emplace_back(std::make_unique<T>(*this, args...));
-            return *dynamic_cast<T*>(components.back().get());
+            _components.emplace_back(std::make_unique<T>(*this, args...));
+            return *dynamic_cast<T*>(_components.back().get());
         }
 
         /**
@@ -91,7 +98,7 @@ namespace Engine::Ressources
         template <typename T>
         T* getComponent()
         {
-            for (std::unique_ptr<Component> &uniquePtrComponent : components)
+            for (std::unique_ptr<Component> &uniquePtrComponent : _components)
             {
                 T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
@@ -179,8 +186,24 @@ namespace Engine::Ressources
                     return;
                 }
             }
-            
+
             parentEntity->children.erase(it);
+        }
+
+        void destroyChild (GameObject* gameObject) noexcept
+        {
+            children.remove_if([&](std::unique_ptr<GameObject>& GOPtr){return GOPtr.get() == gameObject;});
+        }
+
+        virtual 
+        void destroy() noexcept
+        {
+            /*Destoy all children and component and set flag to be delete by it parent*/
+            _isDead = true;
+            isDirty_ = true;
+
+            children.clear();
+            _components.clear(); 
         }
 
         /**
@@ -211,7 +234,7 @@ namespace Engine::Ressources
         std::vector<T*> getComponents()
         {
             std::vector<T*> toReturn;
-            for (std::unique_ptr<Component> &uniquePtrComponent : components)
+            for (std::unique_ptr<Component> &uniquePtrComponent : _components)
             {
                 T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
 
@@ -223,15 +246,15 @@ namespace Engine::Ressources
             return toReturn;
         }
 
-        std::list<std::unique_ptr<Component>>& getComponents () noexcept {return components;}
-        const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return components;}
+        std::list<std::unique_ptr<Component>>& getComponents () noexcept {return _components;}
+        const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return _components;}
         
-        void setTag(std::string newTag) { tag = newTag; }
-        std::string& getTag() { return tag; } 
+        void setTag(const std::string& newTag) { _tag = newTag; }
+        std::string& getTag() { return _tag; } 
 
         bool CompareTag(const std::string& toCompare)
         {
-            if (toCompare.compare(tag) == 0)
+            if (toCompare.compare(_tag) == 0)
                 return true;
             return false;
         }
@@ -240,10 +263,10 @@ namespace Engine::Ressources
 
     protected:
 
-        std::list<std::unique_ptr<Component>> components;
-        std::string tag;
+        std::list<std::unique_ptr<Component>>   _components;
+        std::string                             _tag;
+        bool                                    _isDead {false}; //Flag that inform it parent that this transform must be destroy on update loop
     };
-
 } // namespace Engine::Ressources
 
 #endif //_GAME_OBJECT_H

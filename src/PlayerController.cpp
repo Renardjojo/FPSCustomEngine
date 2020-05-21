@@ -56,7 +56,7 @@ void PlayerController::shoot()
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
-        rayInfo.gameObject->setScale({0.5, 2.f, 0.5f});
+        rayInfo.gameObject->destroy();
     }
 }
 

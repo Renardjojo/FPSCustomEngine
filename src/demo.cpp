@@ -792,7 +792,7 @@ void Demo::updateControl()
 
     if (Input::keyboard.onePressed(SDL_SCANCODE_P) == 1)
     {
-        scene_->getGameObject("world/Player").destroyChild("Reticule");
+        scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
     }
 
 }
