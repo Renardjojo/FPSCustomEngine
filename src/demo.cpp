@@ -632,6 +632,14 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
+    ressourceManager.add<Button>("Return",  pfont, buttonShader,
+                                                    tempX - 50, tempY + 250, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
+                                                    E_GAME_STATE::OPTION).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::STARTING;
+    };
+
     #pragma endregion
 
     #pragma region Saves
@@ -673,6 +681,14 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     }
 
+    ressourceManager.add<Button>("ReturnSave",  pfont, buttonShader,
+                                                    tempX - 50, tempY + 250, 
+                                                    150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
+                                                    E_GAME_STATE::STARTSAVE).function = [&]()
+    {
+        gameEngine_.gameState = E_GAME_STATE::STARTING;
+    };
+
     #pragma endregion
 }
 
@@ -699,7 +715,7 @@ void Demo::updateControl()
 {
     testLifePLayer -= 0.1;
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_ESCAPE) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
     {
         if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
         {
@@ -785,12 +801,12 @@ void Demo::updateControl()
     //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
     // }    
     
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F6) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F6) == 1)
     {
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_P) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_P) == 1)
     {
         scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
     }

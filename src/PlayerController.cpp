@@ -118,7 +118,7 @@ void PlayerController::move()
 {
     _jump = Input::keyboard.isDown[Input::keyboard.jump];
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F2) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == 1)
         toggleCameraType();
 
     camera();
