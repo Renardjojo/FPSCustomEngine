@@ -5,7 +5,6 @@
 #ifndef _GE_LIGHT_H
 #define _GE_LIGHT_H
 
-#include <cmath>
 #include <vector>
 
 #include "GE/Core/Maths/vec.hpp"
@@ -94,6 +93,10 @@ namespace Engine::LowRenderer
             {
                 lightsToUse.clear();
             }
+
+#ifndef DNEDITOR
+            virtual void serializeOnEditor () noexcept override;
+#endif
     
         protected:
     

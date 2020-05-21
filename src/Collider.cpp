@@ -11,6 +11,7 @@ using namespace Engine::Ressources;
 Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)
 {
+    _name = __FUNCTION__;
     attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
     PhysicSystem::addCollider(this);
     for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
@@ -22,6 +23,7 @@ Collider::Collider (GameObject& refGameObject)
 Collider::Collider (const Collider& other)
     :   Component(*this)
 {
+    _name = __FUNCTION__;
     attachedPhysicalObject = other.attachedPhysicalObject;
     PhysicSystem::addCollider(this);
 }
@@ -29,6 +31,7 @@ Collider::Collider (const Collider& other)
 Collider::Collider (Collider&& other)
     :   Component(*this)
 {
+    _name = __FUNCTION__;
     attachedPhysicalObject = std::move(other.attachedPhysicalObject);
     PhysicSystem::updateColliderPointor(this, &other);
 }

@@ -10,6 +10,7 @@
 #include "save/rapidxml-1.13/rapidxml_utils.hpp"
 
 using namespace rapidxml;
+#include <string>
 
 namespace Engine::Ressources
 {
@@ -20,7 +21,8 @@ namespace Engine::Ressources
     public:
 
     Component(GameObject &refGameObject)
-    : _gameObject {refGameObject} 
+    :   _gameObject {refGameObject},
+        _name       {__FUNCTION__}
     {}
 
     Component(const Component &other)               = default;
@@ -34,9 +36,16 @@ namespace Engine::Ressources
     GameObject &        getGameObject() noexcept { return _gameObject; }
     const GameObject&   getGameObject() const noexcept { return _gameObject; }
 
+    std::string toString() {return _name; };
+
+#ifndef DNEDITOR
+    virtual void serializeOnEditor () noexcept {};
+#endif
+
     protected:
 
     GameObject& _gameObject;
+    std::string _name;
 
     };
 
