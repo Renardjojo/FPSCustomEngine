@@ -79,38 +79,27 @@ namespace Engine::Physics
         void Sleep() { _sleep = true; }
         void WakeUp() { _sleep = false; }
 
+        void save(xml_document<>& doc, xml_node<>* nodeParent);
 
 #pragma endregion //!mutator
-
-#pragma region operator
-#pragma endregion //!operator
-
-#pragma region convertor
-#pragma endregion //!convertor
 
     protected:
 #pragma region attribut
 
-        Engine::Core::Maths::Vec3 velocity = {0, 0, 0};
-        Engine::Core::Maths::Vec3 angularVelocity;
-        float mass = 1;
-        bool freezeTrX = false;
-        bool freezeTrY = false;
-        bool freezeTrZ = false;
-        bool freezeRotX = false;
-        bool freezeRotY = false;
-        bool freezeRotZ = false;
-        bool _isKinematic = false;
-        bool _useGravity = true;
-        bool _sleep = false; 
+        Engine::Core::Maths::Vec3 velocity{0, 0, 0};
+        Engine::Core::Maths::Vec3 angularVelocity{0, 0, 0};
+        float mass{1};
+        bool freezeTrX{false};
+        bool freezeTrY{false};
+        bool freezeTrZ{false};
+        bool freezeRotX{false};
+        bool freezeRotY{false};
+        bool freezeRotZ{false};
+        bool _isKinematic{false};
+        bool _useGravity{true};
+        bool _sleep{false}; 
 
 #pragma endregion //!attribut
-
-#pragma region static attribut
-#pragma endregion //! static attribut
-
-#pragma region methods
-#pragma endregion //!methods
 
     private:
     };

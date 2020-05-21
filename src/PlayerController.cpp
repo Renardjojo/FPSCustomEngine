@@ -9,6 +9,7 @@
 
 using namespace Game;
 using namespace Engine::Physics;
+using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::InputSystem;
@@ -45,17 +46,17 @@ void PlayerController::fixedUpdate()
         _physics->AddForce(0.f, 1.f, 0.f);
         _jump = false;
     }
-
+    
     _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 };
 
 void PlayerController::shoot()
 {
-    RayHitInfo rayInfo;
+    HitInfo rayInfo;
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
-        rayInfo.optionnalPhysicalObjectPtr->getGameObject().setScale({0.5, 2.f, 0.5f});
+        rayInfo.gameObject->setScale({0.5, 2.f, 0.5f});
     }
 }
 
@@ -146,4 +147,19 @@ void PlayerController::move()
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
+}
+
+void PlayerController::onCollisionEnter(HitInfo& hitInfo)
+{
+}
+
+void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
+{
+    if (!nodeParent && !&doc)
+        return;
+    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+    newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
+    
+    nodeParent->append_node(newNode);
 }

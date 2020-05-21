@@ -89,11 +89,11 @@ namespace Engine::LowRenderer
 
             #pragma endregion //!mutator
     
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
+
+            static void resetLight()
+            {
+                lightsToUse.clear();
+            }
     
         protected:
     
@@ -109,12 +109,6 @@ namespace Engine::LowRenderer
     
             static std::vector<Light*> lightsToUse;
 
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
-    
-            #pragma region methods
-            #pragma endregion //!methods
     
         private:
     

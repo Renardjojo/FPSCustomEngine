@@ -12,12 +12,19 @@
 
     <GAMEOBJECT 
     type="Model" name="Ground" posX="0" posY="-5" posZ="-5" rotX="0" rotY="0" rotZ="0" scaleX="5" scaleY="0.3" scaleZ="5" 
-    shaderName="White" materialName="DefaultMaterial" meshName="Cube1" componentName="OrientedBoxCollider">
+    shaderName="ColorWithLight" materialName="DefaultMaterial" meshName="Cube" componentName="OrientedBoxCollider">
+    </GAMEOBJECT>
+
+    <GAMEOBJECT type="DirLight" name="light" dirX="0.000000" dirY="0.707107" dirZ="-0.707107" 
+    ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.100000" 
+    diffuse0="1.000000" diffuse1="1.000000" diffuse2="1.000000" diffuse3="0.700000" 
+    specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="1.000000">
     </GAMEOBJECT>
 
     <GAMEOBJECT 
     type="Model" name="Player" posX="0" posY="5" posZ="-5" rotX="0" rotY="0" rotZ="0" scaleX="1" scaleY="1" scaleZ="1" 
-    shaderName="White" materialName="DefaultMaterial" meshName="Sphere1" 
+    shaderName="ColorWithLight" materialName="DefaultMaterial" meshName="Sphere" 
     componentName="PhysicalObject" componentName="SphereCollider" componentName="PlayerController">
     </GAMEOBJECT>
+    
 </WORLD>

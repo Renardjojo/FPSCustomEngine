@@ -5,6 +5,12 @@
 #ifndef _COMPONENT_H
 #define _COMPONENT_H
 
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
+
 namespace Engine::Ressources
 {
     class GameObject;
