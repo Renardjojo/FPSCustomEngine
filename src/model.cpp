@@ -80,10 +80,10 @@ Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>
 
 Model::~Model ()
 {
-    if (isLoadInGPU())
+    /*if (isLoadInGPU())
     {
         unloadFromGPU ();
-    }
+    }*/
 }
 
 void Model::draw () const noexcept

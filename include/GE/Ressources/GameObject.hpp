@@ -179,6 +179,7 @@ namespace Engine::Ressources
                     return;
                 }
             }
+            
             parentEntity->children.erase(it);
         }
 
