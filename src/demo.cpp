@@ -299,9 +299,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
-    player.getComponent<PhysicalObject>()->SetMass(1);
+    player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->SetBounciness(0.4f);
+    player.getComponent<SphereCollider>()->setBounciness(0.4f);
 }
 
 void Demo::loadSkyBox             (t_RessourcesManager &ressourceManager)
@@ -747,7 +747,6 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
     particalArg.spawnCountBySec = 500.f;
     particalArg.lifeDuration = 1.f;
     particalArg.mass = 1.f;
-    //particalArg.propulsionLenght = 500.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}}).addComponent<ParticuleGenerator>(particalArg);

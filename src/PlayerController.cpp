@@ -42,11 +42,11 @@ void PlayerController::fixedUpdate()
 {
     if (_jump)
     {
-        _physics->AddForce(0.f, 1.f, 0.f);
+        _physics->addForce(0.f, 1.f, 0.f);
         _jump = false;
     }
     
-    _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 };
 
 void PlayerController::shoot()

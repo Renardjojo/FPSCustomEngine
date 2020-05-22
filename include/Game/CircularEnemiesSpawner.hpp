@@ -82,8 +82,8 @@ namespace Game
 
                 auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy);
                 newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
-                newGo.addComponent<Engine::Physics::PhysicalObject>().SetMass(1);
-                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().SetBounciness(0.4f);
+                newGo.addComponent<Engine::Physics::PhysicalObject>().setMass(1);
+                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().setBounciness(0.4f);
                 newGo.addComponent<Game::LifeDuration>(5.5f);
             }
         }

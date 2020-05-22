@@ -117,19 +117,19 @@ void ParticuleGenerator::addComponents(GameObject& particleSystemGO)
     if (_useGravity || _propulsionLenght > std::numeric_limits<float>::epsilon())
     {
         PhysicalObject& physicalObject = particleSystemGO.addComponent<PhysicalObject>();
-        physicalObject.SetMass(_mass);
-        physicalObject.SetUseGravity(_useGravity);
-        physicalObject.SetUseGravity(_useGravity);
+        physicalObject.setMass(_mass);
+        physicalObject.setUseGravity(_useGravity);
+        physicalObject.setUseGravity(_useGravity);
 
         switch (_generationShape)
         {
             case EGenerationShape::SphereArea :
             case EGenerationShape::Sphere :
-            physicalObject.AddForce(Random::unitPeripheralSphericalCoordonate() * _propulsionLenght);
+            physicalObject.addForce(Random::unitPeripheralSphericalCoordonate() * _propulsionLenght);
             break;                        
 
             default:
-            physicalObject.AddForce((_gameObject.getGlobalPosition() - particleSystemGO.getGlobalPosition()).normalize() * _propulsionLenght);
+            physicalObject.addForce((_gameObject.getGlobalPosition() - particleSystemGO.getGlobalPosition()).normalize() * _propulsionLenght);
             break;
         }
     }
