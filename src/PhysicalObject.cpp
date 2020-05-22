@@ -24,8 +24,8 @@ PhysicalObject::PhysicalObject (GameObject& refGameObject)
 
 PhysicalObject::PhysicalObject(Engine::Ressources::GameObject &refGameObject, const PhysicalObjectCreateArg& arg)
     :   Component           {refGameObject},
-        _velocity            {arg.velocity},
-        _angularVelocity     {arg.angularVelocity},
+        _velocity            {Vec3::zero},
+        _angularVelocity     {Vec3::zero},
         _mass                {arg.mass},
         _freezeTrX           {arg.freezeTrX},
         _freezeTrY           {arg.freezeTrY},

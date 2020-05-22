@@ -14,8 +14,6 @@ namespace Engine::Physics
 {
 	struct PhysicalObjectCreateArg
 	{
-		Engine::Core::Maths::Vec3 	velocity			{0, 0, 0};
-		Engine::Core::Maths::Vec3 	angularVelocity		{0, 0, 0};
 		float 						mass				{1};
 		bool 						freezeTrX			{false};
 		bool 						freezeTrY			{false};

@@ -4,7 +4,6 @@
 
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Core/Maths/Random.hpp"
-#include "GE/Physics/PhysicalObject.hpp"
 #include "GE/LowRenderer/model.hpp"
 #include "GE/LowRenderer/billBoard.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
@@ -19,7 +18,8 @@ using namespace Engine::LowRenderer;
 
 ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSystemCreateArg& arg)
     :   Engine::Core::Component::ScriptComponent    {gameObject},
-        _optionnalModelCreateArg                    {arg.optionnalModelCreateArg},
+        _modelCreateArg                             {arg.modelCreateArg},
+        _physicalObjectCreateArg                    {arg.physicalObjectCreateArg},
         _generationShape                            {arg.generationShape},
         _scale                                      {arg.scale},
         _particleCount                              {0},
@@ -29,9 +29,7 @@ ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSys
         _propulsionLenght                           {arg.propulsionLenght},
         _spawnCountBySec                            {1 / arg.spawnCountBySec},
         _delayCount                                 {std::fmod(arg.spawnCountBySec, arg.spawnCountBySec)},
-        _mass                                       {arg.mass},
         _isBillBoard                                {arg.isBillBoard},
-        _useGravity                                 {arg.useGravity},
         _useScaledTime                              {arg.useScaledTime}
 {}
 
@@ -55,6 +53,12 @@ void ParticuleGenerator::update()
         GameObject& particleSystemGO = _gameObject.addChild<GameObject>(particleSystemGOArg);
         addComponents(particleSystemGO);
     }
+
+    for (auto &&i : _gameObject.children)
+    {
+        PhysicalObject& physicalObjComp = *(*i).getComponent<PhysicalObject>();
+        physicalObjComp.setVelocity(physicalObjComp.getVelocity() * _velocityEvolutionCoef);
+    }    
 }
 
 Vec3 ParticuleGenerator::generatePosition()
@@ -100,11 +104,11 @@ void ParticuleGenerator::addComponents(GameObject& particleSystemGO)
     /*Model or billboard component*/
     if (_isBillBoard)
     {
-        particleSystemGO.addComponent<BillBoard>(_optionnalModelCreateArg);
+        particleSystemGO.addComponent<BillBoard>(_modelCreateArg);
     }
     else
     {
-        particleSystemGO.addComponent<Model>(_optionnalModelCreateArg);
+        particleSystemGO.addComponent<Model>(_modelCreateArg);
     }
 
     /*Life duration script component*/
@@ -114,23 +118,17 @@ void ParticuleGenerator::addComponents(GameObject& particleSystemGO)
     }
 
     /*Physical object script component*/
-    if (_useGravity || _propulsionLenght > std::numeric_limits<float>::epsilon())
+    PhysicalObject& physicalObject = particleSystemGO.addComponent<PhysicalObject>(_physicalObjectCreateArg);
+
+    switch (_generationShape)
     {
-        PhysicalObject& physicalObject = particleSystemGO.addComponent<PhysicalObject>();
-        physicalObject.setMass(_mass);
-        physicalObject.setUseGravity(_useGravity);
-        physicalObject.setUseGravity(_useGravity);
+        case EGenerationShape::SphereArea :
+        case EGenerationShape::Sphere :
+        physicalObject.addForce(Random::unitPeripheralSphericalCoordonate() * _propulsionLenght);
+        break;                        
 
-        switch (_generationShape)
-        {
-            case EGenerationShape::SphereArea :
-            case EGenerationShape::Sphere :
-            physicalObject.addForce(Random::unitPeripheralSphericalCoordonate() * _propulsionLenght);
-            break;                        
-
-            default:
-            physicalObject.addForce((_gameObject.getGlobalPosition() - particleSystemGO.getGlobalPosition()).normalize() * _propulsionLenght);
-            break;
-        }
+        default:
+        physicalObject.addForce((_gameObject.getGlobalPosition() - particleSystemGO.getGlobalPosition()).normalize() * _propulsionLenght);
+        break;
     }
 }

@@ -739,17 +739,19 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
                             &ressourceManager.get<Mesh>("Plane")};
 
     ParticuleGenerator::ParticleSystemCreateArg particalArg;
-    particalArg.optionnalModelCreateArg = modelArg3;
+    particalArg.modelCreateArg = modelArg3;
     particalArg.isBillBoard = false;
-    particalArg.useGravity = false;
+    particalArg.physicalObjectCreateArg.useGravity = false;
     particalArg.useScaledTime = true;
     particalArg.velocityEvolutionCoef = 0.5f;
     particalArg.spawnCountBySec = 500.f;
     particalArg.lifeDuration = 1.f;
-    particalArg.mass = 1.f;
+    particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
-    scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}}).addComponent<ParticuleGenerator>(particalArg);
+    GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    particleGO.addComponent<ParticuleGenerator>(particalArg);
+    particleGO.addComponent<LifeDuration>(10.f);
 }
 
 void Demo::updateControl()
