@@ -92,8 +92,12 @@ namespace Engine::Physics
             virtual const Engine::Core::Maths::Vec3& getRotation() const noexcept   { return rotation_; }
             virtual const Engine::Core::Maths::Vec3& getScale() const noexcept      { return scale_; }
 
+            virtual const Engine::Core::Maths::Vec3 getVecForward() const noexcept  { return modelMat_.getVectorForward().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecRight() const noexcept    { return modelMat_.getVectorRight().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecUp() const noexcept       { return modelMat_.getVectorUp().getNormalize(); }
+
             virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }
-            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_[0][0], modelMat_[1][1], modelMat_[2][2]}; }
+            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_.getVectorRight().length(), modelMat_.getVectorUp().length(), modelMat_.getVectorForward().length()}; }
 
             #pragma endregion //!accessor
     

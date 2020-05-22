@@ -13,6 +13,13 @@
 
 namespace Engine::Core::InputSystem
 {
+    enum E_KEY_STATE
+    {
+        NOT_PRESSED = 0,
+        TOUCHED,
+        DOWN
+    };
+
     struct inputMouse
     {
 
@@ -34,23 +41,23 @@ namespace Engine::Core::InputSystem
         bool oldLeftClicDown{false};
         bool oldRightClicDown{false};
 
-        int oneLeftClick()
+        E_KEY_STATE getLeftClick()
         {
             if (leftClicDown && !oldLeftClicDown)
             {
-                return 1;
+                return TOUCHED;
             }
             else if (leftClicDown && oldLeftClicDown)
             {
-                return 2;
+                return DOWN;
             }
             else if (!leftClicDown)
             {
-                return 0;
+                return NOT_PRESSED;
             }
             else
             {
-                return 0;
+                return NOT_PRESSED;
             }
         }
     };
@@ -69,7 +76,7 @@ namespace Engine::Core::InputSystem
         bool isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
         bool isPressed[SDL_NUM_SCANCODES];
 
-        int onePressed(const SDL_Scancode key);
+        E_KEY_STATE getKeyState(const SDL_Scancode key);
     };
     struct windowEvent
     {

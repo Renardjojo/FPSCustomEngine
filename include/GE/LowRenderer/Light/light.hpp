@@ -5,7 +5,6 @@
 #ifndef _GE_LIGHT_H
 #define _GE_LIGHT_H
 
-#include <cmath>
 #include <vector>
 
 #include "GE/Core/Maths/vec.hpp"
@@ -89,11 +88,15 @@ namespace Engine::LowRenderer
 
             #pragma endregion //!mutator
     
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
+
+            static void resetLight()
+            {
+                lightsToUse.clear();
+            }
+
+#ifndef DNEDITOR
+            virtual void serializeOnEditor () noexcept override;
+#endif
     
         protected:
     
@@ -109,12 +112,6 @@ namespace Engine::LowRenderer
     
             static std::vector<Light*> lightsToUse;
 
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
-    
-            #pragma region methods
-            #pragma endregion //!methods
     
         private:
     
