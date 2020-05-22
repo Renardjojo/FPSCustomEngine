@@ -46,7 +46,7 @@ namespace Game
 
     public:
         PlayerController(Engine::Ressources::GameObject &gameObject);
-        ~PlayerController();
+        virtual ~PlayerController() = default;
 
         void setCameraType(CameraType type);
         void toggleCameraType();

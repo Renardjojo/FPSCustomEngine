@@ -19,10 +19,10 @@ void Editor::updateInput()
         SDL_ShowCursor(_enable);
     }
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F8) == 2)
+   /* if (Input::keyboard.getKeyState(SDL_SCANCODE_F8) == 2)
     {
         ImGui::ShowDemoWindow();
-    }
+    }*/
 }
 
 void Editor::update(Engine::Core::DataStructure::Graph& graph)

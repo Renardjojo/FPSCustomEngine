@@ -190,6 +190,7 @@ namespace Engine::Core::Maths
 		/* operator */
 		/*----------*/
 
+		explicit operator Vec2 (); //static_cast<Vec2>
 		Vec3& 	operator++	();
 		Vec3 	operator++	(int);
 		Vec3& 	operator--	();

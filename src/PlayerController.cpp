@@ -22,7 +22,6 @@ using namespace Engine::Core::Maths::ShapeRelation;
 PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
                                                              _camera{Camera::getCamUse()} {}
 
-PlayerController::~PlayerController() {}
 
 void PlayerController::start()
 {

@@ -12,6 +12,7 @@
 #include "GE/Core/Maths/Random.hpp"
 #include "GE/LowRenderer/model.hpp"
 
+#include "Game/LifeDuration.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 
@@ -61,7 +62,7 @@ namespace Game
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
         {}
 
-        ~CircularEnemiesSpawner() = default;
+        virtual ~CircularEnemiesSpawner() = default;
 
         void update() override
         {   
@@ -83,6 +84,7 @@ namespace Game
                 newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
                 newGo.addComponent<Engine::Physics::PhysicalObject>().SetMass(1);
                 newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().SetBounciness(0.4f);
+                newGo.addComponent<Game::LifeDuration>(5.5f);
             }
         }
     };

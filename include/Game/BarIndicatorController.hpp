@@ -31,7 +31,7 @@ namespace Game
                 _maxScaleX                                  {gameObject.getScale().x}
         {}
 
-        ~BarIndicatorController() = default;
+        virtual ~BarIndicatorController() = default;
 
         void update() override
         {

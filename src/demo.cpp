@@ -15,6 +15,7 @@
 #include "GE/Ressources/Saves.hpp"
 #include "Game/BarIndicatorController.hpp"
 #include "Game/CircularEnemiesSpawner.hpp"
+#include "Game/ParticuleGenerator.hpp"
 
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
@@ -186,7 +187,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
     ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
-    ressourceManager.add<Mesh>("Plane1", Mesh::createPlane());
+    ressourceManager.add<Mesh>("Plane", Mesh::createPlane());
         
     MaterialAndTextureCreateArg matGround;
     matGround.name_                = "Ground";
@@ -277,7 +278,10 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg billBoardArg {&ressourceManager.get<Shader>("Color"),
                                 {&ressourceManager.get<Material>("GreenMaterial")},
-                                &ressourceManager.get<Mesh>("Cube")};
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "Color",
+                                {"GreenMaterial"},
+                                "Cube"};
 
     GameObjectCreateArg rayGameObject {"Reticule",
                                          {{0.f, 0.f, 10.f},
@@ -286,7 +290,10 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg rayArg   {&ressourceManager.get<Shader>("Color"),
                             {&ressourceManager.get<Material>("PinkMaterial")},
-                            &ressourceManager.get<Mesh>("Sphere")};
+                            &ressourceManager.get<Mesh>("Sphere"),
+                            "Color",
+                            {"PinkMaterial"},
+                            "Sphere"};
 
     scene_->add<GameObject>(player, rayGameObject).addComponent<Model>(rayArg);
 
@@ -726,6 +733,24 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
                             &ressourceManager.get<Mesh>("Cube")};
 
     enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+
+    ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
+                            {&ressourceManager.get<Material>("GreenMaterial")},
+                            &ressourceManager.get<Mesh>("Plane")};
+
+    ParticuleGenerator::ParticleSystemCreateArg particalArg;
+    particalArg.optionnalModelCreateArg = modelArg3;
+    particalArg.isBillBoard = false;
+    particalArg.useGravity = false;
+    particalArg.useScaledTime = true;
+    particalArg.velocityEvolutionCoef = 0.5f;
+    particalArg.spawnCountBySec = 500.f;
+    particalArg.lifeDuration = 1.f;
+    particalArg.mass = 1.f;
+    //particalArg.propulsionLenght = 500.f;
+    particalArg.scale = {0.1, 0.1, 0.1};
+
+    scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}}).addComponent<ParticuleGenerator>(particalArg);
 }
 
 void Demo::updateControl()
