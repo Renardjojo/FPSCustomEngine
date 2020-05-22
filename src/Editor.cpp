@@ -11,7 +11,7 @@ bool Editor::_enable = false;
 
 void Editor::updateInput()
 {
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         _enable = !_enable;
 
@@ -19,7 +19,7 @@ void Editor::updateInput()
         SDL_ShowCursor(_enable);
     }
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F8) == 2)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F8) == E_KEY_STATE::DOWN)
     {
         ImGui::ShowDemoWindow();
     }
