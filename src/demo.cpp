@@ -733,14 +733,14 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
     enemy1.addComponent<Model>(modelArg);
-    enemy1.addComponent<PhysicalObject>().SetMass(1);
-    enemy1.addComponent<SphereCollider>().SetBounciness(0.4f);
+    enemy1.addComponent<PhysicalObject>().setMass(1);
+    enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();
     enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+    //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
                             {&ressourceManager.get<Material>("GreenMaterial")},
@@ -817,60 +817,8 @@ void Demo::updateControl()
         flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
     }
 
-    // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
-    // {
-    //     TimeSystem::setTimeScale(0.f);
-    // }
-    // else
-    // {
-    //     TimeSystem::setTimeScale(0.5f);
-    // }
-
-    // static int exFrameWheelVal = Input::mouse.wheel_scrolling;
-
-    // if (Input::mouse.wheel_scrolling != exFrameWheelVal)
-    // {
-    //     if(Input::mouse.wheel_scrolling > exFrameWheelVal)
-    //     {
-    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY + 5);
-    //     }
-    //     else
-    //     {
-    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY - 5);
-    //     }
-
-    //     exFrameWheelVal = Input::mouse.wheel_scrolling;
-    // }
-
-    // if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
-    // {
-    //     mouseForPlayer1 = !mouseForPlayer1;
-    //     flagF1IsDown = true;
-    // }
-    // else
-    // {
-    //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
-    // }
-
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F6) == 1)
     {
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
-
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_P) == 1)
-    {
-        scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
-    }
 }
-
-// #ifndef DNEDITOR
-
-// void Demo::updateEditor()
-// {
-//     if (displaySceneGraphWindows)
-//     {
-//         SceneGraphWindow::update(*scene_);
-//     }
-// }
-
-// #endif
