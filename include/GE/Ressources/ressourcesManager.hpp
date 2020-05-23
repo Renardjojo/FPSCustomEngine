@@ -173,6 +173,7 @@ namespace Engine::Ressources
                                 Engine::Ressources::Font,
                                 Engine::Ressources::Title,
                                 Engine::Ressources::Button,
+                                Engine::Ressources::Image,
                                 Engine::Ressources::TextField> t_RessourcesManager;
 
 }// namespaceEngine::Ressources
