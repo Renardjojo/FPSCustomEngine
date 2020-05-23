@@ -49,13 +49,15 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
-Demo::Demo(Engine::GE &gameEngine)
-    : gameEngine_(gameEngine),
-      scene_(),
-      flagleftClicIsDown(false),
-      flagF1IsDown(false),
-      usingMouse(true),
-      dirCamera{0.f, 0.f, -1.f}
+std::unique_ptr<Engine::Ressources::Scene> *Demo::currentScene_;
+
+Demo::Demo(Engine::GE& gameEngine)
+    :   gameEngine_         (gameEngine),
+        scene_              (),
+        flagleftClicIsDown  (false),
+        flagF1IsDown        (false),
+        usingMouse          (true),
+        dirCamera          {0.f, 0.f, -1.f}
 {
 
     if (!usingMouse)
@@ -106,6 +108,8 @@ Demo::Demo(Engine::GE &gameEngine)
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     UISystem::isActive = true;
+    
+    currentScene_ = &scene_;
 }
 
 void Demo::update() noexcept
@@ -704,16 +708,29 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            {&ressourceManager.get<Material>("GreenMaterial")},
-                            &ressourceManager.get<Mesh>("Sphere")};
+                          {&ressourceManager.get<Material>("GreenMaterial")},
+                          &ressourceManager.get<Mesh>("Sphere"),
+                          "ColorWithLight",
+                          {"GreenMaterial"},
+                          "Sphere"};
 
-    GameObjectCreateArg Ennemy2GameObjectArg{"Ennemy2"};
+    GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
-    ModelCreateArg modelArg2{&ressourceManager.get<Shader>("ColorWithLight"),
-                             {&ressourceManager.get<Material>("PinkMaterial")},
-                             &ressourceManager.get<Mesh>("Cube")};
+    enemy1.addComponent<Model>(modelArg);
+    enemy1.addComponent<PhysicalObject>().SetMass(1);
+    enemy1.addComponent<SphereCollider>().SetBounciness(0.4f);
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+    Save::createPrefab(enemy1, "enemy1");
+
+    enemy1.destroy();
+
+    // GameObjectCreateArg Ennemy2GameObjectArg    {"Ennemy2"};
+
+    // ModelCreateArg modelArg2{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         {&ressourceManager.get<Material>("PinkMaterial")},
+    //                         &ressourceManager.get<Mesh>("Cube")};
+
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 }
 
 void Demo::updateControl()
