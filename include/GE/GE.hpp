@@ -52,13 +52,13 @@ namespace Engine
 
             #pragma endregion //!accessor
 
-        public:
-
             #pragma region attribut
 
             std::unique_ptr<Core::Renderer::IRenderer>  ren_;
 
             Engine::Ressources::t_RessourcesManager ressourceManager_;
+
+            static Engine::Ressources::t_RessourcesManager* currentRessourceManager_;
 
             E_GAME_STATE gameState;
 

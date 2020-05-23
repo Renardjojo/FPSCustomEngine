@@ -47,6 +47,8 @@ namespace Game
 
             #pragma endregion //!methods
 
+            static std::unique_ptr<Engine::Ressources::Scene> *currentScene_;
+
         protected:
 
             #pragma region attribut
