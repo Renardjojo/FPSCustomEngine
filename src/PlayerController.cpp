@@ -20,7 +20,7 @@ using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::Maths::ShapeRelation;
 
 PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
-                                                             _camera{Camera::getCamUse()} {}
+                                                              _camera{Camera::getCamUse()} {}
 
 PlayerController::~PlayerController() {}
 
@@ -33,7 +33,7 @@ void PlayerController::update()
 {
     move();
 
-    if(Input::mouse.leftClicDownOnce)
+    if (Input::mouse.leftClicDownOnce)
     {
         shoot();
     }
@@ -85,7 +85,6 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-
     mouseMotion *= TimeSystem::getDeltaTime() * _mouseSpeed;
 
     _orbit.y += mouseMotion.x;
