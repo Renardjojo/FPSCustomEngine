@@ -291,20 +291,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 {"GreenMaterial"},
                                 "Cube"};
 
-    GameObjectCreateArg rayGameObject{"Reticule",
-                                      {{0.f, 0.f, 10.f},
-                                       {0.f, 0.f, 0.f},
-                                       {0.2f, 0.2f, 0.2f}}};
-
-    ModelCreateArg rayArg   {&ressourceManager.get<Shader>("Color"),
-                            {&ressourceManager.get<Material>("PinkMaterial")},
-                            &ressourceManager.get<Mesh>("Sphere"),
-                            "Color",
-                            {"PinkMaterial"},
-                            "Sphere"};
-
-    scene_->add<GameObject>(player, rayGameObject).addComponent<Model>(rayArg);
-
     player.addComponent<PlayerController>(ressourceManager);
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
