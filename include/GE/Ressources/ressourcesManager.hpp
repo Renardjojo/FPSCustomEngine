@@ -97,6 +97,7 @@ namespace Engine::Ressources
     //For example : ressourceManager<int, float, std::string> wille create :
     //ressourceManager<int>, ressourceManager<float> and ressourceManager<std::string>.
     //ressourceManager<int, float, std::string> inherited about these 3 class and can access to each element
+    
     template<class LType, class... RType>
     class RessourcesManager
         : public RessourcesManager<LType>, public RessourcesManager<RType...>
@@ -149,8 +150,14 @@ namespace Engine::Ressources
             }
 
             #pragma endregion //!mutator
+/*
+            void use () noexcept;
+
+            static RessourcesManager<LType, RType...>* getRessourceManagerUse() noexcept;*/
 
         protected:
+
+           // static RessourcesManager<LType, RType...>* ressourceManagerToUse; //pointor to be in nullptr by default
 
         private:
 

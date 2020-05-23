@@ -16,6 +16,7 @@
 #include "Game/BarIndicatorController.hpp"
 #include "Game/CircularEnemiesSpawner.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "Game/MaxElementConteneur.hpp"
 
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
@@ -72,6 +73,7 @@ Demo::Demo(Engine::GE& gameEngine)
     }
 
     scene_ = std::make_unique<Scene>();
+    scene_->use();
 
     // TimeSystem::setTimeScale(0.3f);
 
@@ -158,6 +160,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
     ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
+    ressourceManager.add<Shader>("LightAndTexture", "./ressources/shader/vTexture2.vs", "./ressources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
 
     MaterialAndTextureCreateArg matDefault;
     matDefault.name_ = "DefaultMaterial";
@@ -197,6 +200,12 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     matGround.wrapType             = E_WrapType::MIRRORED_REPEAT;
 
     ressourceManager.add<Material>("materialGround" ,matGround);
+
+    MaterialAndTextureCreateArg matBulletHole;
+    matBulletHole.name_                = "BulletHole";
+    matBulletHole.pathDiffuseTexture   = "./ressources/texture/bulletHole.png";
+
+    ressourceManager.add<Material>("BulletHole" ,matBulletHole);
 }
 
 void Demo::loadCamera()
@@ -297,7 +306,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     scene_->add<GameObject>(player, rayGameObject).addComponent<Model>(rayArg);
 
-    player.addComponent<PlayerController>();
+    player.addComponent<PlayerController>(ressourceManager);
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
@@ -744,14 +753,16 @@ void Demo::loadEnemies (Engine::Ressources::t_RessourcesManager& ressourceManage
     particalArg.physicalObjectCreateArg.useGravity = false;
     particalArg.useScaledTime = true;
     particalArg.velocityEvolutionCoef = 0.5f;
-    particalArg.spawnCountBySec = 500.f;
-    particalArg.lifeDuration = 1.f;
+    particalArg.spawnCountBySec = 10.f;
+    particalArg.lifeDuration = 10.f;
     particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
     GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
     particleGO.addComponent<ParticuleGenerator>(particalArg);
     particleGO.addComponent<LifeDuration>(10.f);
+    
+    scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }
 
 void Demo::updateControl()

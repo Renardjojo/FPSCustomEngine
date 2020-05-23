@@ -35,7 +35,9 @@ namespace Game
                 _lifeMaxDelay                               {lifeMaxDelay},
                 _delayCount                                 {0.f},
                 _useScaledTime                              {useScaledTime}
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         virtual ~LifeDuration() = default;
 

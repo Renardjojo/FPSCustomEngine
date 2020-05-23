@@ -84,7 +84,7 @@ namespace Game
                 newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
                 newGo.addComponent<Engine::Physics::PhysicalObject>().setMass(1);
                 newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().setBounciness(0.4f);
-                newGo.addComponent<Game::LifeDuration>(5.5f);
+                newGo.addComponent<Game::LifeDuration>(10.f);
             }
         }
     };

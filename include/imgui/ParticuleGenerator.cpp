@@ -31,7 +31,9 @@ ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSys
         _delayCount                                 {std::fmod(arg.spawnCountBySec, arg.spawnCountBySec)},
         _isBillBoard                                {arg.isBillBoard},
         _useScaledTime                              {arg.useScaledTime}
-{}
+{
+    _name = __FUNCTION__;
+}
 
 void ParticuleGenerator::update()
 {   
@@ -69,27 +71,27 @@ Vec3 ParticuleGenerator::generatePosition()
         case EGenerationShape::Cone :
         case EGenerationShape::Cylinder :
         case EGenerationShape::Circle :
-        returnValue.xy = {Random::peripheralCircularCoordinate({_gameObject.getPosition().x, _gameObject.getPosition().y}, _generationRange)};
+        returnValue.xy = {Random::peripheralCircularCoordinate(Vec2::zero, _generationRange)};
         break;
 
         case EGenerationShape::CircleArea :
-        returnValue.xy = {Random::circularCoordinate({_gameObject.getPosition().x, _gameObject.getPosition().y}, _generationRange)};
+        returnValue.xy = {Random::circularCoordinate({Vec3::zero.x, Vec3::zero.y}, _generationRange)};
         break;
 
         case EGenerationShape::Sphere :
-        returnValue =  Random::peripheralSphericalCoordinate(_gameObject.getPosition(), _generationRange);
+        returnValue =  Random::peripheralSphericalCoordinate(Vec3::zero, _generationRange);
         break;        
 
         case EGenerationShape::SphereArea :
-        returnValue =  Random::sphericalCoordinate(_gameObject.getPosition(), _generationRange);
+        returnValue =  Random::sphericalCoordinate(Vec3::zero, _generationRange);
         break;    
 
         case EGenerationShape::Square :
-        returnValue.xy = {Random::peripheralSquareCoordinate({_gameObject.getPosition().x, _gameObject.getPosition().y}, _generationRange, _generationRange)};
+        returnValue.xy = {Random::peripheralSquareCoordinate({Vec3::zero.x, Vec3::zero.y}, _generationRange, _generationRange)};
         break;     
 
         case EGenerationShape::Cube :
-        returnValue = {Random::peripheralCubiqueCoordinate(_gameObject.getPosition(), _generationRange, _generationRange, _generationRange)}; 
+        returnValue = {Random::peripheralCubiqueCoordinate(Vec3::zero, _generationRange, _generationRange, _generationRange)}; 
         break;                  
 
         default:

@@ -863,7 +863,7 @@ void 	Mat4::setVectorUp(const Vec3& newUp)
 	mat[1] = newUp.z;
 }
 
-void 
+inline 
 void 	Mat4::setVectorRight(const Vec3& newRight) 
 {
 	mat[10] = newRight.x;

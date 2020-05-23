@@ -226,7 +226,7 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
         else if (type.compare("SphereCollider") == 0)
             parent.addComponent<SphereCollider>();
         else if (type.compare("PlayerController") == 0)
-            parent.addComponent<PlayerController>();
+            parent.addComponent<PlayerController>(gameEngine.ressourceManager_);
         else if (type.compare("DirectionnalLight") == 0)
             parent.addComponent<DirectionnalLight>(params).enable(true);
         else if (type.compare("PointLight") == 0)

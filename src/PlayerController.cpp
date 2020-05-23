@@ -4,6 +4,10 @@
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
+#include "GE/LowRenderer/ParticleSystemFactory.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include "Game/LifeDuration.hpp"
+#include "GE/Ressources/scene.hpp"
 #include <math.h>
 #include <algorithm>
 
@@ -18,9 +22,13 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::Maths::ShapeRelation;
+using namespace Engine::LowRenderer;
 
-PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
-                                                             _camera{Camera::getCamUse()} {}
+PlayerController::PlayerController(GameObject &_gameObject,  t_RessourcesManager& ressource)
+    : ScriptComponent{_gameObject},
+    _camera{Camera::getCamUse()},
+    _ressource{ressource}
+    {}
 
 
 void PlayerController::start()
@@ -55,6 +63,35 @@ void PlayerController::shoot()
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
+        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+        ModelCreateArg      modelDecaleGOPref   {&_ressource.get<Shader>("TextureOnly"), 
+                                                {&_ressource.get<Material>("BulletHole")}, 
+                                                &_ressource.get<Mesh>("Plane"),
+                                                "TextureOnly", 
+                                                {"BulletHole"}, 
+                                                "Plane"};
+
+
+        ModelCreateArg modelArg3{&_ressource.get<Shader>("Color"),
+                                {&_ressource.get<Material>("RedMaterial")},
+                                &_ressource.get<Mesh>("Plane")};
+
+        ParticuleGenerator::ParticleSystemCreateArg particalArg;
+        particalArg.modelCreateArg = modelArg3;
+        particalArg.isBillBoard = true;
+        particalArg.physicalObjectCreateArg.useGravity = true;
+        particalArg.useScaledTime = true;
+        particalArg.velocityEvolutionCoef = 1.f;
+        particalArg.spawnCountBySec = 100.f;
+        particalArg.lifeDuration = 0.5f;
+        particalArg.physicalObjectCreateArg.mass = 1.f;
+        particalArg.scale = {0.05, 0.05, 0.05};
+
+        GameObject& particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        particleGO.addComponent<ParticuleGenerator>(particalArg);
+        particleGO.addComponent<LifeDuration>(3.f);
+
+        ParticleSystemFactory::createDecale(Scene::getSceneUse()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
         rayInfo.gameObject->destroy();
     }
 }
