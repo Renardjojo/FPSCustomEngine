@@ -13,7 +13,6 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 
 EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player) : ScriptComponent{gameObject},_player{player} {}
-EnnemyController::~EnnemyController() {}
 
 void EnnemyController::update()
 {

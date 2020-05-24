@@ -60,7 +60,7 @@ buid:
 
 #debugger. Use "run" to start
 gdb :
-	$(OUTPUT) 
+	make all 
 	gdb $(OUTPUT)
 
 #display function stats
@@ -69,12 +69,12 @@ gprof :
 
 #display leak
 leak :
-	$(OUTPUT)
+	make all
 	valgrind $(OUTPUT)
 
 #display leak detail
 leakFull :
-	$(OUTPUT) 
+	make all 
 	valgrind $(VFLAG) $(OUTPUT)
 
 #function to find word in project

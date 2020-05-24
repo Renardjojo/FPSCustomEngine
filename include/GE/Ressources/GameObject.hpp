@@ -197,12 +197,9 @@ namespace Engine::Ressources
         virtual 
         void destroy() noexcept
         {
-            /*Destoy all children and component and set flag to be delete by it parent*/
+            /*set flag to be delete by it parent*/
             _isDead = true;
             isDirty_ = true;
-
-            children.clear();
-            _components.clear(); 
         }
 
         /**

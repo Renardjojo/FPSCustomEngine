@@ -132,22 +132,25 @@ namespace Engine::Core::Maths
 #pragma region Spherique
 
         template<typename T = float>
-        static Vec3 peripheralSphericalCoordinate(const Vec3& center, const T& range)
-        {
-            T phi = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
-            T theta = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
-            return Vec3{center.x + (range * std::sin(phi) * std::cos(theta)),
-                        center.y + (range * std::sin(phi) * std::sin(theta)), 
-                        center.z + (range * std::cos(phi))};
-        }
-
-        template<typename T = float>
         static Vec3 unitPeripheralSphericalCoordonate()
         {
             T phi = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
             T theta = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
             return Vec3{std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi)};
         }
+
+        template<typename T = float>
+        static Vec3 sphericalCoordinate(const Vec3& center, const T& range)
+        {
+            return (center + unitPeripheralSphericalCoordonate()) * unitValue<T>() * range;
+        }
+
+        template<typename T = float>
+        static Vec3 peripheralSphericalCoordinate(const Vec3& center, const T& range)
+        {
+            return (center + unitPeripheralSphericalCoordonate()) * range;
+        }
+
 
 #pragma endregion //!Spherique
 

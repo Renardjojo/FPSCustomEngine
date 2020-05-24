@@ -15,6 +15,8 @@
 #include "GE/Ressources/Saves.hpp"
 #include "Game/BarIndicatorController.hpp"
 #include "Game/CircularEnemiesSpawner.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include "Game/MaxElementConteneur.hpp"
 
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
@@ -72,8 +74,8 @@ Demo::Demo(Engine::GE& gameEngine)
     }
 
     scene_ = std::make_unique<Scene>();
-
-    // TimeSystem::setTimeScale(0.3f);
+    scene_->use();
+    gameEngine_.ressourceManager_.use();
 
     loadRessources(gameEngine_.ressourceManager_);
 
@@ -158,6 +160,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
     ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
     ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
+    ressourceManager.add<Shader>("LightAndTexture", "./ressources/shader/vTexture2.vs", "./ressources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
 
     MaterialAndTextureCreateArg matDefault;
     matDefault.name_ = "DefaultMaterial";
@@ -187,8 +190,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
     ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
-    ressourceManager.add<Mesh>("Plane1", Mesh::createPlane());
-
+    ressourceManager.add<Mesh>("Plane", Mesh::createPlane());
+        
     MaterialAndTextureCreateArg matGround;
     matGround.name_ = "Ground";
     matGround.comp_.shininess = 1.f;
@@ -196,7 +199,13 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     matGround.pathDiffuseTexture = "./ressources/texture/ground.jpg";
     matGround.wrapType = E_WrapType::MIRRORED_REPEAT;
 
-    ressourceManager.add<Material>("materialGround", matGround);
+    ressourceManager.add<Material>("materialGround" ,matGround);
+
+    MaterialAndTextureCreateArg matBulletHole;
+    matBulletHole.name_                = "BulletHole";
+    matBulletHole.pathDiffuseTexture   = "./ressources/texture/bulletHole.png";
+
+    ressourceManager.add<Material>("BulletHole" ,matBulletHole);
 }
 
 void Demo::loadCamera()
@@ -260,13 +269,40 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                {&ressourceManager.get<Material>("PinkMaterial")},
-                               &ressourceManager.get<Mesh>("Sphere"),
+                               &ressourceManager.get<Mesh>("Cube"),
                                "ColorWithLight",
                                {"PinkMaterial"},
-                               "Sphere"};
+                               "Cube"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
+
+   GameObjectCreateArg ReticuleGameObject{"Z",
+                                         {{0.f, 0.f, 0.f},
+                                          {0.f, 0.f, 0.f},
+                                          {0.2f, 0.2f, 0.2f}}};
+
+    ModelCreateArg ReticuleModel{&ressourceManager.get<Shader>("ColorWithLight"),
+                               {&ressourceManager.get<Material>("BlueMaterial")},
+                               &ressourceManager.get<Mesh>("Sphere"),
+                               "ColorWithLight",
+                               {"RedMaterial"},
+                               "Sphere"};
+/*
+    GameObject &ReticuleX = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleX.addComponent<Model>(ReticuleModel); 
+
+    ReticuleGameObject.name = "Y";
+    ReticuleModel.pMaterials = {&ressourceManager.get<Material>("GreenMaterial")};
+
+    GameObject &ReticuleY = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleY.addComponent<Model>(ReticuleModel); 
+
+    ReticuleGameObject.name = "X";
+    ReticuleModel.pMaterials = {&ressourceManager.get<Material>("RedMaterial")};
+
+    GameObject &ReticuleZ = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleZ.addComponent<Model>(ReticuleModel);*/
 
     /*Add life bar on player*/
     GameObjectCreateArg lifeBarGameObject{"lifeBar",
@@ -276,24 +312,17 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg billBoardArg{&ressourceManager.get<Shader>("Color"),
                                 {&ressourceManager.get<Material>("GreenMaterial")},
-                                &ressourceManager.get<Mesh>("Cube")};
+                                &ressourceManager.get<Mesh>("Sphere"),
+                                "Color",
+                                {"GreenMaterial"},
+                                "Sphere"};
 
-    GameObjectCreateArg rayGameObject{"Reticule",
-                                      {{0.f, 0.f, 10.f},
-                                       {0.f, 0.f, 0.f},
-                                       {0.2f, 0.2f, 0.2f}}};
-
-    ModelCreateArg rayArg{&ressourceManager.get<Shader>("Color"),
-                          {&ressourceManager.get<Material>("PinkMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere")};
-
-    scene_->add<GameObject>(player, rayGameObject).addComponent<Model>(rayArg);
 
     player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
-    player.getComponent<PhysicalObject>()->SetMass(1);
+    player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->SetBounciness(0.4f);
+    player.getComponent<SphereCollider>()->setBounciness(0.4f);
 }
 
 void Demo::loadSkyBox(t_RessourcesManager &ressourceManager)
@@ -701,6 +730,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
                                                crosshairSize,
                                                E_GAME_STATE::RUNNING);
 }
+
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
     enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
@@ -717,25 +747,45 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
     enemy1.addComponent<Model>(modelArg);
-    enemy1.addComponent<PhysicalObject>().SetMass(1);
-    enemy1.addComponent<SphereCollider>().SetBounciness(0.4f);
+    enemy1.addComponent<PhysicalObject>().setMass(1);
+    enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
 
     Save::createPrefab(enemy1, "enemy1");
-
     enemy1.destroy();
-
-    // GameObjectCreateArg Ennemy2GameObjectArg    {"Ennemy2"};
-
-    // ModelCreateArg modelArg2{&ressourceManager.get<Shader>("ColorWithLight"),
-    //                         {&ressourceManager.get<Material>("PinkMaterial")},
-    //                         &ressourceManager.get<Mesh>("Cube")};
-
     enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+
+    //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+
+    ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
+                            {&ressourceManager.get<Material>("GreenMaterial")},
+                            &ressourceManager.get<Mesh>("Plane")};
+
+    ParticuleGenerator::ParticleSystemCreateArg particalArg;
+    particalArg.modelCreateArg = modelArg3;
+    particalArg.isBillBoard = false;
+    particalArg.physicalObjectCreateArg.useGravity = false;
+    particalArg.useScaledTime = true;
+    particalArg.velocityEvolutionCoef = 0.5f;
+    particalArg.spawnCountBySec = 10.f;
+    particalArg.lifeDuration = 10.f;
+    particalArg.physicalObjectCreateArg.mass = 1.f;
+    particalArg.scale = {0.1, 0.1, 0.1};
+
+    GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    //particleGO.addComponent<ParticuleGenerator>(particalArg);
+    particleGO.addComponent<LifeDuration>(10.f);
+    
+    scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }
 
 void Demo::updateControl()
 {
-    testLifePLayer -= 0.1;
+    /* Draw player referential
+    float dist = 5.f;
+    scene_->getGameObject("Z").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecForward());
+    scene_->getGameObject("Y").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecUp());
+    scene_->getGameObject("X").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecRight());
+    */
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
     {
@@ -786,60 +836,8 @@ void Demo::updateControl()
         flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
     }
 
-    // if (Input::keyboard.isDown[SDL_SCANCODE_SPACE])
-    // {
-    //     TimeSystem::setTimeScale(0.f);
-    // }
-    // else
-    // {
-    //     TimeSystem::setTimeScale(0.5f);
-    // }
-
-    // static int exFrameWheelVal = Input::mouse.wheel_scrolling;
-
-    // if (Input::mouse.wheel_scrolling != exFrameWheelVal)
-    // {
-    //     if(Input::mouse.wheel_scrolling > exFrameWheelVal)
-    //     {
-    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY + 5);
-    //     }
-    //     else
-    //     {
-    //         static_cast<Camera*>(mainCamera->entity.get())->setFovY(static_cast<Camera*>(mainCamera->entity.get())->getProjectionInfo().fovY - 5);
-    //     }
-
-    //     exFrameWheelVal = Input::mouse.wheel_scrolling;
-    // }
-
-    // if (Input::keyboard.isDown[SDL_SCANCODE_F1] && !flagF1IsDown)
-    // {
-    //     mouseForPlayer1 = !mouseForPlayer1;
-    //     flagF1IsDown = true;
-    // }
-    // else
-    // {
-    //     flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F1];
-    // }
-
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F6) == 1)
     {
         saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
-
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_P) == 1)
-    {
-        scene_->getGameObject("world/Player").destroyChild(&scene_->getGameObject("world/Player/Reticule"));
-    }
 }
-
-// #ifndef DNEDITOR
-
-// void Demo::updateEditor()
-// {
-//     if (displaySceneGraphWindows)
-//     {
-//         SceneGraphWindow::update(*scene_);
-//     }
-// }
-
-// #endif

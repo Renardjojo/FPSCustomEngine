@@ -16,6 +16,7 @@
 #include "GE/LowRenderer/Light/pointLight.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace rapidxml;
 
@@ -28,6 +29,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Core::System;
+using namespace Engine::Core::Debug;
 
 
 void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths, const char *path)
@@ -38,7 +40,7 @@ void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths
 
     if (!file.is_open())
     {
-        std::cout << "FAIL TO READ SAVE FILE" << std::endl; // TODO: assert
+        SLog::logError(std::string("Fail to read save file with path : ") + path);
         return;
     }
 
@@ -63,7 +65,7 @@ void Engine::Ressources::Save::addSavePath(std::vector<std::string> &savePaths, 
     
     if (!file.is_open() || !out.is_open())
     {
-        std::cout << "FAIL TO READ SAVE FILE" << std::endl; // TODO: assert
+        SLog::logError(std::string("Fail to read save file with path : ") + path);
         return;
     }
 
@@ -226,7 +228,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             params.push_back(std::make_unique<std::string>(attr->value()));
 
         if (type.compare("Model") == 0)
-            parent.addComponent<Model>(params, *Engine::GE::currentRessourceManager_);
+            parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
             parent.addComponent<PhysicalObject>();
         else if (type.compare("OrientedBoxCollider") == 0)
@@ -321,7 +323,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         newNode->append_attribute(doc.allocate_attribute("scaleY", doc.allocate_string(std::to_string(gameObjectParent.getScale().y).c_str())));
         newNode->append_attribute(doc.allocate_attribute("scaleZ", doc.allocate_string(std::to_string(gameObjectParent.getScale().z).c_str())));
 
-        std::cout << "saving : " + gameObjectParent.getName() << std::endl;
+        SLog::log(std::string("Saving : ") + gameObjectParent.getName());
     }
 
     if (gameObjectParent.getComponent<Model>())

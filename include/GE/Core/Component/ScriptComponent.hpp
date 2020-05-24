@@ -18,8 +18,8 @@ namespace Engine::Core::Component
     private:
     public:
         ScriptComponent(Engine::Ressources::GameObject &gameobject);
-        ScriptComponent(const ScriptComponent &other) = default;
-        ScriptComponent(ScriptComponent &&other) = default;
+        ScriptComponent(const ScriptComponent &other) = delete;
+        ScriptComponent(ScriptComponent &&other) = delete;
         virtual ~ScriptComponent();
 
         ScriptComponent() = delete;

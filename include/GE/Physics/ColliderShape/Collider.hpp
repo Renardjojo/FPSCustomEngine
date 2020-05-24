@@ -42,8 +42,8 @@ namespace Engine::Physics::ColliderShape
         Engine::Physics::PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
         void SetAttachedPhysicalObject(Engine::Physics::PhysicalObject* newPhysicalBody) { attachedPhysicalObject = newPhysicalBody; }
 
-        float GetBounciness() { return bounciness_; }
-        void SetBounciness(float bounciness) { bounciness_ = bounciness; }
+        float getBounciness() { return bounciness_; }
+        void setBounciness(float bounciness) { bounciness_ = bounciness; }
 
         std::vector<std::function<void(HitInfo&)>> functions;
     protected:
