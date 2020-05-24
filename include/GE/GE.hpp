@@ -52,8 +52,6 @@ namespace Engine
 
             #pragma endregion //!accessor
 
-        public:
-
             #pragma region attribut
 
             std::unique_ptr<Core::Renderer::IRenderer>  ren_;

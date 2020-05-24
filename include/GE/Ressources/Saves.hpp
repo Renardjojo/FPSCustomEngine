@@ -20,21 +20,26 @@ using namespace rapidxml;
 
 namespace Engine::Ressources::Save
 {
-    void initSavePaths(std::vector<std::string>& savePaths, const char* path);
 
     void addSavePath(std::vector<std::string>& savePaths, const char* path);
 
-    void setupScene(Engine::Ressources::Scene& scene, Engine::GE& gameEngine, const char* filePath);
-
-    void initEntity(Engine::Ressources::Scene& scene, Engine::Ressources::GameObject& parent, Engine::GE& gameEngine, xml_node<>* node);
-
     void saveScene(Engine::Ressources::Scene& scene, Engine::GE& gameEngine, const char* filePath);
+
+    void createPrefab(GameObject& gameObject, std::string prefabName);
 
     void saveEntity(Engine::Ressources::GameObject& gameObjectParent, xml_document<>& doc, xml_node<>* nodeParent);
 
-    void loadPrefab(Scene& scene, GameObject& parent, Engine::GE& gameEngine, const char* filePath);
+    void initSavePaths(std::vector<std::string>& savePaths, const char* path);
 
-    void createPrefab(GameObject& gameObject, std::string prefabName);
+    void setupScene(Engine::Ressources::Scene& scene, Engine::GE& gameEngine, const char* filePath);
+
+    Engine::Ressources::GameObject& loadPrefab(GameObject& parent, std::string prefabName);
+
+    Engine::Ressources::GameObject& loadPrefab(GameObject& parent, Engine::Core::Maths::Vec3 position , std::string prefabName);
+
+    Engine::Ressources::GameObject& initEntity(Engine::Ressources::GameObject& parent, xml_node<>* node);
+
+
 } 
 
 

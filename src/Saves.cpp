@@ -3,6 +3,8 @@
 #include "GE/Core/Maths/vec.hpp"
 
 #include "GE/Ressources/Component.hpp"
+#include "Game/demo.hpp"
+#include "GE/GE.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "Game/PlayerController.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
@@ -14,6 +16,7 @@
 #include "GE/LowRenderer/Light/pointLight.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
+#include "GE/Core/Debug/log.hpp"
 
 using namespace rapidxml;
 
@@ -26,6 +29,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Core::System;
+using namespace Engine::Core::Debug;
 
 
 void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths, const char *path)
@@ -36,7 +40,7 @@ void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths
 
     if (!file.is_open())
     {
-        std::cout << "FAIL TO READ SAVE FILE" << std::endl; // TODO: assert
+        SLog::logError(std::string("Fail to read save file with path : ") + path);
         return;
     }
 
@@ -61,7 +65,7 @@ void Engine::Ressources::Save::addSavePath(std::vector<std::string> &savePaths, 
     
     if (!file.is_open() || !out.is_open())
     {
-        std::cout << "FAIL TO READ SAVE FILE" << std::endl; // TODO: assert
+        SLog::logError(std::string("Fail to read save file with path : ") + path);
         return;
     }
 
@@ -92,23 +96,29 @@ void Engine::Ressources::Save::setupScene(Scene& scene, Engine::GE& gameEngine, 
     xml_node<>* node = doc.first_node();
 
     for (xml_node<>* children = node->first_node(); children; children = children->next_sibling())
-        initEntity(scene, scene.getWorld(), gameEngine, children);
+        initEntity(scene.getWorld(), children);
 
     ScriptSystem::start();
 }
 
-void Engine::Ressources::Save::loadPrefab(Scene& scene, GameObject& parent, Engine::GE& gameEngine, const char* filePath)
+Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, std::string prefabName)
 {
-    file<> xmlFile(filePath);
+    file<> xmlFile((std::string("./ressources/Prefabs/") + prefabName + std::string(".xml")).c_str());
     xml_document<> doc;
     doc.parse<0>(xmlFile.data());
 
-    xml_node<>* node = doc.first_node();
+    xml_node<>* node = doc.first_node()->first_node();
 
-    initEntity(scene, parent, gameEngine, node);
+    return initEntity(parent, node);
+}
+Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, Vec3 position, std::string prefabName)
+{
+    GameObject& toReturn = loadPrefab(parent, prefabName);
+    toReturn.setTranslation(position);
+    return toReturn;
 }
 
-void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::GameObject& parent, Engine::GE& gameEngine, xml_node<>* node)
+Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Ressources::GameObject& parent, xml_node<>* node)
 {
     GameObject* newGameObject = nullptr;
 
@@ -159,7 +169,7 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
             }
 
             GameObjectCreateArg gameObjectArg{name, {pos, rot, scale}};
-            newGameObject = &scene.add<GameObject>(parent, gameObjectArg);
+            newGameObject = &parent.addChild<GameObject>(gameObjectArg);
         }
         else if (str.compare("Camera") == 0)
         {
@@ -204,8 +214,8 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
                     name = attr->value();
             }
 
-            CameraPerspectiveCreateArg camArg{pos, rot, gameEngine.getWinSize().width / static_cast<float>(gameEngine.getWinSize().heigth), near, far, fov, name.c_str()};
-            newGameObject = &scene.add<Camera>(scene.getWorld(), camArg);
+            CameraPerspectiveCreateArg camArg{pos, rot, WIDTH / static_cast<float>(HEIGHT), near, far, fov, name.c_str()};
+            newGameObject = &parent.addChild<Camera>(camArg);
             dynamic_cast<Camera *>(newGameObject)->use();
         }
     } // Gameobject
@@ -218,7 +228,7 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
             params.push_back(std::make_unique<std::string>(attr->value()));
 
         if (type.compare("Model") == 0)
-            parent.addComponent<Model>(params, gameEngine.ressourceManager_);
+            parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
             parent.addComponent<PhysicalObject>();
         else if (type.compare("OrientedBoxCollider") == 0)
@@ -237,7 +247,9 @@ void Engine::Ressources::Save::initEntity(Scene& scene, Engine::Ressources::Game
     }
 
     for (xml_node<>* children = node->first_node(); children; children = children->next_sibling())
-        initEntity(scene, *newGameObject, gameEngine, children);
+        initEntity(*newGameObject, children);
+
+    return *newGameObject;
 }
 
 void Engine::Ressources::Save::saveScene(Scene &scene, GE &gameEngine, const char *filePath)
@@ -265,7 +277,7 @@ void Engine::Ressources::Save::createPrefab(GameObject& gameObject, std::string 
 
     saveEntity(gameObject, doc, prefabNode);
 
-    std::ofstream file_stored("./ressources/Prefabs/" + prefabName);
+    std::ofstream file_stored("./ressources/Prefabs/" + prefabName + ".xml");
     file_stored << doc;
     file_stored.close();
     doc.clear();
@@ -311,7 +323,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         newNode->append_attribute(doc.allocate_attribute("scaleY", doc.allocate_string(std::to_string(gameObjectParent.getScale().y).c_str())));
         newNode->append_attribute(doc.allocate_attribute("scaleZ", doc.allocate_string(std::to_string(gameObjectParent.getScale().z).c_str())));
 
-        std::cout << "saving : " + gameObjectParent.getName() << std::endl;
+        SLog::log(std::string("Saving : ") + gameObjectParent.getName());
     }
 
     if (gameObjectParent.getComponent<Model>())

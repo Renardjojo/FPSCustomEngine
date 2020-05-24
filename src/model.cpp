@@ -69,12 +69,7 @@ Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>
         materialName_           ({*params[1]}),
         meshName_               (*params[2])
 {
-    initTextureBufferWithMTLId();   
-
-    for (std::unique_ptr<std::string>& string : params)
-        std::cout << *string << " ";
-
-    std::cout << std::endl;
+    initTextureBufferWithMTLId();
     loadInGPU (); 
 }
 

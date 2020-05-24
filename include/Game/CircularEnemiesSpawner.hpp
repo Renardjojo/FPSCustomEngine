@@ -11,7 +11,8 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/Random.hpp"
 #include "GE/LowRenderer/model.hpp"
-
+#include "GE/Ressources/Saves.hpp"
+#include "Game/LifeDuration.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 
@@ -20,7 +21,7 @@ namespace Game
 
     struct EnemiePrefasAndSpawnChance
     {
-        Engine::LowRenderer::ModelCreateArg prefab;
+        std::string prefabPath;
     };
 
     typedef std::vector<EnemiePrefasAndSpawnChance> EnemieInfo;
@@ -61,7 +62,7 @@ namespace Game
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
         {}
 
-        ~CircularEnemiesSpawner() = default;
+        virtual ~CircularEnemiesSpawner() = default;
 
         void update() override
         {   
@@ -74,15 +75,16 @@ namespace Game
             {
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
-
-                Engine::LowRenderer::ModelCreateArg& enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
-                Engine::Ressources::GameObjectCreateArg gameObjectNewEnnemy {std::string("Ennemy ") + std::to_string(_gameObject.children.size()), {newPosition}};
 
+                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _enemiePrefas[0].prefabPath);
+                /*
                 auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy);
                 newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
-                newGo.addComponent<Engine::Physics::PhysicalObject>().SetMass(1);
-                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().SetBounciness(0.4f);
+                newGo.addComponent<Engine::Physics::PhysicalObject>().setMass(1);
+                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().setBounciness(0.4f);
+                newGo.addComponent<Game::LifeDuration>(10.f);
+                */
             }
         }
     };
