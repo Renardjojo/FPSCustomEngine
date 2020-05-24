@@ -20,6 +20,7 @@ using namespace rapidxml;
 
 namespace Engine::Ressources::Save
 {
+    #define SAVE_FOLDER_PATH "./ressources/saves/"
 
     void addSavePath(std::vector<std::string>& savePaths, const char* path);
 
@@ -38,8 +39,6 @@ namespace Engine::Ressources::Save
     Engine::Ressources::GameObject& loadPrefab(GameObject& parent, Engine::Core::Maths::Vec3 position , std::string prefabName);
 
     Engine::Ressources::GameObject& initEntity(Engine::Ressources::GameObject& parent, xml_node<>* node);
-
-
 } 
 
 

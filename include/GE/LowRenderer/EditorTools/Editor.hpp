@@ -5,6 +5,8 @@
 #ifndef __EDITOR_HPP__
 #define __EDITOR_HPP__
 
+#include "GE/GE.hpp"
+#include "GE/Ressources/scene.hpp"
 #include "GE/LowRenderer/EditorTools/SceneGraphWindow.hpp"
 
 namespace Engine::LowRenderer::EditorTools
@@ -18,6 +20,9 @@ namespace Engine::LowRenderer::EditorTools
 
     static bool _enable;
 
+    static void quickSaveSceneOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
+    static void saveSceneAsOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
+    static void loadSceneOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
     static void updateInput();
 
     public:
@@ -35,7 +40,7 @@ namespace Engine::LowRenderer::EditorTools
 
 #pragma region methods
 
-    static void update(Engine::Core::DataStructure::Graph& graph);
+    static void update(Engine::Ressources::Scene& scene, Engine::GE& engine);
 
 #pragma endregion //!methods
 

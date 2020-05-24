@@ -126,7 +126,7 @@ void Demo::update() noexcept
     }
 
 #ifndef DNEDITOR
-    Editor::update(*scene_);
+    Editor::update(*scene_, gameEngine_);
 #endif
 }
 
