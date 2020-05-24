@@ -12,8 +12,6 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Ressources::Save;
 using namespace Engine::Core::InputSystem;
 
-Ressources::t_RessourcesManager* GE::currentRessourceManager_;
-
 GE::GE ()
 {
     //init Log
@@ -35,8 +33,6 @@ GE::GE ()
     gameState = E_GAME_STATE::STARTING;
 
     initSavePaths(savePaths, "./ressources/saves/LevelPaths");
-
-    currentRessourceManager_ = &ressourceManager_;
 }
 
 GE::~GE ()

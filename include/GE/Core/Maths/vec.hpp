@@ -110,6 +110,9 @@ namespace Engine::Core::Maths
 		friend void operator>>(::std::istream& in, Vec2& vec);
 		friend ::std::ostream& operator<<(::std::ostream& out, const Vec2& vec);
 
+		static Vec2 zero;
+		static Vec2 one;
+
 		union 
 		{
 			struct {float x, y;};
@@ -190,6 +193,7 @@ namespace Engine::Core::Maths
 		/* operator */
 		/*----------*/
 
+		explicit operator Vec2 (); //static_cast<Vec2>
 		Vec3& 	operator++	();
 		Vec3 	operator++	(int);
 		Vec3& 	operator--	();

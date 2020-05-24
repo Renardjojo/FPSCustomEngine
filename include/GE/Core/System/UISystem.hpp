@@ -16,6 +16,7 @@ namespace Engine::Core::System
 
     protected:
         static std::vector<Engine::Ressources::Button *> pButtons;
+        static std::vector<Engine::Ressources::Image *> pImages;
         static std::vector<Engine::Ressources::TextField *> pTextFields;
         static std::vector<Engine::Ressources::Title *> pTitles;
 
@@ -110,6 +111,35 @@ namespace Engine::Core::System
                 if ((*it) == pTitle)
                 {
                     pTitles.erase(it);
+                    return;
+                }
+            }
+        }
+
+        static void addImage(Engine::Ressources::Image *pImage) noexcept
+        {
+            pImages.push_back(pImage);
+        }
+
+        static void updateButtonPointor(Engine::Ressources::Image *newPointorImage, Engine::Ressources::Image *exPointorImage) noexcept
+        {
+            for (std::vector<Engine::Ressources::Image *>::iterator it = pImages.begin(); it != pImages.end(); it++)
+            {
+                if ((*it) == exPointorImage)
+                {
+                    *it = newPointorImage;
+                    return;
+                }
+            }
+        }
+
+        static void removeImage(Engine::Ressources::Image *pImage) noexcept
+        {
+            for (std::vector<Engine::Ressources::Image *>::iterator it = pImages.begin(); it != pImages.end(); it++)
+            {
+                if ((*it) == pImage)
+                {
+                    pImages.erase(it);
                     return;
                 }
             }

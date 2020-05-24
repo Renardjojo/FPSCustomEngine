@@ -9,6 +9,7 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Core::InputSystem;
 
 std::vector<Button *> UISystem::pButtons;
+std::vector<Image *> UISystem::pImages;
 std::vector<TextField *> UISystem::pTextFields;
 std::vector<Title *> UISystem::pTitles;
 TextField *UISystem::pActiveTextfield;
@@ -141,6 +142,12 @@ void UISystem::draw(Engine::GE &gameEngine) noexcept
         if (!button->isActive || button->whenIsActive != gameEngine.gameState)
             continue;
         button->draw();
+    }
+    for (Image *img : pImages)
+    {
+        if (!img->isActive || img->whenIsActive != gameEngine.gameState)
+            continue;
+        img->draw();
     }
     for (TextField *textField : pTextFields)
     {

@@ -62,9 +62,6 @@ namespace Game
 
             Engine::Ressources::GameObject* sunLight;
             Engine::Ressources::GameObject* enemiesContener;
-            /*Engine::Core::Maths::Vec3 dirPlayer1;
-            Engine::Ressources::GameObject* player1;
-            Engine::Ressources::GameObject* player2;*/
 
             float testLifePLayer = 100.f;
 
@@ -84,6 +81,7 @@ namespace Game
             void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadATH                (Engine::Ressources::t_RessourcesManager &ressourceManager);    
             void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             ();
 
