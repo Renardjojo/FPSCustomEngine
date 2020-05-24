@@ -35,7 +35,6 @@ using namespace Engine::Core::Debug;
 void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths, const char *path)
 {
     std::string head;
-
     std::ifstream file(path);
 
     if (!file.is_open())
@@ -44,10 +43,8 @@ void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths
         return;
     }
 
-    while (file.good())
+    while (std::getline(file, head))
     {
-        file >> head;
-
         savePaths.push_back(head);
     }
 
@@ -111,6 +108,7 @@ Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject&
 
     return initEntity(parent, node);
 }
+
 Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, Vec3 position, std::string prefabName)
 {
     GameObject& toReturn = loadPrefab(parent, prefabName);

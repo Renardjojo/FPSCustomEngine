@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string>
 #include <utility>
+#include <typeinfo>
 #include "GE/Core/Debug/log.hpp"
 
 #include "GE/Ressources/ui.hpp"
@@ -55,7 +56,7 @@ namespace Engine::Ressources
             auto it = ressource_.find(key);
             if (it == ressource_.end())
             {
-                Engine::Core::Debug::SLog::logError(std::string("ressource not found with key : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("Resource not found with key : ") + key + " . Resource type : " + typeid(LType).name());
                 exit(1);    
             }
 
@@ -79,7 +80,7 @@ namespace Engine::Ressources
 
             if (rst.second == false)
             {
-                Engine::Core::Debug::SLog::logError(std::string("ressource insert with same key as an element existing : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("ressource insert with same key as an element existing : ") + key + ". Resource type : " + typeid(LType).name());
                 exit(1);
             }
 

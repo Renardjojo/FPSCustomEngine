@@ -31,7 +31,6 @@ void Editor::updateInput()
     }
 }
 
-
 void Editor::quickSaveSceneOption(Scene& scene, GE& engine)
 {
     if (ImGui::MenuItem("Save scene", "CTRL+S"))
@@ -40,6 +39,7 @@ void Editor::quickSaveSceneOption(Scene& scene, GE& engine)
         savePath += "QuickSave";
         savePath += std::to_string(engine.savePaths.size());
         savePath += ".xml";
+
         saveScene(scene, engine, savePath.c_str());
     }
 }

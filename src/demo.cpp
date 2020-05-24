@@ -661,6 +661,11 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     std::string shortSaveName;
 
     for (std::string &saves : gameEngine_.savePaths)
+    {    
+        std::cout << saves<< std::endl;
+    }
+
+    for (std::string &saves : gameEngine_.savePaths)
     {
         if (saves.size() < 23) // TODO: assert
             return;
