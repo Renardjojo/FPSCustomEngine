@@ -71,7 +71,6 @@ void PhysicSystem::update() noexcept
                     Intersection intersection;
                     Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->getVelocity() / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime();
 
-                    //std::cout << dynamic_cast<SphereCollider*>(collider1)->GetSphere().getGlobalSphere().getCenter()<< std::endl;
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                         vectSpeed, intersection))
@@ -119,14 +118,20 @@ bool ifCollisionAffectPhysicalObject(bool collision, PhysicalObject* physicalObj
     return false;
 }
 
-void keepNearestGameObject(GameObject*& currentGameObjectHit, float& firstIntersectionDistance, const Vec3& newIntersection, GameObject* newGameObjectHit, const Vec3& rayOrigine)
+void keepNearestGameObject( GameObject*& currentGameObjectHit, 
+                            Intersection& currentIntersection,
+                            float& firstIntersectionDistance, 
+                            const Intersection& newIntersection,
+                            GameObject* newGameObjectHit, 
+                            const Vec3& rayOrigine)
 {
-    float newIntersectionWithRayOrigineDist = (newIntersection - rayOrigine).length();
-    
+    float newIntersectionWithRayOrigineDist = (newIntersection.intersection1 - rayOrigine).length();
+
     if (newIntersectionWithRayOrigineDist < firstIntersectionDistance)
     {
         currentGameObjectHit = newGameObjectHit;
         firstIntersectionDistance = newIntersectionWithRayOrigineDist;
+        currentIntersection = newIntersection;
     }
 }
 
@@ -135,15 +140,16 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
     bool collisionHappend               = false;
     GameObject* currentGameObjectHit    = nullptr;
     float firstIntersectionDistance     = std::numeric_limits<float>().max();
+    Intersection newIntersection;
 
     for (Collider* collider : pColliders)
     {
         AABBCollider* aabbColliderPtr = dynamic_cast<AABBCollider*>(collider);
         if (aabbColliderPtr != nullptr)
         {
-            if(SegmentAABB::isSegmentAABBCollided(ray, aabbColliderPtr->getGlobalAABB(), rayHitInfo.intersectionsInfo))
+            if(SegmentAABB::isSegmentAABBCollided(ray, aabbColliderPtr->getGlobalAABB(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &aabbColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo,  firstIntersectionDistance, newIntersection, &aabbColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -152,9 +158,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         SphereCollider* sphereColliderPtr = dynamic_cast<SphereCollider*>(collider);
         if (sphereColliderPtr != nullptr)
         {
-            if (SegmentSphere::isSegmentSphereCollided(ray, sphereColliderPtr->getGlobalSphere(), rayHitInfo.intersectionsInfo))
+            if (SegmentSphere::isSegmentSphereCollided(ray, sphereColliderPtr->getGlobalSphere(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &sphereColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &sphereColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -163,9 +169,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         OrientedBoxCollider* orientedBoxColliderPtr = dynamic_cast<OrientedBoxCollider*>(collider);
         if (orientedBoxColliderPtr != nullptr)
         {
-            if (SegmentOrientedBox::isSegmentOrientedBoxCollided(ray, orientedBoxColliderPtr->getGlobalOrientedBox(), rayHitInfo.intersectionsInfo))
+            if (SegmentOrientedBox::isSegmentOrientedBoxCollided(ray, orientedBoxColliderPtr->getGlobalOrientedBox(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &orientedBoxColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &orientedBoxColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -174,9 +180,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         PlaneCollider* planeColliderPtr = dynamic_cast<PlaneCollider*>(collider);
         if (planeColliderPtr != nullptr)
         {
-            if (SegmentPlane::isSegmentPlaneCollided(ray, planeColliderPtr->getGlobalPlane(), rayHitInfo.intersectionsInfo))
+            if (SegmentPlane::isSegmentPlaneCollided(ray, planeColliderPtr->getGlobalPlane(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &planeColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &planeColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -185,9 +191,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         QuadCollider* quadColliderPtr = dynamic_cast<QuadCollider*>(collider);
         if (quadColliderPtr != nullptr)
         {
-            if (SegmentQuad::isSegmentQuadCollided(ray, quadColliderPtr->getGlobalQuad(), rayHitInfo.intersectionsInfo))
+            if (SegmentQuad::isSegmentQuadCollided(ray, quadColliderPtr->getGlobalQuad(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &quadColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &quadColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -196,9 +202,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         CapsuleCollider* capsuleColliderPtr = dynamic_cast<CapsuleCollider*>(collider);
         if (capsuleColliderPtr != nullptr)
         {
-            if (SegmentCapsule::isSegmentCapsuleCollided(ray, capsuleColliderPtr->getGlobalCapsule(), rayHitInfo.intersectionsInfo))
+            if (SegmentCapsule::isSegmentCapsuleCollided(ray, capsuleColliderPtr->getGlobalCapsule(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &capsuleColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &capsuleColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -207,9 +213,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         InfiniteCylinderCollider* infiniteCylinderColliderPtr = dynamic_cast<InfiniteCylinderCollider*>(collider);
         if (infiniteCylinderColliderPtr != nullptr)
         {
-            if (SegmentInfiniteCylinder::isSegmentInfiniteCylinderCollided(ray, infiniteCylinderColliderPtr->getGlobalInfiniteCylinder(), rayHitInfo.intersectionsInfo))
+            if (SegmentInfiniteCylinder::isSegmentInfiniteCylinderCollided(ray, infiniteCylinderColliderPtr->getGlobalInfiniteCylinder(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &infiniteCylinderColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &infiniteCylinderColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
@@ -218,9 +224,9 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
         CylinderCollider* cylinderColliderPtr = dynamic_cast<CylinderCollider*>(collider);
         if (cylinderColliderPtr != nullptr)
         {
-            if (SegmentCylinder::isSegmentCylinderCollided(ray, cylinderColliderPtr->getGlobalCylinder(), rayHitInfo.intersectionsInfo))
+            if (SegmentCylinder::isSegmentCylinderCollided(ray, cylinderColliderPtr->getGlobalCylinder(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, firstIntersectionDistance, rayHitInfo.intersectionsInfo.intersection1, &cylinderColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &cylinderColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;

@@ -857,16 +857,16 @@ Vec3 	Mat4::getVectorForward() 	const
 inline
 void 	Mat4::setVectorUp(const Vec3& newUp)
 {
-	mat[9] = newUp.x;
+	mat[4] = newUp.x;
 	mat[5] = newUp.y;
-	mat[1] = newUp.z;
+	mat[6] = newUp.z;
 }
 
 inline 
 void 	Mat4::setVectorRight(const Vec3& newRight) 
 {
-	mat[10] = newRight.x;
-	mat[6] = newRight.y;
+	mat[0] = newRight.x;
+	mat[1] = newRight.y;
 	mat[2] = newRight.z;
 }
 
@@ -874,8 +874,8 @@ inline
 void 	Mat4::setVectorForward(const Vec3& newForward)
 {
 	mat[8] = newForward.x;
-	mat[4] = newForward.y;
-	mat[0] = newForward.z;
+	mat[9] = newForward.y;
+	mat[10] = newForward.z;
 }
 
 inline

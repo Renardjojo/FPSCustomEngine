@@ -8,7 +8,6 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
-#include "GE/Ressources/ressourcesManager.hpp"
 
 namespace Game
 {
@@ -24,7 +23,7 @@ namespace Game
     private:
         Engine::Physics::PhysicalObject *_physics;
         float _mouseSpeed{1.f};
-        float _playerForce{100.f};
+        float _playerForce{10.f};
         float _playerMaxSpeed{10.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
@@ -34,7 +33,6 @@ namespace Game
         CameraType _type{CameraType::FirstPerson};
 
         Engine::LowRenderer::Camera *_camera;
-        Engine::Ressources::t_RessourcesManager& _ressource;
 
         Engine::Core::Maths::Vec3 _movement{0.f, 0.f, 0.f};
         Engine::Core::Maths::Vec3 _direction{0.f, 0.f, 0.f};
@@ -47,7 +45,7 @@ namespace Game
         void shoot();
 
     public:
-        PlayerController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::t_RessourcesManager& ressource);
+        PlayerController(Engine::Ressources::GameObject &gameObject);
         virtual ~PlayerController() = default;
 
         void setCameraType(CameraType type);

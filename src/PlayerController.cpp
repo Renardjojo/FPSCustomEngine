@@ -8,6 +8,8 @@
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
 #include <math.h>
 #include <algorithm>
 
@@ -24,11 +26,10 @@ using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::Maths::ShapeRelation;
 using namespace Engine::LowRenderer;
 
-PlayerController::PlayerController(GameObject &_gameObject,  t_RessourcesManager& ressource)
+PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-    _camera{Camera::getCamUse()},
-    _ressource{ressource}
-    {}
+    _camera{Camera::getCamUse()}
+{}
 
 
 void PlayerController::start()
@@ -64,17 +65,16 @@ void PlayerController::shoot()
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg      modelDecaleGOPref   {&_ressource.get<Shader>("TextureOnly"), 
-                                                {&_ressource.get<Material>("BulletHole")}, 
-                                                &_ressource.get<Mesh>("Plane"),
+        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
+                                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")}, 
+                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                                 "TextureOnly", 
                                                 {"BulletHole"}, 
                                                 "Plane"};
 
-
-        ModelCreateArg modelArg3{&_ressource.get<Shader>("Color"),
-                                {&_ressource.get<Material>("RedMaterial")},
-                                &_ressource.get<Mesh>("Plane")};
+        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
+                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane")};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -140,7 +140,7 @@ void PlayerController::camera()
     }
 
     //Camera orbit
-    Vec3 coordinates = cylindricalCoord(15.f, _orbit.y) + _gameObject.getPosition();
+    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();

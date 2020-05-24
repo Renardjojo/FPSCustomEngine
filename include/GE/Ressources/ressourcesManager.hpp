@@ -150,20 +150,61 @@ namespace Engine::Ressources
             }
 
             #pragma endregion //!mutator
-/*
-            void use () noexcept;
-
-            static RessourcesManager<LType, RType...>* getRessourceManagerUse() noexcept;*/
 
         protected:
-
-           // static RessourcesManager<LType, RType...>* ressourceManagerToUse; //pointor to be in nullptr by default
 
         private:
 
     };
 
-    typedef RessourcesManager<  Engine::Ressources::Mesh,
+    template<class LType, class... RType>
+    class RessourcesManagerWithGlobalUsage 
+        : public RessourcesManager<LType, RType...>
+    {
+        public:
+
+            #pragma region constructor/destructor
+
+            RessourcesManagerWithGlobalUsage ()                                = default;
+            RessourcesManagerWithGlobalUsage (const RessourcesManagerWithGlobalUsage& other)  = delete;
+            RessourcesManagerWithGlobalUsage (RessourcesManagerWithGlobalUsage&& other)       = default;
+            ~RessourcesManagerWithGlobalUsage ()                               = default;
+
+            #pragma endregion //!constructor/destructor
+
+            #pragma region methods
+            #pragma endregion //!methods
+
+            #pragma region accessor
+
+            void use () noexcept;
+
+            static RessourcesManagerWithGlobalUsage<LType, RType...>* getRessourceManagerUse() noexcept;
+
+        protected:
+
+        static RessourcesManagerWithGlobalUsage<LType, RType...>* ressourceManagerToUse; //pointor to be in nullptr by default
+
+        private:
+
+    };
+
+    template<class LType, class... RType>
+    RessourcesManagerWithGlobalUsage<LType, RType...>* RessourcesManagerWithGlobalUsage<LType, RType...>::ressourceManagerToUse {nullptr};
+
+    template<class LType, class... RType>
+    RessourcesManagerWithGlobalUsage<LType, RType...>* RessourcesManagerWithGlobalUsage<LType, RType...>::getRessourceManagerUse() noexcept
+    { 
+        return ressourceManagerToUse; 
+    }
+
+    template<class LType, class... RType>
+    void RessourcesManagerWithGlobalUsage<LType, RType...>::use () noexcept
+    {
+        ressourceManagerToUse = this;
+    }
+
+    typedef RessourcesManagerWithGlobalUsage<  Engine::Ressources::Mesh,
                                 Engine::Ressources::Shader,
                                 Engine::Ressources::Material,
                                 Engine::Ressources::Text,
@@ -175,6 +216,7 @@ namespace Engine::Ressources
                                 Engine::Ressources::Button,
                                 Engine::Ressources::Image,
                                 Engine::Ressources::TextField> t_RessourcesManager;
+
 
 }// namespaceEngine::Ressources
 

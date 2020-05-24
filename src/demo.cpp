@@ -75,8 +75,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
     scene_ = std::make_unique<Scene>();
     scene_->use();
-
-    // TimeSystem::setTimeScale(0.3f);
+    gameEngine_.ressourceManager_.use();
 
     loadRessources(gameEngine_.ressourceManager_);
 
@@ -319,7 +318,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "Sphere"};
 
 
-    player.addComponent<PlayerController>(ressourceManager);
+    player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
@@ -731,6 +730,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
                                                crosshairSize,
                                                E_GAME_STATE::RUNNING);
 }
+
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
     enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});

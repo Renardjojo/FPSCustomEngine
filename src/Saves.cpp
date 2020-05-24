@@ -226,7 +226,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             params.push_back(std::make_unique<std::string>(attr->value()));
 
         if (type.compare("Model") == 0)
-            parent.addComponent<Model>(params, *Engine::GE::currentRessourceManager_);
+            parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
             parent.addComponent<PhysicalObject>();
         else if (type.compare("OrientedBoxCollider") == 0)
@@ -234,7 +234,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         else if (type.compare("SphereCollider") == 0)
             parent.addComponent<SphereCollider>();
         else if (type.compare("PlayerController") == 0)
-            parent.addComponent<PlayerController>(gameEngine.ressourceManager_);
+            parent.addComponent<PlayerController>();
         else if (type.compare("DirectionnalLight") == 0)
             parent.addComponent<DirectionnalLight>(params).enable(true);
         else if (type.compare("PointLight") == 0)
