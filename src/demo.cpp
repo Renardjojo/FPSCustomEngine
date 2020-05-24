@@ -270,13 +270,40 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                {&ressourceManager.get<Material>("PinkMaterial")},
-                               &ressourceManager.get<Mesh>("Sphere"),
+                               &ressourceManager.get<Mesh>("Cube"),
                                "ColorWithLight",
                                {"PinkMaterial"},
-                               "Sphere"};
+                               "Cube"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
+
+   GameObjectCreateArg ReticuleGameObject{"Z",
+                                         {{0.f, 0.f, 0.f},
+                                          {0.f, 0.f, 0.f},
+                                          {0.2f, 0.2f, 0.2f}}};
+
+    ModelCreateArg ReticuleModel{&ressourceManager.get<Shader>("ColorWithLight"),
+                               {&ressourceManager.get<Material>("BlueMaterial")},
+                               &ressourceManager.get<Mesh>("Sphere"),
+                               "ColorWithLight",
+                               {"RedMaterial"},
+                               "Sphere"};
+/*
+    GameObject &ReticuleX = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleX.addComponent<Model>(ReticuleModel); 
+
+    ReticuleGameObject.name = "Y";
+    ReticuleModel.pMaterials = {&ressourceManager.get<Material>("GreenMaterial")};
+
+    GameObject &ReticuleY = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleY.addComponent<Model>(ReticuleModel); 
+
+    ReticuleGameObject.name = "X";
+    ReticuleModel.pMaterials = {&ressourceManager.get<Material>("RedMaterial")};
+
+    GameObject &ReticuleZ = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    ReticuleZ.addComponent<Model>(ReticuleModel);*/
 
     /*Add life bar on player*/
     GameObjectCreateArg lifeBarGameObject{"lifeBar",
@@ -286,10 +313,11 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     ModelCreateArg billBoardArg{&ressourceManager.get<Shader>("Color"),
                                 {&ressourceManager.get<Material>("GreenMaterial")},
-                                &ressourceManager.get<Mesh>("Cube"),
+                                &ressourceManager.get<Mesh>("Sphere"),
                                 "Color",
                                 {"GreenMaterial"},
-                                "Cube"};
+                                "Sphere"};
+
 
     player.addComponent<PlayerController>(ressourceManager);
     player.addComponent<PhysicalObject>();
@@ -744,7 +772,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     particalArg.scale = {0.1, 0.1, 0.1};
 
     GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
-    particleGO.addComponent<ParticuleGenerator>(particalArg);
+    //particleGO.addComponent<ParticuleGenerator>(particalArg);
     particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
@@ -752,7 +780,12 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
 void Demo::updateControl()
 {
-    testLifePLayer -= 0.1;
+    /* Draw player referential
+    float dist = 5.f;
+    scene_->getGameObject("Z").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecForward());
+    scene_->getGameObject("Y").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecUp());
+    scene_->getGameObject("X").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecRight());
+    */
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
     {

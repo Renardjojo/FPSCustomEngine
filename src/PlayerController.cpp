@@ -126,12 +126,12 @@ void PlayerController::camera()
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
 
+    _orbit.y = fmod(_orbit.y, M_PI * 2);
+    _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
+    _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
+
     if (_type == CameraType::FirstPerson)
     {
-        _orbit.y = fmod(_orbit.y, M_PI * 2);
-        _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
-
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
@@ -140,7 +140,7 @@ void PlayerController::camera()
     }
 
     //Camera orbit
-    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
+    Vec3 coordinates = cylindricalCoord(15.f, _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
     _camera->update();
