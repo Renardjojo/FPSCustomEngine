@@ -12,8 +12,8 @@ using namespace Engine::Core::Maths::ShapeRelation;
 bool SegmentOrientedBox::isSegmentOrientedBoxCollided(const Segment& seg, const OrientedBox& orientedBox, Intersection& intersection)
 {
     /*Transform the segment from global referential to the local referential of the oriented box*/
-    Segment localSegment { Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt1()),
-                                    Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt2())};
+    Segment localSegment {  Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt1()),
+                            Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt2())};
 
     AABB orientedBoxAxisAligned {Referential::globalToLocalPosition(orientedBox.getReferential(), orientedBox.getReferential().origin), orientedBox.getExtI(), orientedBox.getExtJ(), orientedBox.getExtK()};
 

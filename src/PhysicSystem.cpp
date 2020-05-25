@@ -70,29 +70,37 @@ void PhysicSystem::update() noexcept
                 if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
                 {
                     Intersection intersection;
-                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->getVelocity() / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime();
-                    Vec3 AB = collider1->GetAttachedPhysicalObject()->getVelocity();
+                    Vec3 AB = (collider1->GetAttachedPhysicalObject()->getVelocity() * TimeSystem::getFixedDeltaTime());
+                    //Vec3 AB = collider1->GetAttachedPhysicalObject()->getVelocity();
 
+                    std::cout << std::endl << "pos : " << collider1->getGameObject().getPosition() << " " << AB << "   " << AB.length() << std::endl;
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                         AB, intersection))
                     {
+                        if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
+                        {
+                            //TODO: if B is just on the border of the box, it return infinit possibility. To optimize ! 
+                            AB -= AB.getNormalize() * 10.f;
+                            MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
+                            AB, intersection);
+                        }
+
+                        Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
                         Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
                         Vec3 OB = OA + AB;
+                        float ABLength = AB.length();
+                        float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
+                        float tAP = 1.f - tPB;
+                        Vec3 atBeginVelocity = collider1->GetAttachedPhysicalObject()->getVelocity() - gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime();
+                        Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
+                        Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
+                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness() + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
+                        Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
 
-                        float tIB = (OB - intersection.intersection1).length() / AB.length();
-
-                        /*Apply gravity on the vector AI*/
-                        Vec3 velocityAfterCollision = collider1->GetAttachedPhysicalObject()->getVelocity() * tIB;
-                       
-                        Vec3 newVelocity = collider1->getBounciness() * -(2.f * (velocityAfterCollision.dotProduct(intersection.normalI1)) * intersection.normalI1 - velocityAfterCollision);
-                    
-                        /*Apply correction to avoid block inclusion*/
-                        std::cout << newVelocity << "   " << newVelocity.length() <<  std::endl;
-
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + newVelocity + newVelocity.getNormalize() * 0.0001f);
-
-                        collider1->GetAttachedPhysicalObject()->setVelocity(newVelocity );
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition);
+                        collider1->GetAttachedPhysicalObject()->setVelocity(afterCollisionVelocity);
+                        collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
                         HitInfo hitInfo1{intersection, &collider2->getGameObject()};
                         HitInfo hitInfo2{intersection, &collider1->getGameObject()};
@@ -104,14 +112,16 @@ void PhysicSystem::update() noexcept
             }
         }
     }
+    /*TODO: If object collied with another object, we apply two time the displacement. Use isDirty flag*/
 
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
             continue;
         
         /*update movement induct by the differente force on the object*/
-        object->getGameObject().translate((object->getVelocity() / object->getMass()) * TimeSystem::getFixedDeltaTime());
+        object->getGameObject().translate(object->getVelocity() * TimeSystem::getFixedDeltaTime());
+        //std::cout << object->getGameObject().getName() << "  " << object->getVelocity() << "    " <<  object->getGameObject().getPosition() <<std::endl;
     }
 }
 
