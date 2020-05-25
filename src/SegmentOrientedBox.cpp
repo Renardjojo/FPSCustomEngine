@@ -14,6 +14,7 @@ bool SegmentOrientedBox::isSegmentOrientedBoxCollided(const Segment& seg, const 
     /*Transform the segment from global referential to the local referential of the oriented box*/
     Segment localSegment {  Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt1()),
                             Referential::globalToLocalPosition(orientedBox.getReferential(), seg.getPt2())};
+                            
 
     AABB orientedBoxAxisAligned {Referential::globalToLocalPosition(orientedBox.getReferential(), orientedBox.getReferential().origin), orientedBox.getExtI(), orientedBox.getExtJ(), orientedBox.getExtK()};
 

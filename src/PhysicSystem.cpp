@@ -71,16 +71,14 @@ void PhysicSystem::update() noexcept
                 {
                     Intersection intersection;
                     Vec3 AB = (collider1->GetAttachedPhysicalObject()->getVelocity() * TimeSystem::getFixedDeltaTime());
-                    //Vec3 AB = collider1->GetAttachedPhysicalObject()->getVelocity();
 
-                    std::cout << std::endl << "pos : " << collider1->getGameObject().getPosition() << " " << AB << "   " << AB.length() << std::endl;
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                         AB, intersection))
                     {
                         if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
                         {
-                            //TODO: if B is just on the border of the box, it return infinit possibility. To optimize ! 
+                            /*If error happend and the point is inside the box, try to escape to it*/
                             AB -= AB.getNormalize() * 10.f;
                             MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                             AB, intersection);
@@ -95,16 +93,25 @@ void PhysicSystem::update() noexcept
                         Vec3 atBeginVelocity = collider1->GetAttachedPhysicalObject()->getVelocity() - gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime();
                         Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
                         Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
-                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness() + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
+                        Vec3 gravityAfterCollision = gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
+                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness();
+                        
+                        /*Check if the gravity is upper than velocity.*/
+                        if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(gravity) < std::numeric_limits<float>::epsilon())
+                        {
+                            afterCollisionVelocity += gravityAfterCollision;
+                        }
+
+                        //Vec3 newVelocity = gravityAfterCollision.length() > afterCollisionVelocity.length() ? afterCollisionVelocity + gravityAfterCollision : Vec3{};
                         Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
 
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition);
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition + intersection.normalI1 * 0.0001f);
                         collider1->GetAttachedPhysicalObject()->setVelocity(afterCollisionVelocity);
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
+                        /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
                         HitInfo hitInfo1{intersection, &collider2->getGameObject()};
                         HitInfo hitInfo2{intersection, &collider1->getGameObject()};
-
                         collider1->OnCollisionEnter(hitInfo1);
                         collider2->OnCollisionEnter(hitInfo2);
                     }

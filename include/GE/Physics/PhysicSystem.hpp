@@ -137,6 +137,12 @@ namespace Engine::Physics
         bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept;
         */
 
+        static 
+        const Engine::Core::Maths::Vec3& getGravity() noexcept { return gravity;}
+
+        static
+        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = gravity;}
+
         #pragma endregion //!mutator
 
         #pragma region operator

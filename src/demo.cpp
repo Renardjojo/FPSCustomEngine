@@ -217,62 +217,62 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg cubeGameObject{"cube1",
-                                       {{-0.7f, -5.f, 0.f},
-                                        {0.f, 0.f, 45.f},
-                                        {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cubeGameObject{"cube1",
+    //                                    {{-0.7f, -5.f, 0.f},
+    //                                     {0.f, 0.f, 45.f},
+    //                                     {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube1arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            {&ressourceManager.get<Material>("PinkMaterial")},
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            {"PinkMaterial"},
-                            "Cube"};
+    // ModelCreateArg cube1arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         {&ressourceManager.get<Material>("PinkMaterial")},
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         {"PinkMaterial"},
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
+    // scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-    GameObjectCreateArg cube2GameObject{"cube2",
-                                        {{-5.f, -10.f, 0.f},
-                                         {0.f, 0.f, -45.f},
-                                         {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cube2GameObject{"cube2",
+    //                                     {{-5.f, -10.f, 0.f},
+    //                                      {0.f, 0.f, -45.f},
+    //                                      {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube2arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            {&ressourceManager.get<Material>("DefaultMaterial")},
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            {"DefaultMaterial"},
-                            "Cube"};
+    // ModelCreateArg cube2arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         {&ressourceManager.get<Material>("DefaultMaterial")},
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         {"DefaultMaterial"},
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
+    // scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
-    GameObjectCreateArg cube3GameObject{"cube3",
-                                        {{0.f, -11.f, 0.f},
-                                         {0.f, 0.f, 45.f},
-                                         {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cube3GameObject{"cube3",
+    //                                     {{0.f, -11.f, 0.f},
+    //                                      {0.f, 0.f, 45.f},
+    //                                      {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube3arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            {&ressourceManager.get<Material>("DefaultMaterial")},
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            {"DefaultMaterial"},
-                            "Cube"};
+    // ModelCreateArg cube3arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         {&ressourceManager.get<Material>("DefaultMaterial")},
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         {"DefaultMaterial"},
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
+    // scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg playerGameObject{"Player",
-                                         {{0.f, 0.f, 0.f},
+                                         {{0.f, -15.f, 0.f},
                                           {0.f, 0.f, 0.f},
                                           {1.0f, 1.0f, 1.0f}}};
 
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                {&ressourceManager.get<Material>("PinkMaterial")},
-                               &ressourceManager.get<Mesh>("Cube"),
+                               &ressourceManager.get<Mesh>("Sphere"),
                                "ColorWithLight",
                                {"PinkMaterial"},
-                               "Cube"};
+                               "Sphere"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
@@ -322,7 +322,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->setBounciness(0.4f);
+    player.getComponent<SphereCollider>()->setBounciness(0.5f);
 }
 
 void Demo::loadSkyBox(t_RessourcesManager &ressourceManager)
@@ -361,7 +361,7 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg groundArgGameObject{"Ground",
                                             {{0.f, -20.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {50.f, 0.1f, 50.f}}};
+                                             {50.f, 1.f, 50.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("TextureOnly"),
                              {&ressourceManager.get<Material>("materialGround")},
@@ -372,7 +372,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
                              true,
                              false};
 
-    scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject).addComponent<Model>(groundArg);
+    GameObject& ground = scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject);
+    ground.addComponent<Model>(groundArg);
+    ground.setTag("Ground");
     scene_->getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
 }
 
