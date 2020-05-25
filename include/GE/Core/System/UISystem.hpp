@@ -19,6 +19,8 @@ namespace Engine::Core::System
         static std::vector<Engine::Ressources::Image *> pImages;
         static std::vector<Engine::Ressources::TextField *> pTextFields;
         static std::vector<Engine::Ressources::Title *> pTitles;
+        static std::vector<Engine::Ressources::ReferencedTitle*> pReferencedTitles;
+
 
         static Engine::Ressources::TextField *pActiveTextfield;
 
@@ -111,6 +113,23 @@ namespace Engine::Core::System
                 if ((*it) == pTitle)
                 {
                     pTitles.erase(it);
+                    return;
+                }
+            }
+        }
+
+        static void addReferencedTitle(Engine::Ressources::ReferencedTitle *pReferencedTitle) noexcept
+        {
+            pReferencedTitles.push_back(pReferencedTitle);
+        }
+
+        static void removeReferencedTitle(Engine::Ressources::ReferencedTitle *pReferencedTitle) noexcept
+        {
+            for (std::vector<Engine::Ressources::ReferencedTitle *>::iterator it = pReferencedTitles.begin(); it != pReferencedTitles.end(); it++)
+            {
+                if ((*it) == pReferencedTitle)
+                {
+                    pReferencedTitles.erase(it);
                     return;
                 }
             }

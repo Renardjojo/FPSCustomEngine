@@ -31,7 +31,7 @@ namespace Engine::Ressources::Save
 
     void initSavePaths(std::vector<std::string>& savePaths, const char* path);
 
-    void setupScene(Engine::Ressources::Scene& scene, Engine::GE& gameEngine, const char* filePath);
+    void setupScene(Engine::Ressources::Scene& scene, const char* filePath);
 
     Engine::Ressources::GameObject& loadPrefab(GameObject& parent, std::string prefabName);
 

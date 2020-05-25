@@ -118,7 +118,6 @@ void Demo::update() noexcept
 {
     UISystem::update(gameEngine_);
     updateControl();
-
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         scene_->update();
@@ -475,7 +474,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     int tempX = gameEngine_.getWinSize().width / 2.0f;
     int tempY = gameEngine_.getWinSize().heigth / 2.0f;
 
+
 #pragma region Start
+
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader,
                                  tempX - 90, tempY - 200,
                                  200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
@@ -487,6 +488,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         SDL_ShowCursor(false);
         SDL_SetRelativeMouseMode(SDL_TRUE);
     };
+
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader,
                                  tempX - 95, tempY - 100,
@@ -632,7 +634,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  tempX + 50, tempY + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
-        .function = [&]() {
+        .function = [&]() 
+        {
         SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
@@ -643,8 +646,50 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
+    ressourceManager.add<Button>("OptionSwitchButton", pfont, buttonShader,
+                                 tempX - 45, tempY + 200,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
+                                 E_GAME_STATE::OPTION)
+    .function = [&]() 
+    {
+        Button* switchButton = &ressourceManager.get<Button>("OptionSwitchButton");
+        Button* upButton = &ressourceManager.get<Button>("OptionForwardButton");
+        Button* downButton = &ressourceManager.get<Button>("OptionBackwardButton");
+        Button* rightButton = &ressourceManager.get<Button>("OptionRightButton");
+        Button* leftButton = &ressourceManager.get<Button>("OptionLeftButton");
+        if (switchButton->value.compare("WASD") == 0)
+        {
+            Input::keyboard.up = SDL_SCANCODE_Z;
+            Input::keyboard.down = SDL_SCANCODE_S;
+            Input::keyboard.right = SDL_SCANCODE_D;
+            Input::keyboard.left = SDL_SCANCODE_Q;
+            upButton->value = "Z";
+            downButton->value = "S";
+            rightButton->value = "D";
+            leftButton->value = "Q";
+            switchButton->value = "ZQSD";
+        }
+        else if (switchButton->value.compare("ZQSD") == 0)
+        {
+            Input::keyboard.up = SDL_SCANCODE_W;
+            Input::keyboard.down = SDL_SCANCODE_S;
+            Input::keyboard.right = SDL_SCANCODE_D;
+            Input::keyboard.left = SDL_SCANCODE_A;
+            upButton->value = "W";
+            downButton->value = "S";
+            rightButton->value = "D";
+            leftButton->value = "A";
+            switchButton->value = "WASD";
+        }
+        switchButton->updateTexture();
+        upButton->updateTexture();
+        downButton->updateTexture();
+        rightButton->updateTexture();
+        leftButton->updateTexture();
+    };
+
     ressourceManager.add<Button>("Return", pfont, buttonShader,
-                                 tempX - 50, tempY + 250,
+                                 tempX - 50, tempY + 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -676,7 +721,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             Light::resetLight();
             scene_.reset();
             scene_ = std::make_unique<Scene>();
-            setupScene(*scene_, gameEngine_, saves.c_str());
+            setupScene(*scene_, saves.c_str());
             mainCamera = &scene_->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);
@@ -721,7 +766,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
     Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
 
-    Image &image = ressourceManager.add<Image>("CrosshairImage",
+    ressourceManager.add<Image>("CrosshairImage",
                                                t_crosshair.getID(),
                                                imageShader,
                                                halfWidth - halfcrosshairSize,
@@ -758,7 +803,10 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
                             {&ressourceManager.get<Material>("GreenMaterial")},
-                            &ressourceManager.get<Mesh>("Plane")};
+                            &ressourceManager.get<Mesh>("Plane"),
+                            "Color",
+                            {"GreenMaterial"},
+                            "Plane"};
 
     ParticuleGenerator::ParticleSystemCreateArg particalArg;
     particalArg.modelCreateArg = modelArg3;

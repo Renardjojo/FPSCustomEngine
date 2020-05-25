@@ -44,11 +44,11 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
         pShader_                (arg.pShader),
         pMaterial_              (arg.pMaterials),
         pMesh_                  (arg.pMesh),
-        enableBackFaceCulling_  (arg.enableBackFaceCulling),
-        isOpaque_               (arg.isOpaque),
         shaderName_             (arg.shaderName),
         materialName_           (arg.materialName),
-        meshName_               (arg.meshName)
+        meshName_               (arg.meshName),
+        enableBackFaceCulling_  (arg.enableBackFaceCulling),
+        isOpaque_               (arg.isOpaque)
 {
     initTextureBufferWithMTLId();
 

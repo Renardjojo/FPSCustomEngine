@@ -204,6 +204,7 @@ namespace Engine::Ressources
         ressourceManagerToUse = this;
     }
 
+    
     typedef RessourcesManagerWithGlobalUsage<  Engine::Ressources::Mesh,
                                 Engine::Ressources::Shader,
                                 Engine::Ressources::Material,
@@ -215,7 +216,8 @@ namespace Engine::Ressources
                                 Engine::Ressources::Title,
                                 Engine::Ressources::Button,
                                 Engine::Ressources::Image,
-                                Engine::Ressources::TextField> t_RessourcesManager;
+                                Engine::Ressources::TextField,
+                                Engine::Ressources::ReferencedTitle> t_RessourcesManager;
 
 
 }// namespaceEngine::Ressources

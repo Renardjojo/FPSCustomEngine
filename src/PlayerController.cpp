@@ -74,7 +74,10 @@ void PlayerController::shoot()
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
                                 {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane")};
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                "Color",
+                                {"RedMaterial"},
+                                "Plane"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -186,11 +189,12 @@ void PlayerController::move()
 
 void PlayerController::onCollisionEnter(HitInfo& hitInfo)
 {
+    hitInfo.gameObject = hitInfo.gameObject;
 }
 
 void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
 {
-    if (!nodeParent && !&doc)
+    if (!nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
