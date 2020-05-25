@@ -34,7 +34,8 @@ PhysicalObject::PhysicalObject(Engine::Ressources::GameObject &refGameObject, co
         _freezeRotY          {arg.freezeRotY},
         _freezeRotZ          {arg.freezeRotZ},
         _isKinematic         {arg.isKinematic},
-        _useGravity          {arg.useGravity}
+        _useGravity          {arg.useGravity},
+        _isDirty             {false}
 {
     _name = __FUNCTION__;
     if (_gameObject.getComponent<Collider>())
@@ -54,7 +55,8 @@ PhysicalObject::PhysicalObject (const PhysicalObject& other)
         _freezeRotY          (other._freezeRotY),
         _freezeRotZ          (other._freezeRotZ),
         _isKinematic         (other._isKinematic),
-        _useGravity          (other._useGravity)
+        _useGravity          (other._useGravity),
+        _isDirty             (other._isDirty)
 {
     _name = __FUNCTION__;
     if (_gameObject.getComponent<Collider>())
@@ -93,6 +95,7 @@ void PhysicalObject::addForce(const Vec3& force) noexcept
     if (_isKinematic)
         return;
 
+    _isDirty = true;
     _sleep = false;
 
     if (!_freezeTrX)
@@ -116,6 +119,7 @@ void PhysicalObject::addForce(float x, float y, float z) noexcept
     if (_isKinematic)
         return;
 
+    _isDirty = true;
     _sleep = false;
 
     if (!_freezeRotX)
@@ -138,7 +142,9 @@ void PhysicalObject::addTorque(const Vec3& force) noexcept
 {
     if (_isKinematic)
         return;
-        
+
+    _isDirty = true;
+
     if (!_freezeRotX)
         _angularVelocity.x += force.x; 
     else
@@ -159,6 +165,8 @@ void PhysicalObject::addTorque(float x, float y, float z) noexcept
 {
     if (_isKinematic)
         return;
+        
+    _isDirty = true;
 
     if (!_freezeTrX)
         _angularVelocity.x += x;
