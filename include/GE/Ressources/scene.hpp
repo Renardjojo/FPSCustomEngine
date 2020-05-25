@@ -43,19 +43,13 @@ namespace Engine::Ressources
              * @brief Use this Scene to show
              * 
              */
-            void use () noexcept
+
+            static Scene* getCurrentScene()
             {
-                sceneToUse = this;
+                return _currentScene->get();
             }
 
-            static Scene* getSceneUse() noexcept { return sceneToUse; }
-
-        protected:
-
-            static Scene* sceneToUse; //pointor to be in nullptr by default
-
-        private:
-
+            static std::unique_ptr<Engine::Ressources::Scene> *_currentScene;
     };
 } //namespace Engine::Ressrouces
 

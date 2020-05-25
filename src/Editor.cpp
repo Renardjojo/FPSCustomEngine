@@ -3,10 +3,13 @@
 #include "GE/Ressources/Saves.hpp"
 #include "GE/LowRenderer/EditorTools/InspectorWindow.hpp"
 #include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
+#include "GE/LowRenderer/Light/light.hpp"
 #include "imgui/imgui.h"
+#include "GE/LowRenderer/camera.hpp"
 
 #include <string>
 
+using namespace Engine::LowRenderer;
 using namespace Engine::LowRenderer::EditorTools;
 using namespace Engine::Core::InputSystem;
 using namespace Engine::Ressources;
@@ -52,7 +55,11 @@ void Editor::loadSceneOption(Scene& scene, GE& engine)
         {
             if(ImGui::MenuItem(i.substr(19, i.size() - 23).c_str()))
             {
-                setupScene(scene, engine, i.c_str());
+                Light::resetLight();
+                Scene::_currentScene->reset();
+                *Scene::_currentScene = std::make_unique<Scene>();
+                setupScene(*Scene::getCurrentScene(), engine, i.c_str());
+                Camera::setCamUse(static_cast<Camera*>(&Scene::getCurrentScene()->getGameObject("world/MainCamera")));
                 ImGui::EndMenu();
                 return;
             }

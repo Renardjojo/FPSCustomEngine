@@ -51,8 +51,6 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
-std::unique_ptr<Engine::Ressources::Scene> *Demo::currentScene_;
-
 Demo::Demo(Engine::GE& gameEngine)
     :   gameEngine_         (gameEngine),
         scene_              (),
@@ -74,7 +72,8 @@ Demo::Demo(Engine::GE& gameEngine)
     }
 
     scene_ = std::make_unique<Scene>();
-    scene_->use();
+    Scene::_currentScene = &scene_;
+
     gameEngine_.ressourceManager_.use();
 
     loadRessources(gameEngine_.ressourceManager_);
@@ -110,8 +109,6 @@ Demo::Demo(Engine::GE& gameEngine)
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     UISystem::isActive = true;
-    
-    currentScene_ = &scene_;
 }
 
 void Demo::update() noexcept

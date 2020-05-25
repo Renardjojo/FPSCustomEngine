@@ -45,7 +45,8 @@ void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths
 
     while (std::getline(file, head))
     {
-        savePaths.push_back(head);
+        if (head.size() >= 19)
+            savePaths.push_back(head);
     }
 
     file.close();
