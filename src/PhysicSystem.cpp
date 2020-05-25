@@ -51,6 +51,7 @@ void PhysicSystem::update() noexcept
         if (object->useGravity())
             object->addForce(gravity * object->getMass() * TimeSystem::getFixedDeltaTime());
     }
+
     for (Collider* collider1 : pColliders)
     {
         // if (collider1->GetAttachedPhysicalObject())
@@ -69,27 +70,52 @@ void PhysicSystem::update() noexcept
                 if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
                 {
                     Intersection intersection;
-                    Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->getVelocity() / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime();
+                    Vec3 AB = (collider1->GetAttachedPhysicalObject()->getVelocity() * TimeSystem::getFixedDeltaTime());
 
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
-                        vectSpeed, intersection))
+                        AB, intersection))
                     {
+                        if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
+                        {
+                            exit(0);
+                            /*If error happend and the point is inside the box, try to escape to it*/
+                            AB -= AB.getNormalize() * 10.f;
+                            MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
+                            AB, intersection);
+                        }
+
+                        /*Compoute tAP and tPB*/
+                        Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
                         Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
-                        Vec3 AB = OA + vectSpeed;
+                        Vec3 OB = OA + AB;
+                        float ABLength = AB.length();
+                        float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
+                        float tAP = 1.f - tPB;
 
-                        float t = (OA + AB - intersection.intersection1).length() / AB.length();
+                        /*Compute the new position and the new velocity of the entity*/
+                        Vec3 atBeginVelocity = collider1->GetAttachedPhysicalObject()->getVelocity() - gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime();
+                        Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
+                        Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
+                        Vec3 gravityAfterCollision = gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
+                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness();
 
-                        Vec3 velocityAtCollision = collider1->GetAttachedPhysicalObject()->getVelocity() + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * (1.f - t);
-                        Vec3 newVelocity = collider1->getBounciness() * -(2.f * (velocityAtCollision.dotProduct(intersection.normalI1)) * intersection.normalI1 - velocityAtCollision);
+                        /*Check if the gravity is upper than velocity.*/
+                        if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(intersection.normalI1) > std::numeric_limits<float>::epsilon())
+                        {
+                            afterCollisionVelocity += gravityAfterCollision;
+                        }                   
 
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + (newVelocity / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime());
+                        //Vec3 newVelocity = gravityAfterCollision.length() > afterCollisionVelocity.length() ? afterCollisionVelocity + gravityAfterCollision : Vec3{};
+                        Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
 
-                        collider1->GetAttachedPhysicalObject()->setVelocity(newVelocity);
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition + intersection.normalI1 * 0.001f);
+                        collider1->GetAttachedPhysicalObject()->setVelocity(afterCollisionVelocity);
+                        collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
+                        /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
                         HitInfo hitInfo1{intersection, &collider2->getGameObject()};
                         HitInfo hitInfo2{intersection, &collider1->getGameObject()};
-
                         collider1->OnCollisionEnter(hitInfo1);
                         collider2->OnCollisionEnter(hitInfo2);
                     }
@@ -97,13 +123,16 @@ void PhysicSystem::update() noexcept
             }
         }
     }
+    /*TODO: If object collied with another object, we apply two time the displacement. Use isDirty flag*/
+
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
             continue;
         
         /*update movement induct by the differente force on the object*/
-        object->getGameObject().translate((object->getVelocity() / object->getMass()) * TimeSystem::getFixedDeltaTime());
+        object->getGameObject().translate(object->getVelocity() * TimeSystem::getFixedDeltaTime());
+        //std::cout << object->getGameObject().getName() << "  " << object->getVelocity() << "    " <<  object->getGameObject().getPosition() <<std::endl;
     }
 }
 

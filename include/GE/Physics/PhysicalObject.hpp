@@ -72,12 +72,14 @@ namespace Engine::Physics
 
 		void setVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
 		{
+			_isDirty = true;
 			_sleep = false;
 			_velocity = velocity;
 		}
 
 		void setVelocity(float x, float y, float z) noexcept
 		{
+			_isDirty = true;
 			_sleep = false;
 			_velocity.x = x;
 			_velocity.y = y;
@@ -96,6 +98,9 @@ namespace Engine::Physics
 
 		void sleep() noexcept{ _sleep = true; }
 		void wakeUp() noexcept{ _sleep = false; }
+
+		void setDirtyFlag(bool state) noexcept { _isDirty = state; }
+		bool isDirty() const noexcept { return _isDirty; }
 
 		void save(xml_document<> &doc, xml_node<> *nodeParent) noexcept;
 
@@ -120,6 +125,7 @@ namespace Engine::Physics
 		bool _isKinematic{false};
 		bool _useGravity{true};
 		bool _sleep{false};
+		bool _isDirty {false};
 
 #pragma endregion //!attribut
 

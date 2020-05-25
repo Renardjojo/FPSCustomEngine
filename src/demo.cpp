@@ -262,16 +262,16 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg playerGameObject{"Player",
-                                         {{0.f, 0.f, 0.f},
+                                         {{-2.f, 0.f, 0.f},
                                           {0.f, 0.f, 0.f},
                                           {1.0f, 1.0f, 1.0f}}};
 
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                {&ressourceManager.get<Material>("PinkMaterial")},
-                               &ressourceManager.get<Mesh>("Cube"),
+                               &ressourceManager.get<Mesh>("Sphere"),
                                "ColorWithLight",
                                {"PinkMaterial"},
-                               "Cube"};
+                               "Sphere"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
@@ -321,7 +321,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->setBounciness(0.4f);
+    player.getComponent<SphereCollider>()->setBounciness(0.f);
 }
 
 void Demo::loadSkyBox(t_RessourcesManager &ressourceManager)
@@ -360,7 +360,7 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg groundArgGameObject{"Ground",
                                             {{0.f, -20.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {50.f, 0.1f, 50.f}}};
+                                             {50.f, 1.f, 50.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("TextureOnly"),
                              {&ressourceManager.get<Material>("materialGround")},
@@ -371,7 +371,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
                              true,
                              false};
 
-    scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject).addComponent<Model>(groundArg);
+    GameObject& ground = scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject);
+    ground.addComponent<Model>(groundArg);
+    ground.setTag("Ground");
     scene_->getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
 }
 
@@ -819,9 +821,9 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
-    GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    //GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
     //particleGO.addComponent<ParticuleGenerator>(particalArg);
-    particleGO.addComponent<LifeDuration>(10.f);
+    //particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }
