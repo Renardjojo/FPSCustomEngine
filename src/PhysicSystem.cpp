@@ -51,6 +51,7 @@ void PhysicSystem::update() noexcept
         if (object->useGravity())
             object->addForce(gravity * object->getMass() * TimeSystem::getFixedDeltaTime());
     }
+
     for (Collider* collider1 : pColliders)
     {
         // if (collider1->GetAttachedPhysicalObject())
@@ -70,22 +71,28 @@ void PhysicSystem::update() noexcept
                 {
                     Intersection intersection;
                     Vec3 vectSpeed = (collider1->GetAttachedPhysicalObject()->getVelocity() / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime();
+                    Vec3 AB = collider1->GetAttachedPhysicalObject()->getVelocity();
 
                     if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
                         dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
-                        vectSpeed, intersection))
+                        AB, intersection))
                     {
                         Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
-                        Vec3 AB = OA + vectSpeed;
+                        Vec3 OB = OA + AB;
 
-                        float t = (OA + AB - intersection.intersection1).length() / AB.length();
+                        float tIB = (OB - intersection.intersection1).length() / AB.length();
 
-                        Vec3 velocityAtCollision = collider1->GetAttachedPhysicalObject()->getVelocity() + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * (1.f - t);
-                        Vec3 newVelocity = collider1->getBounciness() * -(2.f * (velocityAtCollision.dotProduct(intersection.normalI1)) * intersection.normalI1 - velocityAtCollision);
+                        /*Apply gravity on the vector AI*/
+                        Vec3 velocityAfterCollision = collider1->GetAttachedPhysicalObject()->getVelocity() * tIB;
+                       
+                        Vec3 newVelocity = collider1->getBounciness() * -(2.f * (velocityAfterCollision.dotProduct(intersection.normalI1)) * intersection.normalI1 - velocityAfterCollision);
+                    
+                        /*Apply correction to avoid block inclusion*/
+                        std::cout << newVelocity << "   " << newVelocity.length() <<  std::endl;
 
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + (newVelocity / collider1->GetAttachedPhysicalObject()->getMass()) * TimeSystem::getFixedDeltaTime());
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + newVelocity + newVelocity.getNormalize() * 0.0001f);
 
-                        collider1->GetAttachedPhysicalObject()->setVelocity(newVelocity);
+                        collider1->GetAttachedPhysicalObject()->setVelocity(newVelocity );
 
                         HitInfo hitInfo1{intersection, &collider2->getGameObject()};
                         HitInfo hitInfo2{intersection, &collider1->getGameObject()};
@@ -97,6 +104,7 @@ void PhysicSystem::update() noexcept
             }
         }
     }
+
     for (PhysicalObject* object : pPhysicalObjects)
     {
         if (!object || object->isKinematic() || object->isSleeping())

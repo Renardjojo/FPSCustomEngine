@@ -752,7 +752,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+    //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
@@ -771,9 +771,9 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
-    GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    //GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
     //particleGO.addComponent<ParticuleGenerator>(particalArg);
-    particleGO.addComponent<LifeDuration>(10.f);
+    //particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }
