@@ -28,7 +28,7 @@ namespace Game
         void chasing();
     public:
         EnnemyController(Engine::Ressources::GameObject &gameObject,Engine::Ressources::GameObject* player);
-        ~EnnemyController();
+        virtual ~EnnemyController() = default;
 
         void update() override;
     };

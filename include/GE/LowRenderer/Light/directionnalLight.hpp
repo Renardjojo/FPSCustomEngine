@@ -5,13 +5,15 @@
 #ifndef _GE_DIRECTIONNAL_LIGHT_H
 #define _GE_DIRECTIONNAL_LIGHT_H
 
-#include <cmath>
 #include <vector>
 
-#include "glad/glad.h"
+#ifndef DNEDITOR
+#include "imgui/imgui.h"
+#endif
+
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
@@ -21,8 +23,6 @@ namespace Engine::LowRenderer
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
-
-        const char*                         name;
 
     } DirectionnalLightCreateArg;
 
@@ -35,19 +35,17 @@ namespace Engine::LowRenderer
     
             DirectionnalLight ()						            = default;
 
-            DirectionnalLight ( const DirectionnalLightCreateArg& arg)
-                        :   Light               (arg.direction.getNormalize(), arg.ambient, arg.diffuse, arg.specular, arg.name)
-            {}
+            DirectionnalLight (Engine::Ressources::GameObject & refGameObject, const DirectionnalLightCreateArg& arg);
 
                         
-            DirectionnalLight ( const Engine::Core::Maths::Vec3&                direction,
-                         const Engine::Ressources::AmbiantComponent&            ambient, 
-                         const Engine::Ressources::DiffuseComponent&            diffuse, 
-                         const Engine::Ressources::SpecularComponent&           specular,
-                         const char*                                            name)
-            :   Light               (direction.getNormalize(), ambient, diffuse, specular, name)
-            {}
+            DirectionnalLight ( Engine::Ressources::GameObject &                       refGameObject,
+                                const Engine::Core::Maths::Vec3&                       direction,
+                                const Engine::Ressources::AmbiantComponent&            ambient, 
+                                const Engine::Ressources::DiffuseComponent&            diffuse, 
+                                const Engine::Ressources::SpecularComponent&           specular);
             
+            DirectionnalLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params);
+
             DirectionnalLight (const DirectionnalLight& other)		    = default;
             DirectionnalLight (DirectionnalLight&& other)			    = default;
             virtual ~DirectionnalLight ()				                = default;
@@ -57,48 +55,22 @@ namespace Engine::LowRenderer
             #pragma region methods
 
 
-            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override
-            {
-                lb.push_back({  ambientComp_, 
-                                diffuseComp_, 
-                                specularComp_, 
-                                position_, 3.f,
-                                0.f, 0.f, 0.f, 0.f,
-                                {0.f, 0.f, 0.f}, 0.f});
-            }
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override;
             
+            void save(xml_document<>& doc, xml_node<>* nodeParent);
+
+            #ifndef DNEDITOR
+            virtual void serializeOnEditor () noexcept override;
+            #endif
 
             #pragma endregion //!methods
-    
-            #pragma region static methods
 
-            #pragma endregion //!static methods            
-    
-            #pragma region accessor
-
-            #pragma endregion //!accessor
-    
-            #pragma region mutator
-            #pragma endregion //!mutator
-    
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
     
         protected:
     
             #pragma region attribut
-
+            Engine::Core::Maths::Vec3 _direction;
             #pragma endregion //!attribut
-
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
-    
-            #pragma region methods
-            #pragma endregion //!methods
     
         private:
     

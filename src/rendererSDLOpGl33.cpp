@@ -44,10 +44,34 @@ void    RendererSDLOpGl33::initialize  (const WindowCreateArg& winArg)
     }
 
     SLog::logInitializationEnd("SDL/OpenGL 4.6 Renderer");
+
+#ifndef DNEDITOR
+    SLog::logInitializationStart("init IMGUI for SDL2/OpenGL 4.6");
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplSDL2_InitForOpenGL((SDL_Window*)pWin->get(), openGlContext_);
+    const char* glsl_version = "#version 330 core";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    /*Prepar the next imGui frame*/
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame((SDL_Window*)pWin->get());
+    ImGui::NewFrame();
+
+    SLog::logInitializationEnd("init IMGUI for SDL2/OpenGL 4.6");
+#endif
+
 }
 
 void   RendererSDLOpGl33::release   ()
 {
+#ifndef DNEDITOR
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+#endif
+
     SDL_GL_DeleteContext(openGlContext_);
     SLog::log("SDL/OpenGL 4.6 Renderer release");
 }

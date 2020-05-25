@@ -5,34 +5,50 @@
 #ifndef _COMPONENT_H
 #define _COMPONENT_H
 
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
+#include <string>
+
 namespace Engine::Ressources
 {
-class GameObject;
+    class GameObject;
 
-class Component
-{
-public:
+    class Component
+    {
+    public:
 
     Component(GameObject &refGameObject)
-    : gameObject (refGameObject) 
-    {
-
-    }
+    :   _gameObject {refGameObject},
+        _name       {__FUNCTION__}
+    {}
 
     Component(const Component &other)               = default;
     Component(Component &&other)                    = default;
-    virtual ~Component() {};
+    virtual ~Component()                            = default;
 
     Component()                                     = delete;
     Component &operator=(Component const &other)    = delete;
     Component &operator=(Component &&other)         = delete;
 
-    GameObject& gameObject;
-protected:
+    GameObject &        getGameObject() noexcept { return _gameObject; }
+    const GameObject&   getGameObject() const noexcept { return _gameObject; }
 
+    std::string toString() {return _name; };
 
-};
+#ifndef DNEDITOR
+    virtual void serializeOnEditor () noexcept {};
+#endif
 
-} //
+    protected:
+
+    GameObject& _gameObject;
+    std::string _name;
+
+    };
+
+} // namespace Engine::Ressources
 
 #endif //_COMPONENT_H

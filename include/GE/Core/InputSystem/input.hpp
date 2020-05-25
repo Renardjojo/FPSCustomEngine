@@ -2,175 +2,116 @@
 //Editing by Six Jonathan
 //Date : 21/11/2019 - 09 h 59
 
-#ifndef _GE_INPUT_MANAGER_H
-#define _GE_INPUT_MANAGER_H
+//function based on SDL2 library. See documentation on : https://wiki.libsdl.org/SDL_Scancode to use SDL_Scancode for keyboard
+//The rest of the documentation of input : https://wiki.libsdl.org/SDL_Event
+
+#ifndef __INPUT_HPP__
+#define __INPUT_HPP__
 
 #include <SDL2/SDL_events.h>
 #include <iostream>
 
-//function based on SDL2 library. See documentation on : https://wiki.libsdl.org/SDL_Scancode to use SDL_Scancode for keyboard
-//Else for all documentation of input possibel see : https://wiki.libsdl.org/SDL_Event
-
 namespace Engine::Core::InputSystem
 {
-    typedef struct S_inputMouse
+    enum E_KEY_STATE
     {
-        //mouse input
-        SDL_Point		position;
-        SDL_Point 		motion;
-        SDL_Point		wheel_value;
-        int 			wheel_scrolling;
-        unsigned int	clicks;
-        float 			timeFirstLeftClic;	//implementation data
-        bool 			wheelClic;
-        bool 			isTouch;
-        bool 			rightClic_down;
-        bool 			doubleLeftClic;	//if interval of 2click is under 0.2s
-        bool 			leftClic_down;
-        bool            leftClicPressed;
+        NOT_PRESSED = 0,
+        TOUCHED,
+        DOWN
+    };
 
-        int oneLeftClick()
+    struct inputMouse
+    {
+
+        SDL_Point position{0, 0};
+        SDL_Point motion{0, 0};
+        SDL_Point wheel_value{0, 0};
+        int wheel_scrolling{1};
+        bool wheelClic{false};
+        bool isTouch{false};
+        bool rightClicDown{false};
+        bool rightClicDownOnce{false};
+        bool doubleLeftClic{false};
+        bool leftClicDown{false};
+        bool leftClicDownOnce{false};
+
+        float timeFirstLeftClic{0.f};
+        unsigned int clicks{0};
+
+        bool oldLeftClicDown{false};
+        bool oldRightClicDown{false};
+
+        E_KEY_STATE getLeftClick()
         {
-            if (leftClic_down && !leftClicPressed)
+            if (leftClicDown && !oldLeftClicDown)
             {
-                leftClicPressed = true;
-                return 1;
+                return TOUCHED;
             }
-            else if (leftClic_down && leftClicPressed)
+            else if (leftClicDown && oldLeftClicDown)
             {
-                leftClicPressed = true;
-                return 2;
+                return DOWN;
             }
-            else if (!leftClic_down)
+            else if (!leftClicDown)
             {
-                leftClicPressed = false;
-                return 0;
+                return NOT_PRESSED;
             }
             else
             {
-                leftClicPressed = false;
-                return 0;
+                return NOT_PRESSED;
             }
         }
-
-    } T_inputMouse;
-
-    typedef struct S_inputKeyboard
-    {	
+    };
+    struct inputKeyboard
+    {
         SDL_Keycode key;
-        SDL_Scancode up = SDL_SCANCODE_UP;
-        SDL_Scancode down = SDL_SCANCODE_DOWN;
-        SDL_Scancode right = SDL_SCANCODE_RIGHT;
-        SDL_Scancode left = SDL_SCANCODE_LEFT;
-        SDL_Scancode jump = SDL_SCANCODE_SPACE;
+        SDL_Scancode up{SDL_SCANCODE_UP};
+        SDL_Scancode down{SDL_SCANCODE_DOWN};
+        SDL_Scancode right{SDL_SCANCODE_RIGHT};
+        SDL_Scancode left{SDL_SCANCODE_LEFT};
+        SDL_Scancode jump{SDL_SCANCODE_SPACE};
 
-        bool 		isTouch;
-        bool 		isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
-        bool        isPressed[SDL_NUM_SCANCODES];
-        bool		flagEscIsRelease;
-        bool		escIsRelease;
+        bool isTouch{false};
+        bool flagEscIsRelease{false};
+        bool escIsRelease{false};
+        bool isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
+        bool isPressed[SDL_NUM_SCANCODES];
 
-        int onePressed(const SDL_Scancode key)
-        {
-            if (isDown[key] && !isPressed[key])
-            {
-                isPressed[key] = true;
-                return 1; //Is pressed
-            }
-            else if (isDown[key] && isPressed[key])
-            {
-                isPressed[key] = true;
-                return 2; //isDown
-            }
-            else if (!isDown[key])
-            {
-                isPressed[key] = false;
-                return 0; //not press
-            }
-            else
-                return 0; //not press
-        }
-
-    } T_inputKeyboard;
-
-    typedef struct S_windowEvent
-    {	
-        bool windowEventHappend; //true if event append
-        
-        bool isShow;	//if window is show or hidden
-        bool isExposed; //window has been exposed and should be redrawn
-        bool isMoved; 	//window has been moved.  Note : use SDL_GetWindowPosition to know them new data
-        bool isResized; //window has been resized. Note : use SDL_GetWindowSize to know them new data
-        bool isMinimized;	// window has been minimized. Note use SDL_MinimizeWindow
-        bool isMaximized;	// window has been maximized. Note use SDL_MaximizeWindow
-        bool focusInWindow; //true while mouse or keyboard focus is in focus
-
-    } T_windowEvent;
+        E_KEY_STATE getKeyState(const SDL_Scancode key);
+    };
+    struct windowEvent
+    {
+        bool windowEventHappend{false}; //true if event appendz
+        bool isShow{true};              //if window is show or hidden
+        bool isExposed{false};          //window has been exposed and should be redrawn
+        bool isMoved{false};            //window has been moved.  Note : use SDL_GetWindowPosition to know them new data
+        bool isResized{false};          //window has been resized. Note : use SDL_GetWindowSize to know them new data
+        bool isMinimized{false};        // window has been minimized. Note use SDL_MinimizeWindow
+        bool isMaximized{false};        // window has been maximized. Note use SDL_MaximizeWindow
+        bool focusInWindow{true};       //true while mouse or keyboard focus is in focus
+    };
 
     class Input
     {
-        public:
-            
-        Input ();
-        Input (const Input& other)  = default;
-        virtual ~Input ()           = default;
 
-            /*----------*/
-            /* methode  */
-            /*----------*/
+    protected:
+        //few protected metho to catch event for special component
+        static void pollEventWindow(SDL_Event *event, Uint32 windowID);
+        static void pollEventMouse(SDL_Event *event);
+        static void pollEventKeyboard(SDL_Event *event);
 
-            /**
-            * function : pollEvent
-            *
-            * parameter :
-            *  Uint32 windowID : the id of current window
-            *
-            * return (type void):
-            *
-            * brief : this function catch event and update class input. Do once by frame
-            */
-            void		pollEvent		(Uint32 windowID);
+    public:
+        static windowEvent window;
+        static inputMouse mouse;
+        static inputKeyboard keyboard;
 
-            /*----------*/
-            /* accessor */
-            /*----------*/
+        Input();
+        Input(const Input &other) = delete;
+        virtual ~Input() = default;
 
-            /*----------*/
-            /* mutator  */
-            /*----------*/
-
-            /*----------*/
-            /* operator */
-            /*----------*/
-
-            /*----------*/
-            /* convertor*/
-            /*----------*/
-
-            //public variable (get and set with no effect for class)
-            T_windowEvent	window;
-            T_inputMouse	mouse;
-            T_inputKeyboard	keyboard;
-
-            SDL_Scancode waitForKey();
-
-            void resetKeyDown()
-            {
-                keyboard.isDown[SDL_SCANCODE_RETURN] = false;
-                mouse.leftClic_down = false;
-            }
-
-        protected:
-
-            //method
-
-            //few protected metho to catch event for special component
-            void pollEventWindow    (SDL_Event* event, Uint32 windowID);
-            void pollEventMouse     (SDL_Event* event);
-            void pollEventKeyboard  (SDL_Event* event);
-
-        private:
+        static void pollEvent(Uint32 windowID);
+        static SDL_Scancode waitForKey();
+        static void resetKeyDown();
     };
-}
+} // namespace Engine::Core::InputSystem
 
-#endif //_GE_INPUT_MANAGER_H
+#endif // __INPUT_HPP__

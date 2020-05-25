@@ -15,6 +15,8 @@ Sound::Sound ()
 
 Sound::Sound (const Sound& other)
 {
+	(void)other;
+
     if (numberSound == 0)
         initSDLSoundComponent();
     

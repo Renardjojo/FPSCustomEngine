@@ -17,12 +17,14 @@ void Game::Game::run ()
     while(gameEngine_.gameState != E_GAME_STATE::EXIT)
     {   
         TimeSystem::update([&]()
-                            { 
-                                demo.update();
-                                gameEngine_.pollEvent();
+                            {
+                                demo.fixedUpdate();
                             }, 
                             [&]() 
-                            {},
+                            {
+                                gameEngine_.pollEvent();
+                                demo.update();
+                            },
                             [&]()
                             {      
                                 gameEngine_.clearRenderer();

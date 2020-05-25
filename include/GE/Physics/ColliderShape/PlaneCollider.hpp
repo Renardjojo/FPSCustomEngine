@@ -48,32 +48,32 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::Plane        getGlobalPlane() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() + plane_.getNormal() * plane_.getDistance();
+            const Engine::Core::Maths::Vec3 globalCenter = _gameObject.getPosition() + plane_.getNormal() * plane_.getDistance();
             Engine::Core::Maths::Vec3 globalDirection = plane_.getNormal();
 
             if (directionAxe_ == EDirectionnalAxes::ForwardAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
+                globalDirection += _gameObject.getModelMatrix().getVectorForward();
             }
             else if (directionAxe_ == EDirectionnalAxes::RightAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
+                globalDirection += _gameObject.getModelMatrix().getVectorRight();
             }
             else if (directionAxe_ == EDirectionnalAxes::UpAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorUp();
+                globalDirection += _gameObject.getModelMatrix().getVectorUp();
             }
             else if (directionAxe_ == EDirectionnalAxes::BackwardAxe)
             {
-                globalDirection -= gameObject.entity->getModelMatrix().getVectorForward();
+                globalDirection -= _gameObject.getModelMatrix().getVectorForward();
             }
             else if (directionAxe_ == EDirectionnalAxes::LefttAxe)
             {
-                globalDirection -= gameObject.entity->getModelMatrix().getVectorRight();
+                globalDirection -= _gameObject.getModelMatrix().getVectorRight();
             }
             else
             {
-                globalDirection -= gameObject.entity->getModelMatrix().getVectorUp();
+                globalDirection -= _gameObject.getModelMatrix().getVectorUp();
             }
             
             return Engine::Core::Maths::Shape3D::Plane{globalCenter, globalDirection.getNormalize()};

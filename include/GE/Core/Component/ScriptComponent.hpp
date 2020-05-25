@@ -8,6 +8,8 @@
 #include "GE/Core/DataStructure/graph.hpp"
 #include "GE/Ressources/Component.hpp"
 #include "GE/Ressources/GameObject.hpp"
+#include "GE/Physics/ColliderShape/Collider.hpp"
+#include <functional>
 
 namespace Engine::Core::Component
 {
@@ -16,15 +18,20 @@ namespace Engine::Core::Component
     private:
     public:
         ScriptComponent(Engine::Ressources::GameObject &gameobject);
-        ScriptComponent(const ScriptComponent &other) = default;
-        ScriptComponent(ScriptComponent &&other) = default;
+        ScriptComponent(const ScriptComponent &other) = delete;
+        ScriptComponent(ScriptComponent &&other) = delete;
         virtual ~ScriptComponent();
 
         ScriptComponent() = delete;
         ScriptComponent &operator=(ScriptComponent const &other) = delete;
         ScriptComponent &operator=(ScriptComponent &&other) = delete;
 
-        virtual void update() = 0;
+        virtual void start(){};
+        virtual void fixedUpdate(){};
+        virtual void update(){};
+
+        virtual void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo);
+
         //Engine::Ressources::GameObject& getGameObject () { return gameObject;}
     };
 } // namespace Engine::Core::Component

@@ -3,6 +3,13 @@
 #include "GE/Core/Debug/assert.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
+#include "GE/Ressources/GameObject.hpp"
+
+#include "save/rapidxml-1.13/rapidxml.hpp"
+#include "save/rapidxml-1.13/rapidxml_print.hpp"
+#include "save/rapidxml-1.13/rapidxml_utils.hpp"
+
+using namespace rapidxml;
 
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer;
@@ -32,13 +39,16 @@ void Model::initTextureBufferWithMTLId ()
     }
 }
 
-Model::Model (const ModelCreateArg& arg)
-    :   IModel      (arg.position, arg.rotation, arg.scale, arg.name),
-        pShader_    (arg.pShader),
-        pMaterial_  (arg.pMaterials),
-        pMesh_      (arg.pMesh),
-        enableBackFaceCulling_ (arg.enableBackFaceCulling),
-        isOpaque_   (arg.isOpaque)
+Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
+    :   IModel                  (refGameObject),
+        pShader_                (arg.pShader),
+        pMaterial_              (arg.pMaterials),
+        pMesh_                  (arg.pMesh),
+        enableBackFaceCulling_  (arg.enableBackFaceCulling),
+        isOpaque_               (arg.isOpaque),
+        shaderName_             (arg.shaderName),
+        materialName_           (arg.materialName),
+        meshName_               (arg.meshName)
 {
     initTextureBufferWithMTLId();
 
@@ -48,12 +58,27 @@ Model::Model (const ModelCreateArg& arg)
     }
 }
 
+Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
+    :   IModel                  (refGameObject),
+        pShader_                (&ressourcesManager.get<Shader>(*params[0])),
+        pMaterial_              ({&ressourcesManager.get<Material>(*params[1])}),
+        pMesh_                  (&ressourcesManager.get<Mesh>(*params[2])),
+        enableBackFaceCulling_  (true),
+        isOpaque_               (true),
+        shaderName_             (*params[0]),
+        materialName_           ({*params[1]}),
+        meshName_               (*params[2])
+{
+    initTextureBufferWithMTLId();
+    loadInGPU (); 
+}
+
 Model::~Model ()
 {
-    if (isLoadInGPU())
+    /*if (isLoadInGPU())
     {
         unloadFromGPU ();
-    }
+    }*/
 }
 
 void Model::draw () const noexcept
@@ -99,7 +124,7 @@ void Model::draw () const noexcept
     {
         pMesh_->loadInGPU();
         pIdVAO = pMesh_->getVAOId();
-        SLog::logWarning((std::string("Model \"") + name_ + "\" was try to drawing without load in GPU").c_str());
+        SLog::logWarning((std::string("Model \"") + _gameObject.getName() + "\" was try to drawing without load in GPU").c_str());
     }
 
     if (enableBackFaceCulling_)
@@ -192,5 +217,20 @@ void Model::unloadFromGPU() noexcept
  
 void Model::sendToShaderModelMatrix () const noexcept
 {
-    pShader_->setMat4("model", &modelMat_.mat[0]);
+    pShader_->setMat4("model", &_gameObject.getModelMatrix().mat[0]);
+}
+
+void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
+{ 
+    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+    newNode->append_attribute(doc.allocate_attribute("type", "Model"));
+    newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
+    if (getMaterialName().size() == 0)
+        return;
+    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName()[0].c_str())));
+    newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
+    
+
+    nodeParent->append_node(newNode);
 }

@@ -836,22 +836,46 @@ Mat4		Mat4::getCoMatrix		() const
 	return coMatrix;
 }
 
-inline
-Vec3 	Mat4::getVectorUp() 		const
-{
-	return Vec3{mat[1], mat[5], mat[9]};
-}
-
 inline 
 Vec3 	Mat4::getVectorRight() 	const
 {
-	return Vec3{mat[0], mat[4], mat[8]};
+	return Vec3{mat[0], mat[1], mat[2]};
+}
+
+inline
+Vec3 	Mat4::getVectorUp() 		const
+{
+	return Vec3{mat[4], mat[5], mat[6]};
 }
 
 inline
 Vec3 	Mat4::getVectorForward() 	const
 {
-	return Vec3{mat[2], mat[6], mat[10]};
+	return Vec3{mat[8], mat[9], mat[10]};
+}
+
+inline
+void 	Mat4::setVectorUp(const Vec3& newUp)
+{
+	mat[4] = newUp.x;
+	mat[5] = newUp.y;
+	mat[6] = newUp.z;
+}
+
+inline 
+void 	Mat4::setVectorRight(const Vec3& newRight) 
+{
+	mat[0] = newRight.x;
+	mat[1] = newRight.y;
+	mat[2] = newRight.z;
+}
+
+inline
+void 	Mat4::setVectorForward(const Vec3& newForward)
+{
+	mat[8] = newForward.x;
+	mat[9] = newForward.y;
+	mat[10] = newForward.z;
 }
 
 inline

@@ -34,32 +34,25 @@ namespace Engine::Ressources
              */
             void update () noexcept
             {
-                world_.update();
+                world_.updateSelfAndChild();
             }
-
-            void draw () const noexcept
-            {
-                std::map<float, Engine::LowRenderer::Model*> mapElemSortedByDistance;
-
-                glDisable(GL_BLEND);
-                world_.sortAndDrawOpqueElement(mapElemSortedByDistance);
-
-                glEnable(GL_BLEND);
-                for(std::map<float, Engine::LowRenderer::Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != mapElemSortedByDistance.rend(); ++it) 
-                {
-                    it->second->draw();
-                }
-            }
-
-            /**
-             * @brief check light enable and store it to use them to draw element with shader light
-             * 
-             */
-            void updateLigthToUse() noexcept;
 
             #pragma endregion //!methods
 
+            /**
+             * @brief Use this Scene to show
+             * 
+             */
+            void use () noexcept
+            {
+                sceneToUse = this;
+            }
+
+            static Scene* getSceneUse() noexcept { return sceneToUse; }
+
         protected:
+
+            static Scene* sceneToUse; //pointor to be in nullptr by default
 
         private:
 

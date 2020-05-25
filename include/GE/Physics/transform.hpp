@@ -13,8 +13,9 @@ namespace Engine::Physics
 {
     typedef struct S_TransformCreateArg
     {
-        Engine::Core::Maths::Vec3 position, rotation, scale;
-        
+        Engine::Core::Maths::Vec3   position = Engine::Core::Maths::Vec3::zero, 
+                                    rotation = Engine::Core::Maths::Vec3::zero, 
+                                    scale    = Engine::Core::Maths::Vec3::one;
     } TransformCreateArg;
 
     //class inline only
@@ -90,6 +91,34 @@ namespace Engine::Physics
             virtual const Engine::Core::Maths::Vec3& getPosition() const noexcept   { return position_; }
             virtual const Engine::Core::Maths::Vec3& getRotation() const noexcept   { return rotation_; }
             virtual const Engine::Core::Maths::Vec3& getScale() const noexcept      { return scale_; }
+
+            virtual const Engine::Core::Maths::Vec3 getVecForward() const noexcept  { return modelMat_.getVectorForward().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecRight() const noexcept    { return modelMat_.getVectorRight().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecUp() const noexcept       { return modelMat_.getVectorUp().getNormalize(); }
+
+            virtual void setVecForward(const Engine::Core::Maths::Vec3& newForward)  noexcept 
+            { 
+                modelMat_.setVectorForward(newForward.getNormalize());
+                modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());
+            }
+
+            virtual void setVecRight(const Engine::Core::Maths::Vec3& newRight)  noexcept
+            {
+                modelMat_.setVectorRight(newRight.getNormalize());
+                modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());   
+            }
+
+            virtual void setVecUp(const Engine::Core::Maths::Vec3& newUp)  noexcept
+            {
+                modelMat_.setVectorUp(newUp.getNormalize());
+                modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
+            }
+
+            virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }
+            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_.getVectorRight().length(), modelMat_.getVectorUp().length(), modelMat_.getVectorForward().length()}; }
 
             #pragma endregion //!accessor
     

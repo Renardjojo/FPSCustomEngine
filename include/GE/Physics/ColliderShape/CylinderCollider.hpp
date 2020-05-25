@@ -49,28 +49,28 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::Cylinder        getGlobalCylinder() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 globalCenter = gameObject.entity->getPosition() +cylinder_.getCenter();
+            const Engine::Core::Maths::Vec3 globalCenter = _gameObject.getPosition() +cylinder_.getCenter();
             Engine::Core::Maths::Vec3 globalDirection =cylinder_.getCenter();
             float globalHeight =cylinder_.getSegment().getLenght();
             float globalRadius =cylinder_.getRadius();
 
             if (directionAxe_ == EPositiveDirectionnalAxes::ForwardAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorForward();
-                globalHeight    += gameObject.entity->getScale().z;
-                globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().y) / 2.f;
+                globalDirection += _gameObject.getModelMatrix().getVectorForward();
+                globalHeight    += _gameObject.getScale().z;
+                globalRadius    += (_gameObject.getScale().x + _gameObject.getScale().y) / 2.f;
             }
             else if (directionAxe_ == EPositiveDirectionnalAxes::RightAxe)
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorRight();
-                globalHeight    += gameObject.entity->getScale().x;
-                globalRadius    += (gameObject.entity->getScale().z + gameObject.entity->getScale().y) / 2.f;
+                globalDirection += _gameObject.getModelMatrix().getVectorRight();
+                globalHeight    += _gameObject.getScale().x;
+                globalRadius    += (_gameObject.getScale().z + _gameObject.getScale().y) / 2.f;
             }
             else
             {
-                globalDirection += gameObject.entity->getModelMatrix().getVectorUp();
-                globalHeight    += gameObject.entity->getScale().y;
-                globalRadius    += (gameObject.entity->getScale().x + gameObject.entity->getScale().z) / 2.f;
+                globalDirection += _gameObject.getModelMatrix().getVectorUp();
+                globalHeight    += _gameObject.getScale().y;
+                globalRadius    += (_gameObject.getScale().x + _gameObject.getScale().z) / 2.f;
             }
 
             return Engine::Core::Maths::Shape3D::Cylinder{globalCenter, globalDirection.getNormalize(), globalHeight, globalRadius};

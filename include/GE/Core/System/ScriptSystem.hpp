@@ -2,7 +2,7 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-04-30 - 12 h 57
 
-#include <vector>
+#include <list>
 #include "GE/Core/Component/ScriptComponent.hpp"
 
 #ifndef __SCRIPTSYSTEM_HPP__
@@ -15,7 +15,7 @@ namespace Engine::Core::System
     class ScriptSystem
     {
     protected:
-        static std::vector<ScriptComponent *> _scripts;
+        static std::list<ScriptComponent *> _scripts;
 
     public:
         ScriptSystem() = delete;
@@ -23,7 +23,9 @@ namespace Engine::Core::System
         ScriptSystem &operator=(ScriptSystem const &) = delete;
         ScriptSystem &operator=(ScriptSystem &&) = delete;
 
+        static void start() noexcept;
         static void update() noexcept;
+        static void fixedUpdate() noexcept;
 
         static void addScript(ScriptComponent *scriptComponent);
         static void updateScript(ScriptComponent *pointer, ScriptComponent *old);

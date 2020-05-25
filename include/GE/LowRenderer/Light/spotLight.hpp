@@ -5,19 +5,20 @@
 #ifndef _GE_SPOT_LIGHT_H
 #define _GE_SPOT_LIGHT_H
 
-#include <cmath>
 #include <vector>
 
-#include "glad/glad.h"
+#ifndef DNEDITOR
+#include "imgui/imgui.h"
+#endif
+
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/pointLight.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_SpotLightCreateArg
     {
-        const Engine::Core::Maths::Vec3&    pos;
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
@@ -29,8 +30,6 @@ namespace Engine::LowRenderer
         const Engine::Core::Maths::Vec3&   direction;
         float                              cutOff;
         float                              cutOffExponent;
-
-        const char*                         name;
 
     } SpotLightCreateArg;
 
@@ -58,7 +57,7 @@ namespace Engine::LowRenderer
              * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
              * @param name 
              */
-            SpotLight ( const Engine::Core::Maths::Vec3&                       pos,
+            SpotLight ( Engine::Ressources::GameObject &                       refGameObject,
                         const Engine::Ressources::AmbiantComponent&            ambient, 
                         const Engine::Ressources::DiffuseComponent&            diffuse, 
                         const Engine::Ressources::SpecularComponent&           specular,
@@ -67,19 +66,9 @@ namespace Engine::LowRenderer
                         float                              quadratic,
                         const Engine::Core::Maths::Vec3&   direction,
                         float                              cutOff,
-                        float                              cutOffExponent,
-                        const char*                        name)
-            :   PointLight          (pos, ambient, diffuse, specular, constant, linear, quadratic, name),
-                direction_          (direction),
-                cutOff_             (cosf(cutOff * M_PI / 180.f)),
-                cutOffExponent_     (cosf(cutOffExponent * M_PI / 180.f))
-            {}
-            SpotLight (SpotLightCreateArg arg)
-            :   PointLight          (arg.pos, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic, arg.name),
-                direction_          (arg.direction),
-                cutOff_             (cosf(arg.cutOff * M_PI / 180.f)),
-                cutOffExponent_     (cosf(arg.cutOffExponent * M_PI / 180.f))
-            {}
+                        float                              cutOffExponent);
+
+            SpotLight (Engine::Ressources::GameObject & refGameObject, SpotLightCreateArg arg);
             
             SpotLight (const SpotLight& other)		= default;
             SpotLight (SpotLight&& other)			= default;
@@ -89,35 +78,13 @@ namespace Engine::LowRenderer
     
             #pragma region methods
 
-            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override
-            {
-                lb.push_back({  ambientComp_, 
-                                diffuseComp_, 
-                                specularComp_,
-                                position_, 2.f,
-                                constant_, linear_, quadratic_, cutOffExponent_,
-                                direction_, cutOff_});
-            }
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override;
 
             #pragma endregion //!methods
     
-            #pragma region static methods
-
-            #pragma endregion //!static methods            
-    
-            #pragma region accessor
-
-            #pragma endregion //!accessor
-    
-            #pragma region mutator
-
-            #pragma endregion //!mutator
-    
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
+            #ifndef DNEDITOR
+            virtual void serializeOnEditor () noexcept override;
+            #endif
     
         protected:
     

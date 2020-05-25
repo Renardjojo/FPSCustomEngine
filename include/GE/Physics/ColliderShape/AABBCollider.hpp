@@ -35,10 +35,10 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::AABB        getGlobalAABB() const noexcept
         { 
-            const Engine::Core::Maths::Vec3 centerGlobal = gameObject.entity->getPosition() + AABB_.getCenter();
-            const float extIGlobal = AABB_.getExtI() + gameObject.entity->getScale().x / 2.f;
-            const float extJGlobal = AABB_.getExtJ() + gameObject.entity->getScale().y / 2.f;
-            const float extKGlobal = AABB_.getExtK() + gameObject.entity->getScale().z / 2.f;
+            const Engine::Core::Maths::Vec3 centerGlobal = _gameObject.getPosition() + AABB_.getCenter();
+            const float extIGlobal = AABB_.getExtI() + _gameObject.getScale().x / 2.f;
+            const float extJGlobal = AABB_.getExtJ() + _gameObject.getScale().y / 2.f;
+            const float extKGlobal = AABB_.getExtK() + _gameObject.getScale().z / 2.f;
 
             return Engine::Core::Maths::Shape3D::AABB{centerGlobal, extIGlobal, extJGlobal, extKGlobal};
         }

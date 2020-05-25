@@ -11,13 +11,17 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/Random.hpp"
 #include "GE/LowRenderer/model.hpp"
+#include "GE/Ressources/Saves.hpp"
+#include "Game/LifeDuration.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
+#include "GE/Physics/ColliderShape/SphereCollider.hpp"
 
 namespace Game
 {
 
     struct EnemiePrefasAndSpawnChance
     {
-        Engine::LowRenderer::ModelCreateArg prefab;
+        std::string prefabPath;
     };
 
     typedef std::vector<EnemiePrefasAndSpawnChance> EnemieInfo;
@@ -27,13 +31,13 @@ namespace Game
     {
         private:
         
-        Engine::Core::Maths::Vec3               _spawnPosition          = Engine::Core::Maths::Vec3::zero;
-        EnemieInfo                              _enemiePrefas;
-        float                                   _zoneRadius             = 3.f;  /*in sec*/
-        float                                   _spawnDelay             = 1.f;  /*in sec*/
-        float                                   _spawnDelayInterval     = 0.f; /*in sec*/
-        float                                   _delayCount             = 0.f;
-        float                                   _nextDelay              = _spawnDelay;
+        Engine::Core::Maths::Vec3               _spawnPosition         {Engine::Core::Maths::Vec3::zero};
+        EnemieInfo                              _enemiePrefas          {};
+        float                                   _zoneRadius            {3.f};  /*in sec*/
+        float                                   _spawnDelay            {1.f};  /*in sec*/
+        float                                   _spawnDelayInterval    {0.f}; /*in sec*/
+        float                                   _delayCount            {0.f};
+        float                                   _nextDelay             {_spawnDelay};
 
         
         public:
@@ -49,8 +53,8 @@ namespace Game
          */
         CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemieInfo& enemisPrefabs, Engine::Core::Maths::Vec3& spawnPosition, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
-                _enemiePrefas                               {enemisPrefabs},
                 _spawnPosition                              {spawnPosition},
+                _enemiePrefas                               {enemisPrefabs},
                 _zoneRadius                                 {zoneRadius},
                 _spawnDelay                                 {spawnDelay},
                 _spawnDelayInterval                         {spawnDelayInterval}, 
@@ -58,7 +62,7 @@ namespace Game
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
         {}
 
-        ~CircularEnemiesSpawner() = default;
+        virtual ~CircularEnemiesSpawner() = default;
 
         void update() override
         {   
@@ -71,13 +75,16 @@ namespace Game
             {
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
+                Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
 
-                Engine::LowRenderer::ModelCreateArg enemiePrefasCopy = _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size())].prefab;
-                Engine::Core::Maths::Vec2 newPosition = Engine::Core::Maths::Random::peripheralCircularCoordinate(Engine::Core::Maths::Vec2{enemiePrefasCopy.position.x, enemiePrefasCopy.position.y}, _zoneRadius);
-                enemiePrefasCopy.position.x = newPosition.x;
-                enemiePrefasCopy.position.y = newPosition.y;
-
-                gameObject.addChild<Engine::LowRenderer::Model>(enemiePrefasCopy);
+                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _enemiePrefas[0].prefabPath);
+                /*
+                auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy);
+                newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);
+                newGo.addComponent<Engine::Physics::PhysicalObject>().setMass(1);
+                newGo.addComponent<Engine::Physics::ColliderShape::SphereCollider>().setBounciness(0.4f);
+                newGo.addComponent<Game::LifeDuration>(10.f);
+                */
             }
         }
     };

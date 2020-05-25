@@ -5,19 +5,20 @@
 #ifndef _GE_POINT_LIGHT_H
 #define _GE_POINT_LIGHT_H
 
-#include <cmath>
 #include <vector>
 
-#include "glad/glad.h"
+#ifndef DNEDITOR
+#include "imgui/imgui.h"
+#endif
+
 #include "GE/Core/Maths/vec.hpp"
-#include "GE/LowRenderer/entity.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::LowRenderer
 {
     typedef struct S_PointLightCreateArg
     {
-        const Engine::Core::Maths::Vec3&    pos;
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
@@ -25,8 +26,6 @@ namespace Engine::LowRenderer
         float                               constant; 
         float                               linear;
         float                               quadratic;
-
-        const char*                         name;
 
     } PointLightCreateArg;
 
@@ -39,27 +38,17 @@ namespace Engine::LowRenderer
     
             PointLight ()						            = default;
 
-            PointLight ( const PointLightCreateArg& arg)
-                        :   Light               (arg.pos, arg.ambient, arg.diffuse, arg.specular, arg.name),
-                            constant_           (arg.constant),
-                            linear_             (arg.linear),
-                            quadratic_          (arg.quadratic)
-            {}
-
+            PointLight (Engine::Ressources::GameObject &refGameObject, const PointLightCreateArg& arg);
                         
-            PointLight ( const Engine::Core::Maths::Vec3&                       pos,
+            PointLight ( Engine::Ressources::GameObject &                       refGameObject,
                          const Engine::Ressources::AmbiantComponent&            ambient, 
                          const Engine::Ressources::DiffuseComponent&            diffuse, 
                          const Engine::Ressources::SpecularComponent&           specular,
                          float                              constant, 
                          float                              linear, 
-                         float                              quadratic, 
-                         const char*                        name)
-            :   Light               (pos, ambient, diffuse, specular, name),
-                constant_           (constant),
-                linear_             (linear),
-                quadratic_          (quadratic)
-            {}
+                         float                              quadratic);
+            
+            PointLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params);
             
             PointLight (const PointLight& other)		    = default;
             PointLight (PointLight&& other)			        = default;
@@ -70,50 +59,19 @@ namespace Engine::LowRenderer
             #pragma region methods
 
 
-            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override
-            {
-                lb.push_back({  ambientComp_, 
-                                diffuseComp_, 
-                                specularComp_, 
-                                position_, 1.f,
-                                constant_, linear_, quadratic_, 0.f,
-                                {0.f, 0.f, 0.f}, 0.f});
-            }
-            
+            virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override;
+    
+            void save(xml_document<> &doc, xml_node<> *nodeParent);
+
+            #ifndef DNEDITOR
+            virtual void serializeOnEditor () noexcept override;
+            #endif
 
             #pragma endregion //!methods
-    
-            #pragma region static methods
 
-            #pragma endregion //!static methods            
-    
-            #pragma region accessor
-
-            #pragma endregion //!accessor
-    
-            #pragma region mutator
-            #pragma endregion //!mutator
-    
-            #pragma region operator
-            #pragma endregion //!operator
-    
-            #pragma region convertor
-            #pragma endregion //!convertor
-    
         protected:
-    
-            #pragma region attribut
 
             float constant_, linear_, quadratic_;
-
-            #pragma endregion //!attribut
-
-            #pragma region static attribut
-            
-            #pragma endregion //! static attribut
-    
-            #pragma region methods
-            #pragma endregion //!methods
     
         private:
     

@@ -14,8 +14,8 @@ namespace Engine::LowRenderer
 {
     typedef struct S_EntityCreateArg
     {
-        std::string         name            = "";
-        Engine::Physics::TransformCreateArg  transformArg    = {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one};
+        std::string         name                            {""};
+        Engine::Physics::TransformCreateArg  transformArg  {Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::zero, Engine::Core::Maths::Vec3::one};
         
     } EntityCreateArg;
 
@@ -49,7 +49,7 @@ namespace Engine::LowRenderer
                         name_       (arg.name)
                     {}
 
-            Entity (const Entity& other) = default;
+            Entity (const Entity& other)  = default;
             virtual ~Entity ()            = default;
     
             #pragma endregion //!constructor/destructor
@@ -66,7 +66,10 @@ namespace Engine::LowRenderer
              * @return const char* 
              */
             inline
-            const char* getName() const noexcept { return name_.c_str(); }
+            std::string getName() const noexcept { return name_; }
+
+            inline
+            const char* getCName() const noexcept { return name_.c_str(); }
 
             #pragma endregion //!accessor
     
@@ -80,7 +83,6 @@ namespace Engine::LowRenderer
             inline
             void setName(const char* newName) noexcept 
             { 
-                Engine::Core::Debug::SLog::log((std::string("Entity rename from \"") + name_ + "\" to " + newName).c_str());
                 name_ = newName; 
             }
 

@@ -448,6 +448,12 @@ Vec3 Vec3::getRotateArroundAxis (const Vec3& k, float angleRad) const
 }
 
 inline
+Vec3::operator Vec2 ()
+{
+	return Vec2{x, y};
+}
+
+inline
 Vec3& Vec3::operator++ ()
 {
 	float len = length();
