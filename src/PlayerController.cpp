@@ -53,11 +53,12 @@ void PlayerController::fixedUpdate()
     {
         _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
         _jump = false;
+        _physics->setUseGravity(true);
+        _isGrounded = false;
     }
     
     _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 
-    _isGrounded = false;
 };
 
 void PlayerController::shoot()
@@ -192,6 +193,7 @@ void PlayerController::onCollisionEnter(HitInfo& hitInfo)
     if (hitInfo.gameObject->getTag() == "Ground")
     {
         _isGrounded = true;
+        _physics->setUseGravity(false);
     }
 }
 

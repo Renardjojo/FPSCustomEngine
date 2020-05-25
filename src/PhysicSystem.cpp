@@ -78,34 +78,38 @@ void PhysicSystem::update() noexcept
                     {
                         if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
                         {
+                            exit(0);
                             /*If error happend and the point is inside the box, try to escape to it*/
                             AB -= AB.getNormalize() * 10.f;
                             MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
                             AB, intersection);
                         }
 
+                        /*Compoute tAP and tPB*/
                         Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
                         Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
                         Vec3 OB = OA + AB;
                         float ABLength = AB.length();
                         float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
                         float tAP = 1.f - tPB;
+
+                        /*Compute the new position and the new velocity of the entity*/
                         Vec3 atBeginVelocity = collider1->GetAttachedPhysicalObject()->getVelocity() - gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime();
                         Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
                         Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
                         Vec3 gravityAfterCollision = gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
                         Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness();
-                        
+
                         /*Check if the gravity is upper than velocity.*/
-                        if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(gravity) < std::numeric_limits<float>::epsilon())
+                        if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(intersection.normalI1) > std::numeric_limits<float>::epsilon())
                         {
                             afterCollisionVelocity += gravityAfterCollision;
-                        }
+                        }                   
 
                         //Vec3 newVelocity = gravityAfterCollision.length() > afterCollisionVelocity.length() ? afterCollisionVelocity + gravityAfterCollision : Vec3{};
                         Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
 
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition + intersection.normalI1 * 0.0001f);
+                        collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition + intersection.normalI1 * 0.001f);
                         collider1->GetAttachedPhysicalObject()->setVelocity(afterCollisionVelocity);
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
