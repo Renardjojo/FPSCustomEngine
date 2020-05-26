@@ -124,17 +124,17 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-    mouseMotion *= TimeSystem::getDeltaTime() * _mouseSpeed;
+    mouseMotion *= _mouseSpeed;
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
 
     _orbit.y = fmod(_orbit.y, M_PI * 2);
     _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-    _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
 
     if (_type == CameraType::FirstPerson)
     {
+        _gameObject.setRotation({0, -_orbit.y, 0.f});
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();

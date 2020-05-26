@@ -60,58 +60,58 @@ void EditModeControllerWindow::updateEditModeCameraControl()
 {
    if (Input::keyboard.isDown[Input::keyboard.up])
     {
-        Vec3 vec = dirCamera * (20.f * TimeSystem::getUnscaledDetlaTime());
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getUnscaledDeltaTime());
         pEditModeCamera->translate(vec);
     }
 
     if (Input::keyboard.isDown[Input::keyboard.down])
     {
-        Vec3 vec = dirCamera * (20.f * TimeSystem::getUnscaledDetlaTime());
+        Vec3 vec = dirCamera * (20.f * TimeSystem::getUnscaledDeltaTime());
         pEditModeCamera->translate(-vec);
     }
 
     if (Input::keyboard.isDown[Input::keyboard.jump])
     {
-        pEditModeCamera->translate({0.f, 20.f * static_cast<float>(TimeSystem::getUnscaledDetlaTime()), 0.f});
+        pEditModeCamera->translate({0.f, 20.f * static_cast<float>(TimeSystem::getUnscaledDeltaTime()), 0.f});
     }
 
     if (Input::keyboard.isDown[SDL_SCANCODE_LCTRL])
     {
-        pEditModeCamera->translate({0.f, -20.f * static_cast<float>(TimeSystem::getUnscaledDetlaTime()), 0.f});
+        pEditModeCamera->translate({0.f, -20.f * static_cast<float>(TimeSystem::getUnscaledDeltaTime()), 0.f});
     }
 
     if (Input::keyboard.isDown[Input::keyboard.left])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDetlaTime() * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * TimeSystem::getUnscaledDetlaTime());
+        playerDirOrtho *= (20.f * TimeSystem::getUnscaledDeltaTime());
         pEditModeCamera->translate(-playerDirOrtho);
     }
 
     if (Input::keyboard.isDown[Input::keyboard.right])
     {
         Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-        vecDirPlayer.rotate(-Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDetlaTime() * 180 / M_PI).rotated90();
+        vecDirPlayer.rotate(-Input::mouse.motion.x * 0.1f * TimeSystem::getUnscaledDeltaTime() * 180 / M_PI).rotated90();
         Vec3 playerDirOrtho {vecDirPlayer.x, dirCamera.y, vecDirPlayer.y};
 
-        playerDirOrtho *= (20.f * TimeSystem::getUnscaledDetlaTime());
+        playerDirOrtho *= (20.f * TimeSystem::getUnscaledDeltaTime());
         pEditModeCamera->translate(playerDirOrtho);
     }
 
     if (Input::mouse.motion.y != 0)
     {
-        pEditModeCamera->rotate(-Input::mouse.motion.y * 0.5f * TimeSystem::getUnscaledDetlaTime(), {1.f, 0.f, 0.f});
+        pEditModeCamera->rotate(-Input::mouse.motion.y * 0.5f * TimeSystem::getUnscaledDeltaTime(), {1.f, 0.f, 0.f});
     }
 
     if (Input::mouse.motion.x != 0)
     {
             Vec2 vecDirPlayer = {dirCamera.x, dirCamera.z};
-            vecDirPlayer.rotate(Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDetlaTime() * 180 / M_PI);
+            vecDirPlayer.rotate(Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDeltaTime() * 180 / M_PI);
             dirCamera.x = vecDirPlayer.x;
             dirCamera.z = vecDirPlayer.y;
-            pEditModeCamera->rotate(-Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDetlaTime(), {0.f, 1.f, 0.f});
+            pEditModeCamera->rotate(-Input::mouse.motion.x * 0.5f * TimeSystem::getUnscaledDeltaTime(), {0.f, 1.f, 0.f});
     }
 
     static int exFrameWheelVal = Input::mouse.wheel_scrolling;

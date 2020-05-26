@@ -37,7 +37,7 @@ ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSys
 
 void ParticuleGenerator::update()
 {   
-    _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDetlaTime();
+    _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime();
 
     while(_delayCount >= _spawnCountBySec)
     {

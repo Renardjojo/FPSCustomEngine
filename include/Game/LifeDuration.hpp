@@ -43,7 +43,7 @@ namespace Game
 
         void update() override
         {   
-            _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDetlaTime();
+            _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime();
 
             if(_delayCount >= _lifeMaxDelay)
             {
