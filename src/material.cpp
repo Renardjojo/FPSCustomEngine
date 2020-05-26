@@ -22,7 +22,7 @@ Material::Material (const MaterialAndTextureCreateArg& arg)
         textArg.wrapType        = arg.wrapType;
         textArg.flipTexture     = arg.flipTexture;
         
-        pDiffuseTexturetexture_ = std::make_unique<Texture>(textArg);
+        pDiffuseTexturetexture_ = std::make_shared<Texture>(textArg);
     }
 }
 
@@ -31,7 +31,7 @@ Material::Material (const MaterialAttrib& arg)
                                             arg.diffuse, 
                                             arg.specular,
                                             arg.shininess},
-        pDiffuseTexturetexture_         (std::make_unique<Texture>((std::string(PATH_TEXTURE_RESSORUCE) + arg.nameDiffuseTexture).c_str())),
+        pDiffuseTexturetexture_         (std::make_shared<Texture>((std::string(PATH_TEXTURE_RESSORUCE) + arg.nameDiffuseTexture).c_str())),
         name_                           (arg.id)
 {}
 

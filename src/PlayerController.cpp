@@ -69,14 +69,14 @@ void PlayerController::shoot()
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
-                                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")}, 
+                                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                                 "TextureOnly", 
                                                 {"BulletHole"}, 
                                                 "Plane"};
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
+                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                 "Color",
                                 {"RedMaterial"},

@@ -73,15 +73,32 @@ namespace Game
 
             #pragma region methods
 
-            void loadRessources         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadRessources             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadRockRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadTreeRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSkyboxRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGunRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadPlayerRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSpotLightRessource     (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadTowerRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGroundRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);            
+
+            void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
+            void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
+            void loadSkybox                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGun                    (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadPlayer                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);     
+            
+            
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadSkateBoard         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            //void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadATH                (Engine::Ressources::t_RessourcesManager &ressourceManager);    
+            void loadATH                (Engine::Ressources::t_RessourcesManager& ressourceManager);    
             void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             ();
 

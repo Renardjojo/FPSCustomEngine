@@ -22,11 +22,11 @@ void Model::initTextureBufferWithMTLId ()
     {
         unsigned int sizeTexBuffer = pMaterialToUse_.size();
 
-        for (Material* pMaterial : pMaterial_)
+        for (Material& material : *pMaterial_)
         {
-            if(pMaterial->getName() == idMat)
+            if(material.getName() == idMat)
             {
-                pMaterialToUse_.push_back(pMaterial);
+                pMaterialToUse_.push_back(&material);
                 break;
             }
         }
@@ -61,7 +61,7 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
 Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
     :   IModel                  (refGameObject),
         pShader_                (&ressourcesManager.get<Shader>(*params[0])),
-        pMaterial_              ({&ressourcesManager.get<Material>(*params[1])}),
+        pMaterial_              (&ressourcesManager.get<std::vector<Material>>(*params[1])),
         pMesh_                  (&ressourcesManager.get<Mesh>(*params[2])),
         enableBackFaceCulling_  (true),
         isOpaque_               (true),
@@ -164,20 +164,20 @@ void Model::draw () const noexcept
         }
         else
         {
-            if (pMaterial_[0]->getPDiffuseTexture() != nullptr)
-                pMaterial_[0]->getPDiffuseTexture()->use();
+            if ((*pMaterial_)[0].getPDiffuseTexture() != nullptr)
+                (*pMaterial_)[0].getPDiffuseTexture()->use();
         
             if ((pShader_->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
             {
-                pShader_->setMaterialBlock((pMaterial_[0])->getMaterialComponent());
+                pShader_->setMaterialBlock((*pMaterial_)[0].getMaterialComponent());
             }
             
             if ((pShader_->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
             {
-               pShader_->setVec4("Color",  (pMaterial_[0])->getMaterialComponent().ambient.kr, 
-                                            (pMaterial_[0])->getMaterialComponent().ambient.kg,
-                                            (pMaterial_[0])->getMaterialComponent().ambient.kb,
-                                            (pMaterial_[0])->getMaterialComponent().ambient.ki);
+               pShader_->setVec4("Color",  (*pMaterial_)[0].getMaterialComponent().ambient.kr, 
+                                            (*pMaterial_)[0].getMaterialComponent().ambient.kg,
+                                            (*pMaterial_)[0].getMaterialComponent().ambient.kb,
+                                            (*pMaterial_)[0].getMaterialComponent().ambient.ki);
             }
     
         }
