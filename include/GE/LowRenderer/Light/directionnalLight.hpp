@@ -44,7 +44,7 @@ namespace Engine::LowRenderer
                                 const Engine::Ressources::DiffuseComponent&            diffuse, 
                                 const Engine::Ressources::SpecularComponent&           specular);
             
-            DirectionnalLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params);
+            DirectionnalLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 
             DirectionnalLight (const DirectionnalLight& other)		    = default;
             DirectionnalLight (DirectionnalLight&& other)			    = default;

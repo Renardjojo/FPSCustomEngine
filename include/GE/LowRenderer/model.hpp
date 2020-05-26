@@ -51,7 +51,7 @@ namespace Engine::LowRenderer
             Model(Model &&other)                                  = default;
             virtual ~Model();
 
-            Model(Engine::Ressources::GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, Engine::Ressources::t_RessourcesManager& ressourcesManager); // load construtor
+            Model(Engine::Ressources::GameObject &refGameObject, std::vector<std::string>& params, Engine::Ressources::t_RessourcesManager& ressourcesManager); // load construtor
 
             Model()                                               = delete;
             Model &operator=(Model const &other)                  = delete;

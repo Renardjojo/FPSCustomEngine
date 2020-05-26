@@ -29,7 +29,8 @@ namespace Engine::Core::DataStructure
             Graph ()
                 : world_ {}
             {
-                world_.setName("World");
+                world_.setName("world");
+                world_.parent = nullptr;
             }
 
             Graph (const Graph& other)		= delete;
@@ -108,6 +109,7 @@ namespace Engine::Core::DataStructure
                 dependenceEntity.children.emplace_back(std::make_unique<T>(args...));
                 dependenceEntity.children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
                 dependenceEntity.children.back()->update(dependenceEntity.getModelMatrix());
+                dependenceEntity.children.back()->parent = &dependenceEntity;
 
                 return *dependenceEntity.children.back();
             }

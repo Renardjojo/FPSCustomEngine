@@ -48,7 +48,7 @@ namespace Engine::LowRenderer
                          float                              linear, 
                          float                              quadratic);
             
-            PointLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params);
+            PointLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
             
             PointLight (const PointLight& other)		    = default;
             PointLight (PointLight&& other)			        = default;

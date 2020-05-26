@@ -3,6 +3,7 @@
 		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="GreenMaterial" meshName="Cube"/>
 		<COMPONENT type="SphereCollider"/>
 		<COMPONENT type="PhysicalObject"/>
+		<COMPONENT type="EnnemyController" radius="5.000000" exclusionRadius="0.600000" speed="5.000000" player="world/Player" state="1" checkpointName="world/checkpoint1" checkpointTargetX="10.000000" checkpointTargetY="-10.000000" checkpointTargetZ="10.000000" checkpointNumber="1"/>
 	</GAMEOBJECT>
 </enemy1>
 

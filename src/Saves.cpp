@@ -4,6 +4,8 @@
 
 #include "GE/Ressources/Component.hpp"
 #include "Game/demo.hpp"
+#include "Game/EnnemyController.hpp"
+#include "Game/Checkpoint.hpp"
 #include "GE/GE.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "Game/PlayerController.hpp"
@@ -221,10 +223,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
     else if (std::string(node->name()).compare("COMPONENT") == 0)// Component
     {
         std::string type = str;
-        std::vector<std::unique_ptr<std::string>> params;
+        std::vector<std::string> params;
         attr = attr->next_attribute();
         for (; attr; attr = attr->next_attribute())
-            params.push_back(std::make_unique<std::string>(attr->value()));
+            params.push_back(attr->value());
 
         if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
@@ -240,6 +242,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<DirectionnalLight>(params).enable(true);
         else if (type.compare("PointLight") == 0)
             parent.addComponent<PointLight>(params).enable(true);
+        else if (type.compare("EnnemyController") == 0)
+            parent.addComponent<EnnemyController>(params);
+        else if (type.compare("Checkpoint") == 0)
+            parent.addComponent<Checkpoint>();
 
 
         newGameObject = &parent;
@@ -345,6 +351,12 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 
     if (gameObjectParent.getComponent<DirectionnalLight>())
         gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<EnnemyController>())
+        gameObjectParent.getComponent<EnnemyController>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<Checkpoint>())
+        gameObjectParent.getComponent<Checkpoint>()->save(doc, newNode);
 
         
 
