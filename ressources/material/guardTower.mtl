@@ -1,0 +1,44 @@
+# By Six J for Engin project
+
+newmtl Wood_Material_A
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_A/All_Wood_A.png
+
+newmtl Wood_Material_A_Checkers
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_A/All_Wood_A.png
+
+
+newmtl Wood_texture_B
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_B/All_Wood_B.png
+
+newmtl Wood_Texture_C
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_C/All_Wood_C.png
+
+newmtl Wood_Material_D
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_D/All_Wood_D.png
+
+newmtl Support
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 0.0000
+	map_Kd All_Wood_D/All_Wood_D.png
