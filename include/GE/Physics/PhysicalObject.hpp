@@ -50,6 +50,9 @@ namespace Engine::Physics
 		void addTorque(const Engine::Core::Maths::Vec3& force) noexcept;
 		void addTorque(float x, float y, float z) noexcept;
 
+		/*Create force and torque*/
+		void addForceAtPoint(const Engine::Core::Maths::Vec3& force, const Engine::Core::Maths::Vec3& position) noexcept;
+
 #pragma endregion //!methods
 
 #pragma region accessor
@@ -84,6 +87,13 @@ namespace Engine::Physics
 			_velocity.x = x;
 			_velocity.y = y;
 			_velocity.z = z;
+		}
+
+		void setAngularVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
+		{
+			_isDirty = true;
+			_sleep = false;
+			_angularVelocity = velocity;
 		}
 
 		void setMass			(float mass) noexcept { _mass = mass; }

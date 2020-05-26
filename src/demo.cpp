@@ -741,10 +741,10 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
                           {&ressourceManager.get<Material>("GreenMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere"),
+                          &ressourceManager.get<Mesh>("Cube"),
                           "ColorWithLight",
                           {"GreenMaterial"},
-                          "Sphere"};
+                          "Cube"};
 
     GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
