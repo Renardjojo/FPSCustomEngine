@@ -22,7 +22,7 @@ namespace Engine::LowRenderer::EditorTools
 
     static void quickSaveSceneOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
     static void saveSceneAsOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
-    static void loadSceneOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
+    static void loadSceneOption(Engine::GE& engine);
     static void updateInput();
 
     public:

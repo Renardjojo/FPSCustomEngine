@@ -115,7 +115,6 @@ void Demo::update() noexcept
 {
     UISystem::update(gameEngine_);
     updateControl();
-
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
         scene_->update();
@@ -260,16 +259,16 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg playerGameObject{"Player",
-                                         {{0.f, 0.f, 0.f},
+                                         {{-2.f, 0.f, 0.f},
                                           {0.f, 0.f, 0.f},
                                           {1.0f, 1.0f, 1.0f}}};
 
     ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                {&ressourceManager.get<Material>("PinkMaterial")},
-                               &ressourceManager.get<Mesh>("Cube"),
+                               &ressourceManager.get<Mesh>("Sphere"),
                                "ColorWithLight",
                                {"PinkMaterial"},
-                               "Cube"};
+                               "Sphere"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
@@ -319,7 +318,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->setBounciness(0.4f);
+    player.getComponent<SphereCollider>()->setBounciness(0.f);
 }
 
 void Demo::loadSkyBox(t_RessourcesManager &ressourceManager)
@@ -358,7 +357,7 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg groundArgGameObject{"Ground",
                                             {{0.f, -20.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {50.f, 0.1f, 50.f}}};
+                                             {50.f, 1.f, 50.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("TextureOnly"),
                              {&ressourceManager.get<Material>("materialGround")},
@@ -369,7 +368,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
                              true,
                              false};
 
-    scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject).addComponent<Model>(groundArg);
+    GameObject& ground = scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject);
+    ground.addComponent<Model>(groundArg);
+    ground.setTag("Ground");
     scene_->getGameObject("world/Ground").addComponent<OrientedBoxCollider>();
 }
 
@@ -472,7 +473,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     int tempX = gameEngine_.getWinSize().width / 2.0f;
     int tempY = gameEngine_.getWinSize().heigth / 2.0f;
 
+
 #pragma region Start
+
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader,
                                  tempX - 90, tempY - 200,
                                  200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
@@ -484,6 +487,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         SDL_ShowCursor(false);
         SDL_SetRelativeMouseMode(SDL_TRUE);
     };
+
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader,
                                  tempX - 95, tempY - 100,
@@ -629,7 +633,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  tempX + 50, tempY + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
-        .function = [&]() {
+        .function = [&]() 
+        {
         SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
@@ -640,8 +645,50 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
+    ressourceManager.add<Button>("OptionSwitchButton", pfont, buttonShader,
+                                 tempX - 45, tempY + 200,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
+                                 E_GAME_STATE::OPTION)
+    .function = [&]() 
+    {
+        Button* switchButton = &ressourceManager.get<Button>("OptionSwitchButton");
+        Button* upButton = &ressourceManager.get<Button>("OptionForwardButton");
+        Button* downButton = &ressourceManager.get<Button>("OptionBackwardButton");
+        Button* rightButton = &ressourceManager.get<Button>("OptionRightButton");
+        Button* leftButton = &ressourceManager.get<Button>("OptionLeftButton");
+        if (switchButton->value.compare("WASD") == 0)
+        {
+            Input::keyboard.up = SDL_SCANCODE_Z;
+            Input::keyboard.down = SDL_SCANCODE_S;
+            Input::keyboard.right = SDL_SCANCODE_D;
+            Input::keyboard.left = SDL_SCANCODE_Q;
+            upButton->value = "Z";
+            downButton->value = "S";
+            rightButton->value = "D";
+            leftButton->value = "Q";
+            switchButton->value = "ZQSD";
+        }
+        else if (switchButton->value.compare("ZQSD") == 0)
+        {
+            Input::keyboard.up = SDL_SCANCODE_W;
+            Input::keyboard.down = SDL_SCANCODE_S;
+            Input::keyboard.right = SDL_SCANCODE_D;
+            Input::keyboard.left = SDL_SCANCODE_A;
+            upButton->value = "W";
+            downButton->value = "S";
+            rightButton->value = "D";
+            leftButton->value = "A";
+            switchButton->value = "WASD";
+        }
+        switchButton->updateTexture();
+        upButton->updateTexture();
+        downButton->updateTexture();
+        rightButton->updateTexture();
+        leftButton->updateTexture();
+    };
+
     ressourceManager.add<Button>("Return", pfont, buttonShader,
-                                 tempX - 50, tempY + 250,
+                                 tempX - 50, tempY + 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -678,7 +725,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             Light::resetLight();
             scene_.reset();
             scene_ = std::make_unique<Scene>();
-            setupScene(*scene_, gameEngine_, saves.c_str());
+            setupScene(*scene_, saves.c_str());
             mainCamera = &scene_->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);
@@ -723,7 +770,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
     Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
 
-    Image &image = ressourceManager.add<Image>("CrosshairImage",
+    ressourceManager.add<Image>("CrosshairImage",
                                                t_crosshair.getID(),
                                                imageShader,
                                                halfWidth - halfcrosshairSize,
@@ -741,10 +788,10 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
                           {&ressourceManager.get<Material>("GreenMaterial")},
-                          &ressourceManager.get<Mesh>("Sphere"),
+                          &ressourceManager.get<Mesh>("Cube"),
                           "ColorWithLight",
                           {"GreenMaterial"},
-                          "Sphere"};
+                          "Cube"};
 
     GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
@@ -760,7 +807,10 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
                             {&ressourceManager.get<Material>("GreenMaterial")},
-                            &ressourceManager.get<Mesh>("Plane")};
+                            &ressourceManager.get<Mesh>("Plane"),
+                            "Color",
+                            {"GreenMaterial"},
+                            "Plane"};
 
     ParticuleGenerator::ParticleSystemCreateArg particalArg;
     particalArg.modelCreateArg = modelArg3;
@@ -773,9 +823,9 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
-    GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    //GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
     //particleGO.addComponent<ParticuleGenerator>(particalArg);
-    particleGO.addComponent<LifeDuration>(10.f);
+    //particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }

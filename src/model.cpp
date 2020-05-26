@@ -44,11 +44,11 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
         pShader_                (arg.pShader),
         pMaterial_              (arg.pMaterials),
         pMesh_                  (arg.pMesh),
-        enableBackFaceCulling_  (arg.enableBackFaceCulling),
-        isOpaque_               (arg.isOpaque),
         shaderName_             (arg.shaderName),
         materialName_           (arg.materialName),
-        meshName_               (arg.meshName)
+        meshName_               (arg.meshName),
+        enableBackFaceCulling_  (arg.enableBackFaceCulling),
+        isOpaque_               (arg.isOpaque)
 {
     initTextureBufferWithMTLId();
 
@@ -63,11 +63,11 @@ Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>
         pShader_                (&ressourcesManager.get<Shader>(*params[0])),
         pMaterial_              ({&ressourcesManager.get<Material>(*params[1])}),
         pMesh_                  (&ressourcesManager.get<Mesh>(*params[2])),
-        enableBackFaceCulling_  (true),
-        isOpaque_               (true),
         shaderName_             (*params[0]),
         materialName_           ({*params[1]}),
-        meshName_               (*params[2])
+        meshName_               (*params[2]),
+        enableBackFaceCulling_  (true),
+        isOpaque_               (true)
 {
     initTextureBufferWithMTLId();
     loadInGPU (); 

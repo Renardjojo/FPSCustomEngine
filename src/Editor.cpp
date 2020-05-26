@@ -47,7 +47,7 @@ void Editor::quickSaveSceneOption(Scene& scene, GE& engine)
     }
 }
 
-void Editor::loadSceneOption(Scene& scene, GE& engine)
+void Editor::loadSceneOption(GE& engine)
 {
     if (ImGui::BeginMenu("Load scene", "CTRL+L"))
     {
@@ -58,7 +58,7 @@ void Editor::loadSceneOption(Scene& scene, GE& engine)
                 Light::resetLight();
                 Scene::_currentScene->reset();
                 *Scene::_currentScene = std::make_unique<Scene>();
-                setupScene(*Scene::getCurrentScene(), engine, i.c_str());
+                setupScene(*Scene::getCurrentScene(), i.c_str());
                 Camera::setCamUse(static_cast<Camera*>(&Scene::getCurrentScene()->getGameObject("world/MainCamera")));
                 ImGui::EndMenu();
                 return;
@@ -80,7 +80,7 @@ void Editor::update(Scene& scene, GE& engine)
         if (ImGui::BeginMenu("Edit"))
         {
             quickSaveSceneOption(scene, engine);
-            loadSceneOption(scene, engine);
+            loadSceneOption(engine);
             ImGui::Separator();
 
             ImGui::EndMenu();

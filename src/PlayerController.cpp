@@ -49,13 +49,16 @@ void PlayerController::update()
 
 void PlayerController::fixedUpdate()
 {
-    if (_jump)
+    if (_jump && _isGrounded)
     {
-        _physics->addForce(0.f, 1.f, 0.f);
+        _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
         _jump = false;
+        _physics->setUseGravity(true);
+        _isGrounded = false;
     }
     
     _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+
 };
 
 void PlayerController::shoot()
@@ -74,7 +77,10 @@ void PlayerController::shoot()
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
                                 {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane")};
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                "Color",
+                                {"RedMaterial"},
+                                "Plane"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -151,7 +157,8 @@ void PlayerController::camera()
 
 void PlayerController::move()
 {
-    _jump = Input::keyboard.isDown[Input::keyboard.jump];
+    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
+        _jump = true;
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == 1)
         toggleCameraType();
@@ -186,11 +193,16 @@ void PlayerController::move()
 
 void PlayerController::onCollisionEnter(HitInfo& hitInfo)
 {
+    if (hitInfo.gameObject->getTag() == "Ground")
+    {
+        _isGrounded = true;
+        _physics->setUseGravity(false);
+    }
 }
 
 void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
 {
-    if (!nodeParent && !&doc)
+    if (!nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 

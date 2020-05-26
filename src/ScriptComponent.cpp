@@ -22,5 +22,5 @@ ScriptComponent::~ScriptComponent()
 
 void ScriptComponent::onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo)
 {
-
+    hitInfo.gameObject = hitInfo.gameObject;
 }
