@@ -47,14 +47,14 @@ namespace Game
 
             #pragma endregion //!methods
 
-            static std::unique_ptr<Engine::Ressources::Scene> *currentScene_;
+            static std::unique_ptr<Engine::Ressources::Scene> *_currentScene;
 
         protected:
 
             #pragma region attribut
 
-            Engine::GE& gameEngine_;
-            std::unique_ptr<Engine::Ressources::Scene> scene_;
+            Engine::GE& _gameEngine;
+            std::unique_ptr<Engine::Ressources::Scene> _scene;
 
             bool flagleftClicIsDown;
             bool flagF1IsDown;

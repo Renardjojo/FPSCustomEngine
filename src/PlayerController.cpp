@@ -128,7 +128,7 @@ void PlayerController::camera()
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
-
+    
     _orbit.y = fmod(_orbit.y, M_PI * 2);
     _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
 
