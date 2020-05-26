@@ -37,15 +37,22 @@ namespace Engine::Ressources
                 world_.updateSelfAndChild();
             }
 
-            /**
-             * @brief check light enable and store it to use them to draw element with shader light
-             * 
-             */
-            void updateLigthToUse() noexcept;
-
             #pragma endregion //!methods
 
+            /**
+             * @brief Use this Scene to show
+             * 
+             */
+            void use () noexcept
+            {
+                sceneToUse = this;
+            }
+
+            static Scene* getSceneUse() noexcept { return sceneToUse; }
+
         protected:
+
+            static Scene* sceneToUse; //pointor to be in nullptr by default
 
         private:
 

@@ -92,52 +92,83 @@ namespace Engine::Physics
             virtual const Engine::Core::Maths::Vec3& getRotation() const noexcept   { return rotation_; }
             virtual const Engine::Core::Maths::Vec3& getScale() const noexcept      { return scale_; }
 
+            virtual const Engine::Core::Maths::Vec3 getVecForward() const noexcept  { return modelMat_.getVectorForward().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecRight() const noexcept    { return modelMat_.getVectorRight().getNormalize(); }
+            virtual const Engine::Core::Maths::Vec3 getVecUp() const noexcept       { return modelMat_.getVectorUp().getNormalize(); }
+
+            virtual void setVecForward(const Engine::Core::Maths::Vec3& newForward)  noexcept 
+            { 
+                modelMat_.setVectorForward(newForward.getNormalize());
+                modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());
+            }
+
+            virtual void setVecRight(const Engine::Core::Maths::Vec3& newRight)  noexcept
+            {
+                modelMat_.setVectorRight(newRight.getNormalize());
+                modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());   
+            }
+
+            virtual void setVecUp(const Engine::Core::Maths::Vec3& newUp)  noexcept
+            {
+                modelMat_.setVectorUp(newUp.getNormalize());
+                modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
+            }
+
             virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }
-            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_[0][0], modelMat_[1][1], modelMat_[2][2]}; }
+            virtual Engine::Core::Maths::Vec3 getGlobalScale() const noexcept      { return {modelMat_.getVectorRight().length(), modelMat_.getVectorUp().length(), modelMat_.getVectorForward().length()}; }
 
             #pragma endregion //!accessor
     
             #pragma region mutator
 
-            virtual void rotate (float angleRad, Engine::Core::Maths::Vec3 rotAxis)
+            virtual void rotate (float angleRad, Engine::Core::Maths::Vec3 rotAxis) noexcept
             {
                 rotAxis.normalize();
                 rotation_ += {rotAxis.x * angleRad, rotAxis.y * angleRad, rotAxis.z * angleRad};
                 isDirty_ = true;
             }
 
-            virtual void translate (Engine::Core::Maths::Vec3 translation)
+            virtual void rotate (const Engine::Core::Maths::Vec3& newRotation) noexcept
+            {
+                rotation_ += newRotation;
+                isDirty_ = true;
+            }
+
+            virtual void translate (const Engine::Core::Maths::Vec3& translation) noexcept
             {
                 position_ += translation;
                 isDirty_ = true;
             }
 
-            virtual void scale (Engine::Core::Maths::Vec3 scale)
+            virtual void scale (const Engine::Core::Maths::Vec3& scale) noexcept
             {
                 scale_ += scale;
                 isDirty_ = true;
             }
 
-            virtual void setRotation (float angleRad, Engine::Core::Maths::Vec3 rotAxis)
+            virtual void setRotation (float angleRad, Engine::Core::Maths::Vec3 rotAxis) noexcept
             {
                 rotAxis.normalize();
                 rotation_ = {rotAxis.x * angleRad, rotAxis.y * angleRad, rotAxis.z * angleRad};
                 isDirty_ = true;
             }
 
-            virtual void setRotation (Engine::Core::Maths::Vec3 rotation)
+            virtual void setRotation (const Engine::Core::Maths::Vec3& rotation) noexcept
             {
                 rotation_ = rotation;
                 isDirty_ = true;
             }
 
-            virtual void setTranslation (Engine::Core::Maths::Vec3 translation)
+            virtual void setTranslation (const Engine::Core::Maths::Vec3& translation) noexcept
             {
                 position_ = translation;
                 isDirty_ = true;
             }
 
-            virtual void setScale (Engine::Core::Maths::Vec3 scale)
+            virtual void setScale (const Engine::Core::Maths::Vec3& scale) noexcept
             {
                 scale_ = scale;
                 isDirty_ = true;
@@ -148,7 +179,7 @@ namespace Engine::Physics
              * 
              * @param modelMat 
              */
-            virtual void setModelMatrix (const Engine::Core::Maths::Mat4& modelMat)
+            virtual void setModelMatrix (const Engine::Core::Maths::Mat4& modelMat) noexcept
             {
                 modelMat_ = modelMat;
                 isDirty_ = true;
@@ -158,7 +189,7 @@ namespace Engine::Physics
              * @brief Set the Dirty object and force it to be update
              * 
              */
-            void setDirty() { isDirty_ = true;}
+            void setDirty()  noexcept { isDirty_ = true;}
 
             #pragma endregion //!mutator
     

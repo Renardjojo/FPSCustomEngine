@@ -12,7 +12,6 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Ressources::Save;
 using namespace Engine::Core::InputSystem;
 
-
 GE::GE ()
 {
     //init Log

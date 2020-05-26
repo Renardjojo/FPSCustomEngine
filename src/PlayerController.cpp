@@ -4,6 +4,12 @@
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
+#include "GE/LowRenderer/ParticleSystemFactory.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include "Game/LifeDuration.hpp"
+#include "GE/Ressources/scene.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
 #include <math.h>
 #include <algorithm>
 
@@ -18,11 +24,13 @@ using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::InputSystem;
 using namespace Engine::Core::Maths::ShapeRelation;
+using namespace Engine::LowRenderer;
 
-PlayerController::PlayerController(GameObject &_gameObject) : ScriptComponent{_gameObject},
-                                                             _camera{Camera::getCamUse()} {}
+PlayerController::PlayerController(GameObject &_gameObject)
+    : ScriptComponent{_gameObject},
+    _camera{Camera::getCamUse()}
+{}
 
-PlayerController::~PlayerController() {}
 
 void PlayerController::start()
 {
@@ -33,7 +41,7 @@ void PlayerController::update()
 {
     move();
 
-    if(Input::mouse.leftClicDownOnce)
+    if (Input::mouse.leftClicDownOnce)
     {
         shoot();
     }
@@ -41,13 +49,16 @@ void PlayerController::update()
 
 void PlayerController::fixedUpdate()
 {
-    if (_jump)
+    if (_jump && _isGrounded)
     {
-        _physics->AddForce(0.f, 1.f, 0.f);
+        _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
         _jump = false;
+        _physics->setUseGravity(true);
+        _isGrounded = false;
     }
     
-    _physics->AddForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+
 };
 
 void PlayerController::shoot()
@@ -56,7 +67,38 @@ void PlayerController::shoot()
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
-        rayInfo.gameObject->setScale({0.5, 2.f, 0.5f});
+        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
+                                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")}, 
+                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                                "TextureOnly", 
+                                                {"BulletHole"}, 
+                                                "Plane"};
+
+        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
+                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                "Color",
+                                {"RedMaterial"},
+                                "Plane"};
+
+        ParticuleGenerator::ParticleSystemCreateArg particalArg;
+        particalArg.modelCreateArg = modelArg3;
+        particalArg.isBillBoard = true;
+        particalArg.physicalObjectCreateArg.useGravity = true;
+        particalArg.useScaledTime = true;
+        particalArg.velocityEvolutionCoef = 1.f;
+        particalArg.spawnCountBySec = 100.f;
+        particalArg.lifeDuration = 0.5f;
+        particalArg.physicalObjectCreateArg.mass = 1.f;
+        particalArg.scale = {0.05, 0.05, 0.05};
+
+        GameObject& particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        particleGO.addComponent<ParticuleGenerator>(particalArg);
+        particleGO.addComponent<LifeDuration>(3.f);
+
+        ParticleSystemFactory::createDecale(Scene::getSceneUse()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
+        rayInfo.gameObject->destroy();
     }
 }
 
@@ -85,18 +127,17 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-
     mouseMotion *= TimeSystem::getDeltaTime() * _mouseSpeed;
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
 
+    _orbit.y = fmod(_orbit.y, M_PI * 2);
+    _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
+    _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
+
     if (_type == CameraType::FirstPerson)
     {
-        _orbit.y = fmod(_orbit.y, M_PI * 2);
-        _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-        _gameObject.setRotation({0.f, -_orbit.y, 0.f});
-
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
@@ -116,9 +157,10 @@ void PlayerController::camera()
 
 void PlayerController::move()
 {
-    _jump = Input::keyboard.isDown[Input::keyboard.jump];
+    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
+        _jump = true;
 
-    if (Input::keyboard.onePressed(SDL_SCANCODE_F2) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == 1)
         toggleCameraType();
 
     camera();
@@ -151,11 +193,16 @@ void PlayerController::move()
 
 void PlayerController::onCollisionEnter(HitInfo& hitInfo)
 {
+    if (hitInfo.gameObject->getTag() == "Ground")
+    {
+        _isGrounded = true;
+        _physics->setUseGravity(false);
+    }
 }
 
 void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
 {
-    if (!nodeParent && !&doc)
+    if (!nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 

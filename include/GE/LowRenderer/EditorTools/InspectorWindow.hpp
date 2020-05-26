@@ -15,7 +15,16 @@ namespace Engine::LowRenderer::EditorTools
 {
     class InspectorWindow
     {
+        enum TransformMode
+        { 
+            Local,
+            Global,
+            Count
+        };
+
         protected : 
+
+        static TransformMode transformMode;
 
         static
         void updateTransform(Engine::Ressources::GameObject& gameObject);

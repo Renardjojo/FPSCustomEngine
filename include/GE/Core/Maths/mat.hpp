@@ -523,6 +523,7 @@ namespace Engine::Core::Maths
 			 * @return Vec3 
 			 */
 			Vec3 	getVectorUp() 		const;
+			void 	setVectorUp(const Vec3& newUp);
 
 			/**
 			 * @brief Get the Vector Right object. For indirect referential
@@ -530,6 +531,7 @@ namespace Engine::Core::Maths
 			 * @return Vec3 
 			 */
 			Vec3 	getVectorRight() 	const;
+			void 	setVectorRight(const Vec3& newRight);
 
 			/**
 			 * @brief Get the Vector Forward object
@@ -537,6 +539,7 @@ namespace Engine::Core::Maths
 			 * @return Vec3 
 			 */
 			Vec3 	getVectorForward() 	const;
+			void 	setVectorForward(const Vec3& newForward);
 		
 			/**
 			 * function : getCoMatrix

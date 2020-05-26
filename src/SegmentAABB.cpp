@@ -6,7 +6,7 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Core::Maths::Shape3D;
 using namespace Engine::Core::Maths::ShapeRelation;
 
-bool SegmentAABB::isSegmentAABBCollided(Segment seg, AABB AABB, Intersection& intersection)
+bool SegmentAABB::isSegmentAABBCollided(const Segment& seg, const AABB& AABB, Intersection& intersection)
 {
     Vec3 AB = seg.getPt2() - seg.getPt1();
     float tx0, tx1, ty0, ty1, tz0, tz1, tempT;
@@ -62,17 +62,17 @@ bool SegmentAABB::isSegmentAABBCollided(Segment seg, AABB AABB, Intersection& in
         }
     }
 
-        if (intersection.intersectionType != EIntersectionType::OneIntersectiont)
+    if (intersection.intersectionType != EIntersectionType::OneIntersectiont)
+    {
+        /*Check if segment is inside*/
+        if (AABB.isInside(seg.getPt1()) && AABB.isInside(seg.getPt2()))
         {
-            /*Check if segment is inside*/
-            if (AABB.isInside(seg.getPt1()) && AABB.isInside(seg.getPt2()))
-            {
-                intersection.intersectionType = EIntersectionType::InfinyIntersection;
-                return true;
-            }
-            return false;
+            intersection.intersectionType = EIntersectionType::InfinyIntersection;
+            return true;
         }
-        return true;
+        return false;
+    }
+    return true;
 }
 
 bool SegmentAABB::addIntersectionWithScalerIfOnAABBAndReturnIfFull(const Segment& seg, const AABB& AABB, Intersection& intersection, float scaler, float& tempT, Vec3 faceNormal)

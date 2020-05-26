@@ -1,17 +1,56 @@
 #include "GE/LowRenderer/EditorTools/InspectorWindow.hpp"
-#include <typeinfo> 
+#include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
+#include <typeinfo>
 
 using namespace Engine::Ressources;
 using namespace Engine::LowRenderer::EditorTools;
+
+InspectorWindow::TransformMode InspectorWindow::transformMode {InspectorWindow::TransformMode::Local};
         
 void InspectorWindow::updateTransform(GameObject& gameObject)
 {
     if (!ImGui::CollapsingHeader("Transform"))
         return;
+    
+    Engine::Core::Maths::Vec3 pos;
+    Engine::Core::Maths::Vec3 rot;
+    Engine::Core::Maths::Vec3 scale;
 
-    Engine::Core::Maths::Vec3 pos = gameObject.getPosition();
-    Engine::Core::Maths::Vec3 rot = gameObject.getRotation();
-    Engine::Core::Maths::Vec3 scale = gameObject.getScale();
+    const char* modes_names[InspectorWindow::TransformMode::Count] = {"Local", "Gloabl (read only)"};
+    const char* mode_name = (transformMode >= 0 && transformMode < InspectorWindow::TransformMode::Count) ? modes_names[transformMode] : "Unknown";
+    ImGui::SliderInt("##transformMode", (int*)&transformMode, 0, InspectorWindow::TransformMode::Count - 1, mode_name);
+
+    ImGui::SameLine();
+    if (ImGui::Checkbox("Lock", &EditModeControllerWindow::lockElement))
+    {
+        EditModeControllerWindow::lookAtTowardTargetOnEditMode(gameObject);
+    }
+
+    switch (transformMode)
+    {
+        case InspectorWindow::TransformMode::Local:
+        pos = gameObject.getPosition();
+        rot = gameObject.getRotation() * 180 / M_PI;
+        scale = gameObject.getScale();
+
+        break;
+
+        case InspectorWindow::TransformMode::Global:
+
+        pos = gameObject.getGlobalPosition();
+        rot = gameObject.getRotation() * 180 / M_PI;
+        scale = gameObject.getGlobalScale();
+
+        break;
+    
+    default:
+
+        pos = Engine::Core::Maths::Vec3::zero;
+        rot = Engine::Core::Maths::Vec3::zero;
+        scale = Engine::Core::Maths::Vec3::zero;
+
+        break;
+    }
 
     ImGui::Columns(4);
     ImGui::Text("Position :");
@@ -41,10 +80,21 @@ void InspectorWindow::updateTransform(GameObject& gameObject)
     ImGui::Text("Z :"); ImGui::SameLine(); ImGui::DragFloat("##scaleZ", &scale.z, 0.1f);
     ImGui::Columns(1);
 
-    gameObject.setTranslation(pos);
-    gameObject.setRotation(rot);
-    gameObject.setScale(scale);
+    switch (transformMode)
+    {
+        case InspectorWindow::TransformMode::Local :
+
+        gameObject.setTranslation(pos);
+        gameObject.setRotation(rot * M_PI / 180.f);
+        gameObject.setScale(scale);
+
+        break;
+
+        default:
+        break;
+    }
 }
+
 
 void InspectorWindow::updateHeader(GameObject& gameObject)
 {
@@ -70,9 +120,10 @@ void InspectorWindow::updateComponent(Engine::Ressources::GameObject& gameObject
 {
     for (auto &&i : gameObject.getComponents())
     {
-        std::string compName = typeid(*i).name();
-        compName = compName.substr(compName.find_last_of('4')+1);
-        ImGui::CollapsingHeader(compName.c_str());
+        if (ImGui::CollapsingHeader(i->toString().c_str()))
+        {
+            i->serializeOnEditor();
+        }
     }
 }
 

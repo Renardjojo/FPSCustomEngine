@@ -46,9 +46,9 @@ namespace Engine::Core::System
 		 */
 		static void update(std::function<void()> fixedUpdateFunction, std::function<void()> updateFunction, std::function<void()> renderFunction);
 
-		static double getFixedDeltaTime() { return _fixedDetlaTime; }
+		static float getFixedDeltaTime() { return static_cast<float>(_fixedDetlaTime); }
 
-		static double getFixedUnscaledDeltaTime() { return _fixedUnscaledDetlaTime; }
+		static float getFixedUnscaledDeltaTime() { return static_cast<float>(_fixedUnscaledDetlaTime); }
 		static void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime)
 		{ 
 			if (newFixedUnscaledDetlaTime > 1.)
@@ -60,10 +60,10 @@ namespace Engine::Core::System
 		static bool getLogFPS() { return _logFPS; }
 		static void setLogFPS(bool newLogFPSFlag) { _logFPS = newLogFPSFlag; }
 
-		static double getDeltaTime() { return _deltaTime; }
-		static double getUnscaledDetlaTime() { return _unscaledDeltaTime; }
+		static float getDeltaTime() { return static_cast<float>(_deltaTime); }
+		static float getUnscaledDetlaTime() { return static_cast<float>(_unscaledDeltaTime); }
 
-		static double getTimeScale() { return _timeScale; }
+		static float getTimeScale() { return static_cast<float>(_timeScale); }
 		static void setTimeScale(double newtimeScale)
 		{ 
 			_timeScale = newtimeScale;

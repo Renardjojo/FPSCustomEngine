@@ -44,11 +44,11 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
         pShader_                (arg.pShader),
         pMaterial_              (arg.pMaterials),
         pMesh_                  (arg.pMesh),
-        enableBackFaceCulling_  (arg.enableBackFaceCulling),
-        isOpaque_               (arg.isOpaque),
         shaderName_             (arg.shaderName),
         materialName_           (arg.materialName),
-        meshName_               (arg.meshName)
+        meshName_               (arg.meshName),
+        enableBackFaceCulling_  (arg.enableBackFaceCulling),
+        isOpaque_               (arg.isOpaque)
 {
     initTextureBufferWithMTLId();
 
@@ -69,21 +69,16 @@ Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>
         materialName_           ({*params[1]}),
         meshName_               (*params[2])
 {
-    initTextureBufferWithMTLId();   
-
-    for (std::unique_ptr<std::string>& string : params)
-        std::cout << *string << " ";
-
-    std::cout << std::endl;
+    initTextureBufferWithMTLId();
     loadInGPU (); 
 }
 
 Model::~Model ()
 {
-    if (isLoadInGPU())
+    /*if (isLoadInGPU())
     {
         unloadFromGPU ();
-    }
+    }*/
 }
 
 void Model::draw () const noexcept
@@ -232,11 +227,10 @@ void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("type", "Model"));
     newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
     if (getMaterialName().size() == 0)
-    {
         return;
-    }
     newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName()[0].c_str())));
     newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
     
+
     nodeParent->append_node(newNode);
 }

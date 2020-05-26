@@ -13,6 +13,13 @@
 
 namespace Engine::Core::InputSystem
 {
+    enum E_KEY_STATE
+    {
+        NOT_PRESSED = 0,
+        TOUCHED,
+        DOWN
+    };
+
     struct inputMouse
     {
 
@@ -34,33 +41,33 @@ namespace Engine::Core::InputSystem
         bool oldLeftClicDown{false};
         bool oldRightClicDown{false};
 
-        int oneLeftClick()
+        E_KEY_STATE getLeftClick()
         {
             if (leftClicDown && !oldLeftClicDown)
             {
-                return 1;
+                return TOUCHED;
             }
             else if (leftClicDown && oldLeftClicDown)
             {
-                return 2;
+                return DOWN;
             }
             else if (!leftClicDown)
             {
-                return 0;
+                return NOT_PRESSED;
             }
             else
             {
-                return 0;
+                return NOT_PRESSED;
             }
         }
     };
     struct inputKeyboard
     {
         SDL_Keycode key;
-        SDL_Scancode up{SDL_SCANCODE_UP};
-        SDL_Scancode down{SDL_SCANCODE_DOWN};
-        SDL_Scancode right{SDL_SCANCODE_RIGHT};
-        SDL_Scancode left{SDL_SCANCODE_LEFT};
+        SDL_Scancode up{SDL_SCANCODE_W};
+        SDL_Scancode down{SDL_SCANCODE_S};
+        SDL_Scancode right{SDL_SCANCODE_D};
+        SDL_Scancode left{SDL_SCANCODE_A};
         SDL_Scancode jump{SDL_SCANCODE_SPACE};
 
         bool isTouch{false};
@@ -69,7 +76,7 @@ namespace Engine::Core::InputSystem
         bool isDown[SDL_NUM_SCANCODES]; //use Scancode enum in file SDL_Scancode.
         bool isPressed[SDL_NUM_SCANCODES];
 
-        int onePressed(const SDL_Scancode key);
+        E_KEY_STATE getKeyState(const SDL_Scancode key);
     };
     struct windowEvent
     {

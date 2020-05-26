@@ -22,13 +22,14 @@ namespace Game
 
     private:
         Engine::Physics::PhysicalObject *_physics;
-        float _mouseSpeed{4.f};
+        float _mouseSpeed{1.f};
         float _playerForce{100.f};
         float _playerMaxSpeed{10.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
         bool _jump{false};
+        bool _isGrounded{false};
         
         CameraType _type{CameraType::FirstPerson};
 
@@ -46,7 +47,7 @@ namespace Game
 
     public:
         PlayerController(Engine::Ressources::GameObject &gameObject);
-        ~PlayerController();
+        virtual ~PlayerController() = default;
 
         void setCameraType(CameraType type);
         void toggleCameraType();
