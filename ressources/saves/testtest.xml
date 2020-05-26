@@ -13,11 +13,10 @@
 		<COMPONENT type="OrientedBoxCollider"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="Player" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="PinkMaterial" meshName="Sphere"/>
+		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="PinkMaterial" meshName="Cube"/>
 		<COMPONENT type="PlayerController"/>
 		<COMPONENT type="SphereCollider"/>
 		<COMPONENT type="PhysicalObject"/>
-		<GAMEOBJECT type="Empty" name="Reticule" posX="0.000000" posY="0.000000" posZ="10.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.200000" scaleY="0.200000" scaleZ="0.200000"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="Ground" posX="0.000000" posY="-20.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="50.000000" scaleY="0.100000" scaleZ="50.000000">
 		<COMPONENT type="Model" shaderName="TextureOnly" materialName="materialGround" meshName="Cube"/>
@@ -27,11 +26,22 @@
 		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="DefaultMaterial" meshName="Sphere"/>
 		<COMPONENT type="DirectionnalLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.100000" diffuse0="1.000000" diffuse1="1.000000" diffuse2="1.000000" diffuse3="0.700000" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="1.000000" dirX="0.000000" dirY="0.707107" dirZ="-0.707107"/>
 	</GAMEOBJECT>
-	<GAMEOBJECT type="Empty" name="PointLight" posX="50.000000" posY="20.000000" posZ="-50.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+	<GAMEOBJECT type="Empty" name="PointLight" posX="5.000000" posY="10.000000" posZ="-5.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="DefaultMaterial" meshName="Sphere"/>
+		<COMPONENT type="PointLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.000000" diffuse0="0.000000" diffuse1="1.000000" diffuse2="0.000000" diffuse3="0.700000" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="0.300000" constant="0.000000" linear="0.050000" quadriatic="0.000000"/>
+	</GAMEOBJECT>
+	<GAMEOBJECT type="Empty" name="SpotLight" posX="5.000000" posY="10.000000" posZ="-5.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="DefaultMaterial" meshName="Sphere"/>
 		<COMPONENT type="PointLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.000000" diffuse0="0.000000" diffuse1="1.000000" diffuse2="0.000000" diffuse3="0.700000" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="0.300000" constant="0.000000" linear="0.050000" quadriatic="0.000000"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="EnemiesContener" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000"/>
+	<GAMEOBJECT type="Empty" name="Ennemy" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="GreenMaterial" meshName="Sphere"/>
+		<COMPONENT type="SphereCollider"/>
+		<COMPONENT type="PhysicalObject"/>
+	</GAMEOBJECT>
+	<GAMEOBJECT type="Empty" name="ParticleContener" posX="0.000000" posY="10.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000"/>
+	<GAMEOBJECT type="Empty" name="DecalContenor" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000"/>
 	<GAMEOBJECT type="Empty" name="Right ref" posX="100.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="5.000000" scaleY="5.000000" scaleZ="5.000000">
 		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="RedMaterial" meshName="Sphere"/>
 	</GAMEOBJECT>

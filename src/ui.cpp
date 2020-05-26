@@ -128,6 +128,135 @@ Title::~Title()
     UISystem::removeTitle(this);
 }
 
+ReferencedTitle::ReferencedTitle(Font *_font, Engine::Ressources::Shader *_shader,
+             float _x, float _y, float _w, float _h, SDL_Color _color, int* _value, E_GAME_STATE _whenIsActive)
+    :   font(_font),
+        shader(_shader)
+{
+    x = _x;
+    y = _y;
+    w = _w;
+    h = _h;
+    valuePtr = _value;
+    value = std::to_string(*_value);
+
+    color = _color;
+
+    isActive = true;
+    whenIsActive = _whenIsActive;
+
+    float wid = WIDTH;
+    float hei = HEIGHT;
+
+    float tempx1 = ((x) / wid * 2) - 1;
+    float tempy1 = 1 - ((y) / hei * 2);
+    float tempx2 = ((x + w) / wid * 2) - 1;
+    float tempy2 = 1 - ((y + h) / hei * 2);
+
+    GLfloat vertices[] = {tempx1, tempy1, 0.0f,
+                          tempx2, tempy1, 0.0f,
+                          tempx2, tempy2, 0.0f,
+                          tempx1, tempy2, 0.0f};
+
+    GLfloat uvs[] = {0.0f, 0.0f, 0.0f,
+                     1.0f, 0.0f, 0.0f,
+                     1.0f, 1.0f, 0.0f,
+                     0.0f, 1.0f, 0.0f};
+
+    GLuint indices[] = {0, 1, 2, 0, 2, 3};
+
+    GLuint VBO, VBO2, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &VBO2);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &VBO2);
+    glDeleteBuffers(1, &EBO);
+
+    updateTexture();
+
+    UISystem::addReferencedTitle(this);
+
+    transform = std::make_unique<Transform>();
+}
+
+void ReferencedTitle::update()
+{
+    if (std::to_string(*valuePtr).compare(value) == 0)
+        return;
+    else
+    {
+        value = std::to_string(*valuePtr);
+        updateTexture();
+    }
+}
+
+void ReferencedTitle::draw()
+{
+    glDisable(GL_CULL_FACE);
+
+    glDisable(GL_DEPTH_TEST);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    shader->use();
+    GLuint matrixID = glGetUniformLocation(shader->getIdProgramm(), "matrix");
+
+    glUniformMatrix4fv(matrixID, 1, GL_TRUE, &transform->getModelMatrix()[0][0]);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
+    glEnable(GL_DEPTH_TEST);
+}
+
+void ReferencedTitle::updateTexture()
+{
+    int bpp;
+    Uint32 Rmask, Gmask, Bmask, Amask;
+    SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888, &bpp, &Rmask, &Gmask, &Bmask, &Amask);
+    SDL_Surface *img_rgba8888 = SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
+    SDL_Surface *surface = TTF_RenderText_Solid(font->getpFont(), value.c_str(), color);
+    SDL_BlitSurface(surface, NULL, img_rgba8888, NULL);
+    SDL_FreeSurface(surface);
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_rgba8888->pixels);
+    SDL_FreeSurface(img_rgba8888);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, texture);
+}
+
+ReferencedTitle::~ReferencedTitle()
+{
+    glDeleteVertexArrays(1, &VAO);
+    UISystem::removeReferencedTitle(this);
+}
+
 Button::Button(Font *_font, Engine::Ressources::Shader *_shader,
                float _x, float _y, float _w, float _h, SDL_Color _color, const std::string &_string, E_GAME_STATE _whenIsActive)
 {

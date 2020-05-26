@@ -87,7 +87,7 @@ void Engine::Ressources::Save::addSavePath(std::vector<std::string> &savePaths, 
     file.close();
 }
 
-void Engine::Ressources::Save::setupScene(Scene& scene, Engine::GE& gameEngine, const char* filePath)
+void Engine::Ressources::Save::setupScene(Scene& scene, const char* filePath)
 {
     file<> xmlFile(filePath);
     xml_document<> doc;

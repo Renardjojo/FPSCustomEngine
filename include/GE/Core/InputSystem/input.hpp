@@ -64,10 +64,10 @@ namespace Engine::Core::InputSystem
     struct inputKeyboard
     {
         SDL_Keycode key;
-        SDL_Scancode up{SDL_SCANCODE_UP};
-        SDL_Scancode down{SDL_SCANCODE_DOWN};
-        SDL_Scancode right{SDL_SCANCODE_RIGHT};
-        SDL_Scancode left{SDL_SCANCODE_LEFT};
+        SDL_Scancode up{SDL_SCANCODE_W};
+        SDL_Scancode down{SDL_SCANCODE_S};
+        SDL_Scancode right{SDL_SCANCODE_D};
+        SDL_Scancode left{SDL_SCANCODE_A};
         SDL_Scancode jump{SDL_SCANCODE_SPACE};
 
         bool isTouch{false};

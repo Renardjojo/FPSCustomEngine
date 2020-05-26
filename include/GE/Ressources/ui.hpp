@@ -55,6 +55,42 @@ namespace Engine::Ressources
         Engine::Core::Maths::Vec2 getPos() { return Engine::Core::Maths::Vec2{x, y}; }
     };
 
+    class ReferencedTitle
+    {
+    private:
+        Font *font;
+        Engine::Ressources::Shader *shader;
+        SDL_Color color;
+        GLuint VAO;
+
+        float x;
+        float y;
+        float w;
+        float h;
+
+    public:
+        GLuint texture;
+        std::string value;
+        int* valuePtr;
+        std::unique_ptr<Engine::Physics::Transform> transform;
+        bool isActive;
+        E_GAME_STATE whenIsActive;
+
+        ReferencedTitle(Font *, Engine::Ressources::Shader *, float, float, float, float, SDL_Color, int*, E_GAME_STATE);
+        // ReferencedTitle(const ReferencedTitle &other) = delete;
+        // ReferencedTitle(ReferencedTitle &&other) = delete;
+        virtual ~ReferencedTitle();
+
+        ReferencedTitle() = delete;
+        ReferencedTitle &operator=(ReferencedTitle const &other) = delete;
+        ReferencedTitle &operator=(ReferencedTitle &&other) = delete;
+
+        void draw() ;
+        void update();
+        void updateTexture();
+
+    };
+
     class Button
     {
     private:
