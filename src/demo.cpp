@@ -233,13 +233,13 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     //loadRockRessource          (ressourceManager);
     //loadTreeRessource          (ressourceManager);
-    //loadSkyboxRessource        (ressourceManager);
+    loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
     loadPseudoRessource        (ressourceManager);
     loadPlayerRessource        (ressourceManager);
     //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
-    //loadGroundRessource        (ressourceManager);    
+    loadGroundRessource        (ressourceManager);    
 }
 
 void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
@@ -578,7 +578,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     "SniperMesh"};
 
     scene_->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
-/*
+
     //load billboards
     std::vector<Material>& vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
     Size textureSize = vecMaterialsPseudo[0].getPDiffuseTexture()->getSize();
@@ -595,7 +595,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                 {"PseudoMaterial"},
                                 "Plane", true, false};
 
-    scene_->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);*/
+    scene_->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 }
 
 void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
@@ -794,13 +794,13 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
     player.getComponent<SphereCollider>()->setBounciness(0.f);*/
-/*
-    loadRock                   (ressourceManager, 100);
-    loadTree                   (ressourceManager, 50);
-    loadSkybox                 (ressourceManager);*/
+
+    //loadRock                   (ressourceManager, 50);
+    //loadTree                   (ressourceManager, 10);
+    loadSkybox                 (ressourceManager);
     loadPlayer                 (ressourceManager);
-   /* loadTower                  (ressourceManager);
-    loadGround                 (ressourceManager);   */
+    //loadTower                  (ressourceManager);
+    loadGround                 (ressourceManager);   
 }
 
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
