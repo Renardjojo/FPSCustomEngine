@@ -158,6 +158,7 @@
 			"${TM_FILENAME_BASE}::${TM_FILENAME_BASE}(GameObject &_gameObject)",
 			"	: ScriptComponent{_gameObject}",
 			"{",
+			"	_name =__FUNCTION__;"
 			"}",
 			"",
 			"void ${TM_FILENAME_BASE}::start()",
