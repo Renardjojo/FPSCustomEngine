@@ -15,24 +15,24 @@ namespace Engine::Ressources
 {
     struct MaterialAndTextureCreateArg
     {
-        std::string         name_;
-        MaterialComponent   comp_       = { {1.f, 1.f, 1.f, 0.f}, 
+        std::string         name_           {""};
+        MaterialComponent   comp_           { {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 1.f};
-        const char*         pathDiffuseTexture = nullptr;
-        E_WrapType          wrapType = E_WrapType::REPEAT;
-        E_FilterType        filterType = E_FilterType::LINEAR;
-        bool                flipTexture = true;
-        bool                loadInGPU   = true;
+        const char*         pathDiffuseTexture {nullptr};
+        E_WrapType          wrapType        {E_WrapType::REPEAT};
+        E_FilterType        filterType      {E_FilterType::LINEAR};
+        bool                flipTexture     {true};
+        bool                loadInGPU       {true};
     };
 
     struct MaterialCreateArg
     {
-        std::string             name;
-        MaterialComponent       comp       = { {1.f, 1.f, 1.f, 0.f}, 
+        std::string             name        {""};;
+        MaterialComponent       comp        { {1.f, 1.f, 1.f, 0.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 1.f};
-        std::unique_ptr<Texture> pTexture;
+        std::unique_ptr<Texture> pTexture   {nullptr};
     };
     
     class Material
@@ -41,7 +41,6 @@ namespace Engine::Ressources
     
             #pragma region constructor/destructor
     
-            Material ()							= default;
             Material (std::string name_, MaterialComponent comp);
 
             Material (const MaterialAndTextureCreateArg& arg);
@@ -54,9 +53,12 @@ namespace Engine::Ressources
              */
             Material (const MaterialAttrib& arg);
 
-            Material (const Material& other)	= default;
-            Material (Material&& other)			= default;
-            virtual ~Material ()				= default;
+            Material ()					                    = default;
+            Material (const Material& other)			    = default;
+            Material (Material&& other)				        = default;
+            virtual ~Material ()				            = default;
+            Material& operator=(Material const& other)		= default;
+            Material& operator=(Material && other)			= default;
     
             #pragma endregion //!constructor/destructor
     
@@ -105,7 +107,7 @@ namespace Engine::Ressources
             #pragma region attribut
 
             MaterialComponent           comp_;
-            std::unique_ptr<Texture>    pDiffuseTexturetexture_;
+            std::shared_ptr<Texture>    pDiffuseTexturetexture_;
             std::string                 name_;
 
             #pragma endregion //!attribut

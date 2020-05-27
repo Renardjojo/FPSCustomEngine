@@ -47,8 +47,8 @@ namespace Engine::Core::Maths::Shape3D
     
         #pragma region attribut
 
-        Vec3            center_;
-        float           radius_;
+        Vec3            center_ {Vec3::zero};
+        float           radius_ {0.f};
 
         #pragma endregion //!attribut
     

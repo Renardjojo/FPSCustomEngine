@@ -29,7 +29,9 @@ using namespace Engine::LowRenderer;
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
     _camera{Camera::getCamUse()}
-{}
+{
+    _name = __FUNCTION__;
+}
 
 
 void PlayerController::start()
@@ -65,18 +67,18 @@ void PlayerController::shoot()
 {
     HitInfo rayInfo;
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
+    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
-                                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")}, 
+                                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                                 "TextureOnly", 
                                                 {"BulletHole"}, 
                                                 "Plane"};
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
+                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                 "Color",
                                 {"RedMaterial"},

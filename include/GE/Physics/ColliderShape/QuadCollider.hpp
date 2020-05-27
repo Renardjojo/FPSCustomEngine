@@ -18,17 +18,23 @@ namespace Engine::Physics::ColliderShape
         QuadCollider (Engine::Ressources::GameObject& refGameObject)
             :   Collider        (refGameObject),
                 quad_          ()
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         QuadCollider (const QuadCollider& other)
             :   Collider    (*this),
                 quad_       (other.quad_)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         QuadCollider (QuadCollider&& other)
             :   Collider        (*this),
                 quad_        (std::move(other.quad_))
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         QuadCollider() = delete;
         virtual ~QuadCollider() = default;
@@ -49,6 +55,15 @@ namespace Engine::Physics::ColliderShape
         const Engine::Core::Maths::Shape3D::Quad& getLocalQuad()  const noexcept
         { 
             return quad_;
+        }
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+            
+            nodeParent->append_node(newNode);
         }
 
     private:

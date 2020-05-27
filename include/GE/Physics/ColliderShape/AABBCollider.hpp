@@ -18,17 +18,23 @@ namespace Engine::Physics::ColliderShape
         AABBCollider (Engine::Ressources::GameObject& refGameObject)
             :   Collider        (refGameObject),
                 AABB_           ()
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         AABBCollider (const AABBCollider& other)
             :   Collider    (*this),
                 AABB_       (other.AABB_)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         AABBCollider (AABBCollider&& other)
             :   Collider        (*this),
                 AABB_           (std::move(other.AABB_))
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         AABBCollider() = delete;
         virtual ~AABBCollider() = default;
@@ -46,6 +52,15 @@ namespace Engine::Physics::ColliderShape
         const Engine::Core::Maths::Shape3D::AABB& getLocalAABB()  const noexcept
         { 
             return AABB_;
+        }
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+            
+            nodeParent->append_node(newNode);
         }
 
     private:

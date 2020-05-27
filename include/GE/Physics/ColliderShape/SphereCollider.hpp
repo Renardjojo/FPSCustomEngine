@@ -18,17 +18,23 @@ namespace Engine::Physics::ColliderShape
         SphereCollider (Engine::Ressources::GameObject& refGameObject)
             :   Collider    (refGameObject),
                 sphere_     ()
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         SphereCollider (const SphereCollider& other)
             :   Collider    (*this),
                 sphere_ (other.sphere_)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         SphereCollider (SphereCollider&& other)
             : Collider  (*this),
             sphere_     (std::move(other.sphere_))
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         SphereCollider() = delete;
         
@@ -44,11 +50,16 @@ namespace Engine::Physics::ColliderShape
             return sphere_;
         }
 
+        Engine::Core::Maths::Shape3D::Sphere& getLocalSphere()  noexcept
+        { 
+            return sphere_;
+        }
+
         void save(xml_document<>& doc, xml_node<>* nodeParent) 
         {
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-            newNode->append_attribute(doc.allocate_attribute("type", "SphereCollider"));
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
             
             nodeParent->append_node(newNode);
         }

@@ -18,6 +18,8 @@
 #include "save/rapidxml-1.13/rapidxml_print.hpp"
 #include "save/rapidxml-1.13/rapidxml_utils.hpp"
 
+#include <vector>
+
 using namespace rapidxml;
 
 namespace Engine::LowRenderer
@@ -25,7 +27,7 @@ namespace Engine::LowRenderer
     typedef struct S_ModelCreateArg
     {
         Engine::Ressources::Shader*                     pShader                = nullptr;
-        std::vector<Engine::Ressources::Material*>      pMaterials;
+        std::vector<Engine::Ressources::Material>*      pMaterials             = nullptr;
         Engine::Ressources::Mesh*                       pMesh                  = nullptr;
 
         std::string                                     shaderName;
@@ -102,7 +104,7 @@ namespace Engine::LowRenderer
             #pragma region attribut
 
             Engine::Ressources::Shader*                  pShader_;
-            std::vector<Engine::Ressources::Material*>   pMaterial_; //contain the texture and material data
+            std::vector<Engine::Ressources::Material>*   pMaterial_; //contain the texture and material data
             std::vector<Engine::Ressources::Material*>   pMaterialToUse_; //contain pointor to the material to use when model is display.
             Engine::Ressources::Mesh*                    pMesh_;
 

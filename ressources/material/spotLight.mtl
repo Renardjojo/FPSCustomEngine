@@ -1,0 +1,8 @@
+# By Six J for Engin project
+
+newmtl metal
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 1.0000 1.0000 1.0000
+	Ns 4.0000
+	map_Kd metal.jpg

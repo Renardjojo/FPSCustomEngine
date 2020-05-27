@@ -207,7 +207,7 @@ namespace Engine::Ressources
     
     typedef RessourcesManagerWithGlobalUsage<  Engine::Ressources::Mesh,
                                 Engine::Ressources::Shader,
-                                Engine::Ressources::Material,
+                                std::vector<Engine::Ressources::Material>,
                                 Engine::Ressources::Text,
                                 Engine::Ressources::Texture,
                                 Engine::Ressources::Sample,

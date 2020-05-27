@@ -64,7 +64,8 @@ Texture::Texture(const char* path, bool flipTexture, bool loadInGPU)
 	if (pixels_ == nullptr)
 	{
 		functError((std::string("STBI canno't load image : ") + path).c_str());
-		return;
+		functError(std::string("Loading image failed: ") + stbi_failure_reason());
+        return;
 	}
 
     parseNameInPath(path);
@@ -97,11 +98,11 @@ Texture::Texture(const TextureCreateArg& arg)
 
 Texture::~Texture()
 {
-	stbi_image_free(pixels_);
+    if (pixels_ != nullptr)
+	    stbi_image_free(pixels_);
 
     if (isLoadInGPU_)
-        unloadFromGPU();
-        
+        unloadFromGPU(); 
 }
 
 void Texture::loadInGPU ()
