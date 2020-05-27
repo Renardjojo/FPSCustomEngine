@@ -110,6 +110,7 @@ void PhysicSystem::update() noexcept
                         Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
 
                         collider1->getGameObject().setTranslation(intersection.intersection1 + newPosition + intersection.normalI1 * 0.001f);
+                        collider1->GetAttachedPhysicalObject()->setAngularVelocity(-Vec3::cross(((intersection.intersection1 + AB.getNormalize() * dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getRadius()) - collider1->getGameObject().getPosition()), afterCollisionVelocity));
                         collider1->GetAttachedPhysicalObject()->setVelocity(afterCollisionVelocity);
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
@@ -130,9 +131,9 @@ void PhysicSystem::update() noexcept
         if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
             continue;
         
-        /*update movement induct by the differente force on the object*/
+        /*update movement and torque induct by the differente force on the object*/
         object->getGameObject().translate(object->getVelocity() * TimeSystem::getFixedDeltaTime());
-        //std::cout << object->getGameObject().getName() << "  " << object->getVelocity() << "    " <<  object->getGameObject().getPosition() <<std::endl;
+        object->getGameObject().rotate(object->getAngularVelocity() * TimeSystem::getFixedDeltaTime());
     }
 }
 

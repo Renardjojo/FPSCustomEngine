@@ -30,19 +30,25 @@ namespace Engine::Physics::ColliderShape
             :   Collider        (refGameObject),
             cylinder_        (),
                 directionAxe_   (directionAxe)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         CylinderCollider (const CylinderCollider& other)
             :   Collider    (*this),
             cylinder_       (other.cylinder_),
                 directionAxe_   (other.directionAxe_)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         CylinderCollider (CylinderCollider&& other)
             :   Collider        (*this),
             cylinder_        (std::move(other.cylinder_)),
                 directionAxe_   (std::move(other.directionAxe_))
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         CylinderCollider() = delete;
         virtual ~CylinderCollider() = default;
@@ -79,6 +85,15 @@ namespace Engine::Physics::ColliderShape
         const Engine::Core::Maths::Shape3D::Cylinder& getLocalCylinder()  const noexcept
         { 
             return cylinder_;
+        }
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+            
+            nodeParent->append_node(newNode);
         }
 
     private:

@@ -12,6 +12,7 @@ std::vector<Button *> UISystem::pButtons;
 std::vector<Image *> UISystem::pImages;
 std::vector<TextField *> UISystem::pTextFields;
 std::vector<Title *> UISystem::pTitles;
+std::vector<ReferencedTitle *> UISystem::pReferencedTitles;
 TextField *UISystem::pActiveTextfield;
 Button *UISystem::pOverredButton;
 Engine::Core::Maths::Vec2 UISystem::keyboardXY;
@@ -158,5 +159,12 @@ void UISystem::draw(Engine::GE &gameEngine) noexcept
         if (!title->isActive || title->whenIsActive != gameEngine.gameState)
             continue;
         title->draw();
+    }
+    for (ReferencedTitle *referencedTitle : pReferencedTitles)
+    {
+        if (!referencedTitle->isActive || referencedTitle->whenIsActive != gameEngine.gameState)
+            continue;
+        referencedTitle->update();
+        referencedTitle->draw();
     }
 }

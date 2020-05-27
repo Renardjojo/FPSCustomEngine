@@ -183,6 +183,13 @@ void PhysicalObject::addTorque(float x, float y, float z) noexcept
     else
         _angularVelocity.z = 0.f;
 }
+
+void PhysicalObject::addForceAtPoint(const Engine::Core::Maths::Vec3& force, const Engine::Core::Maths::Vec3& position) noexcept
+{
+    addForce    (force);
+    addTorque   (Vec3::cross((position - _gameObject.getPosition()), force));
+}
+
 void PhysicalObject::save(xml_document<> &doc, xml_node<> *nodeParent) noexcept
 {
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
