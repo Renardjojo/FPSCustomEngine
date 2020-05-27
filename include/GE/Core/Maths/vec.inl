@@ -386,6 +386,19 @@ Vec3 	Vec3::getNormalize		() const
 	return normeVec == 0 ? Vec3{0.f, 0.f, 0.f} : Vec3{x / normeVec, y / normeVec, z / normeVec};
 }
 
+inline
+Vec3& 	Vec3::clampLength		(float max)
+{
+    if (length() > max)
+    {
+        this->normalize();
+		x*= max;
+		y*= max;
+		z*= max;
+    }
+	return *this;
+}
+
 
 inline
 void 	Vec3::cross		(const Vec3& other)

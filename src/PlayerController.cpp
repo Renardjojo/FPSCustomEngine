@@ -28,9 +28,9 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-    _camera{Camera::getCamUse()}
-{}
-
+      _camera{Camera::getCamUse()}
+{
+}
 
 void PlayerController::start()
 {
@@ -56,9 +56,9 @@ void PlayerController::fixedUpdate()
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
-    
-    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
 
+    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
 void PlayerController::shoot()
@@ -67,17 +67,17 @@ void PlayerController::shoot()
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 2.f, shootDirection, 10000.f, rayInfo))
     {
-        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
-                                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")}, 
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                                "TextureOnly", 
-                                                {"BulletHole"}, 
-                                                "Plane"};
+        GameObjectCreateArg decaleGOPref{"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+        ModelCreateArg modelDecaleGOPref{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"),
+                                         {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("BulletHole")},
+                                         &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                         "TextureOnly",
+                                         {"BulletHole"},
+                                         "Plane"};
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-                                {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane")};
+                                 {&t_RessourcesManager::getRessourceManagerUse()->get<Material>("RedMaterial")},
+                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane")};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -90,7 +90,7 @@ void PlayerController::shoot()
         particalArg.physicalObjectCreateArg.mass = 1.f;
         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject& particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        GameObject &particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
         particleGO.addComponent<LifeDuration>(3.f);
 
@@ -128,7 +128,7 @@ void PlayerController::camera()
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
-    
+
     _orbit.y = fmod(_orbit.y, M_PI * 2);
     _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
 
@@ -186,9 +186,11 @@ void PlayerController::move()
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
+
+    //clamp max speed
 }
 
-void PlayerController::onCollisionEnter(HitInfo& hitInfo)
+void PlayerController::onCollisionEnter(HitInfo &hitInfo)
 {
     if (hitInfo.gameObject->getTag() == "Ground")
     {
@@ -197,13 +199,13 @@ void PlayerController::onCollisionEnter(HitInfo& hitInfo)
     }
 }
 
-void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
+void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
     if (!nodeParent && !&doc)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
     newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
-    
+
     nodeParent->append_node(newNode);
 }
