@@ -37,7 +37,9 @@ PointLight::PointLight (GameObject &refGameObject, const std::vector<std::string
                 constant_           (std::stof(params[12])),
                 linear_             (std::stof(params[13])),
                 quadratic_          (std::stof(params[14]))
-{}
+{
+    _name = __FUNCTION__;
+}
 
 void PointLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
 {

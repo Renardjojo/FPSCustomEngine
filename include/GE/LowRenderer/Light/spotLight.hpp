@@ -69,6 +69,8 @@ namespace Engine::LowRenderer
                         float                              cutOffExponent);
 
             SpotLight (Engine::Ressources::GameObject & refGameObject, SpotLightCreateArg arg);
+
+            SpotLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
             
             SpotLight (const SpotLight& other)		= default;
             SpotLight (SpotLight&& other)			= default;
@@ -77,6 +79,8 @@ namespace Engine::LowRenderer
             #pragma endregion //!constructor/destructor
     
             #pragma region methods
+
+            void save(xml_document<> &doc, xml_node<> *nodeParent);
 
             virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override;
 

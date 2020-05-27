@@ -250,6 +250,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<DirectionnalLight>(params).enable(true);
         else if (type.compare("PointLight") == 0)
             parent.addComponent<PointLight>(params).enable(true);
+        else if (type.compare("SpotLight") == 0)
+            parent.addComponent<SpotLight>(params).enable(true);
         else if (type.compare("EnnemyController") == 0)
             parent.addComponent<EnnemyController>(params);
         else if (type.compare("Checkpoint") == 0)
@@ -360,6 +362,9 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 
     if (gameObjectParent.getComponent<DirectionnalLight>())
         gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<SpotLight>())
+        gameObjectParent.getComponent<SpotLight>()->save(doc, newNode);
 
     if (gameObjectParent.getComponent<EnnemyController>())
         gameObjectParent.getComponent<EnnemyController>()->save(doc, newNode);

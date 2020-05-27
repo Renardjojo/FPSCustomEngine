@@ -32,7 +32,9 @@ DirectionnalLight::DirectionnalLight (GameObject &refGameObject, const std::vect
                 AmbiantComponent{std::stof(params[4]), std::stof(params[5]), std::stof(params[6]), std::stof(params[7])}, 
                 AmbiantComponent{std::stof(params[8]), std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}),
     _direction  {Engine::Core::Maths::Vec3{std::stof(params[12]), std::stof(params[13]), std::stof(params[14])}} 
-{}
+{
+    _name = __FUNCTION__;
+}
 
 void DirectionnalLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
 {
