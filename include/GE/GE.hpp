@@ -41,6 +41,23 @@ namespace Engine
             void clearRenderer          () { ren_->clear(); }
             void renderPresent          () { ren_->draw();  }
 
+            void clearAllRessources     ()
+            { 
+                ressourceManager_.clearContenorOf<Engine::Ressources::Mesh>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Shader>();
+                ressourceManager_.clearContenorOf<std::vector<Engine::Ressources::Material>>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Text>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Texture>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Sample>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Music>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Font>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Title>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Button>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Image>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::TextField>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::ReferencedTitle>();
+            }
+
             #pragma endregion //!methods
 
             #pragma region accessor

@@ -86,6 +86,11 @@ namespace Engine::Ressources
             return rst.first->second;
         }
 
+        void clearRessource  () noexcept
+        {
+            ressource_.clear();
+        }
+
         private:
 
         std::unordered_map <std::string, LType> ressource_;
@@ -149,6 +154,12 @@ namespace Engine::Ressources
                 return RessourcesManager<T>::add(key, std::forward<Args>(args)...);
             }
 
+            template<class T>
+            void clearContenorOf  () noexcept
+            {
+                RessourcesManager<T>::clearRessource();
+            }
+
             #pragma endregion //!mutator
 
         protected:
@@ -173,11 +184,10 @@ namespace Engine::Ressources
             #pragma endregion //!constructor/destructor
 
             #pragma region methods
+
+            void use    () noexcept;
+
             #pragma endregion //!methods
-
-            #pragma region accessor
-
-            void use () noexcept;
 
             static RessourcesManagerWithGlobalUsage<LType, RType...>* getRessourceManagerUse() noexcept;
 
@@ -194,7 +204,7 @@ namespace Engine::Ressources
 
     template<class LType, class... RType>
     RessourcesManagerWithGlobalUsage<LType, RType...>* RessourcesManagerWithGlobalUsage<LType, RType...>::getRessourceManagerUse() noexcept
-    { 
+    {
         return ressourceManagerToUse; 
     }
 
@@ -205,19 +215,19 @@ namespace Engine::Ressources
     }
 
     
-    typedef RessourcesManagerWithGlobalUsage<  Engine::Ressources::Mesh,
-                                Engine::Ressources::Shader,
-                                std::vector<Engine::Ressources::Material>,
-                                Engine::Ressources::Text,
-                                Engine::Ressources::Texture,
-                                Engine::Ressources::Sample,
-                                Engine::Ressources::Music,
-                                Engine::Ressources::Font,
-                                Engine::Ressources::Title,
-                                Engine::Ressources::Button,
-                                Engine::Ressources::Image,
-                                Engine::Ressources::TextField,
-                                Engine::Ressources::ReferencedTitle> t_RessourcesManager;
+    typedef RessourcesManagerWithGlobalUsage<   Engine::Ressources::Mesh,
+                                                Engine::Ressources::Shader,
+                                                std::vector<Engine::Ressources::Material>,
+                                                Engine::Ressources::Text,
+                                                Engine::Ressources::Texture,
+                                                Engine::Ressources::Sample,
+                                                Engine::Ressources::Music,
+                                                Engine::Ressources::Font,
+                                                Engine::Ressources::Title,
+                                                Engine::Ressources::Button,
+                                                Engine::Ressources::Image,
+                                                Engine::Ressources::TextField,
+                                                Engine::Ressources::ReferencedTitle> t_RessourcesManager;
 
 
 }// namespaceEngine::Ressources
