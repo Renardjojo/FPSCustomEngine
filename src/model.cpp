@@ -56,6 +56,7 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
     {
         loadInGPU ();
     }
+    _name = __FUNCTION__;
 }
 
 Model::Model(GameObject &refGameObject, std::vector<std::string>& params, t_RessourcesManager& ressourcesManager)
@@ -70,7 +71,8 @@ Model::Model(GameObject &refGameObject, std::vector<std::string>& params, t_Ress
         isOpaque_               (true)
 {
     initTextureBufferWithMTLId();
-    loadInGPU (); 
+    loadInGPU ();
+    _name = __FUNCTION__;
 }
 
 Model::~Model ()
@@ -224,7 +226,7 @@ void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
 { 
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "Model"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
     newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
     newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName().c_str())));
     newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));

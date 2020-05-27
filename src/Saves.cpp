@@ -23,6 +23,7 @@
 #include "Game/PushedOnShoot.hpp"
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/LifeDuration.hpp"
+#include "Game/ParticuleGenerator.hpp"
 
 using namespace rapidxml;
 
@@ -265,6 +266,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<MaxElementConteneur>(params);
         else if (type.compare("LifeDuration") == 0)
             parent.addComponent<LifeDuration>(params);
+        else if (type.compare("ParticuleGenerator") == 0)
+            parent.addComponent<ParticuleGenerator>(params);
 
         newGameObject = &parent;
     }
@@ -382,7 +385,14 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     if (gameObjectParent.getComponent<PushedOnShoot>())
         gameObjectParent.getComponent<PushedOnShoot>()->save(doc, newNode);
 
-        
+    if (gameObjectParent.getComponent<MaxElementConteneur>())
+        gameObjectParent.getComponent<MaxElementConteneur>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<LifeDuration>())
+        gameObjectParent.getComponent<LifeDuration>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<ParticuleGenerator>())
+        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);        
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);

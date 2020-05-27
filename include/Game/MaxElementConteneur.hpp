@@ -35,7 +35,7 @@ namespace Game
             _name = __FUNCTION__;
         }
 
-        LifeDuration (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
+        MaxElementConteneur (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   Engine::Core::Component::ScriptComponent    {refGameObject},
                 _maxElement                                 {std::stof(params[0])}
         {
