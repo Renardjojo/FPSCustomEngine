@@ -1,7 +1,7 @@
 <enemy1>
 	<GAMEOBJECT type="Empty" name="Ennemy" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="GreenMaterial" meshName="Cube"/>
-		<COMPONENT type="SphereCollider"/>
+		<COMPONENT type="SphereCollider" radius="0.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000"/>
 		<COMPONENT type="PhysicalObject"/>
 		<COMPONENT type="EnnemyController" radius="5.000000" exclusionRadius="0.600000" speed="5.000000" player="world/Players/Player1" state="1" checkpointName="world/checkpoint1" checkpointTargetX="10.000000" checkpointTargetY="-10.000000" checkpointTargetZ="10.000000" checkpointNumber="1"/>
 	</GAMEOBJECT>

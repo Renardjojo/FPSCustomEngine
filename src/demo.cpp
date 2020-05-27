@@ -402,7 +402,7 @@ void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
 
 void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(50));
+    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(1000));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name_ = "Ground";
@@ -809,7 +809,7 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     DirectionnalLightCreateArg lightArg2{{0.f, 1.f, -1.f},
                                          {1.f, 1.f, 1.f, 0.1f},
                                          {1.f, 1.f, 1.f, 0.7f},
-                                         {1.f, 1.f, 1.f, 1.f}};
+                                         {1.f, 1.f, 1.f, 1.f}, true};
 
     GameObjectCreateArg pointLightGameObjectArg{"PointLight",
                                                 {{5.f, 10.f, -5.f},
@@ -819,9 +819,7 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     PointLightCreateArg lightArg5{{1.f, 1.f, 1.f, 0.f},
                                   {0.f, 1.f, 0.f, 0.7f},
                                   {1.f, 1.f, 1.f, 0.3f},
-                                  0.f,
-                                  0.05f,
-                                  0.f};
+                                  0.f, 0.05f, 0.f, false};
 
     GameObjectCreateArg spotLightGameObjectArg{"SpotLight",
                                                {{5.f, 10.f, -5.f},
@@ -831,24 +829,22 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     SpotLightCreateArg lightArg6{{1.f, 1.f, 1.f, 0.f},
                                  {0.f, 1.f, 0.f, 0.7f},
                                  {1.f, 1.f, 1.f, 0.3f},
-                                 0.f,
-                                 0.05f,
-                                 0.f,
+                                 0.f, 0.05f, 0.f,
                                  Vec3::down,
-                                 20.f,
-                                 0.5f};
+                                 20.f, 0.5f, 
+                                 false};
 
     GameObject &pl = scene_->add<GameObject>(scene_->getWorld(), lightSphereGameObjectArg);
     pl.addComponent<Model>(lightSphereArg);
-    pl.addComponent<DirectionnalLight>(lightArg2).enable(true);
+    pl.addComponent<DirectionnalLight>(lightArg2);
 
     GameObject &pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg);
     pl1.addComponent<Model>(lightSphereArg);
-    pl1.addComponent<PointLight>(lightArg5).enable(false);
+    pl1.addComponent<PointLight>(lightArg5);
 
     GameObject &pl2 = scene_->add<GameObject>(scene_->getWorld(), spotLightGameObjectArg);
     pl2.addComponent<Model>(lightSphereArg);
-    pl2.addComponent<SpotLight>(lightArg6).enable(false);
+    pl2.addComponent<SpotLight>(lightArg6);
 }
 
 void Demo::loadReferential(t_RessourcesManager &ressourceManager)

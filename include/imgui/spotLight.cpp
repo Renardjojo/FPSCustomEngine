@@ -17,9 +17,10 @@ SpotLight::SpotLight ( GameObject &            refGameObject,
             float                              quadratic,
             const Engine::Core::Maths::Vec3&   direction,
             float                              cutOff,
-            float                              cutOffExponent)
+            float                              cutOffExponent, 
+            bool                                isEnable)
 
-:   PointLight          (refGameObject, ambient, diffuse, specular, constant, linear, quadratic),
+:   PointLight          (refGameObject, ambient, diffuse, specular, constant, linear, quadratic, isEnable),
     direction_          (direction),
     cutOff_             (cosf(cutOff * M_PI / 180.f)),
     cutOffExponent_     (cosf(cutOffExponent * M_PI / 180.f))
@@ -28,7 +29,7 @@ SpotLight::SpotLight ( GameObject &            refGameObject,
 }
 
 SpotLight::SpotLight (GameObject & refGameObject, SpotLightCreateArg arg)
-:   PointLight          (refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic),
+:   PointLight          (refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic, arg.isEnable),
     direction_          (arg.direction),
     cutOff_             (cosf(arg.cutOff * M_PI / 180.f)),
     cutOffExponent_     (cosf(arg.cutOffExponent * M_PI / 180.f))
@@ -38,9 +39,9 @@ SpotLight::SpotLight (GameObject & refGameObject, SpotLightCreateArg arg)
 
 SpotLight::SpotLight (GameObject &refGameObject, const std::vector<std::string>& params)
             :   PointLight          (refGameObject, params),
-                direction_          {std::stof(params[15]), std::stof(params[16]), std::stof(params[17])},
-                cutOff_             {std::stof(params[18])},
-                cutOffExponent_     {std::stof(params[19])} 
+                direction_          {std::stof(params[16]), std::stof(params[17]), std::stof(params[18])},
+                cutOff_             {std::stof(params[19])},
+                cutOffExponent_     {std::stof(params[20])} 
 {
     _name = __FUNCTION__;
 }
@@ -76,11 +77,13 @@ void SpotLight::save(xml_document<> &doc, xml_node<> *nodeParent)
     newNode->append_attribute(doc.allocate_attribute("constant", doc.allocate_string(std::to_string(constant_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("linear", doc.allocate_string(std::to_string(linear_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("quadriatic", doc.allocate_string(std::to_string(quadratic_).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("isEnable", doc.allocate_string(std::to_string(isEnable_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("direction0", doc.allocate_string(std::to_string(direction_.e[0]).c_str())));
     newNode->append_attribute(doc.allocate_attribute("direction1", doc.allocate_string(std::to_string(direction_.e[1]).c_str())));
     newNode->append_attribute(doc.allocate_attribute("direction2", doc.allocate_string(std::to_string(direction_.e[2]).c_str())));
     newNode->append_attribute(doc.allocate_attribute("cutOff", doc.allocate_string(std::to_string(cutOff_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("cutOffExponent", doc.allocate_string(std::to_string(cutOffExponent_).c_str())));
+
 
     nodeParent->append_node(newNode);
 }

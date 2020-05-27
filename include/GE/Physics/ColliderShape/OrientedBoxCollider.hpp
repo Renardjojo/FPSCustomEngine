@@ -40,11 +40,11 @@ namespace Engine::Physics::ColliderShape
 
         OrientedBoxCollider (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   Collider    (refGameObject),
-                orientedBox_     (Referential{  {std::stof(params[0]), std::stof(params[1]), std::stof(params[2])},
-                                                {std::stof(params[3]), std::stof(params[4]), std::stof(params[5])},
-                                                {std::stof(params[6]), std::stof(params[7]), std::stof(params[8])},
-                                                {std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}},
-                                                std::stof(params[12]), std::stof(params[13]), std::stof(params[14]))
+                orientedBox_     (Engine::Core::Maths::Referential{  {std::stof(params[0]), std::stof(params[1]), std::stof(params[2])},
+                                                                    {std::stof(params[3]), std::stof(params[4]), std::stof(params[5])},
+                                                                    {std::stof(params[6]), std::stof(params[7]), std::stof(params[8])},
+                                                                    {std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}},
+                                                                    std::stof(params[12]), std::stof(params[13]), std::stof(params[14]))
         {
             _name = __FUNCTION__;
         }

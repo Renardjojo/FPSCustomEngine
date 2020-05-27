@@ -247,11 +247,11 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         else if (type.compare("PlayerController") == 0)
             parent.addComponent<PlayerController>();
         else if (type.compare("DirectionnalLight") == 0)
-            parent.addComponent<DirectionnalLight>(params).enable(true);
+            parent.addComponent<DirectionnalLight>(params);
         else if (type.compare("PointLight") == 0)
-            parent.addComponent<PointLight>(params).enable(true);
+            parent.addComponent<PointLight>(params);
         else if (type.compare("SpotLight") == 0)
-            parent.addComponent<SpotLight>(params).enable(true);
+            parent.addComponent<SpotLight>(params);
         else if (type.compare("EnnemyController") == 0)
             parent.addComponent<EnnemyController>(params);
         else if (type.compare("Checkpoint") == 0)

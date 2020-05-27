@@ -23,6 +23,7 @@ namespace Engine::LowRenderer
         const Engine::Ressources::AmbiantComponent&             ambient; 
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
+        bool isEnable                                           {true};
 
     } DirectionnalLightCreateArg;
 
@@ -42,7 +43,8 @@ namespace Engine::LowRenderer
                                 const Engine::Core::Maths::Vec3&                       direction,
                                 const Engine::Ressources::AmbiantComponent&            ambient, 
                                 const Engine::Ressources::DiffuseComponent&            diffuse, 
-                                const Engine::Ressources::SpecularComponent&           specular);
+                                const Engine::Ressources::SpecularComponent&           specular,
+                                bool isEnable = true);
             
             DirectionnalLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 
