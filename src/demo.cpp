@@ -1202,27 +1202,26 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
-    {
-        GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
+    GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
-        ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "GreenMaterial",
-                            "Cube"};
+    ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
+                        &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                        &ressourceManager.get<Mesh>("Cube"),
+                        "ColorWithLight",
+                        "GreenMaterial",
+                        "Cube"};
 
-        GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
+    GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
-        enemy1.addComponent<Model>(modelArg);
-        enemy1.addComponent<PhysicalObject>().setMass(1);
-        enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
+    enemy1.addComponent<Model>(modelArg);
+    enemy1.addComponent<PhysicalObject>().setMass(1);
+    enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
 
-        enemy1.addComponent<EnnemyController>(&Scene::getCurrentScene()->getGameObject("world/Players/Player1"), checkpoint1->getComponent<Checkpoint>());
+    //enemy1.addComponent<EnnemyController>(&Scene::getCurrentScene()->getGameObject("world/Players/Player1"), checkpoint1->getComponent<Checkpoint>());
 
-        Save::createPrefab(enemy1, "enemy1");
-        enemy1.destroy();
-    }
+    Save::createPrefab(enemy1, "enemy1");
+    enemy1.destroy();
+
 
     GameObjectCreateArg CrateGameObjectArg{"Crate"};
 
@@ -1245,7 +1244,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     crate.destroy();
 
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("Crate")}, {std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
