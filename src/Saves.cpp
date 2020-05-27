@@ -3,13 +3,8 @@
 #include "GE/Core/Maths/vec.hpp"
 
 #include "GE/Ressources/Component.hpp"
-#include "Game/demo.hpp"
-#include "Game/EnnemyController.hpp"
-#include "Game/Checkpoint.hpp"
 #include "GE/GE.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
-#include "Game/PlayerController.hpp"
-#include "Game/PushedOnShoot.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
@@ -20,6 +15,14 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "GE/Core/Debug/log.hpp"
+
+#include "Game/demo.hpp"
+#include "Game/EnnemyController.hpp"
+#include "Game/Checkpoint.hpp"
+#include "Game/PlayerController.hpp"
+#include "Game/PushedOnShoot.hpp"
+#include "Game/MaxElementConteneur.hpp"
+#include "Game/LifeDuration.hpp"
 
 using namespace rapidxml;
 
@@ -258,6 +261,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<Checkpoint>();
         else if (type.compare("PushedOnShoot") == 0)
             parent.addComponent<PushedOnShoot>();
+        else if (type.compare("MaxElementConteneur") == 0)
+            parent.addComponent<MaxElementConteneur>(params);
+        else if (type.compare("LifeDuration") == 0)
+            parent.addComponent<LifeDuration>(params);
 
         newGameObject = &parent;
     }
