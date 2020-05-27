@@ -61,7 +61,7 @@ namespace Engine::Core::System
 		static void setLogFPS(bool newLogFPSFlag) { _logFPS = newLogFPSFlag; }
 
 		static float getDeltaTime() { return static_cast<float>(_deltaTime); }
-		static float getUnscaledDetlaTime() { return static_cast<float>(_unscaledDeltaTime); }
+		static float getUnscaledDeltaTime() { return static_cast<float>(_unscaledDeltaTime); }
 
 		static float getTimeScale() { return static_cast<float>(_timeScale); }
 		static void setTimeScale(double newtimeScale)
