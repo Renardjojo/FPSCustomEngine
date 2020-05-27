@@ -11,6 +11,7 @@
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Core/Maths/Shape3D/Segment.hpp"
+#include "GE/Ressources/GameObject.hpp"
 
 namespace Engine::Physics
 {
@@ -126,6 +127,27 @@ namespace Engine::Physics
         static
         bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
 
+        /*Trigger ray cast call onCollisionEnter*/
+        static
+        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        /*Trigger ray cast call onCollisionEnter with only tag*/
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+
         /*TODO: Can be implemented if all segment/Shape have the good collision function implemented without intersection
         static
         bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray) noexcept;
@@ -141,7 +163,7 @@ namespace Engine::Physics
         const Engine::Core::Maths::Vec3& getGravity() noexcept { return gravity;}
 
         static
-        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = gravity;}
+        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = newGravity;}
 
         #pragma endregion //!mutator
 

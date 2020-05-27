@@ -56,21 +56,23 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
     {
         loadInGPU ();
     }
+    _name = __FUNCTION__;
 }
 
-Model::Model(GameObject &refGameObject, std::vector<std::unique_ptr<std::string>>& params, t_RessourcesManager& ressourcesManager)
+Model::Model(GameObject &refGameObject, std::vector<std::string>& params, t_RessourcesManager& ressourcesManager)
     :   IModel                  (refGameObject),
-        pShader_                (&ressourcesManager.get<Shader>(*params[0])),
-        pMaterial_              (&ressourcesManager.get<std::vector<Material>>(*params[1])),
-        pMesh_                  (&ressourcesManager.get<Mesh>(*params[2])),
+        pShader_                (&ressourcesManager.get<Shader>(params[0])),
+        pMaterial_              (&ressourcesManager.get<std::vector<Material>>(params[1])),
+        pMesh_                  (&ressourcesManager.get<Mesh>(params[2])),
+        shaderName_             (params[0]),
+        materialName_           ({params[1]}),
+        meshName_               (params[2]),
         enableBackFaceCulling_  (true),
-        isOpaque_               (true),
-        shaderName_             (*params[0]),
-        materialName_           ({*params[1]}),
-        meshName_               (*params[2])
+        isOpaque_               (true)
 {
     initTextureBufferWithMTLId();
-    loadInGPU (); 
+    loadInGPU ();
+    _name = __FUNCTION__;
 }
 
 Model::~Model ()
@@ -224,13 +226,10 @@ void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
 { 
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "Model"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
     newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
-    if (getMaterialName().size() == 0)
-        return;
-    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName()[0].c_str())));
+    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName().c_str())));
     newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
-    
 
     nodeParent->append_node(newNode);
 }

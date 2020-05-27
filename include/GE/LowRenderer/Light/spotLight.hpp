@@ -23,13 +23,14 @@ namespace Engine::LowRenderer
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
 
-        float                               constant; 
-        float                               linear;
-        float                               quadratic;
+        float                                                   constant; 
+        float                                                   linear;
+        float                                                   quadratic;
 
-        const Engine::Core::Maths::Vec3&   direction;
-        float                              cutOff;
-        float                              cutOffExponent;
+        const Engine::Core::Maths::Vec3&                        direction;
+        float                                                   cutOff;
+        float                                                   cutOffExponent;
+        bool                                                    isEnable {true};
 
     } SpotLightCreateArg;
 
@@ -61,14 +62,17 @@ namespace Engine::LowRenderer
                         const Engine::Ressources::AmbiantComponent&            ambient, 
                         const Engine::Ressources::DiffuseComponent&            diffuse, 
                         const Engine::Ressources::SpecularComponent&           specular,
-                        float                              constant, 
-                        float                              linear, 
-                        float                              quadratic,
-                        const Engine::Core::Maths::Vec3&   direction,
-                        float                              cutOff,
-                        float                              cutOffExponent);
+                        float                                                  constant, 
+                        float                                                  linear, 
+                        float                                                  quadratic,
+                        const Engine::Core::Maths::Vec3&                       direction,
+                        float                                                  cutOff,
+                        float                                                  cutOffExponent,
+                        bool                                                   isEnable = true);
 
             SpotLight (Engine::Ressources::GameObject & refGameObject, SpotLightCreateArg arg);
+
+            SpotLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
             
             SpotLight (const SpotLight& other)		= default;
             SpotLight (SpotLight&& other)			= default;
@@ -77,6 +81,8 @@ namespace Engine::LowRenderer
             #pragma endregion //!constructor/destructor
     
             #pragma region methods
+
+            void save(xml_document<> &doc, xml_node<> *nodeParent);
 
             virtual void addToLightToUseBuffer(std::vector<Engine::Ressources::light>& lb) noexcept override;
 

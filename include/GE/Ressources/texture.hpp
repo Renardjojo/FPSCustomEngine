@@ -83,8 +83,6 @@ namespace Engine::Ressources
          */
         void use () const noexcept;
 
-        const std::string& getName() const noexcept {return name_;}
-
         Size getSize() const noexcept {return {w_, h_};}
 
         //Texture& operator=(Texture const &other); //TODO:
@@ -93,7 +91,6 @@ namespace Engine::Ressources
         unsigned int	id_;
         bool            isLoadInGPU_;
 
-        std::string     name_;
         unsigned char*	pixels_     {nullptr};
         int             w_, h_;
         unsigned char   comp_; //RGB = 3 / RGBA = 4

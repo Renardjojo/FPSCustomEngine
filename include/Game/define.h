@@ -5,13 +5,11 @@
 #ifndef _DEFINE_H
 #define _DEFINE_H
 
-#define WIDTH 1000
+#define WIDTH 900
 #define HEIGHT 800
 
 namespace Engine 
 {
-
-
     enum E_GAME_STATE
     {
         STARTING = 0,
@@ -22,7 +20,6 @@ namespace Engine
         LOADSAVE,
         EXIT
     };
-
 
 } /*namespace */
 #endif //_DEFINE_H

@@ -12,27 +12,35 @@ using namespace Engine::Ressources;
 
 
 DirectionnalLight::DirectionnalLight (GameObject & refGameObject, const DirectionnalLightCreateArg& arg)
-            :   Light               {refGameObject, arg.ambient, arg.diffuse, arg.specular},
+            :   Light               {refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.isEnable},
                 _direction          {arg.direction.getNormalize()}
-{}
+{
+    _name = __FUNCTION__;
+}
 
             
 DirectionnalLight::DirectionnalLight ( GameObject &                       refGameObject,
-                    const Engine::Core::Maths::Vec3&                       direction,
-                    const AmbiantComponent&            ambient, 
-                    const DiffuseComponent&            diffuse, 
-                    const SpecularComponent&           specular)
-:   Light               {refGameObject, ambient, diffuse, specular},
+                                        const Engine::Core::Maths::Vec3&   direction,
+                                        const AmbiantComponent&            ambient, 
+                                        const DiffuseComponent&            diffuse, 
+                                        const SpecularComponent&           specular,
+                                        bool isEnable)
+:   Light               {refGameObject, ambient, diffuse, specular, isEnable},
     _direction          {direction.getNormalize()}
-{}
+{
+    _name = __FUNCTION__;
+}
 
-DirectionnalLight::DirectionnalLight (GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params)
+DirectionnalLight::DirectionnalLight (GameObject &refGameObject, const std::vector<std::string>& params)
 :   Light       (refGameObject,
-                AmbiantComponent{std::stof(*params[0]), std::stof(*params[1]), std::stof(*params[2]), std::stof(*params[3])}, 
-                AmbiantComponent{std::stof(*params[4]), std::stof(*params[5]), std::stof(*params[6]), std::stof(*params[7])}, 
-                AmbiantComponent{std::stof(*params[8]), std::stof(*params[9]), std::stof(*params[10]), std::stof(*params[11])}),
-    _direction  {Engine::Core::Maths::Vec3{std::stof(*params[12]), std::stof(*params[13]), std::stof(*params[14])}} 
-{}
+                AmbiantComponent{std::stof(params[0]), std::stof(params[1]), std::stof(params[2]), std::stof(params[3])}, 
+                AmbiantComponent{std::stof(params[4]), std::stof(params[5]), std::stof(params[6]), std::stof(params[7])}, 
+                AmbiantComponent{std::stof(params[8]), std::stof(params[9]), std::stof(params[10]), std::stof(params[11])},
+                static_cast<bool>(std::stof(params[15]))),
+    _direction  {Engine::Core::Maths::Vec3{std::stof(params[12]), std::stof(params[13]), std::stof(params[14])}} 
+{
+    _name = __FUNCTION__;
+}
 
 void DirectionnalLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
 {
@@ -65,6 +73,7 @@ void DirectionnalLight::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("dirX", doc.allocate_string(std::to_string(_direction.x).c_str())));
     newNode->append_attribute(doc.allocate_attribute("dirY", doc.allocate_string(std::to_string(_direction.y).c_str())));
     newNode->append_attribute(doc.allocate_attribute("dirZ", doc.allocate_string(std::to_string(_direction.z).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("isEnable", doc.allocate_string(std::to_string(isEnable_).c_str())));
     
     nodeParent->append_node(newNode);
 }

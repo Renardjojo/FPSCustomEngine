@@ -3,10 +3,8 @@
 #include "GE/Core/Maths/vec.hpp"
 
 #include "GE/Ressources/Component.hpp"
-#include "Game/demo.hpp"
 #include "GE/GE.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
-#include "Game/PlayerController.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
@@ -17,6 +15,15 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "GE/Core/Debug/log.hpp"
+
+#include "Game/demo.hpp"
+#include "Game/EnnemyController.hpp"
+#include "Game/Checkpoint.hpp"
+#include "Game/PlayerController.hpp"
+#include "Game/PushedOnShoot.hpp"
+#include "Game/MaxElementConteneur.hpp"
+#include "Game/LifeDuration.hpp"
+#include "Game/ParticuleGenerator.hpp"
 
 using namespace rapidxml;
 
@@ -35,7 +42,6 @@ using namespace Engine::Core::Debug;
 void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths, const char *path)
 {
     std::string head;
-
     std::ifstream file(path);
 
     if (!file.is_open())
@@ -44,11 +50,10 @@ void Engine::Ressources::Save::initSavePaths(std::vector<std::string> &savePaths
         return;
     }
 
-    while (file.good())
+    while (std::getline(file, head))
     {
-        file >> head;
-
-        savePaths.push_back(head);
+        if (head.size() >= 19)
+            savePaths.push_back(head);
     }
 
     file.close();
@@ -109,8 +114,16 @@ Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject&
 
     xml_node<>* node = doc.first_node()->first_node();
 
-    return initEntity(parent, node);
+    GameObject& newGO = initEntity(parent, node);
+
+    for (auto &&i : newGO.getComponents<ScriptComponent>())
+    {
+        i->start();
+    }
+
+    return newGO;
 }
+
 Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, Vec3 position, std::string prefabName)
 {
     GameObject& toReturn = loadPrefab(parent, prefabName);
@@ -222,26 +235,39 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
     else if (std::string(node->name()).compare("COMPONENT") == 0)// Component
     {
         std::string type = str;
-        std::vector<std::unique_ptr<std::string>> params;
+        std::vector<std::string> params;
         attr = attr->next_attribute();
         for (; attr; attr = attr->next_attribute())
-            params.push_back(std::make_unique<std::string>(attr->value()));
+            params.push_back(attr->value());
 
         if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
-            parent.addComponent<PhysicalObject>();
+            parent.addComponent<PhysicalObject>(params);
         else if (type.compare("OrientedBoxCollider") == 0)
-            parent.addComponent<OrientedBoxCollider>();
+            parent.addComponent<OrientedBoxCollider>(params);
         else if (type.compare("SphereCollider") == 0)
-            parent.addComponent<SphereCollider>();
+            parent.addComponent<SphereCollider>(params);
         else if (type.compare("PlayerController") == 0)
             parent.addComponent<PlayerController>();
         else if (type.compare("DirectionnalLight") == 0)
-            parent.addComponent<DirectionnalLight>(params).enable(true);
+            parent.addComponent<DirectionnalLight>(params);
         else if (type.compare("PointLight") == 0)
-            parent.addComponent<PointLight>(params).enable(true);
-
+            parent.addComponent<PointLight>(params);
+        else if (type.compare("SpotLight") == 0)
+            parent.addComponent<SpotLight>(params);
+        else if (type.compare("EnnemyController") == 0)
+            parent.addComponent<EnnemyController>(params);
+        else if (type.compare("Checkpoint") == 0)
+            parent.addComponent<Checkpoint>();
+        else if (type.compare("PushedOnShoot") == 0)
+            parent.addComponent<PushedOnShoot>();
+        else if (type.compare("MaxElementConteneur") == 0)
+            parent.addComponent<MaxElementConteneur>(params);
+        else if (type.compare("LifeDuration") == 0)
+            parent.addComponent<LifeDuration>(params);
+        else if (type.compare("ParticuleGenerator") == 0)
+            parent.addComponent<ParticuleGenerator>(params);
 
         newGameObject = &parent;
     }
@@ -347,7 +373,26 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     if (gameObjectParent.getComponent<DirectionnalLight>())
         gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
 
-        
+    if (gameObjectParent.getComponent<SpotLight>())
+        gameObjectParent.getComponent<SpotLight>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<EnnemyController>())
+        gameObjectParent.getComponent<EnnemyController>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<Checkpoint>())
+        gameObjectParent.getComponent<Checkpoint>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<PushedOnShoot>())
+        gameObjectParent.getComponent<PushedOnShoot>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<MaxElementConteneur>())
+        gameObjectParent.getComponent<MaxElementConteneur>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<LifeDuration>())
+        gameObjectParent.getComponent<LifeDuration>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<ParticuleGenerator>())
+        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);        
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);

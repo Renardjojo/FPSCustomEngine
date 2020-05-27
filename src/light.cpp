@@ -14,14 +14,16 @@ using namespace Engine::Ressources;
 Light::Light (Engine::Ressources::GameObject &      refGameObject, 
                 const AmbiantComponent&             ambient, 
                 const DiffuseComponent&             diffuse, 
-                const SpecularComponent&            specular)
+                const SpecularComponent&            specular,
+                bool isEnable)
     :   Component          {refGameObject},
         ambientComp_       (ambient),
         diffuseComp_       (diffuse),
         specularComp_      (specular),
-        isEnable_          (false)
+        isEnable_          (!isEnable)
 {
     _name = __FUNCTION__;
+    enable (isEnable);
 }
 
 Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateArg&    arg)
@@ -29,9 +31,10 @@ Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateAr
         ambientComp_       (arg.ambient),
         diffuseComp_       (arg.diffuse),
         specularComp_      (arg.specular),
-        isEnable_          (false)
+        isEnable_          (!arg.isEnable)
 {
     _name = __FUNCTION__;
+    enable (arg.isEnable);
 }
 
 void Light::enable (bool flag) throw() 

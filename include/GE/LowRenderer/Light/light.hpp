@@ -20,6 +20,7 @@ namespace Engine::LowRenderer
         const Engine::Ressources::AmbiantComponent&      ambient; 
         const Engine::Ressources::DiffuseComponent&      diffuse;
         const Engine::Ressources::SpecularComponent&     specular;
+        bool isEnable                                   {true};
 
     } LightCreateArg;
 
@@ -35,7 +36,8 @@ namespace Engine::LowRenderer
             Light ( Engine::Ressources::GameObject &refGameObject,
                     const Engine::Ressources::AmbiantComponent&     ambient, 
                     const Engine::Ressources::DiffuseComponent&     diffuse, 
-                    const Engine::Ressources::SpecularComponent&    specular);
+                    const Engine::Ressources::SpecularComponent&    specular,
+                    bool isEnable = true);
             
             Light (const Light& other)		= delete;
             Light (Light&& other)			= delete;

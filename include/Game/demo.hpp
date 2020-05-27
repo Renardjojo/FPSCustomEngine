@@ -47,8 +47,6 @@ namespace Game
 
             #pragma endregion //!methods
 
-            static std::unique_ptr<Engine::Ressources::Scene> *_currentScene;
-
         protected:
 
             #pragma region attribut
@@ -82,14 +80,15 @@ namespace Game
             void loadPseudoRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager); 
             void loadSpotLightRessource     (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTowerRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadGroundRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);            
+            void loadGroundRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);    
+            void loadCrateRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);          
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadSkybox                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadPlayer                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);     
+            void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);    
             
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
@@ -109,8 +108,6 @@ namespace Game
 #endif
             
             #pragma endregion //!methods
-
-        private:
 
     };
 }
