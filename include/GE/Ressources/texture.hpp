@@ -94,8 +94,8 @@ namespace Engine::Ressources
         bool            isLoadInGPU_;
 
         std::string     name_;
-        unsigned char*	pixels_;
-        int             w_, h_; 
+        unsigned char*	pixels_     {nullptr};
+        int             w_, h_;
         unsigned char   comp_; //RGB = 3 / RGBA = 4
         E_FilterType    filterType_;
         E_WrapType      wrapType_;

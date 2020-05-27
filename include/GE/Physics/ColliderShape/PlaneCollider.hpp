@@ -29,19 +29,25 @@ namespace Engine::Physics::ColliderShape
             :   Collider        (refGameObject),
                 plane_          (),
                 directionAxe_   (directionAxe)
-        {}
+        {
+            _name = __FUNCTION__;    
+        }
 
         PlaneCollider (const PlaneCollider& other)
             :   Collider    (*this),
                 plane_       (other.plane_),
                 directionAxe_   (other.directionAxe_)
-        {}
+        {
+            _name = __FUNCTION__;    
+        }
 
         PlaneCollider (PlaneCollider&& other)
             :   Collider        (*this),
                 plane_        (std::move(other.plane_)),
                 directionAxe_   (std::move(other.directionAxe_))
-        {}
+        {
+            _name = __FUNCTION__;    
+        }
 
         PlaneCollider() = delete;
         virtual ~PlaneCollider() = default;
@@ -82,6 +88,15 @@ namespace Engine::Physics::ColliderShape
         const Engine::Core::Maths::Shape3D::Plane& getLocalPlane()  const noexcept
         { 
             return plane_;
+        }
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+            
+            nodeParent->append_node(newNode);
         }
 
     private:

@@ -23,7 +23,7 @@ Text::Text(const TextCreateArg& arg)
         functError("pFont == nullptr. Invalid argument or invalid path");
         exit (1);
     }
-
+    
     initStr();
 
     if (arg.flipTexture)
@@ -35,6 +35,16 @@ Text::Text(const TextCreateArg& arg)
     {
         loadInGPU();
     }
+}
+
+Text::~Text()
+{
+    if (surface_ != nullptr)
+    {
+        SDL_FreeSurface(surface_);
+    }
+
+    pixels_ = nullptr;
 }
 
 void Text::setColorAndText(const std::string& str, const ColorRGBA& color)
@@ -88,21 +98,24 @@ void Text::setText(const std::string& str)
 
 void Text::initStr	()
 {
-    SDL_Surface* surf;
+    if (surface_ != nullptr)
+    {
+        SDL_FreeSurface(surface_);
+    }
 
     if (isSmooth_)
     {
-        surf = TTF_RenderText_Blended(pFont_->getpFont(), str_.c_str(), SDL_Color{Uint8(color_.r * 255), Uint8(color_.g * 255), Uint8(color_.b * 255), Uint8(color_.a * 255)});
+        surface_ = TTF_RenderText_Blended(pFont_->getpFont(), str_.c_str(), SDL_Color{Uint8(color_.r * 255), Uint8(color_.g * 255), Uint8(color_.b * 255), Uint8(color_.a * 255)});
     }
     else
     {
-        surf = TTF_RenderText_Solid(pFont_->getpFont(), str_.c_str(), SDL_Color{Uint8(color_.r * 255), Uint8(color_.g * 255), Uint8(color_.b * 255), Uint8(color_.a * 255)});
+        surface_ = TTF_RenderText_Solid(pFont_->getpFont(), str_.c_str(), SDL_Color{Uint8(color_.r * 255), Uint8(color_.g * 255), Uint8(color_.b * 255), Uint8(color_.a * 255)});
     }
 
-    w_ 		= surf->w;
-    h_ 		= surf->h;
-    comp_	= surf->format->BytesPerPixel;
-    pixels_	= static_cast<unsigned char*>(surf->pixels);
+    w_ 		= surface_->w;
+    h_ 		= surface_->h;
+    comp_	= surface_->format->BytesPerPixel;
+    pixels_	= static_cast<unsigned char*>(surface_->pixels);
 
     if (pixels_ == nullptr)
     {

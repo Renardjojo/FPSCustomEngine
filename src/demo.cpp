@@ -233,12 +233,13 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     //loadRockRessource          (ressourceManager);
     //loadTreeRessource          (ressourceManager);
-    loadSkyboxRessource        (ressourceManager);
+    //loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
+    loadPseudoRessource        (ressourceManager);
     loadPlayerRessource        (ressourceManager);
-    loadSpotLightRessource     (ressourceManager);
+    //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
-    loadGroundRessource        (ressourceManager);    
+    //loadGroundRessource        (ressourceManager);    
 }
 
 void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
@@ -287,7 +288,7 @@ void Demo::loadSkyboxRessource        (t_RessourcesManager& ressourceManager)
     matSkybox.flipTexture = false;
     matSkybox.filterType = E_FilterType::LINEAR;
 
-    ressourceManager.add<Shader>("SkyboxShader", "./ressources/shader/vSkybox.vs", "./ressources/shader/fSkybox.fs", SKYBOX);
+    ressourceManager.add<Shader>("SkyboxShader", "./ressources/shader/vSkybox.vs", "./ressources/shader/fLightingSkybox.fs", SKYBOX | LIGHT_BLIN_PHONG);
     ressourceManager.add<std::vector<Material>>("SkyboxMaterial", std::vector<Material>{matSkybox});
     ressourceManager.add<Mesh>("SkyboxMesh", "./ressources/obj/skybox.obj");
 }
@@ -310,6 +311,34 @@ void Demo::loadGunRessource           (t_RessourcesManager& ressourceManager)
         ressourceManager.add<std::vector<Material>>("SniperMaterials", std::move(material));
     }
 }
+
+void Demo::loadPseudoRessource        (t_RessourcesManager& ressourceManager)
+{
+    FontCreateArg fontArg;
+    fontArg.fontRoot    = "./ressources/font/COURIER.ttf";
+    fontArg.fontSize    = 25;
+
+    Font& font  = ressourceManager.add<Font>("COURIER", fontArg);
+
+    TextCreateArg textArg;
+    textArg.text = "Mjr. Cavalsky";
+    textArg.pFont = &font;
+    textArg.color = {0.5f, 0.5f, 0.f, 1.f};
+
+    MaterialCreateArg matText;
+    matText.name                = "PseudoMaterial";
+    matText.pTexture            = std::make_unique<Text>(textArg);
+    matText.comp.ambient.ki     = 1.f;
+    matText.comp.diffuse.ki     = 0.f;
+    matText.comp.specular.ki    = 0.f;
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matText);
+        ressourceManager.add<std::vector<Material>>(matText.name, std::move(material));
+    }
+}
+
 
 void Demo::loadPlayerRessource        (t_RessourcesManager& ressourceManager)
 {
@@ -376,7 +405,7 @@ void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
     MaterialAndTextureCreateArg matGround;
     matGround.name_ = "Ground";
     matGround.comp_.shininess = 1.f;
-    matGround.comp_.specular.rgbi = {1.f, 1.f, 1.f, 0.2f};
+    matGround.comp_.specular.rgbi = {1.f, 1.f, 1.f, 0.f};
     matGround.pathDiffuseTexture = "./ressources/texture/arrakisday/arrakisday_dn.tga";
     matGround.wrapType = E_WrapType::MIRRORED_REPEAT;
 
@@ -505,7 +534,15 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
 
     playerGameObject.name = "Player1";
     playerGameObject.transformArg.position = {2.f, 10.f, 2.f};
-    playerGameObject.transformArg.rotation = {0.f, M_PI, 0.f};
+    GameObject& player1GO = scene_->add<GameObject>(playerContener, playerGameObject);
+    player1GO.addComponent<PlayerController>();
+    player1GO.addComponent<PhysicalObject>().setMass(1);
+    player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
+    player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
+
+    playerGameObject.name = "Skin";
+    playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
+    playerGameObject.transformArg.rotation = {0.f, 0.f, 0.f};
     playerGameObject.transformArg.scale = {0.18f, 0.18f, 0.18f};
     
     ModelCreateArg soldierModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
@@ -515,19 +552,13 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     std::move(materialsName),
                                     "Soldier1Mesh"};
 
-    GameObject& player1GO = scene_->add<GameObject>(playerContener, playerGameObject);
-    player1GO.addComponent<Model>(soldierModelArg);
-    player1GO.addComponent<PlayerController>();
-    player1GO.addComponent<PhysicalObject>();
-    player1GO.getComponent<PhysicalObject>()->setMass(1);
-    player1GO.addComponent<SphereCollider>();
-    player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
+    GameObject& skinPlayer1GO = scene_->add<GameObject>(player1GO, playerGameObject);
+    skinPlayer1GO.addComponent<Model>(soldierModelArg);
 
     //load guns
-
     GameObjectCreateArg sniperGameObject    {"Sniper",
-                                            {{0.4f, -1.5f, -2.7f},
-                                            {0.f, M_PI_2, 0.f},
+                                            {{-0.5f, -1.5f, 3.2f},
+                                            {0.f, -M_PI_2, 0.f},
                                             {0.02f, 0.02f, 0.02f}}};
 
     materialsName.clear();
@@ -547,43 +578,24 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     "SniperMesh"};
 
     scene_->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
+/*
+    //load billboards
+    std::vector<Material>& vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
+    Size textureSize = vecMaterialsPseudo[0].getPDiffuseTexture()->getSize();
 
-    // //load billboards
-    // FontCreateArg fontArg;
-    // fontArg.fontRoot    = "./resources/font/COURIER.ttf";
-    // fontArg.fontSize    = 25;
+    GameObjectCreateArg pseudoGameObject    {"Pseudo",
+                                            {{0.0f, 5.0f, 0.0f},
+                                            {0.f, 0.f, 0.f},
+                                            {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f}}};
 
-    // Font& font  = resourceManager.add<Font>("COURIER", fontArg);
+    ModelCreateArg planeArg    { &ressourceManager.get<Shader>("TextureOnly"), 
+                                 &vecMaterialsPseudo,
+                                 &ressourceManager.get<Mesh>("Plane"),
+                                "TextureOnly",
+                                {"PseudoMaterial"},
+                                "Plane", true, false};
 
-    // TextCreateArg textArg;
-    // textArg.text = "Mjr. Cavalsky";
-    // textArg.pFont = &font;
-    // textArg.color = {0.5f, 0.5f, 0.f, 1.f};
-
-    // MaterialCreateArg matText;
-    // matText.name                = "Default material";
-    // //matText.pTexture           = std::make_unique<Texture>("./resources/texture/billboardCloud.jpg");
-    // matText.pTexture            = std::make_unique<Text>(textArg);
-    // matText.comp.ambient.ki     = 1.f;
-    // matText.comp.diffuse.ki     = 0.f;
-    // matText.comp.specular.ki    = 0.f;
-
-    // Size textureSize = matText.pTexture->getSize();
-
-    // Material& materialBillBoard = resourceManager.add<Material>("BillBoard", matText);
-    // Mesh& meshBillBoard = resourceManager.add<Mesh>("BillBoard", Mesh::createPlane());
-
-    // ModelCreateArg planeArg    {{0.0f, 5.0f, 0.0f},
-    //                             {0.f, 0.f, 0.f},
-    //                             {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f},
-    //                             &resourceManager.get<Shader>("TextureOnly"), 
-    //                             {&materialBillBoard},
-    //                             &meshBillBoard, 
-    //                             "BillBoard", 
-    //                             true, false};
-
-    // scene_.add<BillBoard>(*player1, planeArg);
-    // scene_.add<BillBoard>(*player2, planeArg);
+    scene_->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);*/
 }
 
 void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
@@ -667,7 +679,6 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
     ground.setTag("Ground");
 } 
 
-
 void Demo::loadCamera()
 {
     CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
@@ -677,7 +688,7 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg cubeGameObject{"cube1",
+/*    GameObjectCreateArg cubeGameObject{"cube1",
                                        {{-0.7f, -5.f, 0.f},
                                         {0.f, 0.f, 45.f},
                                         {5.f, 1.f, 5.f}}};
@@ -720,7 +731,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                             "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
 /*
     GameObjectCreateArg playerGameObject{"Player",
                                          {{-2.f, 5.f, 0.f},
@@ -783,13 +794,13 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     player.getComponent<PhysicalObject>()->setMass(1);
     player.addComponent<SphereCollider>();
     player.getComponent<SphereCollider>()->setBounciness(0.f);*/
-
-    //loadRock                   (ressourceManager, 100);
-    //loadTree                   (ressourceManager, 50);
-    loadSkybox                 (ressourceManager);
+/*
+    loadRock                   (ressourceManager, 100);
+    loadTree                   (ressourceManager, 50);
+    loadSkybox                 (ressourceManager);*/
     loadPlayer                 (ressourceManager);
-    //loadTower                  (ressourceManager);
-    loadGround                 (ressourceManager);   
+   /* loadTower                  (ressourceManager);
+    loadGround                 (ressourceManager);   */
 }
 
 void Demo::loadLights(t_RessourcesManager &ressourceManager)

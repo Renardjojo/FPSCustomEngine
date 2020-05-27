@@ -20,17 +20,23 @@ namespace Engine::Physics::ColliderShape
         OrientedBoxCollider (Engine::Ressources::GameObject& refGameObject)
             :   Collider        (refGameObject),
                 orientedBox_    ()
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         OrientedBoxCollider (const OrientedBoxCollider& other)
             :   Collider     (*this),
                 orientedBox_ (other.orientedBox_)
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         OrientedBoxCollider (OrientedBoxCollider&& other)
             :   Collider        (*this),
                 orientedBox_    (std::move(other.orientedBox_))
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         OrientedBoxCollider() = delete;
 
@@ -59,7 +65,7 @@ namespace Engine::Physics::ColliderShape
         {
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-            newNode->append_attribute(doc.allocate_attribute("type", "OrientedBoxCollider"));
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
             
             nodeParent->append_node(newNode);
         }

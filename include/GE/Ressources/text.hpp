@@ -35,7 +35,7 @@ namespace Engine::Ressources
         Text(Text && other)       = default;
         Text(const TextCreateArg& arg);
 
-        virtual ~Text() = default;
+        virtual ~Text();
 
 		void setColorAndText(const std::string& str, const ColorRGBA& color);
 		void setColor(const ColorRGBA& color);
@@ -53,6 +53,7 @@ namespace Engine::Ressources
 		Font* 			pFont_;
 		ColorRGBA		color_;
 		bool 			isSmooth_;
+		SDL_Surface*	surface_ {nullptr};
 
 		#pragma endregion //!attribut
 
