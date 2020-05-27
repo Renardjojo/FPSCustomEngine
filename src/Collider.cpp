@@ -14,7 +14,6 @@ Collider::Collider (GameObject& refGameObject)
     _name = __FUNCTION__;
     attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
     PhysicSystem::addCollider(this);
-    std::cout << refGameObject.getName() << std::endl;
     for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
     {
         std::cout << script->toString() << std::endl;

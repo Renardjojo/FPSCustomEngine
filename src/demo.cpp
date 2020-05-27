@@ -56,51 +56,31 @@ using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
 Demo::Demo(Engine::GE& gameEngine)
-    :   gameEngine_         (gameEngine),
-        scene_              (),
-        flagleftClicIsDown  (false),
-        flagF1IsDown        (false),
-        usingMouse          (true),
-        dirCamera          {0.f, 0.f, -1.f}
+    :   _gameEngine         {gameEngine},
+        _scene              {},
+        flagleftClicIsDown  {false},
+        usingMouse          {true},
+        dirCamera           {0.f, 0.f, -1.f}
 {
+    _scene = std::make_unique<Scene>();
+    _gameEngine.ressourceManager_.use();
 
-    if (!usingMouse)
-    {
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-    }
-    else
-    {
-        SDL_ShowCursor(true);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
-    }
+        Scene::_currentScene = &_scene;
 
-    scene_ = std::make_unique<Scene>();
-    Scene::_currentScene = &scene_;
-
-    gameEngine_.ressourceManager_.use();
-
-    loadRessources(gameEngine_.ressourceManager_);
-
+    loadRessources(_gameEngine.ressourceManager_);
     loadCamera();
-
-    loadEntity(gameEngine_.ressourceManager_);
-    // loadSkyBox(gameEngine_.ressourceManager_);
-    loadLights(gameEngine_.ressourceManager_);
-
-    loadUI(gameEngine_.ressourceManager_);
-
-    loadATH(gameEngine_.ressourceManager_);
-
-    loadEnemies(gameEngine_.ressourceManager_);  
-
-    // setupScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
-    // mainCamera = &scene_->getGameObject("world/MainCamera");
-    loadReferential(gameEngine_.ressourceManager_);
+    loadEntity(_gameEngine.ressourceManager_);
+    loadLights(_gameEngine.ressourceManager_);
+    loadUI(_gameEngine.ressourceManager_);
+    loadATH(_gameEngine.ressourceManager_);
+    loadEnemies(_gameEngine.ressourceManager_);
+    // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
+    // mainCamera = &_scene->getGameObject("world/MainCamera");
+    loadReferential(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
 
-    // setupScene(scene_, gameEngine_, "./ressources/saves/setup.xml");
+    // setupScene(_scene, _gameEngine, "./ressources/saves/setup.xml");
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -116,24 +96,28 @@ Demo::Demo(Engine::GE& gameEngine)
 
 void Demo::update() noexcept
 {
-    if (!usingMouse)
-        SDL_WarpMouseInWindow(static_cast<SDL_Window*>(gameEngine_.ren_->getWin()->get()), WIDTH / 2, HEIGHT / 2);
-    UISystem::update(gameEngine_);
+    SDL_ShowCursor(usingMouse);
+    SDL_CaptureMouse(usingMouse? SDL_FALSE :SDL_TRUE);
+    SDL_SetRelativeMouseMode(usingMouse ? SDL_FALSE : SDL_TRUE);
+
+    UISystem::update(_gameEngine);
+
     updateControl();
-    if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+
+    if (_gameEngine.gameState == E_GAME_STATE::RUNNING)
     {
         ScriptSystem::update();
-        scene_->update();
+        _scene->update();
     }
 
 #ifndef DNEDITOR
-    Editor::update(*scene_, gameEngine_);
+    Editor::update(*_scene, _gameEngine);
 #endif
 }
 
 void Demo::fixedUpdate() noexcept
 {
-    if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+    if (_gameEngine.gameState == E_GAME_STATE::RUNNING)
     {
         PhysicSystem::update();
         ScriptSystem::fixedUpdate();
@@ -142,16 +126,16 @@ void Demo::fixedUpdate() noexcept
 
 void Demo::display() const noexcept
 {
-    Size sizeWin = gameEngine_.getWinSize();
+    Size sizeWin = _gameEngine.getWinSize();
 
-    if (gameEngine_.gameState == E_GAME_STATE::RUNNING || gameEngine_.gameState == E_GAME_STATE::PAUSE)
+    if (_gameEngine.gameState == E_GAME_STATE::RUNNING || _gameEngine.gameState == E_GAME_STATE::PAUSE)
     {
         glViewport(0, 0, sizeWin.width, sizeWin.heigth);
 
         RenderingSystem::draw();
     }
 
-    UISystem::draw(gameEngine_);
+    UISystem::draw(_gameEngine);
 
     glUseProgram(0);
 }
@@ -448,7 +432,7 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
                             "RockMaterials",
                             "RockMesh"};
     
-    GameObject& rockContener = scene_->add<GameObject>(scene_->getWorld(), rockGameObject);
+    GameObject& rockContener = _scene->add<GameObject>(_scene->getWorld(), rockGameObject);
 
     /*Create rock with random size, position and rotation and add it on rock contener*/
     for (size_t i = 0; i < number; i++)
@@ -461,7 +445,7 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
 
         rockGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        scene_->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
+        _scene->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
     }
 }
 
@@ -472,7 +456,7 @@ void Demo::loadTree                   (t_RessourcesManager& ressourceManager, un
                                         {0.f, 0.f, 0.f},
                                         {1.f, 1.f, 1.f}}};
 
-    GameObject& treeContener = scene_->add<GameObject>(scene_->getWorld(), treeGameObject);
+    GameObject& treeContener = _scene->add<GameObject>(_scene->getWorld(), treeGameObject);
 
     std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("TreeMaterials");
     
@@ -495,7 +479,7 @@ void Demo::loadTree                   (t_RessourcesManager& ressourceManager, un
 
         treeGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        scene_->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
+        _scene->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
     }
 }
 
@@ -513,7 +497,7 @@ void Demo::loadSkybox                 (t_RessourcesManager& ressourceManager)
                             "SkyboxMaterial",
                             "SkyboxMesh", true, false};
 
-    scene_->add<GameObject>(scene_->getWorld(), skyboxArgGameObject).addComponent<Model>(skyboxArg);
+    _scene->add<GameObject>(_scene->getWorld(), skyboxArgGameObject).addComponent<Model>(skyboxArg);
 }
 
 void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
@@ -523,13 +507,13 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                             {0.f, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
 
-    GameObject& playerContener = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
+    GameObject& playerContener = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
 
     std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("Soldier1Materials");
 
     playerGameObject.name = "Player1";
     playerGameObject.transformArg.position = {2.f, 10.f, 2.f};
-    GameObject& player1GO = scene_->add<GameObject>(playerContener, playerGameObject);
+    GameObject& player1GO = _scene->add<GameObject>(playerContener, playerGameObject);
     player1GO.addComponent<PlayerController>();
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
@@ -547,7 +531,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     "Soldier1Materials",
                                     "Soldier1Mesh"};
 
-    GameObject& skinPlayer1GO = scene_->add<GameObject>(player1GO, playerGameObject);
+    GameObject& skinPlayer1GO = _scene->add<GameObject>(player1GO, playerGameObject);
     skinPlayer1GO.addComponent<Model>(soldierModelArg);
 
     //load guns
@@ -565,7 +549,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     "SniperMaterials",
                                     "SniperMesh"};
 
-    scene_->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
+    _scene->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
 
     //load billboards
     std::vector<Material>& vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
@@ -583,7 +567,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                 "PseudoMaterial",
                                 "Plane", true, false};
 
-    scene_->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
+    _scene->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 }
 
 void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
@@ -601,7 +585,7 @@ void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
                                 "GuardTowerMaterials",
                                 "GuardTowerMesh"};
 
-    GameObject& towerGO = scene_->add<GameObject>(scene_->getWorld(), towerArgGameObject);
+    GameObject& towerGO = _scene->add<GameObject>(_scene->getWorld(), towerArgGameObject);
     towerGO.addComponent<Model>(towerModelArg);
 
     //create projector
@@ -617,7 +601,7 @@ void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
                                         "SpotLightMaterial",
                                         "SpotLightMesh"};
 
-    GameObject& spotLightGO = scene_->add<GameObject>(towerGO, spotLightArgGameObject);
+    GameObject& spotLightGO = _scene->add<GameObject>(towerGO, spotLightArgGameObject);
     spotLightGO.addComponent<Model>(spotLightModelArg);
 
     //create light
@@ -640,7 +624,7 @@ void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
                                      {0.f, -0.5f, 0.6f},
                                      5.f, 7.f};
 
-    GameObject& lightGO = scene_->add<GameObject>(spotLightGO, lightArgGameObject);
+    GameObject& lightGO = _scene->add<GameObject>(spotLightGO, lightArgGameObject);
     lightGO.addComponent<Model>(spherModelarg);
     lightGO.addComponent<SpotLight>(lightSpotArg).enable(true);
 }
@@ -661,7 +645,7 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
                              true,
                              false};
 
-    GameObject& ground = scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject);
+    GameObject& ground = _scene->add<GameObject>(_scene->getWorld(), groundArgGameObject);
     ground.addComponent<Model>(groundArg);
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
@@ -669,8 +653,8 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
 
 void Demo::loadCamera()
 {
-    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, gameEngine_.getWinSize().width / static_cast<float>(gameEngine_.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
-    mainCamera = &scene_->add<Camera>(scene_->getWorld(), camArg);
+    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
+    mainCamera = &_scene->add<Camera>(_scene->getWorld(), camArg);
     dynamic_cast<Camera *>(mainCamera)->use();
 }
 
@@ -688,8 +672,8 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                             "PinkMaterial",
                             "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    _scene->add<GameObject>(_scene->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
+    _scene->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube2GameObject{"cube2",
                                         {{-5.f, -10.f, 0.f},
@@ -703,8 +687,8 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                             "DefaultMaterial",
                             "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+    _scene->add<GameObject>(_scene->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
+    _scene->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
     GameObjectCreateArg cube3GameObject{"cube3",
                                         {{0.f, -11.f, 0.f},
@@ -718,8 +702,8 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                             "DefaultMaterial",
                             "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
+    _scene->add<GameObject>(_scene->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
+    _scene->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
 /*
     GameObjectCreateArg playerGameObject{"Player",
                                          {{-2.f, 5.f, 0.f},
@@ -733,13 +717,13 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                "PinkMaterial",
                                "Sphere"};
 
-    GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
+    GameObject &player = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
     player.addComponent<Model>(playerModel);
 
-   GameObjectCreateArg ReticuleGameObject{"Z",
-                                         {{0.f, 0.f, 0.f},
-                                          {0.f, 0.f, 0.f},
-                                          {0.2f, 0.2f, 0.2f}}};
+    GameObjectCreateArg ReticuleGameObject{"Z",
+                                           {{0.f, 0.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {0.2f, 0.2f, 0.2f}}};
 
     ModelCreateArg ReticuleModel{&ressourceManager.get<Shader>("ColorWithLight"),
                                &ressourceManager.get<std::vector<Material>>("BlueMaterial"),
@@ -748,19 +732,19 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                "RedMaterial",
                                "Sphere"};*/
 /*
-    GameObject &ReticuleX = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    GameObject &ReticuleX = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
     ReticuleX.addComponent<Model>(ReticuleModel); 
 
     ReticuleGameObject.name = "Y";
     ReticuleModel.pMaterials = &ressourceManager.get<std::vector<Material>>("GreenMaterial");
 
-    GameObject &ReticuleY = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    GameObject &ReticuleY = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
     ReticuleY.addComponent<Model>(ReticuleModel); 
 
     ReticuleGameObject.name = "X";
     ReticuleModel.pMaterials = &ressourceManager.get<std::vector<Material>>("RedMaterial");
 
-    GameObject &ReticuleZ = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
+    GameObject &ReticuleZ = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
     ReticuleZ.addComponent<Model>(ReticuleModel);*/
 
     /*Add life bar on player*//*
@@ -776,7 +760,6 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                 "GreenMaterial",
                                 "Sphere"};
 
-
     player.addComponent<PlayerController>();
     player.addComponent<PhysicalObject>();
     player.getComponent<PhysicalObject>()->setMass(1);
@@ -787,10 +770,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     //loadTree                   (ressourceManager, 10);
     loadSkybox                 (ressourceManager);
     loadPlayer                 (ressourceManager);
-    //loadTower                  (ressourceManager);
-    loadGround                 (ressourceManager);   
+    loadGround                 (ressourceManager);
+    //loadTower                  (ressourceManager);Game
 }
-
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg lightSphereGameObjectArg{"DirectionnalLight",
@@ -834,15 +816,15 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
                                  20.f, 0.5f, 
                                  false};
 
-    GameObject &pl = scene_->add<GameObject>(scene_->getWorld(), lightSphereGameObjectArg);
+    GameObject &pl = _scene->add<GameObject>(_scene->getWorld(), lightSphereGameObjectArg);
     pl.addComponent<Model>(lightSphereArg);
     pl.addComponent<DirectionnalLight>(lightArg2);
 
-    GameObject &pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg);
+    GameObject &pl1 = _scene->add<GameObject>(_scene->getWorld(), pointLightGameObjectArg);
     pl1.addComponent<Model>(lightSphereArg);
     pl1.addComponent<PointLight>(lightArg5);
 
-    GameObject &pl2 = scene_->add<GameObject>(scene_->getWorld(), spotLightGameObjectArg);
+    GameObject &pl2 = _scene->add<GameObject>(_scene->getWorld(), spotLightGameObjectArg);
     pl2.addComponent<Model>(lightSphereArg);
     pl2.addComponent<SpotLight>(lightArg6);
 }
@@ -862,17 +844,17 @@ void Demo::loadReferential(t_RessourcesManager &ressourceManager)
                                "Sphere",
                                true};
 
-    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+    _scene->add<GameObject>(_scene->getWorld(), refGO).addComponent<Model>(sphereModel);
 
     refGO.name = "Forward ref";
     refGO.transformArg.position = {0.f, 0.f, 100.f};
     sphereModel.pMaterials = &ressourceManager.get<std::vector<Material>>("BlueMaterial");
-    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+    _scene->add<GameObject>(_scene->getWorld(), refGO).addComponent<Model>(sphereModel);
 
     refGO.name = "Up ref";
     refGO.transformArg.position = {0.f, 100.f, 0.f};
     sphereModel.pMaterials = &ressourceManager.get<std::vector<Material>>("GreenMaterial");
-    scene_->add<GameObject>(scene_->getWorld(), refGO).addComponent<Model>(sphereModel);
+    _scene->add<GameObject>(_scene->getWorld(), refGO).addComponent<Model>(sphereModel);
 }
 
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
@@ -883,8 +865,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     Font *pfont2 = &ressourceManager.add<Font>("font2", fontarg2);
     Shader *buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
-    int tempX = gameEngine_.getWinSize().width / 2.0f;
-    int tempY = gameEngine_.getWinSize().heigth / 2.0f;
+    int tempX = _gameEngine.getWinSize().width / 2.0f;
+    int tempY = _gameEngine.getWinSize().heigth / 2.0f;
 
 
 #pragma region Start
@@ -894,11 +876,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::RUNNING;
+        _gameEngine.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
-
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
     };
 
 
@@ -907,7 +886,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  220.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load Game",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::STARTSAVE;
+        _gameEngine.gameState = E_GAME_STATE::STARTSAVE;
     };
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader,
@@ -915,7 +894,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::OPTION;
+        _gameEngine.gameState = E_GAME_STATE::OPTION;
     };
 
     ressourceManager.add<Button>("MenuQuitButton", pfont, buttonShader,
@@ -923,7 +902,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::EXIT;
+        _gameEngine.gameState = E_GAME_STATE::EXIT;
     };
 
 #pragma endregion
@@ -935,11 +914,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{170, 80, 170, 0}, "Play",
                                  E_GAME_STATE::PAUSE)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::RUNNING;
+        _gameEngine.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
-
-        SDL_ShowCursor(false);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
     };
 
     ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
@@ -947,11 +923,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{80, 170, 80, 0}, "Menu",
                                  E_GAME_STATE::PAUSE)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::STARTING;
+        _gameEngine.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
-
-        SDL_ShowCursor(true);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
     };
 
 #pragma endregion
@@ -1106,7 +1079,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::STARTING;
+        _gameEngine.gameState = E_GAME_STATE::STARTING;
     };
 
 #pragma endregion
@@ -1118,12 +1091,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     std::string shortSaveName;
 
-    for (std::string &saves : gameEngine_.savePaths)
+    for (std::string &saves : _gameEngine.savePaths)
     {    
         std::cout << saves<< std::endl;
     }
 
-    for (std::string &saves : gameEngine_.savePaths)
+    for (std::string &saves : _gameEngine.savePaths)
     {
         if (saves.size() < 23) // TODO: assert
             return;
@@ -1134,13 +1107,13 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                      75.0f, 60.0f, SDL_Color{200, 200, 200, 0},
                                      shortSaveName, E_GAME_STATE::STARTSAVE)
             .function = [&]() {
-            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            _gameEngine.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
             Light::resetLight();
-            scene_.reset();
-            scene_ = std::make_unique<Scene>();
-            setupScene(*scene_, saves.c_str());
-            mainCamera = &scene_->getGameObject("world/MainCamera");
+            _scene.reset();
+            _scene = std::make_unique<Scene>();
+            setupScene(*_scene, saves.c_str());
+            mainCamera = &_scene->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);
             SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -1160,7 +1133,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::STARTSAVE)
         .function = [&]() {
-        gameEngine_.gameState = E_GAME_STATE::STARTING;
+        _gameEngine.gameState = E_GAME_STATE::STARTING;
     };
 
 #pragma endregion
@@ -1168,9 +1141,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 void Demo::loadATH(t_RessourcesManager &ressourceManager)
 {
-    float halfWidth = gameEngine_.getWinSize().width / 2.f;
-    float halfHeight = gameEngine_.getWinSize().heigth / 2.f;
-    float crosshairSize = gameEngine_.getWinSize().heigth / 15;
+    float halfWidth = _gameEngine.getWinSize().width / 2.f;
+    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
+    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
     float halfcrosshairSize = crosshairSize * 0.5;
 
     Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
@@ -1196,11 +1169,11 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
-    GameObject* checkpoint1 = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg {"checkpoint1"});
+    GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
     checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -10, 10});
     checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -10, -10});
 
-    enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
+    enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
     {
         GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
@@ -1212,7 +1185,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                             "GreenMaterial",
                             "Cube"};
 
-        GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
+        GameObject& enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
 
         enemy1.addComponent<Model>(modelArg);
         enemy1.addComponent<PhysicalObject>().setMass(1);
@@ -1233,7 +1206,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                           "CrateMaterial",
                           "Cube"};
 
-    GameObject& crate = scene_->add<GameObject>(scene_->getWorld(), CrateGameObjectArg);
+    GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
 
     crate.addComponent<Model>(modelCrateArg);
     PhysicalObject& physicalObjectComp = crate.addComponent<PhysicalObject>();
@@ -1267,73 +1240,46 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     particalArg.physicalObjectCreateArg.mass = 1.f;
     particalArg.scale = {0.1, 0.1, 0.1};
 
-    //GameObject& particleGO = scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
+    //GameObject& particleGO = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
     //particleGO.addComponent<ParticuleGenerator>(particalArg);
     //particleGO.addComponent<LifeDuration>(10.f);
-    
-    scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 }
 
 void Demo::updateControl()
 {
     /* Draw player referential
     float dist = 5.f;
-    scene_->getGameObject("Z").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecForward());
-    scene_->getGameObject("Y").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecUp());
-    scene_->getGameObject("X").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecRight());
+    _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
+    _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
+    _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
     */
-
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
-        if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
+          Editor::_enable = !Editor::_enable;
+          usingMouse = Editor::_enable;
+
+    }
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == E_KEY_STATE::TOUCHED)
+    {
+        if (_gameEngine.gameState == E_GAME_STATE::RUNNING)
         {
-            gameEngine_.gameState = E_GAME_STATE::PAUSE;
+            _gameEngine.gameState = E_GAME_STATE::PAUSE;
             usingMouse = true;
-
-            SDL_ShowCursor(true);
-            SDL_SetRelativeMouseMode(SDL_FALSE);
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::PAUSE)
+        else if (_gameEngine.gameState == E_GAME_STATE::PAUSE)
         {
-            gameEngine_.gameState = E_GAME_STATE::RUNNING;
+            _gameEngine.gameState = E_GAME_STATE::RUNNING;
             usingMouse = false;
-
-            SDL_ShowCursor(false);
-            SDL_SetRelativeMouseMode(SDL_TRUE);
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::OPTION || gameEngine_.gameState == E_GAME_STATE::LOADSAVE || gameEngine_.gameState == E_GAME_STATE::STARTSAVE)
+        else if (_gameEngine.gameState == E_GAME_STATE::OPTION || _gameEngine.gameState == E_GAME_STATE::LOADSAVE || _gameEngine.gameState == E_GAME_STATE::STARTSAVE)
         {
-            gameEngine_.gameState = E_GAME_STATE::STARTING;
+            _gameEngine.gameState = E_GAME_STATE::STARTING;
         }
-        else if (gameEngine_.gameState == E_GAME_STATE::STARTING)
+        else if (_gameEngine.gameState == E_GAME_STATE::STARTING)
         {
-            gameEngine_.gameState = E_GAME_STATE::EXIT;
+            _gameEngine.gameState = E_GAME_STATE::EXIT;
         }
-    }
-
-    if (Input::keyboard.isDown[SDL_SCANCODE_F3] && !flagF1IsDown)
-    {
-        usingMouse = !usingMouse;
-        flagF1IsDown = true;
-
-        if (!usingMouse)
-        {
-            SDL_ShowCursor(false);
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-        }
-        else
-        {
-            SDL_ShowCursor(true);
-            SDL_SetRelativeMouseMode(SDL_FALSE);
-        }
-    }
-    else
-    {
-        flagF1IsDown = Input::keyboard.isDown[SDL_SCANCODE_F3];
-    }
-
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_F6) == 1)
-    {
-        saveScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     }
 }
