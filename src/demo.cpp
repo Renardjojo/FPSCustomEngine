@@ -91,7 +91,7 @@ Demo::Demo(Engine::GE& gameEngine)
 
     loadATH(gameEngine_.ressourceManager_);
 
-    loadEnemies(gameEngine_.ressourceManager_);
+    loadEnemies(gameEngine_.ressourceManager_);  
 
     // setupScene(*scene_, gameEngine_, "./ressources/saves/testtest.xml");
     // mainCamera = &scene_->getGameObject("world/MainCamera");
@@ -239,7 +239,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadPlayerRessource        (ressourceManager);
     //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
-    loadGroundRessource        (ressourceManager);    
+    loadGroundRessource        (ressourceManager);
+    loadCrateRessource          (ressourceManager);  
 }
 
 void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
@@ -415,6 +416,20 @@ void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
         ressourceManager.add<std::vector<Material>>(matGround.name_, std::move(material));
     }
 }   
+
+void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matCrate;
+    matCrate.name_ = "CrateMaterial";
+    matCrate.comp_.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name_, std::move(material));
+    }
+}
 
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
 {
@@ -1226,7 +1241,27 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+
+    GameObjectCreateArg CrateGameObjectArg{"Crate"};
+
+    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+                          &ressourceManager.get<Mesh>("Cube"),
+                          "LightAndTexture",
+                          {"CrateMaterial"},
+                          "Cube"};
+
+    GameObject& crate = scene_->add<GameObject>(scene_->getWorld(), CrateGameObjectArg);
+
+    crate.addComponent<Model>(modelCrateArg);
+    crate.addComponent<PhysicalObject>().setMass(3);
+    crate.addComponent<SphereCollider>().setBounciness(0.2f);
+
+    Save::createPrefab(crate, "Crate");
+    crate.destroy();
+
+
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.2f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
