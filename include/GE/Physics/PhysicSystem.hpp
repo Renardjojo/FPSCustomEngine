@@ -141,7 +141,7 @@ namespace Engine::Physics
         const Engine::Core::Maths::Vec3& getGravity() noexcept { return gravity;}
 
         static
-        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = gravity;}
+        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = newGravity;}
 
         #pragma endregion //!mutator
 

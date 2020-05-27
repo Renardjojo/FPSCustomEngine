@@ -250,7 +250,7 @@ void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
 
     loadObjWithMTL("./ressources/obj/stone.obj", &attrib, &shape, &materialAttribs);
 
-    Mesh&       rockMesh     = ressourceManager.add<Mesh>("RockMesh", attrib, shape);
+    ressourceManager.add<Mesh>("RockMesh", attrib, shape);
 
     {
         std::vector<Material> material;
@@ -269,7 +269,7 @@ void Demo::loadTreeRessource          (t_RessourcesManager& ressourceManager)
 
     loadObjWithMTL("./ressources/obj/Tree.obj", &attrib, &shape, &materialAttribs);
 
-    Mesh&       rockMesh     = ressourceManager.add<Mesh>("TreeMesh", attrib, shape);
+    ressourceManager.add<Mesh>("TreeMesh", attrib, shape);
 
     {
         std::vector<Material> material;
@@ -367,7 +367,7 @@ void Demo::loadTowerRessource         (t_RessourcesManager& ressourceManager)
 
     loadObjWithMTL("./ressources/obj/guardTower.obj", &attrib, &shape, &materialAttribs);
 
-    Mesh&       rockMesh     = ressourceManager.add<Mesh>("GuardTowerMesh", attrib, shape);
+    ressourceManager.add<Mesh>("GuardTowerMesh", attrib, shape);
 
     {
         std::vector<Material> material;
@@ -386,7 +386,7 @@ void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
 
     loadObjWithMTL("./ressources/obj/spotLight.obj", &attrib, &shape, &materialAttribs);
 
-    Mesh&       rockMesh     = ressourceManager.add<Mesh>("SpotLightMesh", attrib, shape);
+    ressourceManager.add<Mesh>("SpotLightMesh", attrib, shape);
 
     {
         std::vector<Material> material;
@@ -856,11 +856,11 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
 
     GameObject &pl1 = scene_->add<GameObject>(scene_->getWorld(), pointLightGameObjectArg);
     pl1.addComponent<Model>(lightSphereArg);
-    //pl1.addComponent<PointLight>(lightArg5).enable(true);
+    pl1.addComponent<PointLight>(lightArg5).enable(false);
 
     GameObject &pl2 = scene_->add<GameObject>(scene_->getWorld(), spotLightGameObjectArg);
     pl2.addComponent<Model>(lightSphereArg);
-    //pl2.addComponent<SpotLight>(lightArg6).enable(true);
+    pl2.addComponent<SpotLight>(lightArg6).enable(false);
 }
 
 void Demo::loadReferential(t_RessourcesManager &ressourceManager)
