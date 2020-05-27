@@ -67,7 +67,7 @@ void PlayerController::shoot()
 {
     HitInfo rayInfo;
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
+    if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
@@ -100,7 +100,7 @@ void PlayerController::shoot()
         particleGO.addComponent<LifeDuration>(3.f);
 
         ParticleSystemFactory::createDecale(Scene::getSceneUse()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        rayInfo.gameObject->destroy();
+        //rayInfo.gameObject->destroy();
     }
 }
 
@@ -208,7 +208,7 @@ void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
     
     nodeParent->append_node(newNode);
 }

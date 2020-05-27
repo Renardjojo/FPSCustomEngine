@@ -17,6 +17,7 @@
 #include "Game/CircularEnemiesSpawner.hpp"
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/MaxElementConteneur.hpp"
+#include "Game/PushedOnShoot.hpp"
 
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
@@ -1254,14 +1255,16 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObject& crate = scene_->add<GameObject>(scene_->getWorld(), CrateGameObjectArg);
 
     crate.addComponent<Model>(modelCrateArg);
-    crate.addComponent<PhysicalObject>().setMass(3);
+    PhysicalObject& physicalObjectComp = crate.addComponent<PhysicalObject>();
+    physicalObjectComp.setMass(3);
+    crate.addComponent<PushedOnShoot>();
     crate.addComponent<SphereCollider>().setBounciness(0.2f);
 
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.2f, 0.f);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 

@@ -279,27 +279,46 @@ bool PhysicSystem::rayCast(const Vec3& pt1, const Vec3& pt2, HitInfo& rayHitInfo
 
 bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
 {
-    bool rst = rayCast(ray, rayHitInfo);
-    Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-    HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, rayHitInfo.gameObject};
-    pCollider->OnCollisionEnter(hitInfo1);    
-    return rst;
+    if (rayCast(ray, rayHitInfo))
+    {
+        Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
+        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject};
+        pCollider->OnCollisionEnter(hitInfo);    
+        return true;
+    }
+    return false;
 }
 
 bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
 {
-    bool rst = rayCast(Segment{origin, origin + maxDistance * direction}, rayHitInfo);
-    Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-    HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, rayHitInfo.gameObject};
-    pCollider->OnCollisionEnter(hitInfo1);    
-    return rst;
+    return triggerRayCast(pTriggerGameObject, Segment{origin, origin + maxDistance * direction}, rayHitInfo);
 }
 
 bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
 {
-    bool rst = rayCast(Segment{pt1, pt2}, rayHitInfo);
-    Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-    HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, rayHitInfo.gameObject};
-    pCollider->OnCollisionEnter(hitInfo1);    
-    return rst;
+    return triggerRayCast(pTriggerGameObject, Segment{pt1, pt2}, rayHitInfo);
+}
+
+bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+{
+    if (rayCast(ray, rayHitInfo))
+    {
+        Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
+        GameObject tempGOWithTag;
+        tempGOWithTag.setTag(tag);
+        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag};
+        pCollider->OnCollisionEnter(hitInfo1);    
+        return true;
+    }
+    return false;
+}
+
+bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+{
+    return triggerRayCast(tag, Segment{origin, origin + maxDistance * direction}, rayHitInfo);
+}
+
+bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+{
+    return triggerRayCast(tag, Segment{pt1, pt2}, rayHitInfo);
 }

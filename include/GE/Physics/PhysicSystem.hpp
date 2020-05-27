@@ -137,6 +137,16 @@ namespace Engine::Physics
         static
         bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
 
+        /*Trigger ray cast call onCollisionEnter with only tag*/
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
+        static
+        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+
 
         /*TODO: Can be implemented if all segment/Shape have the good collision function implemented without intersection
         static

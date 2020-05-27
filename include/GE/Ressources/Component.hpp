@@ -36,7 +36,7 @@ namespace Engine::Ressources
     GameObject &        getGameObject() noexcept { return _gameObject; }
     const GameObject&   getGameObject() const noexcept { return _gameObject; }
 
-    std::string toString() {return _name; };
+    std::string toString() const noexcept {return _name; };
 
 #ifndef DNEDITOR
     virtual void serializeOnEditor () noexcept {};
