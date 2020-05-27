@@ -373,9 +373,11 @@ inline
 Vec3& 	Vec3::normalize		()
 {
 	float normeVec = length();
-	x = normeVec == 0 ? 0 : x / normeVec;
-	y = normeVec == 0 ? 0 : y / normeVec;
-	z = normeVec == 0 ? 0 : z / normeVec;
+	if(normeVec ==0 )
+		return *this;
+
+	*this /= normeVec;
+
 	return *this;
 }
 
@@ -389,12 +391,14 @@ Vec3 	Vec3::getNormalize		() const
 inline
 Vec3& 	Vec3::clampLength		(float max)
 {
-    if (length() > max)
+	float ln = {length()};
+	if(ln == 0)
+		return *this;
+
+    if (ln > max)
     {
-        this->normalize();
-		x*= max;
-		y*= max;
-		z*= max;
+		*this /= ln;
+		*this *= max;
     }
 	return *this;
 }
