@@ -55,7 +55,6 @@ namespace Game
             std::unique_ptr<Engine::Ressources::Scene> _scene;
 
             bool flagleftClicIsDown;
-            bool flagF1IsDown;
             bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;

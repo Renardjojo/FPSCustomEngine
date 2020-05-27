@@ -139,7 +139,7 @@ void PlayerController::camera()
 
     if (_type == CameraType::FirstPerson)
     {
-        _gameObject.setRotation({0, -_orbit.y, 0.f});
+        _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
@@ -148,6 +148,7 @@ void PlayerController::camera()
     }
 
     //Camera orbit
+    //todo change distance
     Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);

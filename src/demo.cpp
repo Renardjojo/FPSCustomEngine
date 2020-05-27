@@ -56,12 +56,11 @@ using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
 Demo::Demo(Engine::GE& gameEngine)
-    :   _gameEngine         (gameEngine),
-        _scene              (),
-        flagleftClicIsDown  (false),
-        flagF1IsDown        (false),
-        usingMouse          (true),
-        dirCamera          {0.f, 0.f, -1.f}
+    :   _gameEngine         {gameEngine},
+        _scene              {},
+        flagleftClicIsDown  {false},
+        usingMouse          {true},
+        dirCamera           {0.f, 0.f, -1.f}
 {
     _scene = std::make_unique<Scene>();
     _gameEngine.ressourceManager_.use();
@@ -71,7 +70,6 @@ Demo::Demo(Engine::GE& gameEngine)
     loadRessources(_gameEngine.ressourceManager_);
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
-    // loadSkyBox(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
     loadUI(_gameEngine.ressourceManager_);
     loadATH(_gameEngine.ressourceManager_);
@@ -99,7 +97,7 @@ Demo::Demo(Engine::GE& gameEngine)
 void Demo::update() noexcept
 {
     SDL_ShowCursor(usingMouse);
-    SDL_CaptureMouse(SDL_TRUE);
+    SDL_CaptureMouse(usingMouse? SDL_FALSE :SDL_TRUE);
     SDL_SetRelativeMouseMode(usingMouse ? SDL_FALSE : SDL_TRUE);
 
     UISystem::update(_gameEngine);
@@ -772,6 +770,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     //loadTree                   (ressourceManager, 10);
     loadSkybox                 (ressourceManager);
     loadPlayer                 (ressourceManager);
+    loadGround                 (ressourceManager);
     //loadTower                  (ressourceManager);Game
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
@@ -1256,7 +1255,12 @@ void Demo::updateControl()
     _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
     _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
     */
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
+    {
+          Editor::_enable = !Editor::_enable;
+          usingMouse = Editor::_enable;
 
+    }
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == E_KEY_STATE::TOUCHED)
     {
         if (_gameEngine.gameState == E_GAME_STATE::RUNNING)
