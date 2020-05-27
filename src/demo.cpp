@@ -121,8 +121,8 @@ void Demo::update() noexcept
     updateControl();
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
     {
-        scene_->update();
         ScriptSystem::update();
+        scene_->update();
     }
 
 #ifndef DNEDITOR
