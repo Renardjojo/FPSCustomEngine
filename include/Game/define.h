@@ -5,8 +5,8 @@
 #ifndef _DEFINE_H
 #define _DEFINE_H
 
-#define WIDTH 1000
-#define HEIGHT 800
+#define WIDTH 1900
+#define HEIGHT 1080
 
 namespace Engine 
 {

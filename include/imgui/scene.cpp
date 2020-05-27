@@ -2,4 +2,5 @@
 
 using namespace Engine::Ressources;
 
-Scene* Scene::sceneToUse {nullptr};
+std::unique_ptr<Scene> *Engine::Ressources::Scene::_currentScene;
+

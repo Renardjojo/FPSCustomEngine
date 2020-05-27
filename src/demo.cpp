@@ -36,6 +36,7 @@ using namespace Engine::LowRenderer::EditorTools;
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "Game/PlayerController.hpp"
 #include "Game/EnnemyController.hpp"
+#include "Game/Checkpoint.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include <vector>
@@ -53,8 +54,6 @@ using namespace Engine::Core::Parsers;
 using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
-
-std::unique_ptr<Engine::Ressources::Scene> *Demo::currentScene_;
 
 Demo::Demo(Engine::GE& gameEngine)
     :   gameEngine_         (gameEngine),
@@ -77,7 +76,8 @@ Demo::Demo(Engine::GE& gameEngine)
     }
 
     scene_ = std::make_unique<Scene>();
-    scene_->use();
+    Scene::_currentScene = &scene_;
+
     gameEngine_.ressourceManager_.use();
 
     loadRessources(gameEngine_.ressourceManager_);
@@ -112,12 +112,12 @@ Demo::Demo(Engine::GE& gameEngine)
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     UISystem::isActive = true;
-    
-    currentScene_ = &scene_;
 }
 
 void Demo::update() noexcept
 {
+    if (!usingMouse)
+        SDL_WarpMouseInWindow(static_cast<SDL_Window*>(gameEngine_.ren_->getWin()->get()), WIDTH / 2, HEIGHT / 2);
     UISystem::update(gameEngine_);
     updateControl();
     if (gameEngine_.gameState == E_GAME_STATE::RUNNING)
@@ -127,7 +127,7 @@ void Demo::update() noexcept
     }
 
 #ifndef DNEDITOR
-    Editor::update(*scene_);
+    Editor::update(*scene_, gameEngine_);
 #endif
 }
 
@@ -1151,6 +1151,11 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     std::string shortSaveName;
 
     for (std::string &saves : gameEngine_.savePaths)
+    {    
+        std::cout << saves<< std::endl;
+    }
+
+    for (std::string &saves : gameEngine_.savePaths)
     {
         if (saves.size() < 23) // TODO: assert
             return;
@@ -1223,9 +1228,14 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
+    GameObject* checkpoint1 = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg {"checkpoint1"});
+    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -10, 10});
+    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -10, -10});
+
     enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
     GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
+
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
                           &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1239,6 +1249,8 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     enemy1.addComponent<Model>(modelArg);
     enemy1.addComponent<PhysicalObject>().setMass(1);
     enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
+
+    enemy1.addComponent<EnnemyController>(&Scene::getCurrentScene()->getGameObject("world/Player"), checkpoint1->getComponent<Checkpoint>());
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();

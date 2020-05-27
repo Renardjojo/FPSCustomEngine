@@ -29,14 +29,14 @@ PointLight::PointLight ( GameObject &                       refGameObject,
     quadratic_          (quadratic)
 {}
 
-PointLight::PointLight (GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params)
+PointLight::PointLight (GameObject &refGameObject, const std::vector<std::string>& params)
             :   Light               (refGameObject, 
-                                    AmbiantComponent{std::stof(*params[0]), std::stof(*params[1]), std::stof(*params[2]), std::stof(*params[3])}, 
-                                    AmbiantComponent{std::stof(*params[4]), std::stof(*params[5]), std::stof(*params[6]), std::stof(*params[7])}, 
-                                    AmbiantComponent{std::stof(*params[8]), std::stof(*params[9]), std::stof(*params[10]), std::stof(*params[11])}), 
-                constant_           (std::stof(*params[12])),
-                linear_             (std::stof(*params[13])),
-                quadratic_          (std::stof(*params[14]))
+                                    AmbiantComponent{std::stof(params[0]), std::stof(params[1]), std::stof(params[2]), std::stof(params[3])}, 
+                                    AmbiantComponent{std::stof(params[4]), std::stof(params[5]), std::stof(params[6]), std::stof(params[7])}, 
+                                    AmbiantComponent{std::stof(params[8]), std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}), 
+                constant_           (std::stof(params[12])),
+                linear_             (std::stof(params[13])),
+                quadratic_          (std::stof(params[14]))
 {}
 
 void PointLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept

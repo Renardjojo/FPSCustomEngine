@@ -143,6 +143,7 @@ namespace Engine::LowRenderer
             #pragma region static methods         
 
             static Camera* getCamUse() noexcept { return camToUse; }
+            static void setCamUse(Camera* newCamToUse) { camToUse = newCamToUse; }
 
             #pragma endregion //!static methods
 
@@ -179,17 +180,12 @@ namespace Engine::LowRenderer
 
             #pragma endregion //!accessor
 
-            #pragma region mutator
-            #pragma endregion //!mutator
-
             #pragma region operator
 
             Camera& operator=(const Camera& other) = default;
 
             #pragma endregion //!operator
 
-            #pragma region convertor
-            #pragma endregion //!convertor
 
         protected:
 

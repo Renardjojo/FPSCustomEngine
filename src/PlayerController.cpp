@@ -95,7 +95,7 @@ void PlayerController::shoot()
         particalArg.physicalObjectCreateArg.mass = 1.f;
         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject& particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
         particleGO.addComponent<LifeDuration>(3.f);
 

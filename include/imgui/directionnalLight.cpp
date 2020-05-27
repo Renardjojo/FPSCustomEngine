@@ -26,12 +26,12 @@ DirectionnalLight::DirectionnalLight ( GameObject &                       refGam
     _direction          {direction.getNormalize()}
 {}
 
-DirectionnalLight::DirectionnalLight (GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params)
+DirectionnalLight::DirectionnalLight (GameObject &refGameObject, const std::vector<std::string>& params)
 :   Light       (refGameObject,
-                AmbiantComponent{std::stof(*params[0]), std::stof(*params[1]), std::stof(*params[2]), std::stof(*params[3])}, 
-                AmbiantComponent{std::stof(*params[4]), std::stof(*params[5]), std::stof(*params[6]), std::stof(*params[7])}, 
-                AmbiantComponent{std::stof(*params[8]), std::stof(*params[9]), std::stof(*params[10]), std::stof(*params[11])}),
-    _direction  {Engine::Core::Maths::Vec3{std::stof(*params[12]), std::stof(*params[13]), std::stof(*params[14])}} 
+                AmbiantComponent{std::stof(params[0]), std::stof(params[1]), std::stof(params[2]), std::stof(params[3])}, 
+                AmbiantComponent{std::stof(params[4]), std::stof(params[5]), std::stof(params[6]), std::stof(params[7])}, 
+                AmbiantComponent{std::stof(params[8]), std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}),
+    _direction  {Engine::Core::Maths::Vec3{std::stof(params[12]), std::stof(params[13]), std::stof(params[14])}} 
 {}
 
 void DirectionnalLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
