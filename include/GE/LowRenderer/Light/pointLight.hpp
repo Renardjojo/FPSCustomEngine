@@ -23,9 +23,10 @@ namespace Engine::LowRenderer
         const Engine::Ressources::DiffuseComponent&             diffuse;
         const Engine::Ressources::SpecularComponent&            specular;
 
-        float                               constant; 
-        float                               linear;
-        float                               quadratic;
+        float                                                   constant; 
+        float                                                   linear;
+        float                                                   quadratic;
+        bool                                                    isEnable   {true};
 
     } PointLightCreateArg;
 
@@ -44,11 +45,12 @@ namespace Engine::LowRenderer
                          const Engine::Ressources::AmbiantComponent&            ambient, 
                          const Engine::Ressources::DiffuseComponent&            diffuse, 
                          const Engine::Ressources::SpecularComponent&           specular,
-                         float                              constant, 
-                         float                              linear, 
-                         float                              quadratic);
+                         float                                                  constant, 
+                         float                                                  linear, 
+                         float                                                  quadratic,
+                         bool                                                   isEnable = true);
             
-            PointLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params);
+            PointLight (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
             
             PointLight (const PointLight& other)		    = default;
             PointLight (PointLight&& other)			        = default;

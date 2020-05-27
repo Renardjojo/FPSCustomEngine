@@ -10,11 +10,13 @@ using namespace Engine::LowRenderer;
 using namespace Engine::Ressources;
 
 PointLight::PointLight (GameObject &refGameObject, const PointLightCreateArg& arg)
-            :   Light               (refGameObject, arg.ambient, arg.diffuse, arg.specular),
+            :   Light               (refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.isEnable),
                 constant_           (arg.constant),
                 linear_             (arg.linear),
                 quadratic_          (arg.quadratic)
-{}
+{
+    _name = __FUNCTION__;
+}
             
 PointLight::PointLight ( GameObject &                       refGameObject,
                 const AmbiantComponent&            ambient, 
@@ -22,22 +24,28 @@ PointLight::PointLight ( GameObject &                       refGameObject,
                 const SpecularComponent&           specular,
                 float                              constant, 
                 float                              linear, 
-                float                              quadratic)
-:   Light               (refGameObject, ambient, diffuse, specular),
+                float                              quadratic,
+                bool                               isEnable)
+:   Light               (refGameObject, ambient, diffuse, specular, isEnable),
     constant_           (constant),
     linear_             (linear),
     quadratic_          (quadratic)
-{}
+{
+    _name = __FUNCTION__;
+}
 
-PointLight::PointLight (GameObject &refGameObject, const std::vector<std::unique_ptr<std::string>>& params)
+PointLight::PointLight (GameObject &refGameObject, const std::vector<std::string>& params)
             :   Light               (refGameObject, 
-                                    AmbiantComponent{std::stof(*params[0]), std::stof(*params[1]), std::stof(*params[2]), std::stof(*params[3])}, 
-                                    AmbiantComponent{std::stof(*params[4]), std::stof(*params[5]), std::stof(*params[6]), std::stof(*params[7])}, 
-                                    AmbiantComponent{std::stof(*params[8]), std::stof(*params[9]), std::stof(*params[10]), std::stof(*params[11])}), 
-                constant_           (std::stof(*params[12])),
-                linear_             (std::stof(*params[13])),
-                quadratic_          (std::stof(*params[14]))
-{}
+                                    AmbiantComponent{std::stof(params[0]), std::stof(params[1]), std::stof(params[2]), std::stof(params[3])}, 
+                                    AmbiantComponent{std::stof(params[4]), std::stof(params[5]), std::stof(params[6]), std::stof(params[7])}, 
+                                    AmbiantComponent{std::stof(params[8]), std::stof(params[9]), std::stof(params[10]), std::stof(params[11])}, 
+                                    static_cast<bool>(std::stof(params[15]))), 
+                constant_           (std::stof(params[12])),
+                linear_             (std::stof(params[13])),
+                quadratic_          (std::stof(params[14]))
+{
+    _name = __FUNCTION__;
+}
 
 void PointLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
 {
@@ -70,6 +78,7 @@ void PointLight::save(xml_document<> &doc, xml_node<> *nodeParent)
     newNode->append_attribute(doc.allocate_attribute("constant", doc.allocate_string(std::to_string(constant_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("linear", doc.allocate_string(std::to_string(linear_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("quadriatic", doc.allocate_string(std::to_string(quadratic_).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("isEnable", doc.allocate_string(std::to_string(isEnable_).c_str())));
 
     nodeParent->append_node(newNode);
 }

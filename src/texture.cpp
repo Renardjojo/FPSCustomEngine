@@ -109,7 +109,7 @@ void Texture::loadInGPU ()
 {
     if (isLoadInGPU_)
     {
-        functWarning((std::string("Texture name's : ") + name_.c_str() + " already load in GPU").c_str());
+        functWarning(std::string("Texture already load in GPU").c_str());
         return;
     }
 
@@ -183,14 +183,14 @@ void Texture::loadInGPU ()
 	glBindTexture(GL_TEXTURE_2D, 0);
     isLoadInGPU_ = true;
 
-    SLog::log((std::string("Texture ") + name_.c_str() + " load in GPU").c_str());
+    SLog::log(std::string("Texture load in GPU").c_str());
 }
 
 void Texture::unloadFromGPU ()
 {
     if (!isLoadInGPU_)
     {
-        functWarning((std::string("Texture name's : ") + name_.c_str() + " isn't load in GPU").c_str());
+        functWarning(std::string("Texture isn't load in GPU").c_str());
         return;
     }
 

@@ -67,7 +67,7 @@ void PlayerController::shoot()
 {
     HitInfo rayInfo;
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    if (PhysicSystem::rayCast(_gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
+    if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
@@ -95,12 +95,12 @@ void PlayerController::shoot()
         particalArg.physicalObjectCreateArg.mass = 1.f;
         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject& particleGO = Scene::getSceneUse()->add<GameObject>(Scene::getSceneUse()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
         particleGO.addComponent<LifeDuration>(3.f);
 
-        ParticleSystemFactory::createDecale(Scene::getSceneUse()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        rayInfo.gameObject->destroy();
+        ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
+        //rayInfo.gameObject->destroy();
     }
 }
 
@@ -208,7 +208,7 @@ void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "PlayerController"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
     
     nodeParent->append_node(newNode);
 }

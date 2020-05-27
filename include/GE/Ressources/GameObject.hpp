@@ -217,7 +217,7 @@ namespace Engine::Ressources
             (*this).children.emplace_back(std::make_unique<T>(args...));
             (*this).children.back()->children = std::list<std::unique_ptr<Engine::Ressources::GameObject>>();
             (*this).children.back()->update((*this).getModelMatrix());
-
+            (*this).children.back()->parent = this;
             return *(*this).children.back();
         }
 
@@ -244,6 +244,20 @@ namespace Engine::Ressources
 
         std::list<std::unique_ptr<Component>>& getComponents () noexcept {return _components;}
         const std::list<std::unique_ptr<Component>>& getComponents () const noexcept {return _components;}
+
+        std::string getRelativePath()
+        {
+            std::string path = this->getName();
+            GameObject* parentIt = this->parent;
+
+            while (parentIt)
+            {
+                path = parentIt->getName() + std::string("/") + path;
+                parentIt = parentIt->parent;
+            }
+
+            return path;
+        }
         
         void setTag(const std::string& newTag) { _tag = newTag; }
         std::string& getTag() { return _tag; } 
@@ -255,6 +269,7 @@ namespace Engine::Ressources
             return false;
         }
 
+        GameObject* parent;
         std::list<std::unique_ptr<GameObject>> children;
 
     protected:

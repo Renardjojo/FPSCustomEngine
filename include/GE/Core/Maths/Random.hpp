@@ -84,9 +84,15 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = float>
-        static T ranged(const T& max)
+        static auto ranged(const T& max) -> std::enable_if_t<std::is_floating_point<T>::value, T>
         {
             return static_cast <T> (rand()) / (static_cast <T> (RAND_MAX / max));
+        }
+
+        template<typename T = int>
+        static auto ranged(const T& max) -> std::enable_if_t<std::is_integral<T>::value, T>
+        {
+            return ranged<T>(0, max);
         }
 
         /**
@@ -98,9 +104,15 @@ namespace Engine::Core::Maths
          * @return T 
          */
         template<typename T = float>
-        static T ranged(const T& min, const T& max)
+        static auto ranged(const T& min, const T& max) -> std::enable_if_t<std::is_floating_point<T>::value, T>
         {
             return min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(max - min)));
+        }
+
+        template<typename T = int>
+        static auto ranged(const T& min, const T& max) -> std::enable_if_t<std::is_integral<T>::value, T>
+        {
+            return min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/((max + 1) - min)));
         }
 
 #pragma region Cicular

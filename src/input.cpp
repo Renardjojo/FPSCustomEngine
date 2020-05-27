@@ -4,6 +4,8 @@
 #include "imgui/imgui_impl_sdl.h"
 #endif
 
+#include "GE/GE.hpp"
+
 using namespace Engine::Core::InputSystem;
 
 windowEvent Input::window;

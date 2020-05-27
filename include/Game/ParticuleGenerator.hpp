@@ -34,7 +34,7 @@ namespace Game
         struct ParticleSystemCreateArg
         {
             Engine::LowRenderer::ModelCreateArg     modelCreateArg              {};
-            Engine::Physics::PhysicalObjectCreateArg physicalObjectCreateArg     {};
+            Engine::Physics::PhysicalObjectCreateArg physicalObjectCreateArg    {};
             EGenerationShape                        generationShape             {EGenerationShape::Sphere};
             Engine::Core::Maths::Vec3               scale                       {Engine::Core::Maths::Vec3::one};
             float                                   generationRange             {1.f};
@@ -72,9 +72,13 @@ namespace Game
 
         ParticuleGenerator(Engine::Ressources::GameObject &gameObject, const ParticleSystemCreateArg& arg);
 
+        ParticuleGenerator (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
+
         virtual ~ParticuleGenerator() = default;
 
         void update() override;
+
+        void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
 
 } //namespace Game

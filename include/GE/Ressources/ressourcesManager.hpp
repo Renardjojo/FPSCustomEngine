@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string>
 #include <utility>
+#include <typeinfo>
 #include "GE/Core/Debug/log.hpp"
 
 #include "GE/Ressources/ui.hpp"
@@ -55,7 +56,7 @@ namespace Engine::Ressources
             auto it = ressource_.find(key);
             if (it == ressource_.end())
             {
-                Engine::Core::Debug::SLog::logError(std::string("ressource not found with key : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("Resource not found with key : ") + key + " . Resource type : " + typeid(LType).name());
                 exit(1);    
             }
 
@@ -79,11 +80,16 @@ namespace Engine::Ressources
 
             if (rst.second == false)
             {
-                Engine::Core::Debug::SLog::logError(std::string("ressource insert with same key as an element existing : ") + key);
+                Engine::Core::Debug::SLog::logError(std::string("ressource insert with same key as an element existing : ") + key + ". Resource type : " + typeid(LType).name());
                 exit(1);
             }
 
             return rst.first->second;
+        }
+
+        void clearRessource  () noexcept
+        {
+            ressource_.clear();
         }
 
         private:
@@ -149,6 +155,12 @@ namespace Engine::Ressources
                 return RessourcesManager<T>::add(key, std::forward<Args>(args)...);
             }
 
+            template<class T>
+            void clearContenorOf  () noexcept
+            {
+                RessourcesManager<T>::clearRessource();
+            }
+
             #pragma endregion //!mutator
 
         protected:
@@ -173,11 +185,10 @@ namespace Engine::Ressources
             #pragma endregion //!constructor/destructor
 
             #pragma region methods
+
+            void use    () noexcept;
+
             #pragma endregion //!methods
-
-            #pragma region accessor
-
-            void use () noexcept;
 
             static RessourcesManagerWithGlobalUsage<LType, RType...>* getRessourceManagerUse() noexcept;
 
@@ -194,7 +205,7 @@ namespace Engine::Ressources
 
     template<class LType, class... RType>
     RessourcesManagerWithGlobalUsage<LType, RType...>* RessourcesManagerWithGlobalUsage<LType, RType...>::getRessourceManagerUse() noexcept
-    { 
+    {
         return ressourceManagerToUse; 
     }
 
@@ -205,19 +216,19 @@ namespace Engine::Ressources
     }
 
     
-    typedef RessourcesManagerWithGlobalUsage<  Engine::Ressources::Mesh,
-                                Engine::Ressources::Shader,
-                                std::vector<Engine::Ressources::Material>,
-                                Engine::Ressources::Text,
-                                Engine::Ressources::Texture,
-                                Engine::Ressources::Sample,
-                                Engine::Ressources::Music,
-                                Engine::Ressources::Font,
-                                Engine::Ressources::Title,
-                                Engine::Ressources::Button,
-                                Engine::Ressources::Image,
-                                Engine::Ressources::TextField,
-                                Engine::Ressources::ReferencedTitle> t_RessourcesManager;
+    typedef RessourcesManagerWithGlobalUsage<   Engine::Ressources::Mesh,
+                                                Engine::Ressources::Shader,
+                                                std::vector<Engine::Ressources::Material>,
+                                                Engine::Ressources::Text,
+                                                Engine::Ressources::Texture,
+                                                Engine::Ressources::Sample,
+                                                Engine::Ressources::Music,
+                                                Engine::Ressources::Font,
+                                                Engine::Ressources::Title,
+                                                Engine::Ressources::Button,
+                                                Engine::Ressources::Image,
+                                                Engine::Ressources::TextField,
+                                                Engine::Ressources::ReferencedTitle> t_RessourcesManager;
 
 
 }// namespaceEngine::Ressources

@@ -85,6 +85,28 @@ PhysicalObject::PhysicalObject (PhysicalObject&& other)
     PhysicSystem::updatePhysicalObjectPointor(this, &other);
 }
 
+PhysicalObject::PhysicalObject (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
+    :   Component            (refGameObject),
+        _velocity            ({std::stof(params[0]), std::stof(params[1]), std::stof(params[2])}),
+        _angularVelocity     ({std::stof(params[3]), std::stof(params[4]), std::stof(params[5])}),
+        _mass                (std::stof(params[6])),
+        _freezeTrX           (static_cast<bool>(std::stof(params[7]))),
+        _freezeTrY           (static_cast<bool>(std::stof(params[8]))),
+        _freezeTrZ           (static_cast<bool>(std::stof(params[9]))),
+        _freezeRotX          (static_cast<bool>(std::stof(params[10]))),
+        _freezeRotY          (static_cast<bool>(std::stof(params[11]))),
+        _freezeRotZ          (static_cast<bool>(std::stof(params[12]))),
+        _isKinematic         (static_cast<bool>(std::stof(params[13]))),
+        _useGravity          (static_cast<bool>(std::stof(params[14]))),
+        _isDirty             (static_cast<bool>(std::stof(params[15])))
+{
+    _name = __FUNCTION__;
+    
+    if (_gameObject.getComponent<Collider>())
+        _gameObject.getComponent<Collider>()->SetAttachedPhysicalObject(this);
+    PhysicSystem::addPhysicalObject(this);
+}
+
 PhysicalObject::~PhysicalObject ()
 {
     PhysicSystem::removePhysicalObject(this);
@@ -194,7 +216,26 @@ void PhysicalObject::save(xml_document<> &doc, xml_node<> *nodeParent) noexcept
 {
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "PhysicalObject"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+
+    newNode->append_attribute(doc.allocate_attribute("velocity0", doc.allocate_string(std::to_string(_velocity.e[0]).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("velocity1", doc.allocate_string(std::to_string(_velocity.e[1]).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("velocity2", doc.allocate_string(std::to_string(_velocity.e[2]).c_str())));
+
+    newNode->append_attribute(doc.allocate_attribute("AngularVelocity0", doc.allocate_string(std::to_string(_angularVelocity.e[0]).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("AngularVelocity1", doc.allocate_string(std::to_string(_angularVelocity.e[1]).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("AngularVelocity2", doc.allocate_string(std::to_string(_angularVelocity.e[2]).c_str())));
+
+    newNode->append_attribute(doc.allocate_attribute("mass", doc.allocate_string(std::to_string(_mass).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeTrX", doc.allocate_string(std::to_string(_freezeTrX).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeTrY", doc.allocate_string(std::to_string(_freezeTrY).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeTrZ", doc.allocate_string(std::to_string(_freezeTrZ).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeRotX", doc.allocate_string(std::to_string(_freezeRotX).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeRotY", doc.allocate_string(std::to_string(_freezeRotY).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("freezeRotZ", doc.allocate_string(std::to_string(_freezeRotZ).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("isKinematic", doc.allocate_string(std::to_string(_isKinematic).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("useGravity", doc.allocate_string(std::to_string(_useGravity).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("isDirty", doc.allocate_string(std::to_string(_isDirty).c_str())));
 
     nodeParent->append_node(newNode);
 }

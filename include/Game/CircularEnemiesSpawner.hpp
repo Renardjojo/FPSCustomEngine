@@ -76,8 +76,8 @@ namespace Game
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_spawnPosition, _zoneRadius);
-
-                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _enemiePrefas[0].prefabPath);
+                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size() - 1)].prefabPath);
+                
                 /*
                 auto& newGo = _gameObject .addChild<Engine::Ressources::GameObject>(gameObjectNewEnnemy);
                 newGo.addComponent<Engine::LowRenderer::Model>(enemiePrefasCopy);

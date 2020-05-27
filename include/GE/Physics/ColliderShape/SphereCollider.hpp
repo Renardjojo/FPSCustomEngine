@@ -36,6 +36,13 @@ namespace Engine::Physics::ColliderShape
             _name = __FUNCTION__;
         }
 
+        SphereCollider (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
+            :   Collider    (refGameObject),
+                sphere_     (std::stof(params[0]), {std::stof(params[1]), std::stof(params[2]), std::stof(params[3])})
+        {
+            _name = __FUNCTION__;
+        }
+
         SphereCollider() = delete;
         
         virtual ~SphereCollider() = default;
@@ -60,7 +67,11 @@ namespace Engine::Physics::ColliderShape
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
             newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
-            
+            newNode->append_attribute(doc.allocate_attribute("radius", doc.allocate_string(std::to_string(sphere_.getRadius()).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("localCenter0", doc.allocate_string(std::to_string(sphere_.getCenter().e[0]).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("localCenter1", doc.allocate_string(std::to_string(sphere_.getCenter().e[1]).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("localCenter2", doc.allocate_string(std::to_string(sphere_.getCenter().e[2]).c_str())));
+
             nodeParent->append_node(newNode);
         }
 
