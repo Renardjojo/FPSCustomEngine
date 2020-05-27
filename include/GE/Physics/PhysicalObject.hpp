@@ -33,6 +33,7 @@ namespace Engine::Physics
 
 		PhysicalObject(Engine::Ressources::GameObject &refGameObject);
 		PhysicalObject(Engine::Ressources::GameObject &refGameObject, const PhysicalObjectCreateArg& arg);
+		PhysicalObject (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 		PhysicalObject(const PhysicalObject &other);
 		PhysicalObject(PhysicalObject &&other);
 		virtual ~PhysicalObject();

@@ -239,7 +239,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
-            parent.addComponent<PhysicalObject>();
+            parent.addComponent<PhysicalObject>(params);
         else if (type.compare("OrientedBoxCollider") == 0)
             parent.addComponent<OrientedBoxCollider>(params);
         else if (type.compare("SphereCollider") == 0)
