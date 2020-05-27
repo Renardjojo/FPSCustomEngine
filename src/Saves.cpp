@@ -241,9 +241,9 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         else if (type.compare("PhysicalObject") == 0)
             parent.addComponent<PhysicalObject>();
         else if (type.compare("OrientedBoxCollider") == 0)
-            parent.addComponent<OrientedBoxCollider>();
+            parent.addComponent<OrientedBoxCollider>(params);
         else if (type.compare("SphereCollider") == 0)
-            parent.addComponent<SphereCollider>();
+            parent.addComponent<SphereCollider>(params);
         else if (type.compare("PlayerController") == 0)
             parent.addComponent<PlayerController>();
         else if (type.compare("DirectionnalLight") == 0)
