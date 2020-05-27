@@ -78,7 +78,6 @@ void PhysicSystem::update() noexcept
                     {
                         if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
                         {
-                            exit(0);
                             /*If error happend and the point is inside the box, try to escape to it*/
                             AB -= AB.getNormalize() * 10.f;
                             MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 

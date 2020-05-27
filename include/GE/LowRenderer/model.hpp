@@ -31,7 +31,7 @@ namespace Engine::LowRenderer
         Engine::Ressources::Mesh*                       pMesh                  = nullptr;
 
         std::string                                     shaderName;
-        std::vector<std::string>                        materialName; 
+        std::string                                     materialName; 
         std::string                                     meshName; 
          
         bool                                            loadInGPU               = true;
@@ -92,12 +92,11 @@ namespace Engine::LowRenderer
 
             bool isOpaque () const noexcept { return isOpaque_; }
 
-            std::string getShaderName() { return shaderName_; }
-            std::vector<std::string>& getMaterialName() { return materialName_; }
-            std::string getMeshName() { return meshName_; }
+            const std::string& getShaderName() { return shaderName_; }
+            const std::string& getMaterialName() { return materialName_; }
+            const std::string& getMeshName() { return meshName_; }
 
             #pragma endregion //!accessor
-    
     
         protected:
     
@@ -109,7 +108,7 @@ namespace Engine::LowRenderer
             Engine::Ressources::Mesh*                    pMesh_;
 
             std::string                                  shaderName_;
-            std::vector<std::string>                     materialName_; 
+            std::string                                  materialName_; 
             std::string                                  meshName_; 
 
             bool                                        enableBackFaceCulling_;

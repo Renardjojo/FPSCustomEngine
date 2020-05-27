@@ -226,11 +226,8 @@ void Model::save(xml_document<>& doc, xml_node<>* nodeParent)
 
     newNode->append_attribute(doc.allocate_attribute("type", "Model"));
     newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
-    if (getMaterialName().size() == 0)
-        return;
-    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName()[0].c_str())));
+    newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName().c_str())));
     newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
-    
 
     nodeParent->append_node(newNode);
 }

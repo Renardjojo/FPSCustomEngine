@@ -47,12 +47,10 @@ namespace Game
 
         void onCollisionEnter (Engine::Physics::ColliderShape::HitInfo& hitInfo) override
         {
-            std::cout << "ok " << hitInfo.gameObject->getTag() << std::endl;
             if (hitInfo.gameObject->getTag() == "Bullet")
             {
                 GE_assertInfo(_attachedPhysicalObject != nullptr, "Physical gameObject missing on dependant script");
                 _attachedPhysicalObject->addForceAtPoint(hitInfo.intersectionsInfo.intersection1, -hitInfo.intersectionsInfo.normalI1 * 100.f);
-                std::cout << "ok" << std::endl;
             }
         }
 
@@ -63,6 +61,9 @@ namespace Game
 
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
             newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+
+            
+
             nodeParent->append_node(newNode);   
         }
     };

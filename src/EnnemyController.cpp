@@ -66,8 +66,6 @@ void EnnemyController::walk()
     Vec3 direction{_checkpointManager._targetPos - _gameObject.getPosition()};
     _gameObject.translate(direction.getNormalize() * _speed * TimeSystem::getDeltaTime());
 
-    std::cout << "test" << std::endl;
-
     float length{direction.length()};
     if (length < 0.1f)
         _checkpointManager.nextCheckPoint();

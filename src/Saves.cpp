@@ -9,6 +9,7 @@
 #include "GE/GE.hpp"
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "Game/PlayerController.hpp"
+#include "Game/PushedOnShoot.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
@@ -109,7 +110,14 @@ Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject&
 
     xml_node<>* node = doc.first_node()->first_node();
 
-    return initEntity(parent, node);
+    GameObject& newGO = initEntity(parent, node);
+
+    for (auto &&i : newGO.getComponents<ScriptComponent>())
+    {
+        i->start();
+    }
+
+    return newGO;
 }
 
 Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, Vec3 position, std::string prefabName)
@@ -246,7 +254,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<EnnemyController>(params);
         else if (type.compare("Checkpoint") == 0)
             parent.addComponent<Checkpoint>();
-
+        else if (type.compare("PushedOnShoot") == 0)
+            parent.addComponent<PushedOnShoot>();
 
         newGameObject = &parent;
     }
@@ -357,6 +366,9 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 
     if (gameObjectParent.getComponent<Checkpoint>())
         gameObjectParent.getComponent<Checkpoint>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<PushedOnShoot>())
+        gameObjectParent.getComponent<PushedOnShoot>()->save(doc, newNode);
 
         
 

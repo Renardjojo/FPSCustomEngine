@@ -3,6 +3,7 @@
 		<COMPONENT type="Model" shaderName="LightAndTexture" materialName="CrateMaterial" meshName="Cube"/>
 		<COMPONENT type="SphereCollider"/>
 		<COMPONENT type="PhysicalObject"/>
+		<COMPONENT type="PushedOnShoot"/>
 	</GAMEOBJECT>
 </Crate>
 
