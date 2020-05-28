@@ -18,7 +18,6 @@ namespace Engine::LowRenderer::EditorTools
 
     protected:
 
-    static bool _enable;
 
     static void quickSaveSceneOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
     static void saveSceneAsOption(Engine::Ressources::Scene& scene, Engine::GE& engine);
@@ -27,6 +26,7 @@ namespace Engine::LowRenderer::EditorTools
 
     public:
 
+        static bool _enable;
 #pragma region constructor / destructor
 
         Editor()                                = delete;
@@ -44,17 +44,6 @@ namespace Engine::LowRenderer::EditorTools
 
 #pragma endregion //!methods
 
-#pragma region accessor
-#pragma endregion //!accessor
-
-#pragma region mutator
-#pragma endregion //!mutator
-
-#pragma region operator
-#pragma endregion //!operator
-
-#pragma region convertor
-#pragma endregion //!convertor
     };
 
 } /*namespace Engine::LowRenderer::Editor*/

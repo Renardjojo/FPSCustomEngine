@@ -169,6 +169,9 @@ namespace Engine::Core::Maths
 		Vec3& 	normalize		();
 		Vec3 	getNormalize	() const;
 
+		//clamp magnitude
+		Vec3& clampLength(float max);
+
 		//cross product between 2 vectors
 		void 			cross		(const Vec3& other);
 		static Vec3 	cross		(const Vec3& vec1, const Vec3& vec2) { return vec1.getCross(vec2); }

@@ -51,11 +51,10 @@ namespace Game
 
             #pragma region attribut
 
-            Engine::GE& gameEngine_;
-            std::unique_ptr<Engine::Ressources::Scene> scene_;
+            Engine::GE& _gameEngine;
+            std::unique_ptr<Engine::Ressources::Scene> _scene;
 
             bool flagleftClicIsDown;
-            bool flagF1IsDown;
             bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;
