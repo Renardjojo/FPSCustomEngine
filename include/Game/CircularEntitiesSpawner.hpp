@@ -15,6 +15,7 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
+#include "GE/Ressources/scene.hpp"
 
 namespace Game
 {
@@ -99,6 +100,14 @@ namespace Game
 
         virtual ~CircularEntitiesSpawner() = default;
 
+        /**
+         * @brief Return true if the spawn stop to spawn entities
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool isEmpty() const noexcept { return _entitiesToSpawnInfo.empty();}
+
         void update() override
         {  
             if (_entitiesToSpawnInfo.empty())
@@ -117,7 +126,7 @@ namespace Game
                 unsigned int indexEntityToSpawn = Engine::Core::Maths::Random::ranged<int>(_entitiesToSpawnInfo.size() - 1);
 
                 /*Spawn this entity*/
-                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _entitiesToSpawnInfo[indexEntityToSpawn].pathPrefabs);
+                Engine::Ressources::Save::loadPrefab(Engine::Ressources::Scene::getCurrentScene()->getGameObject("EnemiesContener"), newPosition, _entitiesToSpawnInfo[indexEntityToSpawn].pathPrefabs);
 
                 /*Remove this entity. If all the entities of a type were generated, remove this entity's type*/
                 _entitiesToSpawnInfo[indexEntityToSpawn].numberEntity--;

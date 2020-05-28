@@ -1232,7 +1232,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     std::vector<EntityPrefabCount> entitiesToSpawnInfo;
     entitiesToSpawnInfo.emplace_back(EntityPrefabCount{10, "Crate"});
     entitiesToSpawnInfo.emplace_back(EntityPrefabCount{5, "enemy1"});
-    enemiesContener->addComponent<CircularEntitiesSpawner>(entitiesToSpawnInfo, 2.f, 0.5f, 0.f);
+    //enemiesContener->addComponent<CircularEntitiesSpawner>(entitiesToSpawnInfo, 2.f, 0.5f, 0.f);
 
 
     _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
@@ -1292,7 +1292,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
     EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
-    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 10, 100).nextWave();
+    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
 }
 
 void Demo::updateControl()

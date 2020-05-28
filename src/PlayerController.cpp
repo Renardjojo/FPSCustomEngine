@@ -101,7 +101,8 @@ void PlayerController::shoot()
         particleGO.addComponent<LifeDuration>(3.f);*/
 
         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        //rayInfo.gameObject->destroy();
+        if (rayInfo.gameObject->getTag() != "Ground")
+            rayInfo.gameObject->destroy();
     }
 }
 

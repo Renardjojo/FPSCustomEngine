@@ -29,12 +29,14 @@ namespace Game
         size_t          _waveStepOffSet      {1};
         float           _minSpawnIntervale   {0.2f};
         float           _maxSpawnIntervale   {1.5f};
-        float           _nextSpawnEnemie      {0.f};
-        float           _delay                {0.f};
-        size_t          _numberEnemiesGenerate{0};
+        float           _nextSpawnEnemie     {0.f};
+        float           _timeBeforeNextWave  {3.f}; //in second
+        float           _delay               {0.f};
+        Engine::Ressources::GameObject*     _enemiesContenor     {nullptr};
+
         public:
 
-        WaveManager(Engine::Ressources::GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave = 0, size_t waveOffSet = 0, size_t waveStepOffSet = 0, float minSpawnIntervale = 0.2f, float maxSpawnIntervale = 1.5f);
+        WaveManager(Engine::Ressources::GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave = 0, size_t waveOffSet = 0, size_t waveStepOffSet = 1, float minSpawnIntervale = 0.2f, float maxSpawnIntervale = 1.5f, float timeBeforeNextWave = 3.f);
 
         WaveManager (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 

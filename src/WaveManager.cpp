@@ -1,5 +1,6 @@
 #include "Game/WaveManager.hpp"
 
+#include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/Saves.hpp"
 #include "GE/Core/Maths/Random.hpp"
 
@@ -11,19 +12,21 @@ using namespace Engine::Core::Component;
 using namespace Engine::Core::Maths;
 
 
-WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, size_t waveOffSet, size_t waveStepOffSet, float minSpawnIntervale, float maxSpawnIntervale)
-    :   ScriptComponent    {gameObject},
+WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, size_t waveOffSet, size_t waveStepOffSet, float minSpawnIntervale, float maxSpawnIntervale, float timeBeforeNextWave)
+    :   ScriptComponent                             {gameObject},
         _spawnerPrefabs                             {spawnerPrefabs},
         _enemiesPrefabs                             {enemiesPrefabs},
         _currentWave                                {currentWave},
         _waveOffSet                                 {waveOffSet},
         _waveStepOffSet                             {waveStepOffSet},
         _minSpawnIntervale                          {minSpawnIntervale},
-        _maxSpawnIntervale                          {maxSpawnIntervale}
+        _maxSpawnIntervale                          {maxSpawnIntervale},
+        _timeBeforeNextWave                         {timeBeforeNextWave}
 {
     GE_assert(maxSpawnIntervale >= minSpawnIntervale);
     GE_assert(minSpawnIntervale > 0.f);
     GE_assert(maxSpawnIntervale > 0.f);
+    GE_assert(waveStepOffSet != 0.f);
     GE_assert(!spawnerPrefabs.empty());
     GE_assert(!enemiesPrefabs.empty());
 
@@ -39,7 +42,7 @@ WaveManager::WaveManager (GameObject &refGameObject, const std::vector<std::stri
         _maxSpawnIntervale                          {std::stof(params[2])},
         _nextSpawnEnemie                            {std::stof(params[3])},
         _delay                                      {std::stof(params[4])},
-        _numberEnemiesGenerate                      {static_cast<size_t>(std::stoi(params[5]))}
+        _timeBeforeNextWave                         {}
 {
     _name = __FUNCTION__;
 
@@ -60,17 +63,41 @@ WaveManager::WaveManager (GameObject &refGameObject, const std::vector<std::stri
 
 void WaveManager::start()
 {
-
+    _enemiesContenor = &Scene::getCurrentScene()->getGameObject("EnemiesContener");
+    GE_assertInfo(_enemiesContenor != nullptr, "Game object name \"EnemiesContener\" does'nt exist on world");
 }
 
 void WaveManager::update()
 {
+    /*Go the next wave if all entity is dead and all spawner is empty*/
+    if (_gameObject.children.empty() && _enemiesContenor->children.empty())
+    {
+        _delay += Engine::Core::System::TimeSystem::getDeltaTime();
 
+        if(_delay >= _timeBeforeNextWave)
+        {
+            _delay = 0.f;
+            nextWave();
+        }
+        return;
+    }
+
+    /*Check and remove the the empty spawner*/
+    for (std::list<std::unique_ptr<GameObject>>::iterator it =  _gameObject.children.begin(); it != _gameObject.children.end(); it++)
+    {
+        CircularEntitiesSpawner* pSpawner = (*it)->getComponent<CircularEntitiesSpawner>();
+        GE_assertInfo(pSpawner != nullptr, "WaveManager contain gameObject that is not a spawner. WaveManager must be empty");
+    
+        if (pSpawner->isEmpty())
+        {
+            it = _gameObject.destroyChild(it);
+        }
+    }
 }
 
 void WaveManager::nextWave()
 {
-    _currentWave++;
+    _currentWave ++;
 
     /*Remove all spawner and all gameObject*/
     _gameObject.children.clear();
@@ -78,9 +105,11 @@ void WaveManager::nextWave()
     /*Generate the number of ennemies in funciton of the current wave*/
     std::vector<unsigned int> contenorNumberEnemie; // from weakest to strongest
     int totalEnnemiesOnThisWave = generateNumberEnnemy (contenorNumberEnemie);
-    
+
+    GE_assertInfo(totalEnnemiesOnThisWave != 0, "Anought ennemies for with wave");
+
     /*Activate new spawner*/
-    size_t numberSpawnActivate = totalEnnemiesOnThisWave / 5;
+    size_t numberSpawnActivate = totalEnnemiesOnThisWave / 5 + 1;
     if (numberSpawnActivate >_spawnerPrefabs.size())
     {
         numberSpawnActivate = _spawnerPrefabs.size();
@@ -147,7 +176,6 @@ void WaveManager::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("maxSpawnIntervale", doc.allocate_string(std::to_string(_maxSpawnIntervale).c_str())));
     newNode->append_attribute(doc.allocate_attribute("nextSpawnEnemie", doc.allocate_string(std::to_string(_nextSpawnEnemie).c_str())));
     newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("numberEnemiesGenerate", doc.allocate_string(std::to_string(_numberEnemiesGenerate).c_str())));
 
     int count = 0;
     for (auto &&path : _spawnerPrefabs)
@@ -174,14 +202,14 @@ void WaveManager::save(xml_document<>& doc, xml_node<>* nodeParent)
 
 int WaveManager::generateNumberEnnemy (std::vector<unsigned int>& refContenorNumberEnemie)
 {
-    const size_t numberTypeEnemie = _enemiesPrefabs.size();
+    size_t numberTypeEnemie = _enemiesPrefabs.size();
     int enemiesCount = 0;
     int realCurrentWave = _waveOffSet + _currentWave * _waveStepOffSet;
 
     for (size_t i = 0; i < numberTypeEnemie; i++)
     {
-        const int powEnemiesMinusOne = numberTypeEnemie * numberTypeEnemie - 1;
-        const int enemies = (((realCurrentWave % powEnemiesMinusOne) & (int)std::pow(2, i)) >> i) + (realCurrentWave / powEnemiesMinusOne);
+        int powEnemiesMinusOne = numberTypeEnemie * numberTypeEnemie - 1;
+        unsigned int enemies = (((realCurrentWave % powEnemiesMinusOne) & (int)std::pow(2, i)) >> i) + (realCurrentWave / powEnemiesMinusOne);
         refContenorNumberEnemie.push_back(enemies);
         enemiesCount += enemies;
     }
