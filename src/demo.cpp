@@ -11,19 +11,20 @@
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Core/System/UISystem.hpp"
 #include "GE/Ressources/ui.hpp"
-#include "Game/define.h"
-#include "GE/Ressources/Saves.hpp"
-#include "Game/BarIndicatorController.hpp"
-#include "Game/CircularEnemiesSpawner.hpp"
-#include "Game/ParticuleGenerator.hpp"
-#include "Game/MaxElementConteneur.hpp"
-#include "Game/PushedOnShoot.hpp"
-
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
 #include "GE/Physics/ColliderShape/CapsuleCollider.hpp"
 #include "GE/Physics/ColliderShape/AABBCollider.hpp"
 #include "GE/Core/Maths/Random.hpp"
+#include "GE/Ressources/Saves.hpp"
+
+#include "Game/define.h"
+#include "Game/BarIndicatorController.hpp"
+#include "Game/CircularEnemiesSpawner.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include "Game/MaxElementConteneur.hpp"
+#include "Game/PushedOnShoot.hpp"
+#include "Game/GroundController.hpp"
 
 #include "../src/stb_image.h"
 
@@ -211,6 +212,15 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     matDefault.name_ = "BlackMaterial";
     matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+    }
+
+    matDefault.name_ = "BrownMaterial";
+    matDefault.comp_.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
 
     {
         std::vector<Material> material;
@@ -664,6 +674,7 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
 
     GameObject& ground = scene_->add<GameObject>(scene_->getWorld(), groundArgGameObject);
     ground.addComponent<Model>(groundArg);
+    ground.addComponent<GroundController>();
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
 } 

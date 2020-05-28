@@ -24,6 +24,7 @@
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/LifeDuration.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "Game/GroundController.hpp"
 
 using namespace rapidxml;
 
@@ -268,6 +269,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<LifeDuration>(params);
         else if (type.compare("ParticuleGenerator") == 0)
             parent.addComponent<ParticuleGenerator>(params);
+        else if (type.compare("GroundController") == 0)
+            parent.addComponent<GroundController>();
 
         newGameObject = &parent;
     }
@@ -392,7 +395,10 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         gameObjectParent.getComponent<LifeDuration>()->save(doc, newNode);
 
     if (gameObjectParent.getComponent<ParticuleGenerator>())
-        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);        
+        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<GroundController>())
+        gameObjectParent.getComponent<GroundController>()->save(doc, newNode); 
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);
