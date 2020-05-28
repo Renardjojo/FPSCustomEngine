@@ -363,57 +363,90 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         SLog::log(std::string("Saving : ") + gameObjectParent.getName());
     }
 
-    //TODO: does not manage the multiple same component
-    if (gameObjectParent.getComponent<Model>())
-        gameObjectParent.getComponent<Model>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<Model>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PlayerController>())
-        gameObjectParent.getComponent<PlayerController>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PlayerController>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<OrientedBoxCollider>())
-        gameObjectParent.getComponent<OrientedBoxCollider>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<OrientedBoxCollider>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<SphereCollider>())
-        gameObjectParent.getComponent<SphereCollider>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<SphereCollider>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PhysicalObject>())
-        gameObjectParent.getComponent<PhysicalObject>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PhysicalObject>())
+    {
+        i->save(doc, newNode);
+    }
+    
+    for (auto &&i : gameObjectParent.getComponents<PointLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PointLight>())
-        gameObjectParent.getComponent<PointLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<DirectionnalLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<DirectionnalLight>())
-        gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<SpotLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<SpotLight>())
-        gameObjectParent.getComponent<SpotLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<EnnemyController>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<EnnemyController>())
-        gameObjectParent.getComponent<EnnemyController>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<Checkpoint>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<Checkpoint>())
-        gameObjectParent.getComponent<Checkpoint>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PushedOnShoot>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PushedOnShoot>())
-        gameObjectParent.getComponent<PushedOnShoot>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<MaxElementConteneur>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<MaxElementConteneur>())
-        gameObjectParent.getComponent<MaxElementConteneur>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<LifeDuration>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<LifeDuration>())
-        gameObjectParent.getComponent<LifeDuration>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<ParticuleGenerator>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<ParticuleGenerator>())
-        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<GroundController>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<GroundController>())
-        gameObjectParent.getComponent<GroundController>()->save(doc, newNode); 
+    for (auto &&i : gameObjectParent.getComponents<WaveManager>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<WaveManager>())
-        gameObjectParent.getComponent<WaveManager>()->save(doc, newNode);
-
-    if (gameObjectParent.getComponent<CircularEnemiesSpawner>())
-        gameObjectParent.getComponent<CircularEnemiesSpawner>()->save(doc, newNode); 
+    for (auto &&i : gameObjectParent.getComponents<CircularEnemiesSpawner>())
+    {
+        i->save(doc, newNode);
+    }
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);
