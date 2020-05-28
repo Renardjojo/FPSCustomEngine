@@ -25,6 +25,9 @@
 #include "Game/LifeDuration.hpp"
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/GroundController.hpp"
+#include "Game/WaveManager.hpp"
+#include "Game/CircularEnemiesSpawner.hpp"
+
 
 using namespace rapidxml;
 
@@ -241,6 +244,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         for (; attr; attr = attr->next_attribute())
             params.push_back(attr->value());
 
+        //TODO: Can be optimaze. Use unorderde map with lambda
         if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
@@ -271,6 +275,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<ParticuleGenerator>(params);
         else if (type.compare("GroundController") == 0)
             parent.addComponent<GroundController>();
+        else if (type.compare("WaveManager") == 0)
+            parent.addComponent<ParticuleGenerator>(params);
+        else if (type.compare("CircularEnemiesSpawner") == 0)
+            parent.addComponent<ParticuleGenerator>(params);
 
         newGameObject = &parent;
     }
@@ -355,6 +363,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         SLog::log(std::string("Saving : ") + gameObjectParent.getName());
     }
 
+    //TODO: does not manage the multiple same component
     if (gameObjectParent.getComponent<Model>())
         gameObjectParent.getComponent<Model>()->save(doc, newNode);
 
@@ -399,6 +408,12 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
 
     if (gameObjectParent.getComponent<GroundController>())
         gameObjectParent.getComponent<GroundController>()->save(doc, newNode); 
+
+    if (gameObjectParent.getComponent<WaveManager>())
+        gameObjectParent.getComponent<WaveManager>()->save(doc, newNode);
+
+    if (gameObjectParent.getComponent<CircularEnemiesSpawner>())
+        gameObjectParent.getComponent<CircularEnemiesSpawner>()->save(doc, newNode); 
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);

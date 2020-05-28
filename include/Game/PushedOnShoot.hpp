@@ -22,15 +22,6 @@ namespace Game
 
         public:
 
-        /**
-         * @brief Construct a new Ranged Enemies Spawner object
-         * 
-         * @param gameObject 
-         * @param spawnPosition 
-         * @param zoneRadius 
-         * @param spawnDelay 
-         * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
-         */
         PushedOnShoot(Engine::Ressources::GameObject &gameObject)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _attachedPhysicalObject                     {nullptr}

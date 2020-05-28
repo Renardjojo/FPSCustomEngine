@@ -73,7 +73,7 @@ void ParticuleGenerator::update()
         {
             PhysicalObject& physicalObjComp = *(*i).getComponent<PhysicalObject>();
             physicalObjComp.setVelocity(physicalObjComp.getVelocity() - physicalObjComp.getVelocity() * _velocityEvolutionCoef * (_useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime()));
-        } 
+        }
     }  
 
     if (_stopParticuleGeneration)
