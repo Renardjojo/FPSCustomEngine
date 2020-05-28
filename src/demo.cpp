@@ -20,7 +20,7 @@
 
 #include "Game/define.h"
 #include "Game/BarIndicatorController.hpp"
-#include "Game/CircularEnemiesSpawner.hpp"
+#include "Game/CircularEntitiesSpawner.hpp"
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/PushedOnShoot.hpp"
@@ -1228,10 +1228,12 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
+    std::vector<EntityPrefabCount> entitiesToSpawnInfo;
+    entitiesToSpawnInfo.emplace_back(EntityPrefabCount{10, "Crate"});
+    entitiesToSpawnInfo.emplace_back(EntityPrefabCount{5, "enemy1"});
+    enemiesContener->addComponent<CircularEntitiesSpawner>(entitiesToSpawnInfo, 2.f, 0.5f, 0.f);
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemiePrefabs{{std::string("Crate")}, {std::string("enemy1")}}, 2.f, 0.5f, 0.f);
-
-    //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
+    //enemiesContener->addComponent<CircularEntitiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
                             &ressourceManager.get<std::vector<Material>>("GreenMaterial"),

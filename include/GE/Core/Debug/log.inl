@@ -15,6 +15,11 @@ void Engine::Core::Debug::SLog::release() noexcept
 inline
 void Engine::Core::Debug::SLog::logAddMsg (std::string msg) noexcept
 {
+    if (!fileLog.is_open())
+    {
+        return;
+    }
+
     std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
     std::cout.rdbuf(fileLog.rdbuf()); //redirect std::cout to log.txt
 

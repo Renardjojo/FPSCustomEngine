@@ -2,8 +2,8 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-05-08 - 17 h 39
 
-#ifndef _CIRCULAR_ENEMIES_SPAWNER_H
-#define _CIRCULAR_ENEMIES_SPAWNER_H
+#ifndef _CIRCULAR_ENTITIES_SPAWNER_H
+#define _CIRCULAR_ENTITIES_SPAWNER_H
 
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
@@ -18,14 +18,17 @@
 
 namespace Game
 {
-    typedef std::vector<std::string> EnemiePrefabs;
+    struct EntityPrefabCount
+    {
+        unsigned int numberEntity;
+        std::string  pathPrefabs;
+    };
 
-
-    class CircularEnemiesSpawner : public Engine::Core::Component::ScriptComponent
+    class CircularEntitiesSpawner : public Engine::Core::Component::ScriptComponent
     {
         private:
         
-        EnemiePrefabs                           _enemiePrefas          {};
+        std::vector<EntityPrefabCount>          _entitiesToSpawnInfo   {};
         float                                   _zoneRadius            {3.f};  /*in sec*/
         float                                   _spawnDelay            {1.f};  /*in sec*/
         float                                   _spawnDelayInterval    {0.f}; /*in sec*/
@@ -36,7 +39,7 @@ namespace Game
         public:
 
         /**
-         * @brief Construct a new Ranged Enemies Spawner object
+         * @brief Construct a new Ranged Entitiess Spawner object
          * 
          * @param gameObject 
          * @param spawnPosition 
@@ -44,9 +47,9 @@ namespace Game
          * @param spawnDelay 
          * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
          */
-        CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemiePrefabs& enemisPrefabs, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
+        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
-                _enemiePrefas                               {enemisPrefabs},
+                _entitiesToSpawnInfo                        {entitiesToSpawnInfo},
                 _zoneRadius                                 {zoneRadius},
                 _spawnDelay                                 {spawnDelay},
                 _spawnDelayInterval                         {spawnDelayInterval}, 
@@ -54,9 +57,19 @@ namespace Game
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
         {}
 
-        CircularEnemiesSpawner (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
+        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
+            :   Engine::Core::Component::ScriptComponent    {gameObject},
+                _entitiesToSpawnInfo                        {},
+                _zoneRadius                                 {zoneRadius},
+                _spawnDelay                                 {spawnDelay},
+                _spawnDelayInterval                         {spawnDelayInterval}, 
+                _delayCount                                 {0.f},
+                _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
+        {}
+
+        CircularEntitiesSpawner (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   Engine::Core::Component::ScriptComponent    {refGameObject},
-                _enemiePrefas                               {},
+                _entitiesToSpawnInfo                        {},
                 _zoneRadius                                 {std::stof(params[0])},
                 _spawnDelay                                 {std::stof(params[1])},
                 _spawnDelayInterval                         {std::stof(params[2])}, 
@@ -67,19 +80,24 @@ namespace Game
 
             size_t count = 5;
 
-            while (params.size() > count && params[count].substr(0, 2) == "#1")
+            while (params.size() > count)
             {
-                _enemiePrefas.push_back(params[count].substr(2));
-                count++;
+                _entitiesToSpawnInfo.push_back({static_cast<unsigned int>(std::stoi(params[count])), params[count + 1]});
+                count+=2;
             }
         }
 
+        void setEntitiesToSpawn(unsigned int numberEntities, const std::string& prefabs)
+        {
+            if (numberEntities > 0)
+                _entitiesToSpawnInfo.push_back({numberEntities, prefabs});
+        }
 
-        virtual ~CircularEnemiesSpawner() = default;
+        virtual ~CircularEntitiesSpawner() = default;
 
         void update() override
-        {   
-            if (_enemiePrefas.empty())
+        {  
+            if (_entitiesToSpawnInfo.empty())
                 return;
 
             _delayCount += Engine::Core::System::TimeSystem::getDeltaTime();
@@ -89,7 +107,19 @@ namespace Game
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
                 Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_gameObject.getGlobalPosition(), _zoneRadius);
-                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _enemiePrefas[Engine::Core::Maths::Random::ranged<int>(_enemiePrefas.size() - 1)]);
+
+                /*Choose random entity*/
+                unsigned int indexEntityToSpawn = Engine::Core::Maths::Random::ranged<int>(_entitiesToSpawnInfo.size() - 1);
+
+                /*Spawn this entity*/
+                Engine::Ressources::Save::loadPrefab(_gameObject, newPosition, _entitiesToSpawnInfo[indexEntityToSpawn].pathPrefabs);
+
+                /*Remove this entity. If all the entities of a type were generated, remove this entity's type*/
+                _entitiesToSpawnInfo[indexEntityToSpawn].numberEntity--;
+                if (_entitiesToSpawnInfo[indexEntityToSpawn].numberEntity == 0)
+                {
+                    _entitiesToSpawnInfo.erase(_entitiesToSpawnInfo.begin() + indexEntityToSpawn);
+                }
             }
         }
 
@@ -106,12 +136,10 @@ namespace Game
             newNode->append_attribute(doc.allocate_attribute("nextDelay", doc.allocate_string(std::to_string(_nextDelay).c_str())));
 
             int count = 0;
-            for (auto &&path : _enemiePrefas)
+            for (auto &&i : _entitiesToSpawnInfo)
             {
-                std::string data = "#";
-                data += std::to_string(1);
-                data += path;
-                newNode->append_attribute(doc.allocate_attribute((std::string("spawnerPrefabs") + std::to_string(count)).c_str(), doc.allocate_string(data.c_str())));
+                newNode->append_attribute(doc.allocate_attribute((std::string("numberEntity") + std::to_string(count)).c_str(), doc.allocate_string(std::to_string(i.numberEntity).c_str())));
+                newNode->append_attribute(doc.allocate_attribute((std::string("pathPrefabs") + std::to_string(count)).c_str(), doc.allocate_string(i.pathPrefabs.c_str())));
                 count++;
             }
 
@@ -121,4 +149,4 @@ namespace Game
 
 } //namespace Game
 
-#endif //_CIRCULAR_ENEMIES_SPAWNER_H
+#endif //_CIRCULAR_ENTITIES_SPAWNER_H

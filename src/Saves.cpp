@@ -26,7 +26,7 @@
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/GroundController.hpp"
 #include "Game/WaveManager.hpp"
-#include "Game/CircularEnemiesSpawner.hpp"
+#include "Game/CircularEntitiesSpawner.hpp"
 
 
 using namespace rapidxml;
@@ -276,9 +276,9 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         else if (type.compare("GroundController") == 0)
             parent.addComponent<GroundController>();
         else if (type.compare("WaveManager") == 0)
-            parent.addComponent<ParticuleGenerator>(params);
-        else if (type.compare("CircularEnemiesSpawner") == 0)
-            parent.addComponent<ParticuleGenerator>(params);
+            parent.addComponent<WaveManager>(params);
+        else if (type.compare("CircularEntitiesSpawner") == 0)
+            parent.addComponent<CircularEntitiesSpawner>(params);
 
         newGameObject = &parent;
     }
@@ -443,7 +443,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         i->save(doc, newNode);
     }
 
-    for (auto &&i : gameObjectParent.getComponents<CircularEnemiesSpawner>())
+    for (auto &&i : gameObjectParent.getComponents<CircularEntitiesSpawner>())
     {
         i->save(doc, newNode);
     }
