@@ -55,7 +55,9 @@ namespace Game
                 _spawnDelayInterval                         {spawnDelayInterval}, 
                 _delayCount                                 {0.f},
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
@@ -65,7 +67,9 @@ namespace Game
                 _spawnDelayInterval                         {spawnDelayInterval}, 
                 _delayCount                                 {0.f},
                 _nextDelay                                  {_spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
-        {}
+        {
+            _name = __FUNCTION__;
+        }
 
         CircularEntitiesSpawner (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   Engine::Core::Component::ScriptComponent    {refGameObject},
@@ -87,7 +91,7 @@ namespace Game
             }
         }
 
-        void setEntitiesToSpawn(unsigned int numberEntities, const std::string& prefabs)
+        void addEntitiesToSpawner(unsigned int numberEntities, const std::string& prefabs)
         {
             if (numberEntities > 0)
                 _entitiesToSpawnInfo.push_back({numberEntities, prefabs});
@@ -106,7 +110,8 @@ namespace Game
             {
                 _delayCount -= _nextDelay;
                 _nextDelay   = _spawnDelay + Engine::Core::Maths::Random::ranged(-_spawnDelayInterval, _spawnDelayInterval);
-                Engine::Core::Maths::Vec3 newPosition = Engine::Core::Maths::Random::peripheralSphericalCoordinate(_gameObject.getGlobalPosition(), _zoneRadius);
+                Engine::Core::Maths::Vec2 position2D = Engine::Core::Maths::Random::circularCoordinate({_gameObject.getGlobalPosition().x, _gameObject.getGlobalPosition().z}, _zoneRadius);
+                Engine::Core::Maths::Vec3 newPosition = {position2D.x, _gameObject.getGlobalPosition().y ,position2D.y};
 
                 /*Choose random entity*/
                 unsigned int indexEntityToSpawn = Engine::Core::Maths::Random::ranged<int>(_entitiesToSpawnInfo.size() - 1);

@@ -3,23 +3,27 @@
 #include "GE/Ressources/Saves.hpp"
 #include "GE/Core/Maths/Random.hpp"
 
+#include "Game/CircularEntitiesSpawner.hpp"
+
 using namespace Game;
 using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::Maths;
 
 
-WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, float minSpawnIntervale, float maxSpawnIntervale)
+WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, size_t waveOffSet, size_t waveStepOffSet, float minSpawnIntervale, float maxSpawnIntervale)
     :   ScriptComponent    {gameObject},
         _spawnerPrefabs                             {spawnerPrefabs},
         _enemiesPrefabs                             {enemiesPrefabs},
         _currentWave                                {currentWave},
+        _waveOffSet                                 {waveOffSet},
+        _waveStepOffSet                             {waveStepOffSet},
         _minSpawnIntervale                          {minSpawnIntervale},
         _maxSpawnIntervale                          {maxSpawnIntervale}
 {
-    GE_assert(!(maxSpawnIntervale >= minSpawnIntervale));
-    GE_assert(!(minSpawnIntervale < 0.f));
-    GE_assert(!(maxSpawnIntervale < 0.f));
+    GE_assert(maxSpawnIntervale >= minSpawnIntervale);
+    GE_assert(minSpawnIntervale > 0.f);
+    GE_assert(maxSpawnIntervale > 0.f);
     GE_assert(!spawnerPrefabs.empty());
     GE_assert(!enemiesPrefabs.empty());
 
@@ -54,6 +58,10 @@ WaveManager::WaveManager (GameObject &refGameObject, const std::vector<std::stri
     }
 }
 
+void WaveManager::start()
+{
+
+}
 
 void WaveManager::update()
 {
@@ -72,20 +80,59 @@ void WaveManager::nextWave()
     int totalEnnemiesOnThisWave = generateNumberEnnemy (contenorNumberEnemie);
     
     /*Activate new spawner*/
-    size_t numberSpawnActivate = totalEnnemiesOnThisWave % 5;
+    size_t numberSpawnActivate = totalEnnemiesOnThisWave / 5;
     if (numberSpawnActivate >_spawnerPrefabs.size())
     {
         numberSpawnActivate = _spawnerPrefabs.size();
     }
+    
+    /*Initialize the list of ennemies*/
+    std::vector<EntityPrefabCount> enemiesList;
+
+    for (size_t i = 0; i < _enemiesPrefabs.size(); i++)
+    {
+       enemiesList.push_back({contenorNumberEnemie[i], _enemiesPrefabs[i]});
+    }
 
     /*Choose randomly the spawner activate*/
-    std::vector<std::string> copySpawnerPrefabs = _spawnerPrefabs;
+    SpawnerPrefabs copySpawnerPrefabs = _spawnerPrefabs;
+    std::vector <CircularEntitiesSpawner*> spawnerList;
+
     for (size_t i = 0; i < numberSpawnActivate; i++)
     {
-        int spawnerChoose = Engine::Core::Maths::Random::ranged<int>(copySpawnerPrefabs.size());
+        int spawnerChoose = Engine::Core::Maths::Random::ranged<int>(copySpawnerPrefabs.size() - 1);
         GameObject& newSpawnerGO = Save::loadPrefab(_gameObject, copySpawnerPrefabs[spawnerChoose]);
 
+        spawnerList.push_back(newSpawnerGO.getComponent<CircularEntitiesSpawner>());
+        GE_assertInfo(spawnerList.back() != nullptr, "Spawner prefabs doesn't content any CircularEntitiesSpawner");
+
         copySpawnerPrefabs.erase(copySpawnerPrefabs.begin() + spawnerChoose);
+    }
+
+    /*Affect entities on the spawner 5 by 5*/
+    while (!enemiesList.empty())
+    {
+        for (auto &&spawner : spawnerList)
+        {
+            for (size_t enemyTypeIndex = 0; enemyTypeIndex < enemiesList.size(); enemyTypeIndex++)
+            {
+                /*Insert entities 5 by 5 maximum (avoid unbalance spawner)*/
+                unsigned int numberEntityInsert = Engine::Core::Maths::Random::ranged<int>(5);
+                if (numberEntityInsert > enemiesList[enemyTypeIndex].numberEntity)
+                {
+                    numberEntityInsert = enemiesList[enemyTypeIndex].numberEntity;
+                }
+
+                spawner->addEntitiesToSpawner(numberEntityInsert, enemiesList[enemyTypeIndex].pathPrefabs);
+
+                enemiesList[enemyTypeIndex].numberEntity -= numberEntityInsert;
+
+                if (enemiesList[enemyTypeIndex].numberEntity == 0)
+                {
+                    enemiesList.erase(enemiesList.begin() + enemyTypeIndex);
+                }
+            }
+        }
     }
 }
 

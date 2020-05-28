@@ -25,6 +25,7 @@
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/PushedOnShoot.hpp"
 #include "Game/GroundController.hpp"
+#include "Game/WaveManager.hpp"
 
 #include "../src/stb_image.h"
 
@@ -1233,31 +1234,65 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     entitiesToSpawnInfo.emplace_back(EntityPrefabCount{5, "enemy1"});
     enemiesContener->addComponent<CircularEntitiesSpawner>(entitiesToSpawnInfo, 2.f, 0.5f, 0.f);
 
-    //enemiesContener->addComponent<CircularEntitiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
-
-    ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
-                            &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                            &ressourceManager.get<Mesh>("Plane"),
-                            "Color",
-                            "GreenMaterial",
-                            "Plane"};
-
-    ParticuleGenerator::ParticleSystemCreateArg particalArg;
-    particalArg.modelCreateArg = modelArg3;
-    particalArg.isBillBoard = false;
-    particalArg.physicalObjectCreateArg.useGravity = false;
-    particalArg.useScaledTime = true;
-    particalArg.velocityEvolutionCoef = 0.5f;
-    particalArg.spawnCountBySec = 10.f;
-    particalArg.lifeDuration = 10.f;
-    particalArg.physicalObjectCreateArg.mass = 1.f;
-    particalArg.scale = {0.1, 0.1, 0.1};
-
-    //GameObject& particleGO = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"ParticleContener", {{0.f, 10.f, 0.f}}});
-    //particleGO.addComponent<ParticuleGenerator>(particalArg);
-    //particleGO.addComponent<LifeDuration>(10.f);
 
     _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+
+
+
+    /**************************************************************************************************************/
+
+    GameObjectCreateArg spawnerGOArg;
+
+    {
+        spawnerGOArg.name = "Spawner1";
+        spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
+
+        GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+
+        Save::createPrefab(spawnerGO, spawnerGOArg.name);
+        spawnerGO.destroy();
+    }
+
+    {
+        spawnerGOArg.name = "Spawner2";
+        spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
+
+        GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+
+        Save::createPrefab(spawnerGO, spawnerGOArg.name);
+        spawnerGO.destroy();
+    }
+
+    {
+        spawnerGOArg.name = "Spawner3";
+        spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
+
+        GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+
+        Save::createPrefab(spawnerGO, spawnerGOArg.name);
+        spawnerGO.destroy();
+    }
+
+    {
+        spawnerGOArg.name = "Spawner4";
+        spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
+
+        GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+
+        Save::createPrefab(spawnerGO, spawnerGOArg.name);
+        spawnerGO.destroy();
+    }
+
+    GameObjectCreateArg waveManagerArg {"waveManager"};
+
+    GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
+    SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
+    EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
+    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 10, 100).nextWave();
 }
 
 void Demo::updateControl()

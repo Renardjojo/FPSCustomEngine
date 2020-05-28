@@ -24,7 +24,6 @@ namespace Game
 
         SpawnerPrefabs  _spawnerPrefabs      {};
         EnemiesPrefabs  _enemiesPrefabs      {};
-        std::vector<unsigned int> _contenorNumberEnemie {}; // from weakest to strongest
         size_t          _currentWave         {0};
         size_t          _waveOffSet          {0};
         size_t          _waveStepOffSet      {1};
@@ -33,18 +32,33 @@ namespace Game
         float           _nextSpawnEnemie      {0.f};
         float           _delay                {0.f};
         size_t          _numberEnemiesGenerate{0};
-
         public:
 
-        WaveManager(Engine::Ressources::GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave = 0, float minSpawnIntervale = 0.2f, float maxSpawnIntervale = 1.5f);
+        WaveManager(Engine::Ressources::GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave = 0, size_t waveOffSet = 0, size_t waveStepOffSet = 0, float minSpawnIntervale = 0.2f, float maxSpawnIntervale = 1.5f);
 
         WaveManager (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 
         virtual ~WaveManager() = default;
 
+        void start() override;
+
         void update() override;
 
         void nextWave();
+
+        /**
+         * @brief return the wave indicator. This wave juste indicate the difficulty step
+         * 
+         * @return size_t 
+         */
+        size_t getCurrentWave() const noexcept { return _currentWave; }
+
+        /**
+         * @brief Return difficulty of the wave. This number is used to compute the number and type of enemies
+         * 
+         * @return size_t 
+         */
+        size_t getWaveDifficulty() const noexcept { return _currentWave * _waveStepOffSet + _waveOffSet;}
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);
 
