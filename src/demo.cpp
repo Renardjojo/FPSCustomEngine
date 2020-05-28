@@ -221,6 +221,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
     ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
     ressourceManager.add<Mesh>("Plane", Mesh::createPlane());
+    ressourceManager.add<Mesh>("PlaneZ", Mesh::createPlane(1.f, 0, 0, Mesh::Axis::Z));
 
     MaterialAndTextureCreateArg matBulletHole;
     matBulletHole.name_                = "BulletHole";
@@ -734,7 +735,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                "Sphere"};
 
     GameObject &player = scene_->add<GameObject>(scene_->getWorld(), playerGameObject);
-    player.addComponent<Model>(playerModel);
+    player.addComponent<Model>(playerModel);*/
 
    GameObjectCreateArg ReticuleGameObject{"Z",
                                          {{0.f, 0.f, 0.f},
@@ -746,8 +747,8 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                &ressourceManager.get<Mesh>("Sphere"),
                                "ColorWithLight",
                                "RedMaterial",
-                               "Sphere"};*/
-/*
+                               "Sphere"};
+
     GameObject &ReticuleX = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
     ReticuleX.addComponent<Model>(ReticuleModel); 
 
@@ -761,7 +762,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     ReticuleModel.pMaterials = &ressourceManager.get<std::vector<Material>>("RedMaterial");
 
     GameObject &ReticuleZ = scene_->add<GameObject>(scene_->getWorld(), ReticuleGameObject);
-    ReticuleZ.addComponent<Model>(ReticuleModel);*/
+    ReticuleZ.addComponent<Model>(ReticuleModel);
 
     /*Add life bar on player*//*
     GameObjectCreateArg lifeBarGameObject{"lifeBar",
@@ -1275,12 +1276,11 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
 void Demo::updateControl()
 {
-    /* Draw player referential
     float dist = 5.f;
-    scene_->getGameObject("Z").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecForward());
-    scene_->getGameObject("Y").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecUp());
-    scene_->getGameObject("X").setTranslation(scene_->getGameObject("Player").getPosition() + dist * scene_->getGameObject("Player").getVecRight());
-    */
+    scene_->getGameObject("Z").setTranslation(mainCamera->getPosition() + dist * mainCamera->getVecForward());
+    scene_->getGameObject("Y").setTranslation(mainCamera->getPosition() + dist * mainCamera->getVecUp());
+    scene_->getGameObject("X").setTranslation(mainCamera->getPosition() + dist * mainCamera->getVecRight());
+
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == 1)
     {

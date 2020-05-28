@@ -30,6 +30,15 @@ namespace Engine::Ressources
 
     class Mesh
     {
+        public :
+
+        enum class Axis
+        {
+            X, 
+            Y,
+            Z
+        };
+
         public:
     
             #pragma region constructor/destructor
@@ -79,7 +88,7 @@ namespace Engine::Ressources
              * @return MeshConstructorArg 
              */
             static 
-            MeshConstructorArg createPlane	(float textureRepetition = 1.f, unsigned int indexTextureX = 0, unsigned int indexTextureY = 0);
+            MeshConstructorArg createPlane	(float textureRepetition = 1.f, unsigned int indexTextureX = 0, unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y);
 
             /**
              * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin

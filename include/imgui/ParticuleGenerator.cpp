@@ -41,21 +41,22 @@ ParticuleGenerator::ParticuleGenerator (Engine::Ressources::GameObject &refGameO
         _modelCreateArg                             {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>(params[0]),
                                                     &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>(params[1]),
                                                     &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>(params[2]),
-                                                    params[0], params[1], params[2], std::stof(params[3]), std::stof(params[4]), std::stof(params[5])},
-        _physicalObjectCreateArg                    {   std::stof(params[6]), std::stof(params[7]), std::stof(params[8]),
-                                                        std::stof(params[9]), std::stof(params[10]), std::stof(params[11]),
-                                                        std::stof(params[12]), std::stof(params[13]), std::stof(params[14]), std::stof(params[15])},
+                                                    params[0], params[1], params[2], static_cast<bool>(std::stoi(params[3])),
+                                                    static_cast<bool>(std::stoi(params[4])), static_cast<bool>(std::stoi(params[5]))},
+        _physicalObjectCreateArg                    {   std::stof(params[6]), static_cast<bool>(std::stoi(params[7])), static_cast<bool>(std::stoi(params[8])),
+                                                        static_cast<bool>(std::stoi(params[9])),  static_cast<bool>(std::stoi(params[10])), static_cast<bool>(std::stoi(params[11])),
+                                                        static_cast<bool>(std::stoi(params[12])), static_cast<bool>(std::stoi(params[13])), static_cast<bool>(std::stoi(params[14])), static_cast<bool>(std::stoi(params[15]))},
         _generationShape                            {static_cast<EGenerationShape>(std::stoi(params[16]))},
         _scale                                      {{std::stof(params[17]), std::stof(params[18]), std::stof(params[19])}},
-        _particleCount                              {std::stof(params[20])},
+        _particleCount                              {static_cast<size_t>(std::stoi(params[20]))},
         _generationRange                            {std::stof(params[21])},
         _lifeDuration                               {std::stof(params[22])},
         _velocityEvolutionCoef                      {std::stof(params[23])},
         _propulsionLenght                           {std::stof(params[24])},
         _spawnCountBySec                            {std::stof(params[25])},
         _delayCount                                 {std::stof(params[26])},
-        _isBillBoard                                {std::stof(params[27])},
-        _useScaledTime                              {std::stof(params[28])}
+        _isBillBoard                                {static_cast<bool>(std::stoi(params[27]))},
+        _useScaledTime                              {static_cast<bool>(std::stoi(params[28]))}
 {
     _name = __FUNCTION__;
 }

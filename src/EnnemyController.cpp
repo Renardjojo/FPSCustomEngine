@@ -27,7 +27,7 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _player{&Scene::getCurrentScene()->getGameObject(params[3])},
       _state{static_cast<States>(std::stoi(params[4]))},
       _checkpointManager{Scene::getCurrentScene()->getGameObject(params[5]).getComponent<Checkpoint>(), 
-      Vec3{std::stof(params[6]),std::stof(params[7]),std::stof(params[8])}, std::stoi(params[9])}
+      Vec3{std::stof(params[6]),std::stof(params[7]),std::stof(params[8])}, static_cast<unsigned int>(std::stoi(params[9]))}
 {
     
 }

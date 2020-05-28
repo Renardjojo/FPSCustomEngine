@@ -79,10 +79,10 @@ void PlayerController::shoot()
 
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
                                 "Color",
                                 {"RedMaterial"},
-                                "Plane"};
+                                "PlaneZ"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
