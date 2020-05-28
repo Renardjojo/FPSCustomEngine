@@ -44,7 +44,7 @@ namespace Game
          * @param spawnDelay 
          * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
          */
-        CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemiePrefabs& enemisPrefabs, Engine::Core::Maths::Vec3& spawnPosition, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
+        CircularEnemiesSpawner(Engine::Ressources::GameObject &gameObject, const EnemiePrefabs& enemisPrefabs, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _enemiePrefas                               {enemisPrefabs},
                 _zoneRadius                                 {zoneRadius},
@@ -65,7 +65,7 @@ namespace Game
         {
             _name = __FUNCTION__;
 
-            int count = 5;
+            size_t count = 5;
 
             while (params.size() > count && params[count].substr(0, 2) == "#1")
             {

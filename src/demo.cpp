@@ -1229,7 +1229,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     crate.destroy();
 
 
-    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("Crate")}, {std::string("enemy1")}}, 2.f, 0.5f, 0.f);
+    enemiesContener->addComponent<CircularEnemiesSpawner>(EnemiePrefabs{{std::string("Crate")}, {std::string("enemy1")}}, 2.f, 0.5f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 

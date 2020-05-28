@@ -38,9 +38,9 @@ namespace Game
                 _minSpawnIntervale                          {minSpawnIntervale},
                 _maxSpawnIntervale                          {maxSpawnIntervale}
         {
-            GE_assert(!maxSpawnIntervale >= minSpawnIntervale);
-            GE_assert(!minSpawnIntervale < 0.f);
-            GE_assert(!maxSpawnIntervale < 0.f);
+            GE_assert(!(maxSpawnIntervale >= minSpawnIntervale));
+            GE_assert(!(minSpawnIntervale < 0.f));
+            GE_assert(!(maxSpawnIntervale < 0.f));
             GE_assert(!spawnerPrefabs.empty());
             GE_assert(!enemiesPrefabs.empty());
 
@@ -57,7 +57,7 @@ namespace Game
         {
             _name = __FUNCTION__;
 
-            int count = 3;
+            size_t count = 3;
 
             while (params.size() > count && params[count].substr(0, 2) == "#1")
             {
