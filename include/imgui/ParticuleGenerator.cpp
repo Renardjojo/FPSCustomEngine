@@ -72,7 +72,7 @@ void ParticuleGenerator::update()
         for (auto &&i : _gameObject.children)
         {
             PhysicalObject& physicalObjComp = *(*i).getComponent<PhysicalObject>();
-            physicalObjComp.setVelocity(physicalObjComp.getVelocity() - physicalObjComp.getVelocity() * (_velocityEvolutionCoef * _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDetlaTime()));
+            physicalObjComp.setVelocity(physicalObjComp.getVelocity() - physicalObjComp.getVelocity() * _velocityEvolutionCoef * (_useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime()));
         } 
     }  
 
@@ -100,7 +100,7 @@ void ParticuleGenerator::update()
         return;
     }
 
-    _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDetlaTime();
+    _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime();
 
     while(_delayCount >= _spawnCountBySec)
     {

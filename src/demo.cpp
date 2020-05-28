@@ -1260,6 +1260,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
 void Demo::updateControl()
 {
+    /*
     float dist = 5.f;
     _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
     _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
