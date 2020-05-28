@@ -37,7 +37,7 @@ namespace Engine::Physics::ColliderShape
         }
 
         SphereCollider (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   Collider    (refGameObject),
+            :   Collider    (refGameObject, std::stof(params[4]), std::stof(params[5])),
                 sphere_     (std::stof(params[0]), {std::stof(params[1]), std::stof(params[2]), std::stof(params[3])})
         {
             _name = __FUNCTION__;
@@ -71,6 +71,9 @@ namespace Engine::Physics::ColliderShape
             newNode->append_attribute(doc.allocate_attribute("localCenter0", doc.allocate_string(std::to_string(sphere_.getCenter().e[0]).c_str())));
             newNode->append_attribute(doc.allocate_attribute("localCenter1", doc.allocate_string(std::to_string(sphere_.getCenter().e[1]).c_str())));
             newNode->append_attribute(doc.allocate_attribute("localCenter2", doc.allocate_string(std::to_string(sphere_.getCenter().e[2]).c_str())));
+
+            newNode->append_attribute(doc.allocate_attribute("bounciness", doc.allocate_string(std::to_string(_bounciness).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("friction", doc.allocate_string(std::to_string(_friction).c_str())));
 
             nodeParent->append_node(newNode);
         }

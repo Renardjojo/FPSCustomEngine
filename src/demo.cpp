@@ -18,6 +18,7 @@
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/PushedOnShoot.hpp"
+#include "Game/Nexus.hpp"
 
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Physics/ColliderShape/OrientedBoxCollider.hpp"
@@ -241,7 +242,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
     loadGroundRessource        (ressourceManager);
-    loadCrateRessource          (ressourceManager);  
+    loadCrateRessource          (ressourceManager);
+    loadNexusRessource          (ressourceManager);  
 }
 
 void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
@@ -432,6 +434,29 @@ void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
+void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
+{
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materialAttribs;
+
+    loadObjWithMTL("./ressources/obj/Crystal_low.obj", &attrib, &shape, &materialAttribs);
+
+    ressourceManager.add<Mesh>("NexusMesh" , attrib, shape);
+
+    MaterialAndTextureCreateArg matNexus;
+    matNexus.name_ = "NexusMaterial";
+    matNexus.comp_.shininess = 32.f;
+    matNexus.comp_.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
+    matNexus.pathDiffuseTexture = "./ressources/texture/Nexus.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matNexus);
+        ressourceManager.add<std::vector<Material>>(matNexus.name_, std::move(material));
+    }
+}
+
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
 {
     GameObjectCreateArg rockGameObject  {"Rocks",
@@ -534,6 +559,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
+    player1GO.getComponent<SphereCollider>()->setFriction(0.97f);
 
     playerGameObject.name = "Skin";
     playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
@@ -648,7 +674,7 @@ void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
 void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
 {
     GameObjectCreateArg groundArgGameObject{"Ground",
-                                            {{0.f, -1.f, 0.f},
+                                            {{0.f, -20.f, 0.f},
                                              {0.f, 0.f, 0.f},
                                              {100000.f, 1.f, 100000.f}}};
 
@@ -676,7 +702,7 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-/*    GameObjectCreateArg cubeGameObject{"cube1",
+    GameObjectCreateArg cubeGameObject{"cube1",
                                        {{-0.7f, -5.f, 0.f},
                                         {0.f, 0.f, 45.f},
                                         {5.f, 1.f, 5.f}}};
@@ -719,7 +745,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                             "Cube"};
 
     scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
+    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 /*
     GameObjectCreateArg playerGameObject{"Player",
                                          {{-2.f, 5.f, 0.f},
@@ -1239,15 +1265,13 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     PhysicalObject& physicalObjectComp = crate.addComponent<PhysicalObject>();
     physicalObjectComp.setMass(3);
     crate.addComponent<PushedOnShoot>();
-    crate.addComponent<SphereCollider>().setBounciness(0.2f);
-
+    crate.addComponent<SphereCollider>().setBounciness(0.f);
+    crate.getComponent<SphereCollider>()->setFriction(0.97f);
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
 
     enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
-
-    //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
                             &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1272,6 +1296,25 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     //particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+
+    GameObjectCreateArg NexusGameObjectArg{"Nexus"};
+
+    ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                          &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
+                          &ressourceManager.get<Mesh>("NexusMesh"),
+                          "LightAndTexture",
+                          "NexusMaterial",
+                          "NexusMesh"};
+    modelNexusArg.isOpaque = false;
+
+    GameObject& nexus = scene_->add<GameObject>(scene_->getWorld(), NexusGameObjectArg);
+    nexus.setTag("Nexus");
+    nexus.setTranslation(Vec3{15.f, 3.f, 0.f});
+    nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
+    nexus.addComponent<Model>(modelNexusArg);
+    // nexus.addComponent<Model>(modelCrateArg);
+    nexus.addComponent<OrientedBoxCollider>().setBounciness(0.1f);
+    nexus.addComponent<Nexus>();
 }
 
 void Demo::updateControl()

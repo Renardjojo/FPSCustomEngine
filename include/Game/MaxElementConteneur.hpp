@@ -37,7 +37,7 @@ namespace Game
 
         MaxElementConteneur (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   Engine::Core::Component::ScriptComponent    {refGameObject},
-                _maxElement                                 {std::stof(params[0])}
+                _maxElement                                 {static_cast<unsigned int>(std::stoi(params[0]))}
         {
             _name = __FUNCTION__;
         }

@@ -39,7 +39,7 @@ namespace Engine::Physics::ColliderShape
         }
 
         OrientedBoxCollider (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   Collider    (refGameObject),
+            :   Collider    (refGameObject,  std::stof(params[15]), std::stof(params[16])),
                 orientedBox_     (Engine::Core::Maths::Referential{  {std::stof(params[0]), std::stof(params[1]), std::stof(params[2])},
                                                                     {std::stof(params[3]), std::stof(params[4]), std::stof(params[5])},
                                                                     {std::stof(params[6]), std::stof(params[7]), std::stof(params[8])},
@@ -98,6 +98,9 @@ namespace Engine::Physics::ColliderShape
             newNode->append_attribute(doc.allocate_attribute("rightLenght", doc.allocate_string(std::to_string(orientedBox_.getExtI()).c_str())));
             newNode->append_attribute(doc.allocate_attribute("upLenght", doc.allocate_string(std::to_string(orientedBox_.getExtJ()).c_str())));
             newNode->append_attribute(doc.allocate_attribute("forwardLenght", doc.allocate_string(std::to_string(orientedBox_.getExtK()).c_str())));
+
+            newNode->append_attribute(doc.allocate_attribute("bounciness", doc.allocate_string(std::to_string(_bounciness).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("friction", doc.allocate_string(std::to_string(_friction).c_str())));
 
             nodeParent->append_node(newNode);
         }

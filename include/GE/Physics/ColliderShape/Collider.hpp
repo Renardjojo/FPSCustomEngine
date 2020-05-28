@@ -24,6 +24,7 @@ namespace Engine::Physics::ColliderShape
     public:
 
         Collider(Engine::Ressources::GameObject &refGameObject);
+        Collider(Engine::Ressources::GameObject &refGameObject, float bounciness, float friction);
         Collider(const Collider &other);
         Collider(Collider &&other);
         virtual ~Collider();
@@ -39,20 +40,23 @@ namespace Engine::Physics::ColliderShape
                 function(hitInfo);
         }
 
-        Engine::Physics::PhysicalObject* GetAttachedPhysicalObject() { return attachedPhysicalObject; }
-        void SetAttachedPhysicalObject(Engine::Physics::PhysicalObject* newPhysicalBody) { attachedPhysicalObject = newPhysicalBody; }
+        Engine::Physics::PhysicalObject* GetAttachedPhysicalObject() { return _attachedPhysicalObject; }
+        void SetAttachedPhysicalObject(Engine::Physics::PhysicalObject* newPhysicalBody) { _attachedPhysicalObject = newPhysicalBody; }
 
-        float getBounciness() { return bounciness_; }
-        void setBounciness(float bounciness) { bounciness_ = bounciness; }
+        float getBounciness() { return _bounciness; }
+        void setBounciness(float bounciness) { _bounciness = bounciness; }
+
+        float getFriction() { return _friction; }
+        void setFriction(float friction) { _friction = friction; }
 
         std::vector<std::function<void(HitInfo&)>> functions;
         
     protected:
 
-        Engine::Physics::PhysicalObject* attachedPhysicalObject;
+        Engine::Physics::PhysicalObject* _attachedPhysicalObject;
 
-        float bounciness_{0.5};
-        float friction_{0};
+        float _bounciness{0.5};
+        float _friction{1};
     };
 } /*namespace Engine::Physics::Collider*/
 

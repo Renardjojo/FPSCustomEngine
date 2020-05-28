@@ -42,6 +42,11 @@ void Nexus::fixedUpdate()
 {
 }
 
+void Nexus::onCollisionEnter(HitInfo& hitInfo)
+{
+    (void)hitInfo;
+}
+
 void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
 {
     if (!nodeParent)

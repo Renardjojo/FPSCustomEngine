@@ -16,21 +16,28 @@ namespace Game
         {
             Idle = 0,
             Walking = 1,
-            Chasing = 2
+            Striking = 2,
+            Chasing = 3
         };
 
     private:
+        Engine::Ressources::GameObject* _player;
+        Engine::Ressources::GameObject* _nexus{nullptr};
+        States _state{States::Walking};
+        Game::CheckpointManager _checkpointManager;
         float _radius{5.f};
         float _exclusionRadius{0.6f};
         float _speed{5.f};
-        Engine::Ressources::GameObject* _player;
-        States _state{States::Walking};
-        Game::CheckpointManager _checkpointManager;
+        float _attackSpeed{1.f};
+        float _cooldown{0.f};
+        int _damage{1};
 
 
         void idle();
         void walk();
         void chasing();
+        void striking();
+
     public:
         EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Game::Checkpoint* checkpoint);
         EnnemyController(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);

@@ -198,7 +198,7 @@ void PlayerController::onCollisionEnter(HitInfo& hitInfo)
     if (hitInfo.gameObject->getTag() == "Ground")
     {
         _isGrounded = true;
-        _physics->setUseGravity(false);
+        // _physics->setIsKinematic(false);
     }
 }
 

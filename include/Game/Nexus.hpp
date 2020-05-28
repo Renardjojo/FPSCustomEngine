@@ -32,7 +32,7 @@ namespace Game
 
         void InflictDamage(int damage) { life -= damage; }
 
-        void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override = 0;
+        void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);
 

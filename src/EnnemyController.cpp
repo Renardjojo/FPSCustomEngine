@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Game/EnnemyController.hpp"
+#include "Game/Nexus.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
@@ -21,13 +22,16 @@ EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player, C
 
 EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
-      _radius{std::stof(params[0])},
-      _exclusionRadius{std::stof(params[1])},
-      _speed{std::stof(params[2])},
-      _player{&Scene::getCurrentScene()->getGameObject(params[3])},
-      _state{static_cast<States>(std::stoi(params[4]))},
-      _checkpointManager{Scene::getCurrentScene()->getGameObject(params[5]).getComponent<Checkpoint>(), 
-      Vec3{std::stof(params[6]),std::stof(params[7]),std::stof(params[8])}, std::stoi(params[9])}
+      _player{&Scene::getCurrentScene()->getGameObject(params[0])},
+      _state{static_cast<States>(std::stoi(params[1]))},
+      _checkpointManager{Scene::getCurrentScene()->getGameObject(params[2]).getComponent<Checkpoint>(), 
+      Vec3{std::stof(params[3]),std::stof(params[4]),std::stof(params[5])}, static_cast<unsigned int>(std::stoi(params[6]))},
+      _radius{std::stof(params[7])},
+      _exclusionRadius{std::stof(params[8])},
+      _speed{std::stof(params[9])},
+      _attackSpeed{std::stof(params[10])},
+      _cooldown{std::stof(params[11])},
+      _damage{std::stoi(params[12])}
 {
     
 }
@@ -35,7 +39,10 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
 void EnnemyController::update()
 {
     if (_player == nullptr)
+    {
+        walk();
         return;
+    }
 
     switch (_state)
     {
@@ -45,6 +52,9 @@ void EnnemyController::update()
 
     case States::Chasing:
         chasing();
+        break;
+
+    case States::Striking:
         break;
 
     case States::Walking:
@@ -82,9 +92,26 @@ void EnnemyController::chasing()
         _state = States::Idle;
 }
 
+void EnnemyController::striking()
+{
+    _cooldown += TimeSystem::getDeltaTime();
+   if (_nexus)
+   {
+        if (_cooldown >= _attackSpeed)
+        {
+           _nexus->getComponent<Nexus>()->InflictDamage(_damage);
+           _cooldown = 0.f;
+        }
+   }
+}
+
 void EnnemyController::onCollisionEnter(Engine::Physics::ColliderShape::HitInfo &hitInfo)
 {
-    (void)hitInfo;
+    if (hitInfo.gameObject->CompareTag("Nexus"))
+    {
+        _state = Striking;
+        _nexus = hitInfo.gameObject;
+    }
 }
 
 void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
@@ -95,18 +122,21 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
 
     newNode->append_attribute(doc.allocate_attribute("type", "EnnemyController"));
 
-    newNode->append_attribute(doc.allocate_attribute("radius", doc.allocate_string(std::to_string(_radius).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("exclusionRadius", doc.allocate_string(std::to_string(_exclusionRadius).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("speed", doc.allocate_string(std::to_string(_speed).c_str())));
     newNode->append_attribute(doc.allocate_attribute("player", doc.allocate_string(_player->getRelativePath().c_str())));
     newNode->append_attribute(doc.allocate_attribute("state", doc.allocate_string(std::to_string(_state).c_str())));
 
     newNode->append_attribute(doc.allocate_attribute("checkpointName", doc.allocate_string(_checkpointManager._checkpoints->getGameObject().getRelativePath().c_str())));
-
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetX", doc.allocate_string(std::to_string(_checkpointManager._targetPos.x).c_str())));
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetY", doc.allocate_string(std::to_string(_checkpointManager._targetPos.y).c_str())));
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetZ", doc.allocate_string(std::to_string(_checkpointManager._targetPos.z).c_str())));
     newNode->append_attribute(doc.allocate_attribute("checkpointNumber", doc.allocate_string(std::to_string(_checkpointManager._cpNumber).c_str())));
+
+    newNode->append_attribute(doc.allocate_attribute("radius", doc.allocate_string(std::to_string(_radius).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("exclusionRadius", doc.allocate_string(std::to_string(_exclusionRadius).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("speed", doc.allocate_string(std::to_string(_speed).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("attackSpeed", doc.allocate_string(std::to_string(_attackSpeed).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("cooldown", doc.allocate_string(std::to_string(_cooldown).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("damage", doc.allocate_string(std::to_string(_damage).c_str())));
 
     nodeParent->append_node(newNode);
 }
