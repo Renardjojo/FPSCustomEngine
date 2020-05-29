@@ -12,9 +12,7 @@
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
 #include "GE/LowRenderer/model.hpp"
-#include "GE/Ressources/sample.hpp"
 #include "GE/Ressources/material.hpp"
-#include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "GE/Core/Maths/vec.hpp"
@@ -71,6 +69,7 @@ namespace Game
             #pragma region methods
 
             void loadRessources             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSounds                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadRockRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTreeRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyboxRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);

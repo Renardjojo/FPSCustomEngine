@@ -37,6 +37,8 @@ using namespace Engine::LowRenderer::EditorTools;
 #include "Game/PlayerController.hpp"
 #include "Game/EnnemyController.hpp"
 #include "Game/Checkpoint.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
 
 #include <SDL2/SDL_mouse.h>
 #include <vector>
@@ -55,17 +57,17 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
-Demo::Demo(Engine::GE& gameEngine)
-    :   _gameEngine         {gameEngine},
-        _scene              {},
-        flagleftClicIsDown  {false},
-        usingMouse          {true},
-        dirCamera           {0.f, 0.f, -1.f}
+Demo::Demo(Engine::GE &gameEngine)
+    : _gameEngine{gameEngine},
+      _scene{},
+      flagleftClicIsDown{false},
+      usingMouse{true},
+      dirCamera{0.f, 0.f, -1.f}
 {
     _scene = std::make_unique<Scene>();
     _gameEngine.ressourceManager_.use();
 
-        Scene::_currentScene = &_scene;
+    Scene::_currentScene = &_scene;
 
     loadRessources(_gameEngine.ressourceManager_);
     loadCamera();
@@ -77,6 +79,7 @@ Demo::Demo(Engine::GE& gameEngine)
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
     loadReferential(_gameEngine.ressourceManager_);
+    loadSounds(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
 
@@ -97,7 +100,7 @@ Demo::Demo(Engine::GE& gameEngine)
 void Demo::update() noexcept
 {
     SDL_ShowCursor(usingMouse);
-    SDL_CaptureMouse(usingMouse? SDL_FALSE :SDL_TRUE);
+    SDL_CaptureMouse(usingMouse ? SDL_FALSE : SDL_TRUE);
     SDL_SetRelativeMouseMode(usingMouse ? SDL_FALSE : SDL_TRUE);
 
     UISystem::update(_gameEngine);
@@ -139,7 +142,6 @@ void Demo::display() const noexcept
 
     glUseProgram(0);
 }
-
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
@@ -207,8 +209,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Mesh>("Plane", Mesh::createPlane());
 
     MaterialAndTextureCreateArg matBulletHole;
-    matBulletHole.name_                = "BulletHole";
-    matBulletHole.pathDiffuseTexture   = "./ressources/texture/bulletHole.png";
+    matBulletHole.name_ = "BulletHole";
+    matBulletHole.pathDiffuseTexture = "./ressources/texture/bulletHole.png";
 
     {
         std::vector<Material> material;
@@ -218,17 +220,30 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     //loadRockRessource          (ressourceManager);
     //loadTreeRessource          (ressourceManager);
-    loadSkyboxRessource        (ressourceManager);
-    loadGunRessource           (ressourceManager);
-    loadPseudoRessource        (ressourceManager);
-    loadPlayerRessource        (ressourceManager);
+    loadSkyboxRessource(ressourceManager);
+    loadGunRessource(ressourceManager);
+    loadPseudoRessource(ressourceManager);
+    loadPlayerRessource(ressourceManager);
     //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
-    loadGroundRessource        (ressourceManager);
-    loadCrateRessource          (ressourceManager);  
+    loadGroundRessource(ressourceManager);
+    loadCrateRessource(ressourceManager);
+}
+void Demo::loadSounds(t_RessourcesManager &rm)
+{
+    SoundPlayer::initialize();
+    //SoundPlayer::listDevices();
+    rm.add<Sound>("gunshot","./ressources/sound/9_mm_gunshot-mike-koenig-123.wav");
+    
+    Sound& bg = rm.add<Sound>("background","./ressources/music/dark_forces.wav");
+    bg.setGain(0.35f);
+    bg.setLooping(true);
+
+    //play background sound at startup
+    SoundPlayer::play(bg);
 }
 
-void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
+void Demo::loadRockRessource(t_RessourcesManager &ressourceManager)
 {
     Attrib attrib;
     std::vector<Shape> shape;
@@ -242,15 +257,15 @@ void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("RockMaterials", std::move(material));
     }
 }
 
-void Demo::loadTreeRessource          (t_RessourcesManager& ressourceManager)
+void Demo::loadTreeRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
+    Attrib attrib;
+    std::vector<Shape> shape;
     std::vector<MaterialAttrib> materialAttribs;
 
     loadObjWithMTL("./ressources/obj/Tree.obj", &attrib, &shape, &materialAttribs);
@@ -261,12 +276,12 @@ void Demo::loadTreeRessource          (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("TreeMaterials", std::move(material));
     }
 }
 
-void Demo::loadSkyboxRessource        (t_RessourcesManager& ressourceManager)
+void Demo::loadSkyboxRessource(t_RessourcesManager &ressourceManager)
 {
     MaterialAndTextureCreateArg matSkybox;
     matSkybox.name_ = "SkyBox";
@@ -279,10 +294,10 @@ void Demo::loadSkyboxRessource        (t_RessourcesManager& ressourceManager)
     ressourceManager.add<Mesh>("SkyboxMesh", "./ressources/obj/skybox.obj");
 }
 
-void Demo::loadGunRessource           (t_RessourcesManager& ressourceManager)
+void Demo::loadGunRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
+    Attrib attrib;
+    std::vector<Shape> shape;
     std::vector<MaterialAttrib> materialAttribs;
 
     loadObjWithMTL("./ressources/obj/World_war_II_Sniper_gun_3d_models.obj", &attrib, &shape, &materialAttribs);
@@ -293,18 +308,18 @@ void Demo::loadGunRessource           (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("SniperMaterials", std::move(material));
     }
 }
 
-void Demo::loadPseudoRessource        (t_RessourcesManager& ressourceManager)
+void Demo::loadPseudoRessource(t_RessourcesManager &ressourceManager)
 {
     FontCreateArg fontArg;
-    fontArg.fontRoot    = "./ressources/font/COURIER.ttf";
-    fontArg.fontSize    = 25;
+    fontArg.fontRoot = "./ressources/font/COURIER.ttf";
+    fontArg.fontSize = 25;
 
-    Font& font  = ressourceManager.add<Font>("COURIER", fontArg);
+    Font &font = ressourceManager.add<Font>("COURIER", fontArg);
 
     TextCreateArg textArg;
     textArg.text = "Mjr. Cavalsky";
@@ -312,11 +327,11 @@ void Demo::loadPseudoRessource        (t_RessourcesManager& ressourceManager)
     textArg.color = {0.5f, 0.5f, 0.f, 1.f};
 
     MaterialCreateArg matText;
-    matText.name                = "PseudoMaterial";
-    matText.pTexture            = std::make_unique<Text>(textArg);
-    matText.comp.ambient.ki     = 1.f;
-    matText.comp.diffuse.ki     = 0.f;
-    matText.comp.specular.ki    = 0.f;
+    matText.name = "PseudoMaterial";
+    matText.pTexture = std::make_unique<Text>(textArg);
+    matText.comp.ambient.ki = 1.f;
+    matText.comp.diffuse.ki = 0.f;
+    matText.comp.specular.ki = 0.f;
 
     {
         std::vector<Material> material;
@@ -325,11 +340,10 @@ void Demo::loadPseudoRessource        (t_RessourcesManager& ressourceManager)
     }
 }
 
-
-void Demo::loadPlayerRessource        (t_RessourcesManager& ressourceManager)
+void Demo::loadPlayerRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
+    Attrib attrib;
+    std::vector<Shape> shape;
     std::vector<MaterialAttrib> materialAttribs;
 
     loadObjWithMTL("./ressources/obj/CODSoldier.obj", &attrib, &shape, &materialAttribs);
@@ -340,15 +354,15 @@ void Demo::loadPlayerRessource        (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("Soldier1Materials", std::move(material));
-    } 
+    }
 }
 
-void Demo::loadTowerRessource         (t_RessourcesManager& ressourceManager)
+void Demo::loadTowerRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
+    Attrib attrib;
+    std::vector<Shape> shape;
     std::vector<MaterialAttrib> materialAttribs;
 
     loadObjWithMTL("./ressources/obj/guardTower.obj", &attrib, &shape, &materialAttribs);
@@ -359,15 +373,15 @@ void Demo::loadTowerRessource         (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("GuardTowerMaterials", std::move(material));
     }
 }
 
-void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
+void Demo::loadSpotLightRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
+    Attrib attrib;
+    std::vector<Shape> shape;
     std::vector<MaterialAttrib> materialAttribs;
 
     loadObjWithMTL("./ressources/obj/spotLight.obj", &attrib, &shape, &materialAttribs);
@@ -378,15 +392,14 @@ void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
-        material.assign (materialAttribs.begin(),materialAttribs.end());
+        material.assign(materialAttribs.begin(), materialAttribs.end());
         ressourceManager.add<std::vector<Material>>("SpotLightMaterial", std::move(material));
     }
 }
 
-
-void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
+void Demo::loadGroundRessource(t_RessourcesManager &ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(1000));
+    ressourceManager.add<Mesh>("GroundMesh", Mesh::createPlane(1000));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name_ = "Ground";
@@ -400,9 +413,9 @@ void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
         material.emplace_back(matGround);
         ressourceManager.add<std::vector<Material>>(matGround.name_, std::move(material));
     }
-}   
+}
 
-void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
+void Demo::loadCrateRessource(t_RessourcesManager &ressourceManager)
 {
     MaterialAndTextureCreateArg matCrate;
     matCrate.name_ = "CrateMaterial";
@@ -416,23 +429,23 @@ void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
+void Demo::loadRock(t_RessourcesManager &ressourceManager, unsigned int number)
 {
-    GameObjectCreateArg rockGameObject  {"Rocks",
+    GameObjectCreateArg rockGameObject{"Rocks",
                                        {{0.f, 0.f, 0.f},
                                         {0.f, 0.f, 0.f},
                                         {1.f, 1.f, 1.f}}};
 
-    std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("RockMaterials");
-    
+    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("RockMaterials");
+
     ModelCreateArg rockModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &vecMaterials,
-                            &ressourceManager.get<Mesh>("RockMesh"),
-                            "LightAndTexture",
-                            "RockMaterials",
-                            "RockMesh"};
-    
-    GameObject& rockContener = _scene->add<GameObject>(_scene->getWorld(), rockGameObject);
+                                &vecMaterials,
+                                &ressourceManager.get<Mesh>("RockMesh"),
+                                "LightAndTexture",
+                                "RockMaterials",
+                                "RockMesh"};
+
+    GameObject &rockContener = _scene->add<GameObject>(_scene->getWorld(), rockGameObject);
 
     /*Create rock with random size, position and rotation and add it on rock contener*/
     for (size_t i = 0; i < number; i++)
@@ -449,24 +462,24 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
     }
 }
 
-void Demo::loadTree                   (t_RessourcesManager& ressourceManager, unsigned int number)
+void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
 {
-    GameObjectCreateArg treeGameObject  {"Trees",
+    GameObjectCreateArg treeGameObject{"Trees",
                                        {{0.f, 0.f, 0.f},
                                         {0.f, 0.f, 0.f},
                                         {1.f, 1.f, 1.f}}};
 
-    GameObject& treeContener = _scene->add<GameObject>(_scene->getWorld(), treeGameObject);
+    GameObject &treeContener = _scene->add<GameObject>(_scene->getWorld(), treeGameObject);
 
-    std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("TreeMaterials");
-    
+    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("TreeMaterials");
+
     ModelCreateArg treeModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &vecMaterials,
-                            &ressourceManager.get<Mesh>("TreeMesh"),
-                            "LightAndTexture",
-                            "TreeMaterials",
-                            "TreeMesh"};
-    
+                                &vecMaterials,
+                                &ressourceManager.get<Mesh>("TreeMesh"),
+                                "LightAndTexture",
+                                "TreeMaterials",
+                                "TreeMesh"};
+
     /*Create tree with random size, position and rotation and add it on tre contener*/
     for (size_t i = 0; i < number; i++)
     {
@@ -483,7 +496,7 @@ void Demo::loadTree                   (t_RessourcesManager& ressourceManager, un
     }
 }
 
-void Demo::loadSkybox                 (t_RessourcesManager& ressourceManager)
+void Demo::loadSkybox(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg skyboxArgGameObject{"Skybox",
                                             {{0.f, 0.f, 0.f},
@@ -491,29 +504,29 @@ void Demo::loadSkybox                 (t_RessourcesManager& ressourceManager)
                                              {10.f, 10.f, 10.f}}};
 
     ModelCreateArg skyboxArg{&ressourceManager.get<Shader>("SkyboxShader"),
-                            &ressourceManager.get<std::vector<Material>>("SkyboxMaterial"),
-                            &ressourceManager.get<Mesh>("SkyboxMesh"),
-                            "SkyboxShader",
-                            "SkyboxMaterial",
-                            "SkyboxMesh", true, false};
+                             &ressourceManager.get<std::vector<Material>>("SkyboxMaterial"),
+                             &ressourceManager.get<Mesh>("SkyboxMesh"),
+                             "SkyboxShader",
+                             "SkyboxMaterial",
+                             "SkyboxMesh", true, false};
 
     _scene->add<GameObject>(_scene->getWorld(), skyboxArgGameObject).addComponent<Model>(skyboxArg);
 }
 
-void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
+void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg playerGameObject    {"Players",
-                                            {{0.f, 0.f, 0.f},
-                                            {0.f, 0.f, 0.f},
-                                            {1.f, 1.f, 1.f}}};
+    GameObjectCreateArg playerGameObject{"Players",
+                                         {{0.f, 0.f, 0.f},
+                                          {0.f, 0.f, 0.f},
+                                          {1.f, 1.f, 1.f}}};
 
-    GameObject& playerContener = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
+    GameObject &playerContener = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
 
-    std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("Soldier1Materials");
+    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("Soldier1Materials");
 
     playerGameObject.name = "Player1";
     playerGameObject.transformArg.position = {2.f, 10.f, 2.f};
-    GameObject& player1GO = _scene->add<GameObject>(playerContener, playerGameObject);
+    GameObject &player1GO = _scene->add<GameObject>(playerContener, playerGameObject);
     player1GO.addComponent<PlayerController>();
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
@@ -523,113 +536,116 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
     playerGameObject.transformArg.rotation = {0.f, 0.f, 0.f};
     playerGameObject.transformArg.scale = {0.18f, 0.18f, 0.18f};
-    
-    ModelCreateArg soldierModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                    &vecMaterials,
-                                    &ressourceManager.get<Mesh>("Soldier1Mesh"),
-                                    "LightAndTexture",
-                                    "Soldier1Materials",
-                                    "Soldier1Mesh"};
 
-    GameObject& skinPlayer1GO = _scene->add<GameObject>(player1GO, playerGameObject);
+    ModelCreateArg soldierModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                   &vecMaterials,
+                                   &ressourceManager.get<Mesh>("Soldier1Mesh"),
+                                   "LightAndTexture",
+                                   "Soldier1Materials",
+                                   "Soldier1Mesh"};
+
+    GameObject &skinPlayer1GO = _scene->add<GameObject>(player1GO, playerGameObject);
     skinPlayer1GO.addComponent<Model>(soldierModelArg);
 
     //load guns
-    GameObjectCreateArg sniperGameObject    {"Sniper",
-                                            {{-0.5f, -1.5f, 3.2f},
-                                            {0.f, -M_PI_2, 0.f},
-                                            {0.02f, 0.02f, 0.02f}}};
+    GameObjectCreateArg sniperGameObject{"Sniper",
+                                         {{-0.5f, -1.5f, 3.2f},
+                                          {0.f, -M_PI_2, 0.f},
+                                          {0.02f, 0.02f, 0.02f}}};
 
-    std::vector<Material>& vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
+    std::vector<Material> &vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
 
     ModelCreateArg sniperModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                    &vecMaterialsGun,
-                                    &ressourceManager.get<Mesh>("SniperMesh"),
-                                    "LightAndTexture",
-                                    "SniperMaterials",
-                                    "SniperMesh"};
+                                  &vecMaterialsGun,
+                                  &ressourceManager.get<Mesh>("SniperMesh"),
+                                  "LightAndTexture",
+                                  "SniperMaterials",
+                                  "SniperMesh"};
 
     _scene->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
 
     //load billboards
-    std::vector<Material>& vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
+    std::vector<Material> &vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
     Size textureSize = vecMaterialsPseudo[0].getPDiffuseTexture()->getSize();
 
-    GameObjectCreateArg pseudoGameObject    {"Pseudo",
-                                            {{0.0f, 5.0f, 0.0f},
-                                            {0.f, 0.f, 0.f},
-                                            {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f}}};
+    GameObjectCreateArg pseudoGameObject{"Pseudo",
+                                         {{0.0f, 5.0f, 0.0f},
+                                          {0.f, 0.f, 0.f},
+                                          {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f}}};
 
-    ModelCreateArg planeArg    { &ressourceManager.get<Shader>("TextureOnly"), 
-                                 &vecMaterialsPseudo,
-                                 &ressourceManager.get<Mesh>("Plane"),
-                                "TextureOnly",
-                                "PseudoMaterial",
-                                "Plane", true, false};
+    ModelCreateArg planeArg{&ressourceManager.get<Shader>("TextureOnly"),
+                            &vecMaterialsPseudo,
+                            &ressourceManager.get<Mesh>("Plane"),
+                            "TextureOnly",
+                            "PseudoMaterial",
+                            "Plane", true, false};
 
     _scene->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 }
 
-void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
+void Demo::loadTower(t_RessourcesManager &ressourceManager)
 {
     //create the tower
     GameObjectCreateArg towerArgGameObject{"Tower",
-                                            {{0.f, 0.f, 0.f},
+                                           {{0.f, 0.f, 0.f},
                                             {0.f, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
 
     ModelCreateArg towerModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("GuardTowerMaterials"),
-                                &ressourceManager.get<Mesh>("GuardTowerMesh"),
-                                "LightAndTexture",
-                                "GuardTowerMaterials",
-                                "GuardTowerMesh"};
+                                 &ressourceManager.get<std::vector<Material>>("GuardTowerMaterials"),
+                                 &ressourceManager.get<Mesh>("GuardTowerMesh"),
+                                 "LightAndTexture",
+                                 "GuardTowerMaterials",
+                                 "GuardTowerMesh"};
 
-    GameObject& towerGO = _scene->add<GameObject>(_scene->getWorld(), towerArgGameObject);
+    GameObject &towerGO = _scene->add<GameObject>(_scene->getWorld(), towerArgGameObject);
     towerGO.addComponent<Model>(towerModelArg);
 
     //create projector
-    GameObjectCreateArg spotLightArgGameObject  {"SpotLight",
-                                                {{0.0f, 48.0f, -5.0f},
+    GameObjectCreateArg spotLightArgGameObject{"SpotLight",
+                                               {{0.0f, 48.0f, -5.0f},
                                                 {M_PI, 0.f, 0.f},
                                                 {0.05f, 0.05f, 0.05f}}};
 
-    ModelCreateArg spotLightModelArg    {&ressourceManager.get<Shader>("LightAndTexture"),
-                                        &ressourceManager.get<std::vector<Material>>("SpotLightMaterial"),
-                                        &ressourceManager.get<Mesh>("SpotLightMesh"),
-                                        "LightAndTexture",
-                                        "SpotLightMaterial",
-                                        "SpotLightMesh"};
+    ModelCreateArg spotLightModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                     &ressourceManager.get<std::vector<Material>>("SpotLightMaterial"),
+                                     &ressourceManager.get<Mesh>("SpotLightMesh"),
+                                     "LightAndTexture",
+                                     "SpotLightMaterial",
+                                     "SpotLightMesh"};
 
-    GameObject& spotLightGO = _scene->add<GameObject>(towerGO, spotLightArgGameObject);
+    GameObject &spotLightGO = _scene->add<GameObject>(towerGO, spotLightArgGameObject);
     spotLightGO.addComponent<Model>(spotLightModelArg);
 
     //create light
-    GameObjectCreateArg lightArgGameObject      {"light",
-                                                {{0.0f, 90.0f, -50.0f},
-                                                {0, 0.f, 0.f},
-                                                {21.f, 21.f, 21.f}}};
+    GameObjectCreateArg lightArgGameObject{"light",
+                                           {{0.0f, 90.0f, -50.0f},
+                                            {0, 0.f, 0.f},
+                                            {21.f, 21.f, 21.f}}};
 
     ModelCreateArg spherModelarg{&ressourceManager.get<Shader>("ColorWithLight"),
-                                &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                                &ressourceManager.get<Mesh>("Sphere"),
-                                "ColorWithLight",
-                                "PinkMaterial",
-                                "Sphere"};
+                                 &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
+                                 &ressourceManager.get<Mesh>("Sphere"),
+                                 "ColorWithLight",
+                                 "PinkMaterial",
+                                 "Sphere"};
 
-    SpotLightCreateArg lightSpotArg {{1.f, 1.f, 1.f, 0.f}, 
-                                     {1.f, 1.f, 1.f, 1.f}, 
-                                     {1.f, 1.f, 1.f, 1.f},
-                                     0.f, 0.005f, 0.f,
-                                     {0.f, -0.5f, 0.6f},
-                                     5.f, 7.f};
+    SpotLightCreateArg lightSpotArg{{1.f, 1.f, 1.f, 0.f},
+                                    {1.f, 1.f, 1.f, 1.f},
+                                    {1.f, 1.f, 1.f, 1.f},
+                                    0.f,
+                                    0.005f,
+                                    0.f,
+                                    {0.f, -0.5f, 0.6f},
+                                    5.f,
+                                    7.f};
 
-    GameObject& lightGO = _scene->add<GameObject>(spotLightGO, lightArgGameObject);
+    GameObject &lightGO = _scene->add<GameObject>(spotLightGO, lightArgGameObject);
     lightGO.addComponent<Model>(spherModelarg);
     lightGO.addComponent<SpotLight>(lightSpotArg).enable(true);
 }
 
-void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
+void Demo::loadGround(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg groundArgGameObject{"Ground",
                                             {{0.f, -1.f, 0.f},
@@ -645,11 +661,11 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
                              true,
                              false};
 
-    GameObject& ground = _scene->add<GameObject>(_scene->getWorld(), groundArgGameObject);
+    GameObject &ground = _scene->add<GameObject>(_scene->getWorld(), groundArgGameObject);
     ground.addComponent<Model>(groundArg);
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
-} 
+}
 
 void Demo::loadCamera()
 {
@@ -660,7 +676,7 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-/*    GameObjectCreateArg cubeGameObject{"cube1",
+    /*    GameObjectCreateArg cubeGameObject{"cube1",
                                        {{-0.7f, -5.f, 0.f},
                                         {0.f, 0.f, 45.f},
                                         {5.f, 1.f, 5.f}}};
@@ -704,7 +720,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     _scene->add<GameObject>(_scene->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
     _scene->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
-/*
+    /*
     GameObjectCreateArg playerGameObject{"Player",
                                          {{-2.f, 5.f, 0.f},
                                           {0.f, 0.f, 0.f},
@@ -731,7 +747,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
                                "ColorWithLight",
                                "RedMaterial",
                                "Sphere"};*/
-/*
+    /*
     GameObject &ReticuleX = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
     ReticuleX.addComponent<Model>(ReticuleModel); 
 
@@ -747,7 +763,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     GameObject &ReticuleZ = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
     ReticuleZ.addComponent<Model>(ReticuleModel);*/
 
-    /*Add life bar on player*//*
+    /*Add life bar on player*/ /*
     GameObjectCreateArg lifeBarGameObject{"lifeBar",
                                           {{0.f, 2.f, 0.f},
                                            {0.f, 0.f, 0.f},
@@ -768,9 +784,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 
     //loadRock                   (ressourceManager, 50);
     //loadTree                   (ressourceManager, 10);
-    loadSkybox                 (ressourceManager);
-    loadPlayer                 (ressourceManager);
-    loadGround                 (ressourceManager);
+    loadSkybox(ressourceManager);
+    loadPlayer(ressourceManager);
+    loadGround(ressourceManager);
     //loadTower                  (ressourceManager);Game
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
@@ -791,7 +807,8 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     DirectionnalLightCreateArg lightArg2{{0.f, 1.f, -1.f},
                                          {1.f, 1.f, 1.f, 0.1f},
                                          {1.f, 1.f, 1.f, 0.7f},
-                                         {1.f, 1.f, 1.f, 1.f}, true};
+                                         {1.f, 1.f, 1.f, 1.f},
+                                         true};
 
     GameObjectCreateArg pointLightGameObjectArg{"PointLight",
                                                 {{5.f, 10.f, -5.f},
@@ -801,7 +818,10 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     PointLightCreateArg lightArg5{{1.f, 1.f, 1.f, 0.f},
                                   {0.f, 1.f, 0.f, 0.7f},
                                   {1.f, 1.f, 1.f, 0.3f},
-                                  0.f, 0.05f, 0.f, false};
+                                  0.f,
+                                  0.05f,
+                                  0.f,
+                                  false};
 
     GameObjectCreateArg spotLightGameObjectArg{"SpotLight",
                                                {{5.f, 10.f, -5.f},
@@ -811,9 +831,12 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
     SpotLightCreateArg lightArg6{{1.f, 1.f, 1.f, 0.f},
                                  {0.f, 1.f, 0.f, 0.7f},
                                  {1.f, 1.f, 1.f, 0.3f},
-                                 0.f, 0.05f, 0.f,
+                                 0.f,
+                                 0.05f,
+                                 0.f,
                                  Vec3::down,
-                                 20.f, 0.5f, 
+                                 20.f,
+                                 0.5f,
                                  false};
 
     GameObject &pl = _scene->add<GameObject>(_scene->getWorld(), lightSphereGameObjectArg);
@@ -868,7 +891,6 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     int tempX = _gameEngine.getWinSize().width / 2.0f;
     int tempY = _gameEngine.getWinSize().heigth / 2.0f;
 
-
 #pragma region Start
 
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader,
@@ -879,7 +901,6 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         _gameEngine.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
     };
-
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader,
                                  tempX - 95, tempY - 100,
@@ -1020,8 +1041,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  tempX + 50, tempY + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
-        .function = [&]() 
-        {
+        .function = [&]() {
         SDL_Scancode key = Input::waitForKey();
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
@@ -1036,13 +1056,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  tempX - 45, tempY + 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
                                  E_GAME_STATE::OPTION)
-    .function = [&]() 
-    {
-        Button* switchButton = &ressourceManager.get<Button>("OptionSwitchButton");
-        Button* upButton = &ressourceManager.get<Button>("OptionForwardButton");
-        Button* downButton = &ressourceManager.get<Button>("OptionBackwardButton");
-        Button* rightButton = &ressourceManager.get<Button>("OptionRightButton");
-        Button* leftButton = &ressourceManager.get<Button>("OptionLeftButton");
+        .function = [&]() {
+        Button *switchButton = &ressourceManager.get<Button>("OptionSwitchButton");
+        Button *upButton = &ressourceManager.get<Button>("OptionForwardButton");
+        Button *downButton = &ressourceManager.get<Button>("OptionBackwardButton");
+        Button *rightButton = &ressourceManager.get<Button>("OptionRightButton");
+        Button *leftButton = &ressourceManager.get<Button>("OptionLeftButton");
         if (switchButton->value.compare("WASD") == 0)
         {
             Input::keyboard.up = SDL_SCANCODE_Z;
@@ -1092,8 +1111,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     std::string shortSaveName;
 
     for (std::string &saves : _gameEngine.savePaths)
-    {    
-        std::cout << saves<< std::endl;
+    {
+        std::cout << saves << std::endl;
     }
 
     for (std::string &saves : _gameEngine.savePaths)
@@ -1158,18 +1177,18 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
     Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
 
     ressourceManager.add<Image>("CrosshairImage",
-                                               t_crosshair.getID(),
-                                               imageShader,
-                                               halfWidth - halfcrosshairSize,
-                                               halfHeight - halfcrosshairSize,
-                                               crosshairSize,
-                                               crosshairSize,
-                                               E_GAME_STATE::RUNNING);
+                                t_crosshair.getID(),
+                                imageShader,
+                                halfWidth - halfcrosshairSize,
+                                halfHeight - halfcrosshairSize,
+                                crosshairSize,
+                                crosshairSize,
+                                E_GAME_STATE::RUNNING);
 }
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
-    GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
+    GameObject *checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"checkpoint1"});
     checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -10, 10});
     checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -10, -10});
 
@@ -1179,13 +1198,13 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
         ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "GreenMaterial",
-                            "Cube"};
+                                &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "ColorWithLight",
+                                "GreenMaterial",
+                                "Cube"};
 
-        GameObject& enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        GameObject &enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
 
         enemy1.addComponent<Model>(modelArg);
         enemy1.addComponent<PhysicalObject>().setMass(1);
@@ -1200,16 +1219,16 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObjectCreateArg CrateGameObjectArg{"Crate"};
 
     ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                          &ressourceManager.get<Mesh>("Cube"),
-                          "LightAndTexture",
-                          "CrateMaterial",
-                          "Cube"};
+                                 &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+                                 &ressourceManager.get<Mesh>("Cube"),
+                                 "LightAndTexture",
+                                 "CrateMaterial",
+                                 "Cube"};
 
-    GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+    GameObject &crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
 
     crate.addComponent<Model>(modelCrateArg);
-    PhysicalObject& physicalObjectComp = crate.addComponent<PhysicalObject>();
+    PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
     physicalObjectComp.setMass(3);
     crate.addComponent<PushedOnShoot>();
     crate.addComponent<SphereCollider>().setBounciness(0.2f);
@@ -1217,17 +1236,16 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-
     enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{std::string("enemy1")}, {std::string("Crate")}}, Vec3{0.f, 4.f, 0.f}, 2.f, 0.5f, 0.f);
 
     //enemiesContener->addComponent<CircularEnemiesSpawner>(EnemieInfo{{modelArg}, {modelArg2}}, Vec3{0.f, 4.f, 0.f}, 2.f, 1.f, 0.f);
 
     ModelCreateArg modelArg3{&ressourceManager.get<Shader>("Color"),
-                            &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                            &ressourceManager.get<Mesh>("Plane"),
-                            "Color",
-                            "GreenMaterial",
-                            "Plane"};
+                             &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                             &ressourceManager.get<Mesh>("Plane"),
+                             "Color",
+                             "GreenMaterial",
+                             "Plane"};
 
     ParticuleGenerator::ParticleSystemCreateArg particalArg;
     particalArg.modelCreateArg = modelArg3;
@@ -1257,9 +1275,8 @@ void Demo::updateControl()
     */
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
-          Editor::_enable = !Editor::_enable;
-          usingMouse = Editor::_enable;
-
+        Editor::_enable = !Editor::_enable;
+        usingMouse = Editor::_enable;
     }
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == E_KEY_STATE::TOUCHED)
     {

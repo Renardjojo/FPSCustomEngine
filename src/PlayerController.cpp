@@ -9,6 +9,8 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
 
 #include <math.h>
 #include <algorithm>
@@ -28,11 +30,11 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-    _camera{Camera::getCamUse()}
+      _rm{t_RessourcesManager::getRessourceManagerUse()},
+      _camera{Camera::getCamUse()}
 {
     _name = __FUNCTION__;
 }
-
 
 void PlayerController::start()
 {
@@ -51,13 +53,18 @@ void PlayerController::update()
 
 void PlayerController::fixedUpdate()
 {
+    if (_isGrounded)
+    {
+        _physics->setVelocity(_physics->getVelocity()*0.85);
+    }
+
     if (_jump && _isGrounded)
     {
-        _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
-        _jump = false;
+        _physics->addForce(Vec3::up * _jumpForce);
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
+    _jump = false;
 
     _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
     _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
@@ -65,24 +72,26 @@ void PlayerController::fixedUpdate()
 
 void PlayerController::shoot()
 {
+    SoundPlayer::play(_rm->get<Sound>("gunshot"));
+
     HitInfo rayInfo;
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
-        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                                "TextureOnly", 
-                                                {"BulletHole"}, 
-                                                "Plane"};
+        GameObjectCreateArg decaleGOPref{"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+        ModelCreateArg modelDecaleGOPref{&_rm->get<Shader>("TextureOnly"),
+                                         &_rm->get<std::vector<Material>>("BulletHole"),
+                                         &_rm->get<Mesh>("Plane"),
+                                         "TextureOnly",
+                                         {"BulletHole"},
+                                         "Plane"};
 
-        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                "Color",
-                                {"RedMaterial"},
-                                "Plane"};
+        ModelCreateArg modelArg3{&_rm->get<Shader>("Color"),
+                                 &_rm->get<std::vector<Material>>("RedMaterial"),
+                                 &_rm->get<Mesh>("Plane"),
+                                 "Color",
+                                 {"RedMaterial"},
+                                 "Plane"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -95,7 +104,7 @@ void PlayerController::shoot()
         particalArg.physicalObjectCreateArg.mass = 1.f;
         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+        GameObject &particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
         particleGO.addComponent<LifeDuration>(3.f);
 
@@ -129,7 +138,7 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-    mouseMotion *= _mouseSpeed;
+    mouseMotion *= _mouseSpeed* TimeSystem::getDeltaTime();
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
@@ -212,6 +221,6 @@ void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
     newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
-    
+
     nodeParent->append_node(newNode);
 }

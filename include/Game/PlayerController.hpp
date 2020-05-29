@@ -21,10 +21,12 @@ namespace Game
         };
 
     private:
+        Engine::Ressources::t_RessourcesManager* _rm;
         Engine::Physics::PhysicalObject *_physics;
-        float _mouseSpeed{0.005f};
-        float _playerForce{100.f};
-        float _playerMaxSpeed{10.f};
+        float _mouseSpeed{1.f};
+        float _playerForce{600.f};
+        float _jumpForce{450.f};
+        float _playerMaxSpeed{30.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};

@@ -11,8 +11,8 @@
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
 #include "GE/LowRenderer/model.hpp"
-#include "GE/Ressources/sample.hpp"
-#include "GE/Ressources/music.hpp"
+//#include "GE/Ressources/sample.hpp"
+//#include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/define.h"
@@ -25,6 +25,17 @@ namespace Engine
     class GE
     {
         public:
+            #pragma region attribut
+
+            std::unique_ptr<Core::Renderer::IRenderer>  ren_;
+
+            Engine::Ressources::t_RessourcesManager ressourceManager_;
+
+            E_GAME_STATE gameState;
+
+            std::vector<std::string> savePaths;
+
+            #pragma endregion //!attribut
 
             #pragma region constructor/destructor
 
@@ -48,8 +59,7 @@ namespace Engine
                 ressourceManager_.clearContenorOf<std::vector<Engine::Ressources::Material>>();
                 ressourceManager_.clearContenorOf<Engine::Ressources::Text>();
                 ressourceManager_.clearContenorOf<Engine::Ressources::Texture>();
-                ressourceManager_.clearContenorOf<Engine::Ressources::Sample>();
-                ressourceManager_.clearContenorOf<Engine::Ressources::Music>();
+                ressourceManager_.clearContenorOf<Engine::Ressources::Sound>();
                 ressourceManager_.clearContenorOf<Engine::Ressources::Font>();
                 ressourceManager_.clearContenorOf<Engine::Ressources::Title>();
                 ressourceManager_.clearContenorOf<Engine::Ressources::Button>();
@@ -69,19 +79,6 @@ namespace Engine
 
             #pragma endregion //!accessor
 
-            #pragma region attribut
-
-            std::unique_ptr<Core::Renderer::IRenderer>  ren_;
-
-            Engine::Ressources::t_RessourcesManager ressourceManager_;
-
-            E_GAME_STATE gameState;
-
-            std::vector<std::string> savePaths;
-
-            #pragma endregion //!attribut
-
-        private:
     };
 }//namespace Engine
 
