@@ -55,7 +55,7 @@ void PlayerController::fixedUpdate()
 {
     if (_isGrounded)
     {
-        _physics->setVelocity(_physics->getVelocity()*0.85);
+        _physics->setVelocity(_physics->getVelocity()*_deceleration);
     }
 
     if (_jump && _isGrounded)
@@ -66,7 +66,7 @@ void PlayerController::fixedUpdate()
     }
     _jump = false;
 
-    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
     _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
@@ -78,20 +78,21 @@ void PlayerController::shoot()
     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
-        GameObjectCreateArg decaleGOPref{"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg modelDecaleGOPref{&_rm->get<Shader>("TextureOnly"),
-                                         &_rm->get<std::vector<Material>>("BulletHole"),
-                                         &_rm->get<Mesh>("Plane"),
-                                         "TextureOnly",
-                                         {"BulletHole"},
-                                         "Plane"};
-
+        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+        decaleGOPref.transformArg.scale = Vec3::one / 20.f;
+        ModelCreateArg      modelDecaleGOPref   {&_rm->get<Shader>("LightAndTexture"), 
+                                                &_rm->get<std::vector<Material>>("BulletHole"), 
+                                                &_rm->get<Mesh>("Plane"),
+                                                "LightAndTexture", 
+                                                {"BulletHole"}, 
+                                                "Plane"};
+/*
         ModelCreateArg modelArg3{&_rm->get<Shader>("Color"),
-                                 &_rm->get<std::vector<Material>>("RedMaterial"),
-                                 &_rm->get<Mesh>("Plane"),
-                                 "Color",
-                                 {"RedMaterial"},
-                                 "Plane"};
+                                &_rm->get<std::vector<Material>>("RedMaterial"),
+                                &_rm->get<Mesh>("PlaneZ"),
+                                "Color",
+                                {"RedMaterial"},
+                                "PlaneZ"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -106,10 +107,11 @@ void PlayerController::shoot()
 
         GameObject &particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
-        particleGO.addComponent<LifeDuration>(3.f);
+        particleGO.addComponent<LifeDuration>(3.f);*/
 
         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        //rayInfo.gameObject->destroy();
+        if (rayInfo.gameObject->getTag() != "Ground")
+            rayInfo.gameObject->destroy();
     }
 }
 

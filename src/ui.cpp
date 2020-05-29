@@ -129,9 +129,11 @@ Title::~Title()
 }
 
 ReferencedTitle::ReferencedTitle(Font *_font, Engine::Ressources::Shader *_shader,
-             float _x, float _y, float _w, float _h, SDL_Color _color, int* _value, E_GAME_STATE _whenIsActive)
+             float _x, float _y, float _w, float _h, const SDL_Color& _color, int* _value, const std::string& additionnalTextBeforValue, E_GAME_STATE _whenIsActive)
     :   font(_font),
-        shader(_shader)
+        shader(_shader),
+        _additionnalTextBeforValue {additionnalTextBeforValue},
+        whenIsActive {_whenIsActive}
 {
     x = _x;
     y = _y;
@@ -141,9 +143,6 @@ ReferencedTitle::ReferencedTitle(Font *_font, Engine::Ressources::Shader *_shade
     value = std::to_string(*_value);
 
     color = _color;
-
-    isActive = true;
-    whenIsActive = _whenIsActive;
 
     float wid = WIDTH;
     float hei = HEIGHT;
@@ -214,7 +213,6 @@ void ReferencedTitle::update()
 void ReferencedTitle::draw()
 {
     glDisable(GL_CULL_FACE);
-
     glDisable(GL_DEPTH_TEST);
 
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -237,7 +235,7 @@ void ReferencedTitle::updateTexture()
     Uint32 Rmask, Gmask, Bmask, Amask;
     SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ABGR8888, &bpp, &Rmask, &Gmask, &Bmask, &Amask);
     SDL_Surface *img_rgba8888 = SDL_CreateRGBSurface(0, w, h, bpp, Rmask, Gmask, Bmask, Amask);
-    SDL_Surface *surface = TTF_RenderText_Solid(font->getpFont(), value.c_str(), color);
+    SDL_Surface *surface = TTF_RenderText_Solid(font->getpFont(), (_additionnalTextBeforValue + value).c_str(), color);
     SDL_BlitSurface(surface, NULL, img_rgba8888, NULL);
     SDL_FreeSurface(surface);
 

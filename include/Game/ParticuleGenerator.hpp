@@ -45,6 +45,8 @@ namespace Game
             float                                   spawnDelayOffSet            {0.f};          //in second
             bool                                    isBillBoard                 {false};
             bool                                    useScaledTime               {true};
+            bool                                    instanteParticuleGeneration {false};         //Do not considere the time. Spawn "spawnCountBySec" directely
+            bool                                    stopParticuleGeneration     {false};
         };
 
         private:
@@ -62,6 +64,8 @@ namespace Game
         float                                   _delayCount                 {0.f};          //in second      
         bool                                    _isBillBoard                {false};
         bool                                    _useScaledTime              {true};
+        bool                                    _instanteParticuleGeneration{false};         //Do not considere the time. Spawn "spawnCountBySec" directely
+        bool                                    _stopParticuleGeneration    {false};
         
         protected :
 

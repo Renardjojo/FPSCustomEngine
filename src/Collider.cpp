@@ -16,9 +16,7 @@ Collider::Collider (GameObject& refGameObject)
     PhysicSystem::addCollider(this);
     for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
     {
-        std::cout << script->toString() << std::endl;
         functions.push_back([script](HitInfo& HitInfo){script->onCollisionEnter(HitInfo);});
-
     }       
 }
 

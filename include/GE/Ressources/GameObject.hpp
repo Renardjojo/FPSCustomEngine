@@ -189,9 +189,48 @@ namespace Engine::Ressources
             parentEntity->children.erase(it);
         }
 
-        void destroyChild (GameObject* gameObject) noexcept
+        /**
+         * @brief destroy childen of gameobject
+         * 
+         * @param GameObject 
+         */
+        std::list<std::unique_ptr<GameObject>>::iterator destroyChild (GameObject* pGameObject) noexcept
         {
-            children.remove_if([&](std::unique_ptr<GameObject>& GOPtr){return GOPtr.get() == gameObject;});
+            for (std::list<std::unique_ptr<GameObject>>::iterator it =  children.begin(); it != children.end(); it++)
+            {
+                if ((*it).get() == pGameObject)
+                {
+                    return children.erase(it);
+                }
+            }
+            return children.end();
+        }
+
+        std::list<std::unique_ptr<GameObject>>::iterator destroyChild (const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
+        {
+            return children.erase(it);
+        }
+
+        /**
+         * @brief destroy component of gameobject
+         * 
+         * @param Component 
+         */
+        std::list<std::unique_ptr<Component>>::iterator destroyComponent (Component* pComponent) noexcept
+        {
+            for (std::list<std::unique_ptr<Component>>::iterator it =  _components.begin(); it != _components.end(); it++)
+            {
+                if ((*it).get() == pComponent)
+                {
+                    return _components.erase(it);
+                }
+            }
+            return _components.end();
+        }
+
+        std::list<std::unique_ptr<Component>>::iterator destroyComponent (const std::list<std::unique_ptr<Component>>::iterator& it) noexcept
+        {
+            return _components.erase(it);
         }
 
         virtual 

@@ -219,7 +219,7 @@ void Mesh::draw () const noexcept
 	}
 }
 
-MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY)
+MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY, Axis towardAxis)
 {
 	MeshConstructorArg mesh;
     mesh.objName = "Plane";
@@ -248,10 +248,36 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
     mesh.iBuffer	[0].emplace_back(Indice{3, 2, 1});
 
 	//initialize vertex :
-	mesh.vBuffer	.push_back({-0.5f, 0.f, -0.5});
-	mesh.vBuffer	.push_back({ 0.5f, 0.f, -0.5});
-	mesh.vBuffer	.push_back({ 0.5f, 0.f,  0.5});
-	mesh.vBuffer	.push_back({-0.5f, 0.f,  0.5});
+
+	switch (towardAxis)
+	{
+	case Axis::X:
+		mesh.vBuffer	.push_back({0.f, -0.5f, -0.5});
+		mesh.vBuffer	.push_back({0.f,  0.5f, -0.5});
+		mesh.vBuffer	.push_back({0.f,  0.5f,  0.5});
+		mesh.vBuffer	.push_back({0.f, -0.5f,  0.5});
+		break;
+
+	case Axis::Y:
+		mesh.vBuffer	.push_back({-0.5f, 0.f, -0.5});
+		mesh.vBuffer	.push_back({ 0.5f, 0.f, -0.5});
+		mesh.vBuffer	.push_back({ 0.5f, 0.f,  0.5});
+		mesh.vBuffer	.push_back({-0.5f, 0.f,  0.5});
+		break;
+		
+	case Axis::Z:
+		mesh.vBuffer	.push_back({-0.5f, -0.5, 0.f});
+		mesh.vBuffer	.push_back({ 0.5f, -0.5, 0.f});
+		mesh.vBuffer	.push_back({ 0.5f,  0.5, 0.f});
+		mesh.vBuffer	.push_back({-0.5f,  0.5, 0.f});
+		break;
+	
+	default:
+		functWarning(std::string("Other axis not implemented"))
+		break;
+	}
+
+
 
 	//initialize texture coord : 
 	float shiftX = indexTextureX * textureRepetition;

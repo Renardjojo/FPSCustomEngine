@@ -160,10 +160,12 @@ void UISystem::draw(Engine::GE &gameEngine) noexcept
             continue;
         title->draw();
     }
+
     for (ReferencedTitle *referencedTitle : pReferencedTitles)
     {
-        if (!referencedTitle->isActive || referencedTitle->whenIsActive != gameEngine.gameState)
+        if (referencedTitle->whenIsActive != gameEngine.gameState)
             continue;
+
         referencedTitle->update();
         referencedTitle->draw();
     }
