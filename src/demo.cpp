@@ -73,12 +73,12 @@ Demo::Demo(Engine::GE& gameEngine)
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
-    loadUI(_gameEngine.ressourceManager_);
     loadATH(_gameEngine.ressourceManager_);
     loadEnemies(_gameEngine.ressourceManager_);
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
     loadReferential(_gameEngine.ressourceManager_);
+    loadUI(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
 
@@ -673,112 +673,6 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-/*    GameObjectCreateArg cubeGameObject{"cube1",
-                                       {{-0.7f, -5.f, 0.f},
-                                        {0.f, 0.f, 45.f},
-                                        {5.f, 1.f, 5.f}}};
-
-    ModelCreateArg cube1arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "PinkMaterial",
-                            "Cube"};
-
-    _scene->add<GameObject>(_scene->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    _scene->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
-
-    GameObjectCreateArg cube2GameObject{"cube2",
-                                        {{-5.f, -10.f, 0.f},
-                                         {0.f, 0.f, -45.f},
-                                         {5.f, 1.f, 5.f}}};
-
-    ModelCreateArg cube2arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "DefaultMaterial",
-                            "Cube"};
-
-    _scene->add<GameObject>(_scene->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    _scene->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
-
-    GameObjectCreateArg cube3GameObject{"cube3",
-                                        {{0.f, -11.f, 0.f},
-                                         {0.f, 0.f, 45.f},
-                                         {5.f, 1.f, 5.f}}};
-
-    ModelCreateArg cube3arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "DefaultMaterial",
-                            "Cube"};
-
-    _scene->add<GameObject>(_scene->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    _scene->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();*/
-/*
-    GameObjectCreateArg playerGameObject{"Player",
-                                         {{-2.f, 5.f, 0.f},
-                                          {0.f, 0.f, 0.f},
-                                          {1.0f, 1.0f, 1.0f}}};
-
-    ModelCreateArg playerModel{&ressourceManager.get<Shader>("ColorWithLight"),
-                               &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
-                               &ressourceManager.get<Mesh>("Sphere"),
-                               "ColorWithLight",
-                               "PinkMaterial",
-                               "Sphere"};
-
-    GameObject &player = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
-    player.addComponent<Model>(playerModel);
-
-    GameObjectCreateArg ReticuleGameObject{"Z",
-                                           {{0.f, 0.f, 0.f},
-                                            {0.f, 0.f, 0.f},
-                                            {0.2f, 0.2f, 0.2f}}};
-
-    ModelCreateArg ReticuleModel{&ressourceManager.get<Shader>("ColorWithLight"),
-                               &ressourceManager.get<std::vector<Material>>("BlueMaterial"),
-                               &ressourceManager.get<Mesh>("Sphere"),
-                               "ColorWithLight",
-                               "RedMaterial",
-                               "Sphere"};*/
-/*
-    GameObject &ReticuleX = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
-    ReticuleX.addComponent<Model>(ReticuleModel); 
-
-    ReticuleGameObject.name = "Y";
-    ReticuleModel.pMaterials = &ressourceManager.get<std::vector<Material>>("GreenMaterial");
-
-    GameObject &ReticuleY = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
-    ReticuleY.addComponent<Model>(ReticuleModel); 
-
-    ReticuleGameObject.name = "X";
-    ReticuleModel.pMaterials = &ressourceManager.get<std::vector<Material>>("RedMaterial");
-
-    GameObject &ReticuleZ = _scene->add<GameObject>(_scene->getWorld(), ReticuleGameObject);
-    ReticuleZ.addComponent<Model>(ReticuleModel);*/
-
-    /*Add life bar on player*//*
-    GameObjectCreateArg lifeBarGameObject{"lifeBar",
-                                          {{0.f, 2.f, 0.f},
-                                           {0.f, 0.f, 0.f},
-                                           {1.f, 0.3f, 0.1f}}};
-
-    ModelCreateArg billBoardArg{&ressourceManager.get<Shader>("Color"),
-                                &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                                &ressourceManager.get<Mesh>("Sphere"),
-                                "Color",
-                                "GreenMaterial",
-                                "Sphere"};
-
-    player.addComponent<PlayerController>();
-    player.addComponent<PhysicalObject>();
-    player.getComponent<PhysicalObject>()->setMass(1);
-    player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->setBounciness(0.f);*/
-
     //loadRock                   (ressourceManager, 50);
     //loadTree                   (ressourceManager, 10);
     loadSkybox                 (ressourceManager);
@@ -1148,6 +1042,16 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         .function = [&]() {
         _gameEngine.gameState = E_GAME_STATE::STARTING;
     };
+
+#pragma endregion
+
+#pragma region UI in Game
+
+ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
+                                tempX  - tempX / 10.f, tempY - tempY / 10.f * 9.f,
+                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
+
+//Font *, Engine::Ressources::Shader *, float, float, float, float, const SDL_Color&, int*, const std::string& additionnalTextBeforValue
 
 #pragma endregion
 }

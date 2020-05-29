@@ -51,6 +51,7 @@ namespace Game
          * @return size_t 
          */
         size_t getCurrentWave() const noexcept { return _currentWave; }
+        size_t* getPCurrentWave() noexcept { return &_currentWave; }
 
         /**
          * @brief Return difficulty of the wave. This number is used to compute the number and type of enemies
