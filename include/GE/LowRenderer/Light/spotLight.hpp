@@ -27,7 +27,6 @@ namespace Engine::LowRenderer
         float                                                   linear;
         float                                                   quadratic;
 
-        const Engine::Core::Maths::Vec3&                        direction;
         float                                                   cutOff;
         float                                                   cutOffExponent;
         bool                                                    isEnable {true};
@@ -65,7 +64,6 @@ namespace Engine::LowRenderer
                         float                                                  constant, 
                         float                                                  linear, 
                         float                                                  quadratic,
-                        const Engine::Core::Maths::Vec3&                       direction,
                         float                                                  cutOff,
                         float                                                  cutOffExponent,
                         bool                                                   isEnable = true);
@@ -96,7 +94,6 @@ namespace Engine::LowRenderer
     
             #pragma region attribut
 
-            Engine::Core::Maths::Vec3 direction_; 
             float cutOff_;              //specifies the spotlight's radius.
             float cutOffExponent_;
 

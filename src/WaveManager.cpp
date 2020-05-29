@@ -3,6 +3,7 @@
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/Saves.hpp"
 #include "GE/Core/Maths/Random.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 #include "Game/CircularEntitiesSpawner.hpp"
 

@@ -196,7 +196,7 @@ namespace Engine::Ressources
          */
         std::list<std::unique_ptr<GameObject>>::iterator destroyChild (GameObject* pGameObject) noexcept
         {
-            for (std::list<std::unique_ptr<GameObject>>::iterator it =  children.begin(); it != children.end(); it++)
+            for (std::list<std::unique_ptr<GameObject>>::iterator it = children.begin(); it != children.end(); it++)
             {
                 if ((*it).get() == pGameObject)
                 {
