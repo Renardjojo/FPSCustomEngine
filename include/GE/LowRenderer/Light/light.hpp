@@ -103,6 +103,11 @@ namespace Engine::LowRenderer
             virtual void  setAmbient(const Engine::Ressources::AmbiantComponent& newAmbient)          noexcept { ambientComp_.rgba = newAmbient.rgba; }
             virtual void  setDiffuse(const Engine::Ressources::DiffuseComponent& newDiffuse)          noexcept { diffuseComp_.rgba = newDiffuse.rgba; }
             virtual void  setSpecular(const Engine::Ressources::SpecularComponent& newSpecular)         noexcept { specularComp_.rgba = newSpecular.rgba; }
+
+            virtual void  setAmbient(const Engine::Core::Maths::Vec4& newAmbient)          noexcept { ambientComp_.rgbi = newAmbient; }
+            virtual void  setDiffuse(const Engine::Core::Maths::Vec4& newDiffuse)          noexcept { diffuseComp_.rgbi = newDiffuse; }
+            virtual void  setSpecular(const Engine::Core::Maths::Vec4& newSpecular)         noexcept { specularComp_.rgbi = newSpecular; }
+
             virtual void  enable (bool flag)               throw();
 
             #pragma endregion //!mutator

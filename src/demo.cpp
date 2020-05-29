@@ -1198,7 +1198,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 void Demo::loadTimeManager        (Engine::Ressources::t_RessourcesManager& ressourceManager)
 {
     GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
-    timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 17.f);
+    timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 17.f, 100.f);
 }
 
 void Demo::updateControl()

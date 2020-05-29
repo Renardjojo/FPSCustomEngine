@@ -12,6 +12,7 @@
 #include "GE/Ressources/scene.hpp"
 #include "GE/Core/Debug/assert.hpp"
 #include "GE/Core/Maths/vec.hpp"
+#include "GE/Ressources/type.hpp"
 
 namespace Game
 {
@@ -31,6 +32,7 @@ namespace Game
 
         float    _midDay                {_dayStart + _dayDuration / 2.f};
         float    _midNight              {_dayStart + _nightDuration / 2.f};
+        float    _sunDistance           {100.f};
 
         /*  Day recap :
             3h -> 5h59 : sunrise		        (40,40,70)		->	(100,100,100)
@@ -40,10 +42,20 @@ namespace Game
             21h -> 2h59 : night					(40,40,70)
         */
 
-        const Engine::Core::Maths::Vec4 morningSunLightColor     {0.4f, 0.4f, 0.4f, 1.f};        //Sun light color at the evening
-        const Engine::Core::Maths::Vec4 midDaySunLightColor      {0.7f, 0.7f, 0.7f, 1.f};           //Sun light color at the middday
-        const Engine::Core::Maths::Vec4 eveningSunLightColor     {0.4f, 0.4f, 0.4f, 1.f};        //Sun light color at the morning
-        const Engine::Core::Maths::Vec4 nightColor               {0.15f, 0.15f, 0.27f, 0.6f};     //Sun light color at the night
+        const Engine::Ressources::AmbiantComponent morningSunLightColorAmbiante    {1.f, 1.f, 1.f, 0.3f};        //Sun light color at the evening
+        const Engine::Ressources::AmbiantComponent midDaySunLightColorAmbiante     {1.f, 1.f, 1.f, 0.1f};           //Sun light color at the middday
+        const Engine::Ressources::AmbiantComponent eveningSunLightColorAmbiante    {1.f, 1.f, 1.f, 0.3f};        //Sun light color at the morning
+        const Engine::Ressources::AmbiantComponent nightColorAmbiante              {0.54f, 0.54f, 1.f, 0.4f};     //Sun light color at the night
+
+        const Engine::Ressources::DiffuseComponent morningSunLightColorDiffuse     {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the evening
+        const Engine::Ressources::DiffuseComponent midDaySunLightColorDiffuse      {1.f, 1.f, 1.f, .8f};           //Sun light color at the middday
+        const Engine::Ressources::DiffuseComponent eveningSunLightColorDiffuse     {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the morning
+        const Engine::Ressources::DiffuseComponent nightColorDiffuse               {0.54f, 0.54f, 1.f, 0.f};     //Sun light color at the night
+
+        const Engine::Ressources::SpecularComponent morningSunLightColorSpecular   {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the evening
+        const Engine::Ressources::SpecularComponent midDaySunLightColorSpecular    {1.f, 1.f, 1.f, 1.f};           //Sun light color at the middday
+        const Engine::Ressources::SpecularComponent eveningSunLightColorSpecular   {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the morning
+        const Engine::Ressources::SpecularComponent nightColorSpecular             {0.54f, 0.54f, 1.f, 0.f};     //Sun light color at the night
 
         Engine::LowRenderer::DirectionnalLight* _pSunDirectionnalLight;
 
@@ -55,7 +67,8 @@ namespace Game
                                                                     float nightStart, 
                                                                     float nightDuration,
                                                                     float sunSetDuration,
-                                                                    float currentTime)
+                                                                    float currentTime,
+                                                                    float sunDistance)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _dayStart                                   {dayStart},
                 _dayDuration                                {dayDuration},
@@ -65,7 +78,8 @@ namespace Game
                 _sunSetDuration                             {sunSetDuration},
                 _currentTime                                {std::fmod(currentTime, dayDuration + nightDuration)},
                 _midDay                                     {_dayStart + _dayDuration / 2.f},
-                _midNight                                   {_dayStart + _nightDuration / 2.f}
+                _midNight                                   {_dayStart + _nightDuration / 2.f},
+                _sunDistance                                {sunDistance}
         {
             _name = __FUNCTION__;
 
@@ -97,29 +111,56 @@ namespace Game
                 _currentTime -= _dayDuration + _nightDuration;
             }
 
+            /*move light and sun*/
+            Engine::Core::Maths::Vec3 newDirection;
+            
+            float rot = (_currentTime - _dayStart) * (M_PI * 2.f) / (_dayDuration + _nightDuration);
+            newDirection = {cosf(rot), sinf(rot), 0.f};
+            std::cout << "rot : " << rot* 180.f / M_PI << " " << _currentTime << std::endl; 
+
+            _pSunDirectionnalLight->getGameObject().setTranslation(newDirection * _sunDistance);
+            _pSunDirectionnalLight->setDirection(newDirection);
+
+            /*Manage luminosity and color temperatur*/
             if (_currentTime < _dayStart - _sunRiseDuration) /*night*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(nightColor);
+                _pSunDirectionnalLight->setAmbient(nightColorAmbiante);
+                _pSunDirectionnalLight->setDiffuse(nightColorDiffuse);
+                _pSunDirectionnalLight->setSpecular(nightColorSpecular);
             }
             else if (_currentTime < _dayStart) /*sunRise*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(Engine::Core::Maths::Vec4::lerp(nightColor, morningSunLightColor, (_currentTime - (_dayStart - _sunRiseDuration)) / _sunRiseDuration));
+                float t = (_currentTime - (_dayStart - _sunRiseDuration)) / _sunRiseDuration;
+                _pSunDirectionnalLight->setAmbient(Engine::Core::Maths::Vec4::lerp(nightColorAmbiante.rgbi, morningSunLightColorAmbiante.rgbi, t));
+                _pSunDirectionnalLight->setDiffuse(Engine::Core::Maths::Vec4::lerp(nightColorDiffuse.rgbi, morningSunLightColorDiffuse.rgbi, t));
+                _pSunDirectionnalLight->setSpecular(Engine::Core::Maths::Vec4::lerp(nightColorSpecular.rgbi, morningSunLightColorSpecular.rgbi, t));
             }
             else if (_currentTime < _midDay) /*light increase*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(Engine::Core::Maths::Vec4::lerp(morningSunLightColor, midDaySunLightColor, (_currentTime - _dayStart) / (_midDay - _dayStart)));
+                float t = (_currentTime - _dayStart) / (_midDay - _dayStart);
+                _pSunDirectionnalLight->setAmbient(Engine::Core::Maths::Vec4::lerp(morningSunLightColorAmbiante.rgbi, midDaySunLightColorAmbiante.rgbi, t));
+                _pSunDirectionnalLight->setDiffuse(Engine::Core::Maths::Vec4::lerp(morningSunLightColorDiffuse.rgbi, midDaySunLightColorDiffuse.rgbi, t));
+                _pSunDirectionnalLight->setSpecular(Engine::Core::Maths::Vec4::lerp(morningSunLightColorSpecular.rgbi, midDaySunLightColorSpecular.rgbi, t));
             }
             else if (_currentTime < _nightStart) /*light deacrease*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(Engine::Core::Maths::Vec4::lerp(midDaySunLightColor, eveningSunLightColor, (_currentTime - _midDay) / (_nightStart - _midDay)));
+                float t = (_currentTime - _midDay) / (_nightStart - _midDay);
+                _pSunDirectionnalLight->setAmbient(Engine::Core::Maths::Vec4::lerp(midDaySunLightColorAmbiante.rgbi, eveningSunLightColorAmbiante.rgbi, t));
+                _pSunDirectionnalLight->setDiffuse(Engine::Core::Maths::Vec4::lerp(midDaySunLightColorDiffuse.rgbi, eveningSunLightColorDiffuse.rgbi, t));
+                _pSunDirectionnalLight->setSpecular(Engine::Core::Maths::Vec4::lerp(midDaySunLightColorSpecular.rgbi, eveningSunLightColorSpecular.rgbi, t));
             }
             else if (_currentTime < _nightStart + _sunSetDuration) /*sunset*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(Engine::Core::Maths::Vec4::lerp(eveningSunLightColor, nightColor, (_currentTime - _nightStart) / _sunSetDuration));    
+                float t = (_currentTime - _nightStart) / _sunSetDuration;  
+                _pSunDirectionnalLight->setAmbient(Engine::Core::Maths::Vec4::lerp(eveningSunLightColorAmbiante.rgbi, nightColorAmbiante.rgbi, t));
+                _pSunDirectionnalLight->setDiffuse(Engine::Core::Maths::Vec4::lerp(eveningSunLightColorDiffuse.rgbi, nightColorDiffuse.rgbi, t));
+                _pSunDirectionnalLight->setSpecular(Engine::Core::Maths::Vec4::lerp(eveningSunLightColorSpecular.rgbi, nightColorSpecular.rgbi, t));
             }
             else /*night*/
             {
-                _pSunDirectionnalLight->setGlobalComponent(nightColor);
+                _pSunDirectionnalLight->setAmbient(nightColorAmbiante);
+                _pSunDirectionnalLight->setDiffuse(nightColorDiffuse);
+                _pSunDirectionnalLight->setSpecular(nightColorSpecular);
             }
         }
 
