@@ -17,53 +17,56 @@ namespace Engine::Physics
 {
     struct CollisionHitInfos
     {
-        Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
-        PhysicalObject*                                     optionnalPhysicalObjectPtr1;
-        PhysicalObject*                                     optionnalPhysicalObjectPtr2;
+        Engine::Core::Maths::ShapeRelation::Intersection intersectionsInfo;
+        PhysicalObject *optionnalPhysicalObjectPtr1;
+        PhysicalObject *optionnalPhysicalObjectPtr2;
+    };
+
+    struct ColliderDataAfterCollision
+    {
+        ColliderShape::Collider *collider;
+        Engine::Core::Maths::Vec3 remaningVelocity;
+        Engine::Core::Maths::Vec3 finalVelocity;
+        Engine::Core::Maths::Vec3 lastCollisionPoint;
+        Engine::Core::Maths::Vec3 finalAngularVelocity;
+        bool collided{false};
     };
 
     class PhysicSystem
     {
-        public:
+    public:
+#pragma region constructor / destructor
 
-        #pragma region constructor/destructor
+        PhysicSystem() = delete;
+        PhysicSystem(const PhysicSystem &other) = delete;
+        PhysicSystem(PhysicSystem &&other) = delete;
+        virtual ~PhysicSystem() = delete;
+        PhysicSystem &operator=(PhysicSystem const &) = delete;
+        PhysicSystem &operator=(PhysicSystem &&) = delete;
 
-        PhysicSystem ()					                = delete;
-        PhysicSystem (const PhysicSystem& other)	    = delete;
-        PhysicSystem (PhysicSystem&& other)			    = delete;
-        virtual ~PhysicSystem ()				        = delete;
-        PhysicSystem& operator=(PhysicSystem const&)	= delete;
-        PhysicSystem& operator=(PhysicSystem &&)		= delete;
+#pragma endregion //!constructor/destructor
 
-        #pragma endregion //!constructor/destructor
+#pragma region methods
 
-        #pragma region methods
+        static void update() noexcept;
 
-        static
-        void update () noexcept;
+#pragma endregion //!methods
 
-        #pragma endregion //!methods
-
-        #pragma region accessor
-        #pragma endregion //!accessor
-
-        #pragma region mutator
+#pragma region mutator
 
         /**
          * @brief Add physicalObject (using key word this) on the physic system. This object will be update by the physic system
          * 
          * @param pPhysicalObject 
          */
-        static
-        void addPhysicalObject (PhysicalObject* pPhysicalObject) noexcept
+        static void addPhysicalObject(PhysicalObject *pPhysicalObject) noexcept
         {
             pPhysicalObjects.push_back(pPhysicalObject);
         }
 
-        static
-        void updatePhysicalObjectPointor (PhysicalObject* newPointorPhysicalObject, PhysicalObject* exPointorPhysicalObject) noexcept
+        static void updatePhysicalObjectPointor(PhysicalObject *newPointorPhysicalObject, PhysicalObject *exPointorPhysicalObject) noexcept
         {
-            for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
+            for (std::vector<PhysicalObject *>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {
                 if ((*it) == exPointorPhysicalObject)
                 {
@@ -73,10 +76,9 @@ namespace Engine::Physics
             }
         }
 
-        static
-        void removePhysicalObject (PhysicalObject* pPhysicalObject) noexcept
+        static void removePhysicalObject(PhysicalObject *pPhysicalObject) noexcept
         {
-            for (std::vector<PhysicalObject*>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
+            for (std::vector<PhysicalObject *>::iterator it = pPhysicalObjects.begin(); it != pPhysicalObjects.end(); it++)
             {
                 if ((*it) == pPhysicalObject)
                 {
@@ -86,16 +88,14 @@ namespace Engine::Physics
             }
         }
 
-        static
-        void addCollider (ColliderShape::Collider* pCollider) noexcept
+        static void addCollider(ColliderShape::Collider *pCollider) noexcept
         {
             pColliders.push_back(pCollider);
         }
 
-        static
-        void updateColliderPointor (ColliderShape::Collider* newPointorCollider, ColliderShape::Collider* exPointorCollider) noexcept
+        static void updateColliderPointor(ColliderShape::Collider *newPointorCollider, ColliderShape::Collider *exPointorCollider) noexcept
         {
-            for (std::vector<ColliderShape::Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            for (std::vector<ColliderShape::Collider *>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
             {
                 if ((*it) == exPointorCollider)
                 {
@@ -105,10 +105,9 @@ namespace Engine::Physics
             }
         }
 
-        static
-        void removeCollider (ColliderShape::Collider* pCollider) noexcept
+        static void removeCollider(ColliderShape::Collider *pCollider) noexcept
         {
-            for (std::vector<ColliderShape::Collider*>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
+            for (std::vector<ColliderShape::Collider *>::iterator it = pColliders.begin(); it != pColliders.end(); it++)
             {
                 if ((*it) == pCollider)
                 {
@@ -118,35 +117,25 @@ namespace Engine::Physics
             }
         }
 
-        static
-        bool rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool rayCast(const Engine::Core::Maths::Shape3D::Segment &ray, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool rayCast(const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool rayCast(const Engine::Core::Maths::Vec3 &origin, const Engine::Core::Maths::Vec3 &direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool rayCast(const Engine::Core::Maths::Vec3 &pt1, const Engine::Core::Maths::Vec3 &pt2, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
         /*Trigger ray cast call onCollisionEnter*/
-        static
-        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment &ray, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Vec3 &origin, const Engine::Core::Maths::Vec3 &direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Vec3 &pt1, const Engine::Core::Maths::Vec3 &pt2, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
         /*Trigger ray cast call onCollisionEnter with only tag*/
-        static
-        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool triggerRayCast(const std::string &tag, const Engine::Core::Maths::Shape3D::Segment &ray, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
+        static bool triggerRayCast(const std::string &tag, const Engine::Core::Maths::Vec3 &origin, const Engine::Core::Maths::Vec3 &direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
-        static
-        bool triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept;
-
+        static bool triggerRayCast(const std::string &tag, const Engine::Core::Maths::Vec3 &pt1, const Engine::Core::Maths::Vec3 &pt2, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept;
 
         /*TODO: Can be implemented if all segment/Shape have the good collision function implemented without intersection
         static
@@ -159,42 +148,24 @@ namespace Engine::Physics
         bool rayCast(const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2) noexcept;
         */
 
-        static 
-        const Engine::Core::Maths::Vec3& getGravity() noexcept { return gravity;}
+        static const Engine::Core::Maths::Vec3 &getGravity() noexcept { return gravity; }
 
-        static
-        void setGravity(const Engine::Core::Maths::Vec3& newGravity) noexcept { gravity = newGravity;}
+        static void setGravity(const Engine::Core::Maths::Vec3 &newGravity) noexcept { gravity = newGravity; }
 
-        #pragma endregion //!mutator
+#pragma endregion //!mutator
 
-        #pragma region operator
-        #pragma endregion //!operator
-
-        #pragma region convertor
-        #pragma endregion //!convertor
-
-        protected:
-
-        #pragma region attribut
+    protected:
+#pragma region attribut
 
         static Engine::Core::Maths::Vec3 gravity;
 
-        static std::vector<PhysicalObject*> pPhysicalObjects;
-        static std::vector<ColliderShape::Collider*> pColliders;
+        static std::vector<PhysicalObject *> pPhysicalObjects;
+        static std::vector<ColliderShape::Collider *> pColliders;
 
-        static float test;
+        static std::vector<ColliderDataAfterCollision> collidersDataAfterCollision;
 
-        #pragma endregion //!attribut
-
-        #pragma region static attribut
-        #pragma endregion //! static attribut
-
-        #pragma region methods
-        #pragma endregion //!methods
-
-        private:
-
+#pragma endregion //!attribut
     };
-}
+} // namespace Engine::Physics
 
 #endif //_PHYSICS_H

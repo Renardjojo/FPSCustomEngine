@@ -37,6 +37,7 @@ PlayerController::PlayerController(GameObject &_gameObject)
 void PlayerController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
+    _playerForce = _airForce;
 };
 
 void PlayerController::update()
@@ -55,6 +56,7 @@ void PlayerController::fixedUpdate()
     {
         _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
         _jump = false;
+        _playerForce = _airForce;
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
@@ -198,6 +200,7 @@ void PlayerController::onCollisionEnter(HitInfo& hitInfo)
     if (hitInfo.gameObject->getTag() == "Ground")
     {
         _isGrounded = true;
+        _playerForce = _groundForce;
         // _physics->setIsKinematic(false);
     }
 }

@@ -448,7 +448,7 @@ void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
     matNexus.name_ = "NexusMaterial";
     matNexus.comp_.shininess = 32.f;
     matNexus.comp_.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
-    matNexus.pathDiffuseTexture = "./ressources/texture/Nexus.png";
+    matNexus.pathDiffuseTexture = "./ressources/texture/text2.png";
 
     {
         std::vector<Material> material;
@@ -559,7 +559,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
-    player1GO.getComponent<SphereCollider>()->setFriction(0.97f);
+    player1GO.getComponent<SphereCollider>()->setFriction(0.70f);
 
     playerGameObject.name = "Skin";
     playerGameObject.transformArg.position = {0.f, -10.f, -2.f};

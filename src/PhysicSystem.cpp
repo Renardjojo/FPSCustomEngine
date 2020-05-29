@@ -37,13 +37,14 @@ using namespace Engine::Core::Maths;
 using namespace Engine::Core::Maths::Shape3D;
 using namespace Engine::Core::Maths::ShapeRelation;
 
-std::vector<PhysicalObject*>    PhysicSystem::pPhysicalObjects;
-std::vector<Collider*>          PhysicSystem::pColliders;
-Engine::Core::Maths::Vec3       PhysicSystem::gravity = {0,-9.81f,0};
+std::vector<PhysicalObject *> PhysicSystem::pPhysicalObjects;
+std::vector<Collider *> PhysicSystem::pColliders;
+std::vector<ColliderDataAfterCollision> PhysicSystem::collidersDataAfterCollision;
+Engine::Core::Maths::Vec3 PhysicSystem::gravity = {0, -9.81f, 0};
 
 void PhysicSystem::update() noexcept
 {
-    for (PhysicalObject* object : pPhysicalObjects)
+    for (PhysicalObject *object : pPhysicalObjects)
     {
         if (!object || object->isKinematic() || object->isSleeping())
             continue;
@@ -52,71 +53,55 @@ void PhysicSystem::update() noexcept
             object->addForce(gravity * object->getMass() * TimeSystem::getFixedDeltaTime());
     }
 
-    for (Collider* collider1 : pColliders)
+    for (Collider *collider1 : pColliders)
     {
-        // if (collider1->GetAttachedPhysicalObject())
-        // {
-        //     if (collider1->GetAttachedPhysicalObject()-iIsKinematic())
-        //         continue;
-        // }
-        for (Collider* collider2 : pColliders)
+        if (collider1->GetAttachedPhysicalObject())
         {
-            // is kinematic todo
-
+            if (collider1->GetAttachedPhysicalObject()->isKinematic())
+                continue;
+        }
+        for (Collider *collider2 : pColliders)
+        {
             if (collider1 != collider2)
             {
                 if (!collider1->GetAttachedPhysicalObject())
                     continue;
-                if (dynamic_cast<SphereCollider*>(collider1) && dynamic_cast<OrientedBoxCollider*>(collider2))
+                if (dynamic_cast<SphereCollider *>(collider1) && dynamic_cast<OrientedBoxCollider *>(collider2))
                 {
                     Intersection intersection;
                     Vec3 AB = (collider1->GetAttachedPhysicalObject()->getVelocity() * TimeSystem::getFixedDeltaTime());
 
-                    if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided( 
-                        dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
-                        AB, intersection))
+                    if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(
+                            dynamic_cast<SphereCollider *>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider *>(collider2)->getGlobalOrientedBox(),
+                            AB, intersection))
                     {
                         if (intersection.intersectionType == EIntersectionType::InfinyIntersection)
                         {
                             /*If error happend and the point is inside the box, try to escape to it*/
                             AB -= AB.getNormalize() * 10.f;
-                            MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider*>(collider2)->getGlobalOrientedBox(), 
-                            AB, intersection);
+                            MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(dynamic_cast<SphereCollider *>(collider1)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider *>(collider2)->getGlobalOrientedBox(),
+                                                                                       AB, intersection);
                         }
 
-                        /*Compoute tAP and tPB*/
+                        /*Compute tAP and tPB*/
                         Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
-                        Vec3 OA = dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getCenter();
+                        Vec3 OA = dynamic_cast<SphereCollider *>(collider1)->getGlobalSphere().getCenter();
                         Vec3 OB = OA + AB;
                         float ABLength = AB.length();
                         float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
                         float tAP = 1.f - tPB;
 
                         // /*Compute the new position and the new velocity of the entity*/
-                        // Vec3 atBeginVelocity = collider1->GetAttachedPhysicalObject()->getVelocity() - gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime();
-                        // Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
-                        // Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
-                        // Vec3 gravityAfterCollision = gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
-                        // Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness();
-                        /*Check if the gravity is upper than velocity.*/
-                        // if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(intersection.normalI1) > std::numeric_limits<float>::epsilon())
-                        // {
-                        //     afterCollisionVelocity += gravityAfterCollision;
-                        // }                   
-
-                        //Vec3 newVelocity = gravityAfterCollision.length() > afterCollisionVelocity.length() ? afterCollisionVelocity + gravityAfterCollision : Vec3{};
-                        // Vec3 newPosition = afterCollisionVelocity * TimeSystem::getFixedDeltaTime();
-
                         Vec3 velocity = collider1->GetAttachedPhysicalObject()->getVelocity();
                         Vec3 reactionForce = intersection.normalI1 * -velocity.dotProduct(intersection.normalI1);
                         Vec3 newVelocity = (velocity + reactionForce) * collider1->getFriction() + reactionForce * collider1->getBounciness();
-                        Vec3 remainingVelocity = newVelocity * 0.001f; // TODO: WIP find right value
+                        Vec3 remainingVelocity = newVelocity * tPB * TimeSystem::getFixedDeltaTime();
+                        Vec3 newPos = intersection.intersection1 + intersection.normalI1 * 0.001f;
+                        Vec3 angularVelocity = -Vec3::cross(((intersection.intersection1 + AB.getNormalize() * dynamic_cast<SphereCollider *>(collider1)->getGlobalSphere().getRadius()) - collider1->getGameObject().getPosition()), newVelocity);
+                        
+                        collider1->getGameObject().setTranslation(newPos);
 
-
-                        collider1->getGameObject().setTranslation(intersection.intersection1 + remainingVelocity + intersection.normalI1 * 0.001f);
-                        collider1->GetAttachedPhysicalObject()->setAngularVelocity(-Vec3::cross(((intersection.intersection1 + AB.getNormalize() * dynamic_cast<SphereCollider*>(collider1)->getGlobalSphere().getRadius()) - collider1->getGameObject().getPosition()), newVelocity));
-                        collider1->GetAttachedPhysicalObject()->setVelocity(newVelocity);
-                        // collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
+                        collidersDataAfterCollision.emplace_back(ColliderDataAfterCollision{collider1, remainingVelocity, newVelocity, newPos, angularVelocity});
 
                         /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
                         HitInfo hitInfo1{intersection, &collider2->getGameObject()};
@@ -128,21 +113,85 @@ void PhysicSystem::update() noexcept
             }
         }
     }
+    while (!collidersDataAfterCollision.empty()) // new loop for case when many collision in 1 frame
+    {
+        for (std::vector<ColliderDataAfterCollision>::iterator colliderIT = collidersDataAfterCollision.begin(); colliderIT != collidersDataAfterCollision.end(); colliderIT++)
+        {
+            if (collidersDataAfterCollision.size() == 0 || !(*colliderIT).collider)
+                break;
+            if ((*colliderIT).collider->GetAttachedPhysicalObject()->isKinematic())
+                continue;
+            (*colliderIT).collided = false;
+            for (Collider *collider2 : pColliders)
+            {
+                if ((*colliderIT).collider != collider2)
+                {
+                    if (dynamic_cast<OrientedBoxCollider *>(collider2))
+                    {
+                        Intersection intersection;
+                        Vec3 AB = ((*colliderIT).remaningVelocity * TimeSystem::getFixedDeltaTime());
+
+                        if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(
+                                dynamic_cast<SphereCollider *>((*colliderIT).collider)->getGlobalSphere(), dynamic_cast<OrientedBoxCollider *>(collider2)->getGlobalOrientedBox(),
+                                AB, intersection))
+                        {
+                            /*Compoute tAP and tPB*/
+                            Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
+                            Vec3 OA = dynamic_cast<SphereCollider *>((*colliderIT).collider)->getGlobalSphere().getCenter();
+                            Vec3 OB = OA + AB;
+                            float ABLength = AB.length();
+                            float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
+                            float tAP = 1.f - tPB;
+
+                            // /*Compute the new position and the new velocity of the entity*/
+                            Vec3 finalReactionForce = intersection.normalI1 * -(*colliderIT).finalVelocity.dotProduct(intersection.normalI1);
+                            (*colliderIT).finalAngularVelocity = ((*colliderIT).finalVelocity + finalReactionForce) * (*colliderIT).collider->getFriction() + finalReactionForce * (*colliderIT).collider->getBounciness();
+
+                            Vec3 remaningReactionForce = intersection.normalI1 * -(*colliderIT).remaningVelocity.dotProduct(intersection.normalI1);
+                            Vec3 newRemaningVelocity = ((*colliderIT).remaningVelocity + remaningReactionForce) * (*colliderIT).collider->getFriction() + remaningReactionForce * (*colliderIT).collider->getBounciness();
+
+                            (*colliderIT).remaningVelocity = newRemaningVelocity * tPB * TimeSystem::getFixedDeltaTime();
+
+                            (*colliderIT).collider->getGameObject().setTranslation(intersection.intersection1 + intersection.normalI1 * 0.001f);
+
+                            (*colliderIT).lastCollisionPoint = intersection.intersection1 + intersection.normalI1 * 0.001f;
+                            (*colliderIT).collided = true;
+
+                            /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
+                            HitInfo hitInfo1{intersection, &collider2->getGameObject()};
+                            HitInfo hitInfo2{intersection, &(*colliderIT).collider->getGameObject()};
+                            (*colliderIT).collider->OnCollisionEnter(hitInfo1);
+                            collider2->OnCollisionEnter(hitInfo2);
+                        }
+                    }
+                }
+            }
+            if (!(*colliderIT).collided)
+            {
+                (*colliderIT).collider->getGameObject().setTranslation((*colliderIT).lastCollisionPoint + (*colliderIT).remaningVelocity);
+                (*colliderIT).collider->GetAttachedPhysicalObject()->setAngularVelocity((*colliderIT).finalAngularVelocity);
+                (*colliderIT).collider->GetAttachedPhysicalObject()->setVelocity((*colliderIT).finalVelocity);
+                (*colliderIT).collider->GetAttachedPhysicalObject()->setDirtyFlag(false);
+
+                colliderIT = collidersDataAfterCollision.erase(colliderIT);
+            }
+        }
+    }
+
     /*TODO: If object collied with another object, we apply two time the displacement. Use isDirty flag*/
 
-    for (PhysicalObject* object : pPhysicalObjects)
+    for (PhysicalObject *object : pPhysicalObjects)
     {
         if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
             continue;
-        
+
         /*update movement and torque induct by the differente force on the object*/
         object->getGameObject().translate(object->getVelocity() * TimeSystem::getFixedDeltaTime());
         object->getGameObject().rotate(object->getAngularVelocity() * TimeSystem::getFixedDeltaTime());
     }
 }
 
-inline 
-bool ifCollisionAffectPhysicalObject(bool collision, PhysicalObject* physicalObject, HitInfo& rayHitInfo)
+inline bool ifCollisionAffectPhysicalObject(bool collision, PhysicalObject *physicalObject, HitInfo &rayHitInfo)
 {
     if (collision)
     {
@@ -152,12 +201,12 @@ bool ifCollisionAffectPhysicalObject(bool collision, PhysicalObject* physicalObj
     return false;
 }
 
-void keepNearestGameObject( GameObject*& currentGameObjectHit, 
-                            Intersection& currentIntersection,
-                            float& firstIntersectionDistance, 
-                            const Intersection& newIntersection,
-                            GameObject* newGameObjectHit, 
-                            const Vec3& rayOrigine)
+void keepNearestGameObject(GameObject *&currentGameObjectHit,
+                           Intersection &currentIntersection,
+                           float &firstIntersectionDistance,
+                           const Intersection &newIntersection,
+                           GameObject *newGameObjectHit,
+                           const Vec3 &rayOrigine)
 {
     float newIntersectionWithRayOrigineDist = (newIntersection.intersection1 - rayOrigine).length();
 
@@ -169,27 +218,27 @@ void keepNearestGameObject( GameObject*& currentGameObjectHit,
     }
 }
 
-bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment &ray, HitInfo &rayHitInfo) noexcept
 {
-    bool collisionHappend               = false;
-    GameObject* currentGameObjectHit    = nullptr;
-    float firstIntersectionDistance     = std::numeric_limits<float>().max();
+    bool collisionHappend = false;
+    GameObject *currentGameObjectHit = nullptr;
+    float firstIntersectionDistance = std::numeric_limits<float>().max();
     Intersection newIntersection;
 
-    for (Collider* collider : pColliders)
+    for (Collider *collider : pColliders)
     {
-        AABBCollider* aabbColliderPtr = dynamic_cast<AABBCollider*>(collider);
+        AABBCollider *aabbColliderPtr = dynamic_cast<AABBCollider *>(collider);
         if (aabbColliderPtr != nullptr)
         {
-            if(SegmentAABB::isSegmentAABBCollided(ray, aabbColliderPtr->getGlobalAABB(), newIntersection))
+            if (SegmentAABB::isSegmentAABBCollided(ray, aabbColliderPtr->getGlobalAABB(), newIntersection))
             {
-                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo,  firstIntersectionDistance, newIntersection, &aabbColliderPtr->getGameObject(), ray.getPt1());
+                keepNearestGameObject(currentGameObjectHit, rayHitInfo.intersectionsInfo, firstIntersectionDistance, newIntersection, &aabbColliderPtr->getGameObject(), ray.getPt1());
                 collisionHappend = true;
             }
             continue;
         }
 
-        SphereCollider* sphereColliderPtr = dynamic_cast<SphereCollider*>(collider);
+        SphereCollider *sphereColliderPtr = dynamic_cast<SphereCollider *>(collider);
         if (sphereColliderPtr != nullptr)
         {
             if (SegmentSphere::isSegmentSphereCollided(ray, sphereColliderPtr->getGlobalSphere(), newIntersection))
@@ -200,7 +249,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        OrientedBoxCollider* orientedBoxColliderPtr = dynamic_cast<OrientedBoxCollider*>(collider);
+        OrientedBoxCollider *orientedBoxColliderPtr = dynamic_cast<OrientedBoxCollider *>(collider);
         if (orientedBoxColliderPtr != nullptr)
         {
             if (SegmentOrientedBox::isSegmentOrientedBoxCollided(ray, orientedBoxColliderPtr->getGlobalOrientedBox(), newIntersection))
@@ -211,7 +260,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        PlaneCollider* planeColliderPtr = dynamic_cast<PlaneCollider*>(collider);
+        PlaneCollider *planeColliderPtr = dynamic_cast<PlaneCollider *>(collider);
         if (planeColliderPtr != nullptr)
         {
             if (SegmentPlane::isSegmentPlaneCollided(ray, planeColliderPtr->getGlobalPlane(), newIntersection))
@@ -222,7 +271,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        QuadCollider* quadColliderPtr = dynamic_cast<QuadCollider*>(collider);
+        QuadCollider *quadColliderPtr = dynamic_cast<QuadCollider *>(collider);
         if (quadColliderPtr != nullptr)
         {
             if (SegmentQuad::isSegmentQuadCollided(ray, quadColliderPtr->getGlobalQuad(), newIntersection))
@@ -233,7 +282,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        CapsuleCollider* capsuleColliderPtr = dynamic_cast<CapsuleCollider*>(collider);
+        CapsuleCollider *capsuleColliderPtr = dynamic_cast<CapsuleCollider *>(collider);
         if (capsuleColliderPtr != nullptr)
         {
             if (SegmentCapsule::isSegmentCapsuleCollided(ray, capsuleColliderPtr->getGlobalCapsule(), newIntersection))
@@ -244,7 +293,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        InfiniteCylinderCollider* infiniteCylinderColliderPtr = dynamic_cast<InfiniteCylinderCollider*>(collider);
+        InfiniteCylinderCollider *infiniteCylinderColliderPtr = dynamic_cast<InfiniteCylinderCollider *>(collider);
         if (infiniteCylinderColliderPtr != nullptr)
         {
             if (SegmentInfiniteCylinder::isSegmentInfiniteCylinderCollided(ray, infiniteCylinderColliderPtr->getGlobalInfiniteCylinder(), newIntersection))
@@ -255,7 +304,7 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
             continue;
         }
 
-        CylinderCollider* cylinderColliderPtr = dynamic_cast<CylinderCollider*>(collider);
+        CylinderCollider *cylinderColliderPtr = dynamic_cast<CylinderCollider *>(collider);
         if (cylinderColliderPtr != nullptr)
         {
             if (SegmentCylinder::isSegmentCylinderCollided(ray, cylinderColliderPtr->getGlobalCylinder(), newIntersection))
@@ -271,58 +320,58 @@ bool PhysicSystem::rayCast(const Engine::Core::Maths::Shape3D::Segment& ray, Hit
     return collisionHappend;
 }
 
-bool PhysicSystem::rayCast(const Vec3& origin, const Vec3& direction, float maxDistance, HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::rayCast(const Vec3 &origin, const Vec3 &direction, float maxDistance, HitInfo &rayHitInfo) noexcept
 {
     return rayCast(Segment{origin, origin + maxDistance * direction}, rayHitInfo);
 }
 
-bool PhysicSystem::rayCast(const Vec3& pt1, const Vec3& pt2, HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::rayCast(const Vec3 &pt1, const Vec3 &pt2, HitInfo &rayHitInfo) noexcept
 {
     return rayCast(Segment{pt1, pt2}, rayHitInfo);
 }
 
-bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Shape3D::Segment &ray, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     if (rayCast(ray, rayHitInfo))
     {
-        Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject};
-        pCollider->OnCollisionEnter(hitInfo);    
+        Collider *pCollider = rayHitInfo.gameObject->getComponent<Collider>();
+        HitInfo hitInfo{rayHitInfo.intersectionsInfo, pTriggerGameObject};
+        pCollider->OnCollisionEnter(hitInfo);
         return true;
     }
     return false;
 }
 
-bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Vec3 &origin, const Engine::Core::Maths::Vec3 &direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     return triggerRayCast(pTriggerGameObject, Segment{origin, origin + maxDistance * direction}, rayHitInfo);
 }
 
-bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameObject, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject *pTriggerGameObject, const Engine::Core::Maths::Vec3 &pt1, const Engine::Core::Maths::Vec3 &pt2, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     return triggerRayCast(pTriggerGameObject, Segment{pt1, pt2}, rayHitInfo);
 }
 
-bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Shape3D::Segment& ray, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(const std::string &tag, const Engine::Core::Maths::Shape3D::Segment &ray, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     if (rayCast(ray, rayHitInfo))
     {
-        Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
+        Collider *pCollider = rayHitInfo.gameObject->getComponent<Collider>();
         GameObject tempGOWithTag;
         tempGOWithTag.setTag(tag);
-        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag};
-        pCollider->OnCollisionEnter(hitInfo1);    
+        HitInfo hitInfo1{rayHitInfo.intersectionsInfo, &tempGOWithTag};
+        pCollider->OnCollisionEnter(hitInfo1);
         return true;
     }
     return false;
 }
 
-bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& origin, const Engine::Core::Maths::Vec3& direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(const std::string &tag, const Engine::Core::Maths::Vec3 &origin, const Engine::Core::Maths::Vec3 &direction, float maxDistance, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     return triggerRayCast(tag, Segment{origin, origin + maxDistance * direction}, rayHitInfo);
 }
 
-bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Maths::Vec3& pt1, const Engine::Core::Maths::Vec3& pt2, Engine::Physics::ColliderShape::HitInfo& rayHitInfo) noexcept
+bool PhysicSystem::triggerRayCast(const std::string &tag, const Engine::Core::Maths::Vec3 &pt1, const Engine::Core::Maths::Vec3 &pt2, Engine::Physics::ColliderShape::HitInfo &rayHitInfo) noexcept
 {
     return triggerRayCast(tag, Segment{pt1, pt2}, rayHitInfo);
 }
