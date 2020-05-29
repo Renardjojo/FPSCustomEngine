@@ -22,16 +22,6 @@ namespace Engine::Physics
         PhysicalObject *optionnalPhysicalObjectPtr2;
     };
 
-    struct ColliderDataAfterCollision
-    {
-        ColliderShape::Collider *collider;
-        Engine::Core::Maths::Vec3 remaningVelocity;
-        Engine::Core::Maths::Vec3 finalVelocity;
-        Engine::Core::Maths::Vec3 lastCollisionPoint;
-        Engine::Core::Maths::Vec3 finalAngularVelocity;
-        bool collided{false};
-    };
-
     class PhysicSystem
     {
     public:
@@ -161,8 +151,6 @@ namespace Engine::Physics
 
         static std::vector<PhysicalObject *> pPhysicalObjects;
         static std::vector<ColliderShape::Collider *> pColliders;
-
-        static std::vector<ColliderDataAfterCollision> collidersDataAfterCollision;
 
 #pragma endregion //!attribut
     };
