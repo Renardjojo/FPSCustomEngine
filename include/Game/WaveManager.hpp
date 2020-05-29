@@ -8,7 +8,6 @@
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/Debug/assert.hpp"
 
 #include <vector>
 #include <string>

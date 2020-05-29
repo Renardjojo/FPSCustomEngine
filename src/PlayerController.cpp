@@ -9,6 +9,7 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 #include <math.h>
 #include <algorithm>
@@ -37,6 +38,10 @@ PlayerController::PlayerController(GameObject &_gameObject)
 void PlayerController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
+    GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
+
+    _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
+    GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
 };
 
 void PlayerController::update()
@@ -62,6 +67,12 @@ void PlayerController::fixedUpdate()
     _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
     _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
+
+void PlayerController::switchFlashLightState()
+{
+    _flashLightOn = !_flashLightOn;
+    _flashLight->enable(_flashLightOn);
+}
 
 void PlayerController::shoot()
 {
@@ -164,6 +175,10 @@ void PlayerController::move()
 {
     if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
         _jump = true;
+
+    if (Input::keyboard.getKeyState(Input::keyboard.switchFlashLightState) == E_KEY_STATE::TOUCHED)
+        switchFlashLightState();
+
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == 1)
         toggleCameraType();

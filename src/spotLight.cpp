@@ -15,13 +15,11 @@ SpotLight::SpotLight ( GameObject &            refGameObject,
             float                              constant, 
             float                              linear, 
             float                              quadratic,
-            const Engine::Core::Maths::Vec3&   direction,
             float                              cutOff,
             float                              cutOffExponent, 
-            bool                                isEnable)
+            bool                               isEnable)
 
 :   PointLight          (refGameObject, ambient, diffuse, specular, constant, linear, quadratic, isEnable),
-    direction_          (direction),
     cutOff_             (cosf(cutOff * M_PI / 180.f)),
     cutOffExponent_     (cosf(cutOffExponent * M_PI / 180.f))
 {
@@ -30,7 +28,6 @@ SpotLight::SpotLight ( GameObject &            refGameObject,
 
 SpotLight::SpotLight (GameObject & refGameObject, SpotLightCreateArg arg)
 :   PointLight          (refGameObject, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic, arg.isEnable),
-    direction_          (arg.direction),
     cutOff_             (cosf(arg.cutOff * M_PI / 180.f)),
     cutOffExponent_     (cosf(arg.cutOffExponent * M_PI / 180.f))
 {
@@ -39,7 +36,6 @@ SpotLight::SpotLight (GameObject & refGameObject, SpotLightCreateArg arg)
 
 SpotLight::SpotLight (GameObject &refGameObject, const std::vector<std::string>& params)
             :   PointLight          (refGameObject, params),
-                direction_          {std::stof(params[16]), std::stof(params[17]), std::stof(params[18])},
                 cutOff_             {std::stof(params[19])},
                 cutOffExponent_     {std::stof(params[20])} 
 {
@@ -53,7 +49,7 @@ void SpotLight::addToLightToUseBuffer(std::vector<light>& lb) noexcept
                     specularComp_,
                     getGameObject().getGlobalPosition(), 2.f,
                     constant_, linear_, quadratic_, cutOffExponent_,
-                    direction_, cutOff_});
+                    _gameObject.getVecForward(), cutOff_});
 }
 
 void SpotLight::save(xml_document<> &doc, xml_node<> *nodeParent)
@@ -78,9 +74,6 @@ void SpotLight::save(xml_document<> &doc, xml_node<> *nodeParent)
     newNode->append_attribute(doc.allocate_attribute("linear", doc.allocate_string(std::to_string(linear_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("quadriatic", doc.allocate_string(std::to_string(quadratic_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isEnable", doc.allocate_string(std::to_string(isEnable_).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("direction0", doc.allocate_string(std::to_string(direction_.e[0]).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("direction1", doc.allocate_string(std::to_string(direction_.e[1]).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("direction2", doc.allocate_string(std::to_string(direction_.e[2]).c_str())));
     newNode->append_attribute(doc.allocate_attribute("cutOff", doc.allocate_string(std::to_string(cutOff_).c_str())));
     newNode->append_attribute(doc.allocate_attribute("cutOffExponent", doc.allocate_string(std::to_string(cutOffExponent_).c_str())));
 
@@ -93,25 +86,21 @@ void SpotLight::serializeOnEditor () noexcept
 {
     PointLight::serializeOnEditor();
 
-    bool isTouch = false;
-
-    ImGui::Text("Direction :");
-    ImGui::Columns(3);
-    ImGui::Text("X :"); ImGui::SameLine();
-    isTouch |= ImGui::DragFloat("##dirSpotLightX", &direction_.x, 0.1f);
-    ImGui::NextColumn();
-    ImGui::Text("Y :"); ImGui::SameLine();
-    isTouch |= ImGui::DragFloat("##dirSpotLightY", &direction_.y, 0.1f);
-    ImGui::NextColumn();
-    ImGui::Text("Z :"); ImGui::SameLine();
-    isTouch |= ImGui::DragFloat("##dirSpotLightZ", &direction_.z, 0.1f);
-    ImGui::Columns(1);
-
-    if (isTouch)
-        direction_.normalize();
-
     ImGui::Spacing();
-    ImGui::Text("CutOff :"); ImGui::SameLine(); ImGui::DragFloat("##cutOffPoinLighttX", &cutOff_, 0.1f);
-    ImGui::Text("CutOff exponent :"); ImGui::SameLine(); ImGui::DragFloat("##cutOffExponentPoinLightY", &cutOffExponent_, 0.1f);
+
+    float acosCutOffDeg = acos(cutOff_) * 180.f / M_PI;
+    float acosCutOffExpDeg = acos(cutOffExponent_) * 180.f / M_PI;
+
+    ImGui::Text("CutOff :"); ImGui::SameLine();
+    if (ImGui::DragFloat("##cutOffPoinLighttX", &acosCutOffDeg, 0.1f))
+    {
+        cutOff_ = cosf(acosCutOffDeg * M_PI / 180.f);
+    }
+
+    ImGui::Text("CutOff exponent :"); ImGui::SameLine(); 
+    if (ImGui::DragFloat("##cutOffExponentPoinLightY", &acosCutOffExpDeg, 0.1f))
+    {
+        cutOffExponent_ = cosf(acosCutOffExpDeg * M_PI / 180.f);
+    }
 }
 #endif
