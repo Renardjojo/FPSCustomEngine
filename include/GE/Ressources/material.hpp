@@ -15,8 +15,8 @@ namespace Engine::Ressources
 {
     struct MaterialAndTextureCreateArg
     {
-        std::string         name_           {""};
-        MaterialComponent   comp_           { {1.f, 1.f, 1.f, 1.f}, 
+        std::string         name           {""};
+        MaterialComponent   comp           { {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 
                                             {1.f, 1.f, 1.f, 1.f}, 1.f};
         const char*         pathDiffuseTexture {nullptr};

@@ -228,7 +228,7 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
     mesh.vBuffer    .reserve(4);
     mesh.vtBuffer   .reserve(4);
     mesh.vnBuffer   .reserve(2);
-	mesh.iBuffer.push_back({});
+	mesh.iBuffer	.push_back({});
     mesh.iBuffer    .reserve(2);
 
 	//Face 1
@@ -277,8 +277,6 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
 		break;
 	}
 
-
-
 	//initialize texture coord : 
 	float shiftX = indexTextureX * textureRepetition;
 	float shiftY = indexTextureY * textureRepetition;
@@ -288,7 +286,7 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
 	mesh.vtBuffer	.push_back({ shiftX + textureRepetition, shiftY + textureRepetition});
 
 	//initialize normal :
-	mesh.vnBuffer	.push_back({ 0.f,  -1.f,  0.f});
+	mesh.vnBuffer	.push_back({ 0.f, -1.f,  0.f});
 	mesh.vnBuffer	.push_back({ 0.f, 1.f,  0.f});
 
 	return mesh;

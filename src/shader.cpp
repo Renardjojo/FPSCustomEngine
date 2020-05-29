@@ -149,6 +149,14 @@ static const char* colorFragmentShaderStr = R"(
 uniform vec4 Color;
 )";
 
+static const char* timeScaledAccVertexShaderStr = R"(
+uniform float scaledTimeAcc;
+)";
+
+static const char* timeUnscaledAccVertexShaderStr = R"(
+uniform float unscaledTimeAcc;
+)";
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
     :   featureMask_ (featureMask),
         lightsUniformBuffer_ (0)
@@ -176,6 +184,16 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
     if ((featureMask_ & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
         fragmentCode.insert(0, colorFragmentShaderStr);
+    }
+
+    if ((featureMask_ & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    {
+        vertexCode.insert(0, timeScaledAccVertexShaderStr);
+    }
+
+    if ((featureMask_ & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    {
+        vertexCode.insert(0, timeUnscaledAccVertexShaderStr);
     }
 
     vertexCode.insert(0, versionHeaderStr);

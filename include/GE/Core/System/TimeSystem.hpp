@@ -27,7 +27,9 @@ namespace Engine::Core::System
 		static double _timeScale;
 		static double _fixedDetlaTime;
 		static double _fixedUnscaledDetlaTime;
-		static bool  _logFPS;
+		static bool   _logFPS;
+		static float  _scaledTimeAcc;
+		static float  _unscaledTimeAcc;
 
 	public:
 		TimeSystem() = delete;
@@ -62,6 +64,9 @@ namespace Engine::Core::System
 
 		static float getDeltaTime() { return static_cast<float>(_deltaTime); }
 		static float getUnscaledDeltaTime() { return static_cast<float>(_unscaledDeltaTime); }
+
+		static float getAccumulateTime() { return _scaledTimeAcc; }
+		static float getAccumulateUnscaledTime() { return _unscaledTimeAcc; }
 
 		static float getTimeScale() { return static_cast<float>(_timeScale); }
 		static void setTimeScale(double newtimeScale)
