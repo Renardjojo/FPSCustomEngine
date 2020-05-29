@@ -146,72 +146,72 @@ void Demo::display() const noexcept
 void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Shader>("ColorWithLight", "./ressources/shader/vProjectionNormal.vs", "./ressources/shader/fColorWithLight.fs", AMBIANTE_COLOR_ONLY | LIGHT_BLIN_PHONG);
-    ressourceManager.add<Shader>("Color", "./ressources/shader/vCloud.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
-    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vCloud.vs", "./ressources/shader/fTextureOnly.fs");
+    ressourceManager.add<Shader>("Color", "./ressources/shader/vTextureOnlyWithProjection.vs", "./ressources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
+    ressourceManager.add<Shader>("TextureOnly", "./ressources/shader/vTextureOnlyWithProjection.vs", "./ressources/shader/fTextureOnly.fs");
     ressourceManager.add<Shader>("LightAndTexture", "./ressources/shader/vTexture2.vs", "./ressources/shader/fTexture2.fs", LIGHT_BLIN_PHONG);
 
     MaterialAndTextureCreateArg matDefault;
-    matDefault.name_ = "DefaultMaterial";
+    matDefault.name = "DefaultMaterial";
     matDefault.pathDiffuseTexture = nullptr;
     matDefault.flipTexture = false;
 
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
-    matDefault.name_ = "PinkMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 1.f, 1.f};
+    matDefault.name = "PinkMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{1.f, 0.f, 1.f, 1.f};
 
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
-    matDefault.name_ = "RedMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{1.f, 0.f, 0.f, 1.f};
+    matDefault.name = "RedMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{1.f, 0.f, 0.f, 1.f};
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
-    matDefault.name_ = "GreenMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{0.f, 1.f, 0.f, 1.f};
-
-    {
-        std::vector<Material> material;
-        material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
-    }
-
-    matDefault.name_ = "BlueMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 1.f, 1.f};
+    matDefault.name = "GreenMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{0.f, 1.f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
-    matDefault.name_ = "BlackMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
+    matDefault.name = "BlueMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{0.f, 0.f, 1.f, 1.f};
 
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
-    matDefault.name_ = "BrownMaterial";
-    matDefault.comp_.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
+    matDefault.name = "BlackMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{0.f, 0.f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
         material.emplace_back(matDefault);
-        ressourceManager.add<std::vector<Material>>(matDefault.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
+    }
+
+    matDefault.name = "BrownMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
@@ -220,13 +220,13 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     ressourceManager.add<Mesh>("PlaneZ", Mesh::createPlane(1.f, 0, 0, Mesh::Axis::Z));
 
     MaterialAndTextureCreateArg matBulletHole;
-    matBulletHole.name_                = "BulletHole";
+    matBulletHole.name                = "BulletHole";
     matBulletHole.pathDiffuseTexture   = "./ressources/texture/bulletHole.png";
 
     {
         std::vector<Material> material;
         material.emplace_back(matBulletHole);
-        ressourceManager.add<std::vector<Material>>(matBulletHole.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
     //loadRockRessource          (ressourceManager);
@@ -237,8 +237,9 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadPlayerRessource        (ressourceManager);
     //loadSpotLightRessource     (ressourceManager);
     //loadTowerRessource         (ressourceManager);
-    loadGroundRessource        (ressourceManager);
+    loadGroundRessource         (ressourceManager);
     loadCrateRessource          (ressourceManager);  
+    loadFogRessource            (ressourceManager);
 }
 
 void Demo::loadRockRessource          (t_RessourcesManager& ressourceManager)
@@ -282,7 +283,7 @@ void Demo::loadTreeRessource          (t_RessourcesManager& ressourceManager)
 void Demo::loadSkyboxRessource        (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matSkybox;
-    matSkybox.name_ = "SkyBox";
+    matSkybox.name = "SkyBox";
     matSkybox.pathDiffuseTexture = "./ressources/texture/arrakisday/skb.bmp";
     matSkybox.flipTexture = false;
     matSkybox.filterType = E_FilterType::LINEAR;
@@ -402,31 +403,51 @@ void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
     ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(1000));
 
     MaterialAndTextureCreateArg matGround;
-    matGround.name_ = "Ground";
-    matGround.comp_.shininess = 1.f;
-    matGround.comp_.specular.rgbi = {1.f, 1.f, 1.f, 0.f};
+    matGround.name = "Ground";
+    matGround.comp.shininess = 1.f;
+    matGround.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.f};
     matGround.pathDiffuseTexture = "./ressources/texture/arrakisday/arrakisday_dn.tga";
     matGround.wrapType = E_WrapType::MIRRORED_REPEAT;
 
     {
         std::vector<Material> material;
         material.emplace_back(matGround);
-        ressourceManager.add<std::vector<Material>>(matGround.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matGround.name, std::move(material));
     }
 }   
 
 void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matCrate;
-    matCrate.name_ = "CrateMaterial";
-    matCrate.comp_.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    matCrate.name = "CrateMaterial";
+    matCrate.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
     matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
 
     {
         std::vector<Material> material;
         material.emplace_back(matCrate);
-        ressourceManager.add<std::vector<Material>>(matCrate.name_, std::move(material));
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
     }
+}
+
+void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matFog;
+    matFog.name = "FogMaterials";
+    matFog.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    matFog.comp.ambient.ki     = 1.f;
+    matFog.comp.diffuse.ki     = 0.f;
+    matFog.comp.specular.ki    = 0.f;
+    matFog.pathDiffuseTexture = "./ressources/texture/billboardCloud.jpg";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matFog);
+        ressourceManager.add<std::vector<Material>>(matFog.name, std::move(material));
+    }
+
+    ressourceManager.add<Mesh>("BillBoardFogMesh", Mesh::createPlane(0.25, 3, 3, Mesh::Axis::Z));
+    ressourceManager.add<Shader>("BillBoardFogShader", "./ressources/shader/vCloud.vs", "./ressources/shader/fCloud.fs", SCALE_TIME_ACC);
 }
 
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
@@ -679,6 +700,36 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
     ground.setTag("Ground");
 } 
 
+void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
+{
+   GameObjectCreateArg fogGameObjectArg  {"FogContener"};
+
+    GameObject& fogContener = _scene->add<GameObject>(_scene->getWorld(), fogGameObjectArg);
+
+    std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("FogMaterials");
+    
+    ModelCreateArg fogModelArg{&ressourceManager.get<Shader>("BillBoardFogShader"),
+                            &vecMaterials,
+                            &ressourceManager.get<Mesh>("BillBoardFogMesh"),
+                            "BillBoardFogShader",
+                            "FogMaterials",
+                            "BillBoardFogMesh",
+                            true, false, false};
+    
+    /*Create tree with random size, position and rotation and add it on tre contener*/
+    for (size_t i = 0; i < number; i++)
+    {
+        fogGameObjectArg.name = "Fog" + std::to_string(i);
+        fogGameObjectArg.transformArg.position.x = Random::ranged<float>(-250.f, 250.f);
+        fogGameObjectArg.transformArg.position.z = Random::ranged<float>(-250.f, 250.f);
+        fogGameObjectArg.transformArg.rotation.y = Random::ranged<float>(360.f * M_PI / 180.f);
+        fogGameObjectArg.transformArg.scale = {Random::ranged<float>(50.f, 100.f), Random::ranged<float>(20.f, 55.f), 1.f};
+        fogGameObjectArg.transformArg.position.y = fogGameObjectArg.transformArg.scale.y / 2.f;
+
+        _scene->add<GameObject>(fogContener, fogGameObjectArg).addComponent<BillBoard>(fogModelArg);
+    }
+}
+
 void Demo::loadCamera()
 {
     CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
@@ -691,9 +742,10 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     loadTimeManager             ();
     //loadRock                   (ressourceManager, 50);
     //loadTree                   (ressourceManager, 10);
-    loadSkybox                 (ressourceManager);
-    loadPlayer                 (ressourceManager);
-    loadGround                 (ressourceManager);
+    loadSkybox                  (ressourceManager);
+    loadPlayer                  (ressourceManager);
+    loadGround                  (ressourceManager);
+    loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
