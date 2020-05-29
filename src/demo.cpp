@@ -546,6 +546,20 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
 
     GameObject& skinPlayer1GO = _scene->add<GameObject>(player1GO, playerGameObject);
     skinPlayer1GO.addComponent<Model>(soldierModelArg);
+    
+    //load flashlight
+    GameObjectCreateArg flashlightGameObject    {"FlashLight",
+                                                {{0.f, 0.f, 1.7f}, 
+                                                {0.f, 0.f, -M_PI / 10.f}}};
+
+    SpotLightCreateArg lightArg{{1.f, 1.f, 1.f, 0.f},
+                                 {1.f, 1.f, 1.f, 0.7f},
+                                 {1.f, 1.f, 1.f, 0.3f},
+                                 0.3f, 0.001f, 0.f,
+                                 20.7f, 27.5f, 
+                                 false};
+
+    _scene->add<GameObject>(player1GO, flashlightGameObject).addComponent<SpotLight>(lightArg);
 
     //load guns
     GameObjectCreateArg sniperGameObject    {"Sniper",
@@ -634,7 +648,7 @@ void Demo::loadTower                  (t_RessourcesManager& ressourceManager)
                                      {1.f, 1.f, 1.f, 1.f}, 
                                      {1.f, 1.f, 1.f, 1.f},
                                      0.f, 0.005f, 0.f,
-                                     {0.f, -0.5f, 0.6f},
+                                     /*{0.f, -0.5f, 0.6f}, DIRECTION*/
                                      5.f, 7.f};
 
     GameObject& lightGO = _scene->add<GameObject>(spotLightGO, lightArgGameObject);
@@ -674,7 +688,7 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    loadTimeManager             (ressourceManager);
+    loadTimeManager             ();
     //loadRock                   (ressourceManager, 50);
     //loadTree                   (ressourceManager, 10);
     loadSkybox                 (ressourceManager);
@@ -721,7 +735,6 @@ void Demo::loadLights(t_RessourcesManager &ressourceManager)
                                  {0.f, 1.f, 0.f, 0.7f},
                                  {1.f, 1.f, 1.f, 0.3f},
                                  0.f, 0.05f, 0.f,
-                                 Vec3::down,
                                  20.f, 0.5f, 
                                  false};
 
@@ -841,12 +854,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 #pragma region Option
 
     ressourceManager.add<Title>("OptionForwardTitle", pfont, buttonShader,
-                                tempX - 155, tempY - 300,
+                                tempX - 155, tempY - 400,
                                 175.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Forward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionForwardButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 300,
+                                 tempX + 50, tempY - 400,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.up)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -861,12 +874,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionBackwardTitle", pfont, buttonShader,
-                                tempX - 185, tempY - 200,
+                                tempX - 185, tempY - 300,
                                 200.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Backward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionBackwardButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 200,
+                                 tempX + 50, tempY - 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.down)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -881,12 +894,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionLeftTitle", pfont, buttonShader,
-                                tempX - 75, tempY - 100,
+                                tempX - 75, tempY - 200,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Left :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionLeftButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 100,
+                                 tempX + 50, tempY - 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.left)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -901,12 +914,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionRightTitle", pfont, buttonShader,
-                                tempX - 100, tempY,
+                                tempX - 100, tempY - 100,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Right :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionRightButton", pfont, buttonShader,
-                                 tempX + 50, tempY,
+                                 tempX + 50, tempY - 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.right)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -916,6 +929,26 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             Input::keyboard.right = key;
             ressourceManager.get<Button>("OptionRightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
             ressourceManager.get<Button>("OptionRightButton").updateTexture();
+            Input::resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionSwitchLightStateTitle", pfont, buttonShader,
+                                tempX - 310, tempY,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Switch light state :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionSwitchLightStateButton", pfont, buttonShader,
+                                 tempX + 50, tempY,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.switchFlashLightState)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.switchFlashLightState = key;
+            ressourceManager.get<Button>("OptionSwitchLightStateButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionSwitchLightStateButton").updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1195,7 +1228,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
 }
 
-void Demo::loadTimeManager        (Engine::Ressources::t_RessourcesManager& ressourceManager)
+void Demo::loadTimeManager        ()
 {
     GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
     timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 17.f, 100.f);

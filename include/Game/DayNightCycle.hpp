@@ -87,7 +87,17 @@ namespace Game
         }
 
         DayNightCycle (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   Engine::Core::Component::ScriptComponent    {refGameObject}
+            :   Engine::Core::Component::ScriptComponent    {refGameObject},
+                _dayStart                                   {std::stof(params[0])},
+                _dayDuration                                {std::stof(params[1])},
+                _sunRiseDuration                            {std::stof(params[2])},
+                _nightStart                                 {std::stof(params[3])},
+                _nightDuration                              {std::stof(params[4])},
+                _sunSetDuration                             {std::stof(params[5])},
+                _currentTime                                {std::stof(params[6])},
+                _midDay                                     {std::stof(params[7])},
+                _midNight                                   {std::stof(params[8])},
+                _sunDistance                                {std::stof(params[9])}
         {
             _name = __FUNCTION__;
         }
@@ -116,7 +126,6 @@ namespace Game
             
             float rot = (_currentTime - _dayStart) * (M_PI * 2.f) / (_dayDuration + _nightDuration);
             newDirection = {cosf(rot), sinf(rot), 0.f};
-            std::cout << "rot : " << rot* 180.f / M_PI << " " << _currentTime << std::endl; 
 
             _pSunDirectionnalLight->getGameObject().setTranslation(newDirection * _sunDistance);
             _pSunDirectionnalLight->setDirection(newDirection);
@@ -169,6 +178,17 @@ namespace Game
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
             newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+
+            newNode->append_attribute(doc.allocate_attribute("dayStart", doc.allocate_string(std::to_string(_dayStart).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("dayDuration", doc.allocate_string(std::to_string(_dayDuration).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("sunRiseDuration", doc.allocate_string(std::to_string(_sunRiseDuration).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("nightStart", doc.allocate_string(std::to_string(_nightStart).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("nightDuration", doc.allocate_string(std::to_string(_nightDuration).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("sunSetDuration", doc.allocate_string(std::to_string(_sunSetDuration).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("currentTime", doc.allocate_string(std::to_string(_currentTime).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("midDay", doc.allocate_string(std::to_string(_midDay).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("midNight", doc.allocate_string(std::to_string(_midNight).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("sunDistance", doc.allocate_string(std::to_string(_sunDistance).c_str())));
 
             nodeParent->append_node(newNode);
         }
