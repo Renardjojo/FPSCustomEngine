@@ -46,6 +46,9 @@ namespace Engine::Core::Maths
 		Vec2  		getRotated270 	() const;
 
 
+		static Vec2 	lerp		(const Vec2& vec1, const Vec2& vec2, float t);
+
+
 		/**
 		 * function : foundAngleType
 		 *
@@ -177,6 +180,8 @@ namespace Engine::Core::Maths
 		static Vec3 	cross		(const Vec3& vec1, const Vec3& vec2) { return vec1.getCross(vec2); }
 		Vec3 			getCross	(const Vec3& other) const;
 
+		static Vec3 	lerp		(const Vec3& vec1, const Vec3& vec2, float t);
+
 		//this function return true if vector is colineaire this other vector. 
 		//Comput dot product. If dot product is near of zero, vectors is colinear
 		bool 	isColinear	(const Vec3& other, const float epsilon = __FLT_EPSILON__);
@@ -267,7 +272,7 @@ namespace Engine::Core::Maths
 		Vec4& 	normalize		();
 		Vec4 	getNormalize	() const;
 
-		
+		static Vec4 	lerp		(const Vec4& vec1, const Vec4& vec2, float t);	
 
 		/*----------*/
 		/* operator */
