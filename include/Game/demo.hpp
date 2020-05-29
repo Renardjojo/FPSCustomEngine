@@ -98,6 +98,7 @@ namespace Game
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadATH                (Engine::Ressources::t_RessourcesManager& ressourceManager);    
             void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadTimeManager        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadCamera             ();
 
             void updateControl          ();

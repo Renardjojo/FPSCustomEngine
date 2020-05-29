@@ -26,6 +26,7 @@
 #include "Game/PushedOnShoot.hpp"
 #include "Game/GroundController.hpp"
 #include "Game/WaveManager.hpp"
+#include "Game/DayNightCycle.hpp"
 
 #include "../src/stb_image.h"
 
@@ -673,6 +674,7 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
+    loadTimeManager             (ressourceManager);
     //loadRock                   (ressourceManager, 50);
     //loadTree                   (ressourceManager, 10);
     loadSkybox                 (ressourceManager);
@@ -682,7 +684,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg lightSphereGameObjectArg{"DirectionnalLight",
+    GameObjectCreateArg lightSphereGameObjectArg{"Sun",
                                                  {{0.f, 0.f, 0.f},
                                                   {0.f, 0.f, 0.f},
                                                   {1.f, 1.f, 1.f}}};
@@ -1191,6 +1193,12 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
     EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
+}
+
+void Demo::loadTimeManager        (Engine::Ressources::t_RessourcesManager& ressourceManager)
+{
+    GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
+    timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 17.f);
 }
 
 void Demo::updateControl()
