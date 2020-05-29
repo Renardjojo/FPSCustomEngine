@@ -31,7 +31,9 @@ ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSys
         _spawnCountBySec                            {1 / arg.spawnCountBySec},
         _delayCount                                 {std::fmod(arg.spawnCountBySec, arg.spawnCountBySec)},
         _isBillBoard                                {arg.isBillBoard},
-        _useScaledTime                              {arg.useScaledTime}
+        _useScaledTime                              {arg.useScaledTime},
+        _instanteParticuleGeneration                {arg.instanteParticuleGeneration},
+        _stopParticuleGeneration                    {arg.stopParticuleGeneration}
 {
     _name = __FUNCTION__;
 }
@@ -41,27 +43,63 @@ ParticuleGenerator::ParticuleGenerator (Engine::Ressources::GameObject &refGameO
         _modelCreateArg                             {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>(params[0]),
                                                     &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>(params[1]),
                                                     &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>(params[2]),
-                                                    params[0], params[1], params[2], std::stof(params[3]), std::stof(params[4]), std::stof(params[5])},
-        _physicalObjectCreateArg                    {   std::stof(params[6]), std::stof(params[7]), std::stof(params[8]),
-                                                        std::stof(params[9]), std::stof(params[10]), std::stof(params[11]),
-                                                        std::stof(params[12]), std::stof(params[13]), std::stof(params[14]), std::stof(params[15])},
+                                                    params[0], params[1], params[2], static_cast<bool>(std::stoi(params[3])),
+                                                    static_cast<bool>(std::stoi(params[4])), static_cast<bool>(std::stoi(params[5]))},
+        _physicalObjectCreateArg                    {   std::stof(params[6]), static_cast<bool>(std::stoi(params[7])), static_cast<bool>(std::stoi(params[8])),
+                                                        static_cast<bool>(std::stoi(params[9])),  static_cast<bool>(std::stoi(params[10])), static_cast<bool>(std::stoi(params[11])),
+                                                        static_cast<bool>(std::stoi(params[12])), static_cast<bool>(std::stoi(params[13])), static_cast<bool>(std::stoi(params[14])), static_cast<bool>(std::stoi(params[15]))},
         _generationShape                            {static_cast<EGenerationShape>(std::stoi(params[16]))},
         _scale                                      {{std::stof(params[17]), std::stof(params[18]), std::stof(params[19])}},
-        _particleCount                              {std::stof(params[20])},
+        _particleCount                              {static_cast<size_t>(std::stoi(params[20]))},
         _generationRange                            {std::stof(params[21])},
         _lifeDuration                               {std::stof(params[22])},
         _velocityEvolutionCoef                      {std::stof(params[23])},
         _propulsionLenght                           {std::stof(params[24])},
         _spawnCountBySec                            {std::stof(params[25])},
         _delayCount                                 {std::stof(params[26])},
-        _isBillBoard                                {std::stof(params[27])},
-        _useScaledTime                              {std::stof(params[28])}
+        _isBillBoard                                {static_cast<bool>(std::stoi(params[27]))},
+        _useScaledTime                              {static_cast<bool>(std::stoi(params[28]))},
+        _instanteParticuleGeneration                {static_cast<bool>(std::stoi(params[29]))},
+        _stopParticuleGeneration                    {static_cast<bool>(std::stoi(params[30]))}
 {
     _name = __FUNCTION__;
 }
 
 void ParticuleGenerator::update()
 {   
+    if (_velocityEvolutionCoef != 0.f && _velocityEvolutionCoef != 1.f)
+    {
+        for (auto &&i : _gameObject.children)
+        {
+            PhysicalObject& physicalObjComp = *(*i).getComponent<PhysicalObject>();
+            physicalObjComp.setVelocity(physicalObjComp.getVelocity() - physicalObjComp.getVelocity() * _velocityEvolutionCoef * (_useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime()));
+        }
+    }  
+
+    if (_stopParticuleGeneration)
+        return;
+
+    if (_instanteParticuleGeneration)
+    {
+        for (unsigned int i = 0; i < static_cast<unsigned int>(1.f / _spawnCountBySec); i++)
+        {
+            GameObjectCreateArg particleSystemGOArg {std::string("ParticleSystem") + std::to_string(_particleCount)};
+            _particleCount++;
+            if (_particleCount == std::numeric_limits<size_t>::max())
+            {
+                _particleCount = 0;
+            }
+
+            particleSystemGOArg.transformArg.scale = _scale;
+            particleSystemGOArg.transformArg.position = generatePosition();
+            GameObject& particleSystemGO = _gameObject.addChild<GameObject>(particleSystemGOArg);
+            addComponents(particleSystemGO);
+        }
+        
+        _stopParticuleGeneration = true;
+        return;
+    }
+
     _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime();
 
     while(_delayCount >= _spawnCountBySec)
@@ -80,12 +118,6 @@ void ParticuleGenerator::update()
         GameObject& particleSystemGO = _gameObject.addChild<GameObject>(particleSystemGOArg);
         addComponents(particleSystemGO);
     }
-
-    for (auto &&i : _gameObject.children)
-    {
-        PhysicalObject& physicalObjComp = *(*i).getComponent<PhysicalObject>();
-        physicalObjComp.setVelocity(physicalObjComp.getVelocity() * _velocityEvolutionCoef);
-    }    
 }
 
 Vec3 ParticuleGenerator::generatePosition()
@@ -202,6 +234,8 @@ void ParticuleGenerator::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("delayCount", doc.allocate_string(std::to_string(_delayCount).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isBillBoard", doc.allocate_string(std::to_string(_isBillBoard).c_str())));
     newNode->append_attribute(doc.allocate_attribute("useScaledTime", doc.allocate_string(std::to_string(_useScaledTime).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("instanteParticuleGeneration", doc.allocate_string(std::to_string(_instanteParticuleGeneration).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("stopParticuleGeneration", doc.allocate_string(std::to_string(_stopParticuleGeneration).c_str())));
 
     nodeParent->append_node(newNode);
 }

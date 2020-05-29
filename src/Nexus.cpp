@@ -29,12 +29,12 @@ Nexus::Nexus(GameObject &_gameObject)
 
 void Nexus::start()
 {
-    life = 10;
+    _life = 10;
 }
 
 void Nexus::update()
 {
-    if (life <= 0)
+    if (_life <= 0)
         std::cout << "nexus destroy" << std::endl;
 }
 
@@ -50,7 +50,7 @@ void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
 
     newNode->append_attribute(doc.allocate_attribute("type", "Nexus"));
 
-    newNode->append_attribute(doc.allocate_attribute("life", std::to_string(life).c_str()));
+    newNode->append_attribute(doc.allocate_attribute("life", std::to_string(_life).c_str()));
 
     nodeParent->append_node(newNode);
 }

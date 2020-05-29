@@ -17,7 +17,9 @@ EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player, C
 :   ScriptComponent{gameObject},
     _player{player},
     _checkpointManager{checkpoint}
-{}
+{
+    _name = __FUNCTION__;
+}
 
 EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
@@ -27,9 +29,9 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _player{&Scene::getCurrentScene()->getGameObject(params[3])},
       _state{static_cast<States>(std::stoi(params[4]))},
       _checkpointManager{Scene::getCurrentScene()->getGameObject(params[5]).getComponent<Checkpoint>(), 
-      Vec3{std::stof(params[6]),std::stof(params[7]),std::stof(params[8])}, std::stoi(params[9])}
+      Vec3{std::stof(params[6]),std::stof(params[7]),std::stof(params[8])}, static_cast<unsigned int>(std::stoi(params[9]))}
 {
-    
+    _name = __FUNCTION__;
 }
 
 void EnnemyController::update()
@@ -93,7 +95,7 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "EnnemyController"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
 
     newNode->append_attribute(doc.allocate_attribute("radius", doc.allocate_string(std::to_string(_radius).c_str())));
     newNode->append_attribute(doc.allocate_attribute("exclusionRadius", doc.allocate_string(std::to_string(_exclusionRadius).c_str())));

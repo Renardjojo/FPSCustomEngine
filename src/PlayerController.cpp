@@ -70,19 +70,20 @@ void PlayerController::shoot()
     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
     {
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
+        decaleGOPref.transformArg.scale = Vec3::one / 20.f;
+        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"), 
                                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                                "TextureOnly", 
+                                                "LightAndTexture", 
                                                 {"BulletHole"}, 
                                                 "Plane"};
-
+/*
         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
                                 "Color",
                                 {"RedMaterial"},
-                                "Plane"};
+                                "PlaneZ"};
 
         ParticuleGenerator::ParticleSystemCreateArg particalArg;
         particalArg.modelCreateArg = modelArg3;
@@ -97,10 +98,11 @@ void PlayerController::shoot()
 
         GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
-        particleGO.addComponent<LifeDuration>(3.f);
+        particleGO.addComponent<LifeDuration>(3.f);*/
 
         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        //rayInfo.gameObject->destroy();
+        if (rayInfo.gameObject->getTag() != "Ground")
+            rayInfo.gameObject->destroy();
     }
 }
 

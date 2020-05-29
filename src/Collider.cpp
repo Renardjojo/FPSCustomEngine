@@ -14,11 +14,10 @@ Collider::Collider (GameObject& refGameObject)
     _name = __FUNCTION__;
     attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
     PhysicSystem::addCollider(this);
+
     for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
     {
-        std::cout << script->toString() << std::endl;
         functions.push_back([script](HitInfo& HitInfo){script->onCollisionEnter(HitInfo);});
-
     }       
 }
 

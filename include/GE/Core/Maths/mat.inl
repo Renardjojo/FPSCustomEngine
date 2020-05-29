@@ -368,19 +368,20 @@ Mat3&		Mat3::operator-=		(const Mat3& other)
 inline
 Mat3&		Mat3::operator*=		(const Mat3& other)
 {
-    for ( size_t i = 0; i < column() ; i++ )
+    for ( size_t i = 0; i < line() ; i++ )
 	{
-        for ( size_t j = 0; j < line(); j++ )
+        for ( size_t j = 0; j < column(); j++ )
 		{
 			float result = 0.f;
 
 			for ( size_t index = 0; index < 3; index++)
 			{
-				result += ((*this)[i][index] * other[index][j]);
-			}	
+				result += ((*this)[index][i] * other[j][index]);
+			}
+			(*this)[j][i] = result;
 		}
 	}
-		
+
 	return *this;
 }
 
@@ -1007,7 +1008,8 @@ Mat4&		Mat4::operator*=		(const Mat4& other)
 			for ( size_t index = 0; index < 4; index++)
 			{
 				result += ((*this)[i][index] * other[index][j]);
-			}	
+			}
+			(*this)[i][j] = result;
 		}
 	}
 
@@ -1022,6 +1024,7 @@ Mat4&		Mat4::operator*=		(const Mat4& other)
 			{
 				result += ((*this)[index][i] * other[j][index]);
 			}
+			(*this)[j][i] = result;
 		}
 	}
 #endif
