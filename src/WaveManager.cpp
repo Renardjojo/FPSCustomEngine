@@ -11,21 +11,16 @@ using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::Maths;
 
-
-WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, size_t waveOffSet, size_t waveStepOffSet, float minSpawnIntervale, float maxSpawnIntervale, float timeBeforeNextWave)
+WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPrefabs, const EnemiesPrefabs& enemiesPrefabs, size_t currentWave, size_t waveOffSet, size_t waveStepOffSet, float timeBeforeNextWave)
     :   ScriptComponent                             {gameObject},
         _spawnerPrefabs                             {spawnerPrefabs},
         _enemiesPrefabs                             {enemiesPrefabs},
         _currentWave                                {currentWave},
         _waveOffSet                                 {waveOffSet},
         _waveStepOffSet                             {waveStepOffSet},
-        _minSpawnIntervale                          {minSpawnIntervale},
-        _maxSpawnIntervale                          {maxSpawnIntervale},
-        _timeBeforeNextWave                         {timeBeforeNextWave}
+        _timeBeforeNextWave                         {timeBeforeNextWave},
+        _delay                                      {0.f}
 {
-    GE_assert(maxSpawnIntervale >= minSpawnIntervale);
-    GE_assert(minSpawnIntervale > 0.f);
-    GE_assert(maxSpawnIntervale > 0.f);
     GE_assert(waveStepOffSet != 0.f);
     GE_assert(!spawnerPrefabs.empty());
     GE_assert(!enemiesPrefabs.empty());
@@ -34,19 +29,18 @@ WaveManager::WaveManager(GameObject &gameObject, const SpawnerPrefabs& spawnerPr
 }
 
 WaveManager::WaveManager (GameObject &refGameObject, const std::vector<std::string>& params)
-    :   ScriptComponent    {refGameObject},
+    :   ScriptComponent                             {refGameObject},
         _spawnerPrefabs                             {},
         _enemiesPrefabs                             {},
         _currentWave                                {static_cast<size_t>(std::stoi(params[0]))},
-        _minSpawnIntervale                          {std::stof(params[1])},
-        _maxSpawnIntervale                          {std::stof(params[2])},
-        _nextSpawnEnemie                            {std::stof(params[3])},
-        _delay                                      {std::stof(params[4])},
-        _timeBeforeNextWave                         {}
+        _waveOffSet                                 {static_cast<size_t>(std::stoi(params[1]))},
+        _waveStepOffSet                             {static_cast<size_t>(std::stoi(params[2]))},
+        _timeBeforeNextWave                         {std::stof(params[3])},
+        _delay                                      {std::stof(params[4])}
 {
     _name = __FUNCTION__;
 
-    size_t count = 6;
+    size_t count = 5;
 
     while (params.size() > count && params[count].substr(0, 2) == "#1")
     {
@@ -172,9 +166,9 @@ void WaveManager::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
 
     newNode->append_attribute(doc.allocate_attribute("currentWave", doc.allocate_string(std::to_string(_currentWave).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("minSpawnIntervale", doc.allocate_string(std::to_string(_minSpawnIntervale).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("maxSpawnIntervale", doc.allocate_string(std::to_string(_maxSpawnIntervale).c_str())));
-    newNode->append_attribute(doc.allocate_attribute("nextSpawnEnemie", doc.allocate_string(std::to_string(_nextSpawnEnemie).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("waveOffSet", doc.allocate_string(std::to_string(_waveOffSet).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("waveStepOffSet", doc.allocate_string(std::to_string(_waveStepOffSet).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("timeBeforeNextWave", doc.allocate_string(std::to_string(_timeBeforeNextWave).c_str())));
     newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
 
     int count = 0;

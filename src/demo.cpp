@@ -1182,6 +1182,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
+    /*Create enemies prefabs */
     GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
     checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -10, 10});
     checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -10, -10});
@@ -1229,17 +1230,9 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-    std::vector<EntityPrefabCount> entitiesToSpawnInfo;
-    entitiesToSpawnInfo.emplace_back(EntityPrefabCount{10, "Crate"});
-    entitiesToSpawnInfo.emplace_back(EntityPrefabCount{5, "enemy1"});
-    //enemiesContener->addComponent<CircularEntitiesSpawner>(entitiesToSpawnInfo, 2.f, 0.5f, 0.f);
-
-
     _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 
-
-
-    /**************************************************************************************************************/
+    /*Create spawner*/
 
     GameObjectCreateArg spawnerGOArg;
 
@@ -1248,7 +1241,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1259,7 +1252,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1270,7 +1263,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1281,12 +1274,13 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
     }
 
+    /*Create wave manager and assign spawner and enemies prefabs*/
     GameObjectCreateArg waveManagerArg {"waveManager"};
 
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);

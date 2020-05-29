@@ -1,6 +1,6 @@
 <Spawner1>
 	<GAMEOBJECT type="Empty" name="Spawner1" posX="5.000000" posY="5.000000" posZ="5.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="CircularEntitiesSpawner" zoneRadius="2.000000" spawnDelay="0.500000" spawnDelayInterval="0.000000" delayCount="0.000000" nextDelay="0.500000"/>
+		<COMPONENT type="CircularEntitiesSpawner" zoneRadius="2.000000" spawnDelay="0.500000" spawnDelayInterval="0.000000" delayCount="0.000000" nextDelay="0.500000" contenorName="world/EnemiesContener"/>
 	</GAMEOBJECT>
 </Spawner1>
 
