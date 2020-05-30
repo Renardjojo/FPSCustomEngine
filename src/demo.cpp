@@ -233,8 +233,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    //loadRockRessource          (ressourceManager);
-    //loadTreeRessource          (ressourceManager);
+    loadRockRessource          (ressourceManager);
+    loadTreeRessource          (ressourceManager);
     loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
     loadPseudoRessource        (ressourceManager);
@@ -445,7 +445,7 @@ void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
 
 void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(1000));
+    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(10));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name = "Ground";
@@ -768,7 +768,7 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
     GameObjectCreateArg groundArgGameObject{"Ground",
                                             {{0.f, -1.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {100000.f, 1.f, 100000.f}}};
+                                             {1000.f, 1.f, 1000.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("Ground"),
@@ -826,8 +826,8 @@ void Demo::loadCamera()
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
     loadTimeManager             ();
-    //loadRock                   (ressourceManager, 50);
-    //loadTree                   (ressourceManager, 10);
+    loadRock                    (ressourceManager, 100);
+    loadTree                    (ressourceManager, 50);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);

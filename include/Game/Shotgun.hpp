@@ -33,7 +33,7 @@ namespace Game
 
         Shotgun (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
             :   FireGun {refGameObject, params},
-                _radiusPrescisionAtOnMeter{} //TODO:
+                _radiusPrescisionAtOnMeter{std::stof(params[11])}
         {
             _name = __FUNCTION__;
         }
@@ -83,6 +83,27 @@ namespace Game
         virtual void aim () noexcept
         {
 
+        }
+
+        virtual void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        {
+            xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+            newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+            newNode->append_attribute(doc.allocate_attribute("bulletDamage", doc.allocate_string(std::to_string(_bulletDamage).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("bulletVelocity", doc.allocate_string(std::to_string(_bulletVelocity).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("bulletPerShot", doc.allocate_string(std::to_string(_bulletPerShot).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("realoadTime", doc.allocate_string(std::to_string(_realoadTime).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("munitionCapacity", doc.allocate_string(std::to_string(_munitionCapacity).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("shotIntervalDelay", doc.allocate_string(std::to_string(_shotIntervalDelay).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("munition", doc.allocate_string(std::to_string(_munition).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("isRelaoading", doc.allocate_string(std::to_string(_isRelaoading).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("isWaitingForNextShot", doc.allocate_string(std::to_string(_isWaitingForNextShot).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("isAutomatic", doc.allocate_string(std::to_string(_isAutomatic).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("radiusPrescisionAtOnMeter", doc.allocate_string(std::to_string(_radiusPrescisionAtOnMeter).c_str())));
+
+            nodeParent->append_node(newNode);
         }
     };
 

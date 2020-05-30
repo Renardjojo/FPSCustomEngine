@@ -71,7 +71,8 @@ namespace Game
                 _munition                                   {static_cast<unsigned int>(std::stoi(params[6]))},
                 _delay                                      {std::stof(params[7])},
                 _isRelaoading                               {static_cast<bool>(std::stoi(params[8]))},
-                _isWaitingForNextShot                       {static_cast<bool>(std::stoi(params[9]))}
+                _isWaitingForNextShot                       {static_cast<bool>(std::stoi(params[9]))},
+                _isAutomatic                                {static_cast<bool>(std::stoi(params[10]))}
         {
             _name = __FUNCTION__;
             GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
@@ -184,6 +185,7 @@ namespace Game
             newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
             newNode->append_attribute(doc.allocate_attribute("isRelaoading", doc.allocate_string(std::to_string(_isRelaoading).c_str())));
             newNode->append_attribute(doc.allocate_attribute("isWaitingForNextShot", doc.allocate_string(std::to_string(_isWaitingForNextShot).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("isAutomatic", doc.allocate_string(std::to_string(_isAutomatic).c_str())));
 
             nodeParent->append_node(newNode);
         }
