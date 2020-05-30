@@ -666,7 +666,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     FireGun& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5);
     playerControllerPlayer1.addFireGun(&shotgunComponent);*/
 
-    GameObjectCreateArg subMachineGunGameObject    {"SubMachineGun",
+    GameObjectCreateArg subMachineGunGameObject {"SubMachineGun",
                                                 {{-0.5f, -1.5f, 3.2f},
                                                 {0.f, M_PI, 0.f},
                                                 {0.3f, 0.3f, 0.3f}}};

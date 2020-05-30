@@ -12,7 +12,8 @@ void RenderingSystem::draw () noexcept
 
     for(std::map<float, Engine::Core::Component::RenderingObject*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != mapElemSortedByDistance.rend(); ++it) 
     {
-        it->second->draw();
+        if (it->second->isActivate())
+            it->second->draw();
     }
 }
 
