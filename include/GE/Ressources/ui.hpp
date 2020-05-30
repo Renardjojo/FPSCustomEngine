@@ -89,7 +89,6 @@ namespace Engine::Ressources
         void draw() ;
         void update();
         void updateTexture();
-
     };
 
     class Button

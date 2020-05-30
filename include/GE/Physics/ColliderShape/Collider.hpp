@@ -17,6 +17,7 @@ namespace Engine::Physics::ColliderShape
     {
         Engine::Core::Maths::ShapeRelation::Intersection    intersectionsInfo;
         Engine::Ressources::GameObject*                     gameObject;
+        float                                               gameObjectInertie;
     };
 
     class Collider : public Engine::Ressources::Component

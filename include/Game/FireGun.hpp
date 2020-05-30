@@ -1,6 +1,6 @@
 //Project : Engine
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
-//Date : 2020-05-22 - 17 h 39
+//Date : 2020-05-30 - 17 h 39
 
 #ifndef _FIRE_GUN_H
 #define _FIRE_GUN_H
@@ -15,7 +15,7 @@ namespace Game
 {
     class FireGun : public Engine::Core::Component::ScriptComponent
     {
-        private:
+        protected :
 
         /*Bullet stats*/
         float           _bulletDamage        {1.f};
@@ -35,10 +35,12 @@ namespace Game
         float           _delay                  {0.f};
         bool            _isRelaoading           {false};
         bool            _isWaitingForNextShot   {false};
+        bool            _isAutomatic            {false}; //on fire gun stats but her for memory alignas
+
 
         public:
 
-        FireGun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float realoadTime, unsigned int munitionCapacity, float shotIntervalDelay)
+        FireGun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float realoadTime, unsigned int munitionCapacity, float shotIntervalDelay, bool isAutomatic)
             :   Engine::Core::Component::ScriptComponent    {gameObject},        
                 _bulletDamage                               {bulletDamage},
                 _bulletVelocity                             {bulletVelocity},
@@ -49,9 +51,13 @@ namespace Game
                 _munition                                   {munitionCapacity},
                 _delay                                      {0.f},
                 _isRelaoading                               {false},
-                _isWaitingForNextShot                       {false}
+                _isWaitingForNextShot                       {false},
+                _isAutomatic                                {isAutomatic}
         {
             _name = __FUNCTION__;
+            GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
+            GE_assert(realoadTime > 0.f);
+            GE_assert(shotIntervalDelay > 0.f);
         }
 
         FireGun (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
@@ -68,7 +74,9 @@ namespace Game
                 _isWaitingForNextShot                       {static_cast<bool>(std::stoi(params[9]))}
         {
             _name = __FUNCTION__;
-            GE_assertInfo(_munitionCapacity % _bulletPerShot != 0, "The magazine must match the number of bullets fired per shot");
+            GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
+            GE_assert(_realoadTime > 0.f);
+            GE_assert(_shotIntervalDelay > 0.f);
         }
 
         virtual ~FireGun() = default;
@@ -98,7 +106,9 @@ namespace Game
             }
         }
 
-        void shoot (const Engine::Core::Maths::Vec3& direction) noexcept
+        virtual bool isAutomatic() const noexcept { return _isAutomatic;}
+
+        virtual void shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
         {
             if (_isRelaoading || _isWaitingForNextShot)
             {
@@ -117,24 +127,49 @@ namespace Game
             
             Engine::Physics::ColliderShape::HitInfo rayInfo;
 
-            if (Engine::Physics::PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + direction * 6.f, direction, 10000.f, rayInfo))
+            for (size_t i = 0; i < _bulletPerShot; i++)
             {
-                if (rayInfo.gameObject->getTag() != "Ground")
-                    rayInfo.gameObject->destroy();
+                //TODO: remove direction * 6.f when layer integrate the player (avoid to shoot the player)
+                if (Engine::Physics::PhysicSystem::rayCast(startPoint + direction * 6.f, direction, 10000.f, rayInfo))
+                {
+                    Engine::Physics::ColliderShape::Collider* pCollider = rayInfo.gameObject->getComponent<Engine::Physics::ColliderShape::Collider>();
+                    Engine::Ressources::GameObject tempGOWithTag;
+                    tempGOWithTag.setTag("Bullet");
+                    Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
+                    pCollider->OnCollisionEnter(hitInfo1);
+
+                    if (rayInfo.gameObject->getTag() != "Ground")
+                        rayInfo.gameObject->destroy();
+                }
             }
         }
 
-        void reload () noexcept
+        virtual void reload () noexcept
         {
             _isRelaoading = true;
         }
 
-        void aim () noexcept
+        virtual void aim () noexcept
         {
 
         }
 
-        void save(xml_document<>& doc, xml_node<>* nodeParent) 
+        unsigned int getMunition () const noexcept
+        {
+            return _munition;
+        }
+
+        unsigned int* getPMunition () noexcept
+        {
+            return &_munition;
+        }
+
+        unsigned int getMagazine () const noexcept
+        {
+            return _munitionCapacity;
+        }
+
+        virtual void save(xml_document<>& doc, xml_node<>* nodeParent) 
         {
             xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 

@@ -48,7 +48,7 @@ void PlayerController::update()
 {
     move();
 
-    if (Input::mouse.leftClicDown)
+    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
     {
         shoot();
     }
@@ -76,10 +76,7 @@ void PlayerController::switchFlashLightState()
 
 void PlayerController::shoot()
 {
-    if (_firesGuns.empty())
-        return;
-
-    _firesGuns[0]->shoot(_gameObject.getModelMatrix().getVectorForward());
+    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
 
     
 //     HitInfo rayInfo;

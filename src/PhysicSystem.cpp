@@ -114,8 +114,8 @@ void PhysicSystem::update() noexcept
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
                         /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
-                        HitInfo hitInfo1{intersection, &collider2->getGameObject()};
-                        HitInfo hitInfo2{intersection, &collider1->getGameObject()};
+                        HitInfo hitInfo1{intersection, &collider2->getGameObject(), 0.f /*Static object*/};
+                        HitInfo hitInfo2{intersection, &collider1->getGameObject(), afterCollisionVelocity.length()};
                         collider1->OnCollisionEnter(hitInfo1);
                         collider2->OnCollisionEnter(hitInfo2);
                     }
@@ -281,7 +281,7 @@ bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameOb
     if (rayCast(ray, rayHitInfo))
     {
         Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject};
+        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject, ray.getLenght()};
         pCollider->OnCollisionEnter(hitInfo);    
         return true;
     }
@@ -305,7 +305,7 @@ bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Ma
         Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
         GameObject tempGOWithTag;
         tempGOWithTag.setTag(tag);
-        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag};
+        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag, ray.getLenght()};
         pCollider->OnCollisionEnter(hitInfo1);    
         return true;
     }

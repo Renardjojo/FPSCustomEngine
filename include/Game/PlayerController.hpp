@@ -9,6 +9,7 @@
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
+#include "GE/Ressources/ui.hpp"
 #include "Game/FireGun.hpp"
 
 namespace Game
@@ -35,7 +36,7 @@ namespace Game
         bool _flashLightOn{false};
 
         std::vector<FireGun*> _firesGuns {}; /*First element is the weapon used*/
-        
+
         CameraType _type{CameraType::FirstPerson};
 
         Engine::LowRenderer::Camera *_camera;
@@ -52,6 +53,7 @@ namespace Game
         void shoot();
 
     public:
+    
         PlayerController(Engine::Ressources::GameObject &gameObject);
         virtual ~PlayerController() = default;
 
