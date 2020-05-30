@@ -9,10 +9,10 @@
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
+#include "Game/FireGun.hpp"
 
 namespace Game
 {
-
     class PlayerController : public Engine::Core::Component::ScriptComponent
     {
         enum class CameraType
@@ -33,6 +33,8 @@ namespace Game
         bool _jump{false};
         bool _isGrounded{false};
         bool _flashLightOn{false};
+
+        std::vector<FireGun*> _firesGuns {}; /*First element is the weapon used*/
         
         CameraType _type{CameraType::FirstPerson};
 
@@ -55,6 +57,7 @@ namespace Game
 
         void setCameraType(CameraType type);
         void toggleCameraType();
+        void addFireGun(FireGun* fireGun);
 
         void update() override;
         void start() override;

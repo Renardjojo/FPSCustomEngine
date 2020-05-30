@@ -27,6 +27,7 @@
 #include "Game/GroundController.hpp"
 #include "Game/WaveManager.hpp"
 #include "Game/DayNightCycle.hpp"
+#include "Game/FireGun.hpp"
 
 #include "../src/stb_image.h"
 
@@ -548,7 +549,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     playerGameObject.name = "Player1";
     playerGameObject.transformArg.position = {2.f, 10.f, 2.f};
     GameObject& player1GO = _scene->add<GameObject>(playerContener, playerGameObject);
-    player1GO.addComponent<PlayerController>();
+    PlayerController& playerControllerPlayer1 = player1GO.addComponent<PlayerController>();
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
@@ -597,7 +598,10 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
                                     "SniperMaterials",
                                     "SniperMesh"};
 
-    _scene->add<GameObject>(player1GO, sniperGameObject).addComponent<Model>(sniperModelArg);
+    GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
+    sniperGO.addComponent<Model>(sniperModelArg);
+    FireGun& sniperComponent = sniperGO.addComponent<FireGun>(10.f, 1000.f, 1, 1.f, 10, 0.2f);
+    playerControllerPlayer1.addFireGun(&sniperComponent);
 
     //load billboards
     std::vector<Material>& vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
@@ -1199,7 +1203,6 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();
-
 
     GameObjectCreateArg CrateGameObjectArg{"Crate"};
 

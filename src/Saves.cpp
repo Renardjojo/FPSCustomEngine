@@ -28,6 +28,7 @@
 #include "Game/WaveManager.hpp"
 #include "Game/CircularEntitiesSpawner.hpp"
 #include "Game/DayNightCycle.hpp"
+#include "Game/FireGun.hpp"
 
 using namespace rapidxml;
 
@@ -281,6 +282,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<CircularEntitiesSpawner>(params);
         else if (type.compare("DayNightCycle") == 0)
             parent.addComponent<DayNightCycle>(params);
+        else if (type.compare("FireGun") == 0)
+            parent.addComponent<FireGun>(params);
 
         newGameObject = &parent;
     }
@@ -451,6 +454,11 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<DayNightCycle>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<FireGun>())
     {
         i->save(doc, newNode);
     }
