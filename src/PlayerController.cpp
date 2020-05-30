@@ -52,6 +52,30 @@ void PlayerController::update()
     {
         shoot();
     }
+
+    /*Choose fire gun*/
+    if (_firesGuns.size() > 1)
+    {
+        if (Input::mouse.wheel_scrollingFlag != 0)
+        {
+            if (Input::mouse.wheel_scrollingFlag == 1)
+            {
+                FireGun* temp = _firesGuns.front();
+                _firesGuns.erase(_firesGuns.begin());
+                _firesGuns.push_back(temp);
+                temp->getGameObject().setActivate(false);
+                _firesGuns.front()->getGameObject().setActivate(true);
+            }
+            else
+            {
+                FireGun* temp = _firesGuns.back();
+                _firesGuns.pop_back();
+                temp->getGameObject().setActivate(true);
+                _firesGuns.front()->getGameObject().setActivate(false);
+                _firesGuns.insert(_firesGuns.begin(), temp);
+            }
+        }
+    }
 }
 
 void PlayerController::fixedUpdate()
