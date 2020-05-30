@@ -24,7 +24,7 @@ void RenderingSystem::sortAndDrawOpqueElement(std::map<float, Engine::Core::Comp
         Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model*>(pRenderingObject);
         if (model != nullptr)
         {
-            if (model->isOpaque())
+            if (model->isOpaque() && model->isActivate())
                 model->draw();
             else
             {

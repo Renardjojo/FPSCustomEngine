@@ -139,6 +139,15 @@ void PlayerController::addFireGun(FireGun* fireGun)
     GE_assert(fireGun != nullptr);
 
     _firesGuns.emplace_back(fireGun);
+
+    if (_firesGuns.size() == 1)
+    {
+
+    }
+    else 
+    {
+        _firesGuns.back()->getGameObject().setActivate(false);
+    }
 }
 
 Vec3 PlayerController::cylindricalCoord(float r, float angle)
