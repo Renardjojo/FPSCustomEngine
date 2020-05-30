@@ -1227,12 +1227,19 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     GameObjectCreateArg spawnerGOArg;
 
+    GameObjectCreateArg pointLightGameObjectArg{"PointLight", {{0.f, 2.f, 0.f}}};
+    PointLightCreateArg lightArg{{1.f, 1.f, 1.f, 0.f},
+                                {1.f, 0.f, 0.f, 0.7f},
+                                {1.f, 1.f, 1.f, 0.3f},
+                                0.f, 0.05f, 0.f, true};
+
     {
         spawnerGOArg.name = "Spawner1";
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1244,6 +1251,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1255,6 +1263,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -1266,6 +1275,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();

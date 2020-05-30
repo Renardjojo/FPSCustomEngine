@@ -41,7 +41,7 @@ namespace Engine::LowRenderer
             
             Light (const Light& other)		= delete;
             Light (Light&& other)			= delete;
-            virtual ~Light ()				= default;
+            virtual ~Light ();
 
             Light()                               = delete;
             Light &operator=(Light const &other)  = delete;
