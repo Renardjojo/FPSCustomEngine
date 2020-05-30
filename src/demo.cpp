@@ -629,7 +629,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     _scene->add<GameObject>(player1GO, flashlightGameObject).addComponent<SpotLight>(lightArg);
 
     //load guns
-    /*
+    
     GameObjectCreateArg sniperGameObject    {"Sniper",
                                             {{-0.5f, -1.5f, 3.2f},
                                             {0.f, -M_PI_2, 0.f},
@@ -647,8 +647,8 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
     sniperGO.addComponent<Model>(sniperModelArg);
     FireGun& sniperComponent = sniperGO.addComponent<Sniper>(10.f, 1000.f, 1, 1.f, 50, 0.2f);
-    playerControllerPlayer1.addFireGun(&sniperComponent);*/
-/*
+    playerControllerPlayer1.addFireGun(&sniperComponent);
+
     GameObjectCreateArg shotgunGameObject    {"shotgun",
                                             {{-0.5f, -1.5f, 3.8f}, {0.f, M_PI, 0.f}}};
 
@@ -664,7 +664,7 @@ void Demo::loadPlayer                 (t_RessourcesManager& ressourceManager)
     GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
     shotgunGO.addComponent<Model>(shotgunModelArg);
     FireGun& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5);
-    playerControllerPlayer1.addFireGun(&shotgunComponent);*/
+    playerControllerPlayer1.addFireGun(&shotgunComponent);
 
     GameObjectCreateArg subMachineGunGameObject {"SubMachineGun",
                                                 {{-0.5f, -1.5f, 3.2f},
