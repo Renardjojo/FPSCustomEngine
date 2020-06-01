@@ -3,6 +3,7 @@
 		<COMPONENT type="Model" shaderName="LightAndTexture" materialName="CrateMaterial" meshName="Cube"/>
 		<COMPONENT type="SphereCollider" radius="0.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000"/>
 		<COMPONENT type="PhysicalObject" velocity0="0.000000" velocity1="0.000000" velocity2="0.000000" AngularVelocity0="0.000000" AngularVelocity1="0.000000" AngularVelocity2="0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="0" freezeRotY="0" freezeRotZ="0" isKinematic="0" useGravity="1" isDirty="0"/>
+		<COMPONENT type="Loot" activationRadius="8.000000"/>
 	</GAMEOBJECT>
 </Lot2>
 

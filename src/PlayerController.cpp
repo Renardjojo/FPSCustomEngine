@@ -6,6 +6,7 @@
 #include "GE/Physics/PhysicSystem.hpp"
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "Game/LootMachine.hpp"
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
@@ -53,6 +54,11 @@ void PlayerController::update()
     if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
     {
         shoot();
+    }
+
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_R) == E_KEY_STATE::TOUCHED)
+    {
+        activateLootMachine();
     }
 
     /*Choose fire gun*/
@@ -158,6 +164,11 @@ void PlayerController::setCameraType(CameraType type)
     //     //animation de transition de position de la camera
     // }
     _type = type;
+}
+
+void PlayerController::activateLootMachine()
+{
+    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition());
 }
 
 void PlayerController::toggleCameraType()
