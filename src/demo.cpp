@@ -220,6 +220,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     ressourceManager.add<Mesh>("Cube", Mesh::createCube(1));
     ressourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
+    ressourceManager.add<Mesh>("Cylinder", Mesh::createCylindre(25));
     ressourceManager.add<Mesh>("Plane", Mesh::createPlane());
     ressourceManager.add<Mesh>("PlaneZ", Mesh::createPlane(1.f, 0, 0, Mesh::Axis::Z));
 
@@ -243,6 +244,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     //loadTowerRessource         (ressourceManager);
     loadGroundRessource         (ressourceManager);
     loadCrateRessource          (ressourceManager);  
+    loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
 }
 
@@ -472,6 +474,20 @@ void Demo::loadCrateRessource          (t_RessourcesManager& ressourceManager)
         std::vector<Material> material;
         material.emplace_back(matCrate);
         ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+}
+
+void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matGlass;
+    matGlass.name = "GlassMaterial";
+    matGlass.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    matGlass.pathDiffuseTexture = "./ressources/texture/glass.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matGlass);
+        ressourceManager.add<std::vector<Material>>(matGlass.name, std::move(material));
     }
 }
 
@@ -773,7 +789,7 @@ void Demo::loadGround                 (t_RessourcesManager& ressourceManager)
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("Ground"),
                              &ressourceManager.get<Mesh>("GroundMesh"),
-                             "TextureOnly",
+                             "LightAndTexture",
                              "Ground",
                              "GroundMesh",
                              true,
@@ -816,6 +832,261 @@ void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressource
     }
 }
 
+void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
+{
+    GameObjectCreateArg lotMachinArgGameObject{"LotMachin",
+                                            {{20.f, 5.f, 20.f},
+                                             {0.f, 0.f, 0.f},
+                                             {1.f, 1.f, 1.f}}};
+
+    GameObject& lotMachin = _scene->add<GameObject>(_scene->getWorld(), lotMachinArgGameObject);
+
+    float wrapHeight = 10.f;
+    float wrapWidth = 4.f;
+    float wrapDepth = 2.5f;
+    float wrapThickness = 0.3f;
+
+    /*Lever*/
+    GameObjectCreateArg leverArgGameObject{"Lever",
+                                            {{wrapWidth, 0.f, 0.f},
+                                            {0, 0.f, 0.f},
+                                            {1.f, 1.f, 1.f}}};
+
+    GameObject& lever = _scene->add<GameObject>(lotMachin, leverArgGameObject);
+
+    GameObjectCreateArg cylinderArgGameObject{"Cylinder",
+                                            {{-0.5f, 0.f, 0.f},
+                                            {M_PI_2, 0.f, 0.f},
+                                            {.5f, 0.5f, 3.f}}};
+                                             
+    ModelCreateArg cylinderArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             &ressourceManager.get<Mesh>("Cylinder"),
+                             "LightAndTexture",
+                             "BlackMaterial",
+                             "Cylinder", 
+                            true, false};
+
+    _scene->add<GameObject>(lever, cylinderArgGameObject).addComponent<Model>(cylinderArg);
+
+     GameObjectCreateArg sphereArgGameObject{"Sphere",
+                                            {{-0.5f, cylinderArgGameObject.transformArg.scale.z / 2.f, 0.f},
+                                            {0, 0.f, 0.f},
+                                            {1.5f, 1.5f, 1.5f}}};
+                                             
+    ModelCreateArg sphereArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                             &ressourceManager.get<Mesh>("Sphere"),
+                             "LightAndTexture",
+                             "RedMaterial",
+                             "Sphere"};
+
+    _scene->add<GameObject>(lever, sphereArgGameObject).addComponent<Model>(sphereArg);
+
+    GameObjectCreateArg cylinderBaseArgGameObject{"CylinderBase",
+                                            {{-1.f, -cylinderArgGameObject.transformArg.scale.z / 2.f, 0.f},
+                                            {0.f, M_PI_2, 0.f},
+                                            {1.f, 1.f, 2.f}}};
+                                             
+    ModelCreateArg cylinderBaseArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             &ressourceManager.get<Mesh>("Cylinder"),
+                             "LightAndTexture",
+                             "BlackMaterial",
+                             "Cylinder", 
+                            true, false};
+
+    _scene->add<GameObject>(lever, cylinderBaseArgGameObject).addComponent<Model>(cylinderBaseArg);
+
+    /*Mechanism*/
+    GameObjectCreateArg mechanismArgGameObject{"Mechanism",
+                                            {{0.f, 0.f, 0.f},
+                                            {0, 0.f, 0.f},
+                                            {1.f, 1.f, 1.f}}};
+
+    GameObject& mechanism = _scene->add<GameObject>(lotMachin, mechanismArgGameObject);
+    
+    GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
+                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
+                                            {0.f, 0.f, M_PI_4},
+                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+
+    GameObjectCreateArg secondInclinedPlatformArgGameObject{"SecondInclinedPlatform",
+                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
+                                            {0.f, 0.f, -M_PI_4},
+                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+
+    GameObjectCreateArg thirdInclinedPlatformArgGameObject{"ThirdInclinedPlatform",
+                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
+                                            {0.f, 0.f, M_PI_4},
+                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                        
+    GameObjectCreateArg forthInclinedPlatformArgGameObject{"ForthInclinedPlatform",
+                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
+                                            {0.f, 0.f, -M_PI_4},
+                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                            
+    GameObjectCreateArg distributorInclinedPlatformArgGameObject{"DistributorInclinedPlatform",
+                                            {{0.f, (wrapHeight / 8.f * 1) - wrapHeight / 2.f, 0.f},
+                                            {M_PI_4, 0.f, 0.f},
+                                            {wrapWidth, wrapThickness, wrapDepth}}};
+                                             
+    ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                             &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "GreenMaterial",
+                            "Cube"};
+
+    ModelCreateArg pinkPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
+                             &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "PinkMaterial",
+                            "Cube"};
+
+    ModelCreateArg redPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                             &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "RedMaterial",
+                            "Cube"};
+
+    GameObject& firstInclinedPlatformGO = _scene->add<GameObject>(mechanism, firstInclinedPlatformArgGameObject);
+    GameObject& secondInclinedPlatformGO = _scene->add<GameObject>(mechanism, secondInclinedPlatformArgGameObject);
+    GameObject& thirdInclinedPlatformGO = _scene->add<GameObject>(mechanism, thirdInclinedPlatformArgGameObject);
+    GameObject& fourthInclinedPlatformGO = _scene->add<GameObject>(mechanism, forthInclinedPlatformArgGameObject);
+    GameObject& distributorInclinedPlatformGO = _scene->add<GameObject>(mechanism, distributorInclinedPlatformArgGameObject);
+
+    firstInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
+    firstInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+
+    secondInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
+    secondInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+
+    thirdInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
+    thirdInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+
+    fourthInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
+    fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+
+    distributorInclinedPlatformGO.addComponent<Model>(redPlatformArg);
+    distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+
+
+    /*Wrap*/
+    GameObjectCreateArg wrapArgGameObject{"Wrap",
+                                            {{0.f, 0.f, 0.f},
+                                            {0, 0.f, 0.f},
+                                            {1.f, 1.f, 1.f}}};
+
+    GameObject& wrap = _scene->add<GameObject>(lotMachin, wrapArgGameObject);
+    
+                                             
+    GameObjectCreateArg leftFaceArgGameObject{"leftFace",
+                                            {{-wrapWidth / 2.f, 0.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapThickness, wrapHeight, wrapDepth}}};
+
+    GameObjectCreateArg rightFaceArgGameObject{"rightFace",
+                                            {{wrapWidth / 2.f, 0.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapThickness, wrapHeight, wrapDepth}}};
+
+    GameObjectCreateArg backwardFaceArgGameObject{"BackwardFace",
+                                            {{0.f, 0.f, -wrapDepth / 2.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapWidth, wrapHeight, wrapThickness}}};
+
+    GameObjectCreateArg topFaceArgGameObject{"TopFace",
+                                            {{0.f, wrapHeight / 2.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapWidth, wrapThickness, wrapDepth}}};
+
+    GameObjectCreateArg forwardTopFaceArgGameObject{"forwardTopFace",
+                                            {{0.f, (wrapHeight) - wrapHeight / 2.f, wrapDepth / 2.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapWidth, wrapHeight / 6.f, wrapThickness}}};
+
+    GameObjectCreateArg forwardGlassFaceArgGameObject{"forwardGlassFace",
+                                            {{0.f, wrapHeight / 10.f, wrapDepth / 2.f},
+                                            {0.f, 0.f, 0.f},
+                                            {wrapWidth, wrapHeight / 3.f * 2.f, wrapThickness}}};
+                                            
+    ModelCreateArg blackPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "BlackMaterial",
+                            "Cube"};
+
+    ModelCreateArg glassPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("GlassMaterial"),
+                             &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "GlassMaterial",
+                            "Cube"};
+    glassPlatformArg.isOpaque = false;
+
+    _scene->add<GameObject>(wrap, rightFaceArgGameObject).addComponent<Model>(blackPlatformArg);
+    _scene->add<GameObject>(wrap, leftFaceArgGameObject).addComponent<Model>(blackPlatformArg);
+    _scene->add<GameObject>(wrap, backwardFaceArgGameObject).addComponent<Model>(blackPlatformArg);
+    _scene->add<GameObject>(wrap, topFaceArgGameObject).addComponent<Model>(blackPlatformArg);
+    _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject).addComponent<Model>(blackPlatformArg);
+    _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject).addComponent<Model>(glassPlatformArg);
+
+    /*Create lots prefabs*/
+    GameObjectCreateArg lot1GameObjectArg{"Lot1"};
+    lot1GameObjectArg.transformArg.scale /= 2.f;
+
+    GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
+
+    lot1GO.addComponent<Model>(greenPlatformArg);
+    lot1GO.addComponent<PhysicalObject>().setMass(1);
+    lot1GO.addComponent<SphereCollider>().setBounciness(0.4f);
+
+    Save::createPrefab(lot1GO, "Lot1");
+    lot1GO.destroy();
+
+    GameObjectCreateArg lot2GameObjectArg{"Lot2"};
+    lot2GameObjectArg.transformArg.scale /= 2.f;
+
+    GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
+
+    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+                          &ressourceManager.get<Mesh>("Cube"),
+                          "LightAndTexture",
+                          "CrateMaterial",
+                          "Cube"};
+
+    lot2GO.addComponent<Model>(modelCrateArg);
+    lot2GO.addComponent<PhysicalObject>().setMass(1);
+    lot2GO.addComponent<SphereCollider>().setBounciness(0.4f);
+
+    Save::createPrefab(lot2GO, "Lot2");
+    lot2GO.destroy();
+
+    std::vector<EntityPrefabCount> entitySpawnerInfo;
+    entitySpawnerInfo.push_back({20, "Lot1"});
+    entitySpawnerInfo.push_back({20, "Lot2"});
+
+    /*Create spawner*/
+    GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
+
+    GameObjectCreateArg spawnerGOArg;
+    {
+        spawnerGOArg.name = "Spawner";
+        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
+
+        GameObject& spawnerGO = _scene->add<GameObject>(lotMachin, spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, entitySpawnerInfo, 0.1f, 0.5f, 0.f);
+
+        //Save::createPrefab(spawnerGO, spawnerGOArg.name);
+        //spawnerGO.destroy();
+    }
+}
+
 void Demo::loadCamera()
 {
     CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
@@ -833,6 +1104,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     loadGround                  (ressourceManager);
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
+    loadLotMachin               (ressourceManager);
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
@@ -1376,7 +1648,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 void Demo::loadTimeManager        ()
 {
     GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
-    timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 17.f, 100.f);
+    timeManager.addComponent<DayNightCycle>(60.f, 120.f, 30.f, 180.f, 120.f, 30.f, 100.f, 1000.f);
 }
 
 void Demo::updateControl()
