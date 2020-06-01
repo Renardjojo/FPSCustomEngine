@@ -22,6 +22,11 @@ namespace Engine::Ressources
         float r, g, b, a;
     };
 
+    struct ColorRGB
+    {
+        float r, g, b;
+    };
+
     typedef union
     {    
         struct {float kr, kg, kb, ki;};

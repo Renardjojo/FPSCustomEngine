@@ -69,6 +69,7 @@ namespace Engine::Core::InputSystem
         SDL_Scancode right{SDL_SCANCODE_D};
         SDL_Scancode left{SDL_SCANCODE_A};
         SDL_Scancode jump{SDL_SCANCODE_SPACE};
+        SDL_Scancode switchFlashLightState{SDL_SCANCODE_E};
 
         bool isTouch{false};
         bool flagEscIsRelease{false};

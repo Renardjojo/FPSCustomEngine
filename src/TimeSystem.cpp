@@ -23,6 +23,9 @@ double TimeSystem::_fixedUnscaledDetlaTime = 1. / 60.;
 double TimeSystem::_fixedDetlaTime = _fixedUnscaledDetlaTime * _timeScale;
 bool  TimeSystem::_logFPS = true;
 
+float  TimeSystem::_scaledTimeAcc	= 0.f;
+float  TimeSystem::_unscaledTimeAcc = 0.f;
+
 void TimeSystem::update()
 {	
 	_temp_time = SDL_GetTicks() / 1000.0;
@@ -85,6 +88,19 @@ void TimeSystem::update(std::function<void()> fixedUpdateFunction, std::function
 
 	unFixedUpdateFrameCount++;
 	_deltaTime = _unscaledDeltaTime * _timeScale;
+
+	_scaledTimeAcc	 += _deltaTime;
+	_unscaledTimeAcc += _unscaledDeltaTime;
+
+	if (isinf(_scaledTimeAcc))
+	{
+		_scaledTimeAcc = 0.f;
+	}
+
+	if (isinf(_unscaledTimeAcc))
+	{
+		_unscaledTimeAcc = 0.f;
+	}
 
 	/*unfixed update*/
     updateFunction();

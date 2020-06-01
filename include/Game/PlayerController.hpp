@@ -8,6 +8,7 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
+#include "GE/LowRenderer/Light/spotLight.hpp"
 
 namespace Game
 {
@@ -23,6 +24,7 @@ namespace Game
     private:
         Engine::Ressources::t_RessourcesManager* _rm;
         Engine::Physics::PhysicalObject *_physics;
+        Engine::LowRenderer::SpotLight *_flashLight;
         float _mouseSpeed{0.75f};
         float _playerForce{600.f};
         float _jumpForce{450.f};
@@ -33,6 +35,7 @@ namespace Game
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
         bool _jump{false};
         bool _isGrounded{false};
+        bool _flashLightOn{false};
         
         CameraType _type{CameraType::FirstPerson};
 
@@ -45,6 +48,7 @@ namespace Game
 
         void camera();
         void move();
+        void switchFlashLightState();
         void showReticle();
         void shoot();
 

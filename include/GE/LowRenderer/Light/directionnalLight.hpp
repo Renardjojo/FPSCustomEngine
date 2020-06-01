@@ -65,6 +65,8 @@ namespace Engine::LowRenderer
             virtual void serializeOnEditor () noexcept override;
             #endif
 
+            void setDirection( const  Engine::Core::Maths::Vec3& newDirection) noexcept { _direction = newDirection.getNormalize();}
+
             #pragma endregion //!methods
 
     

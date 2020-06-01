@@ -27,7 +27,7 @@
 #include "Game/GroundController.hpp"
 #include "Game/WaveManager.hpp"
 #include "Game/CircularEntitiesSpawner.hpp"
-
+#include "Game/DayNightCycle.hpp"
 
 using namespace rapidxml;
 
@@ -279,6 +279,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<WaveManager>(params);
         else if (type.compare("CircularEntitiesSpawner") == 0)
             parent.addComponent<CircularEntitiesSpawner>(params);
+        else if (type.compare("DayNightCycle") == 0)
+            parent.addComponent<DayNightCycle>(params);
 
         newGameObject = &parent;
     }
@@ -444,6 +446,11 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<CircularEntitiesSpawner>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<DayNightCycle>())
     {
         i->save(doc, newNode);
     }
