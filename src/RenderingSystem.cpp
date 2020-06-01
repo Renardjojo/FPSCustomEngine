@@ -12,7 +12,7 @@ void RenderingSystem::draw () noexcept
 
     for(std::map<float, Engine::Core::Component::RenderingObject*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != mapElemSortedByDistance.rend(); ++it) 
     {
-        if (it->second->isActivate())
+        if (it->second->isActivated())
             it->second->draw();
     }
 }
@@ -24,7 +24,7 @@ void RenderingSystem::sortAndDrawOpqueElement(std::map<float, Engine::Core::Comp
         Engine::LowRenderer::Model *model = dynamic_cast<Engine::LowRenderer::Model*>(pRenderingObject);
         if (model != nullptr)
         {
-            if (model->isOpaque() && model->isActivate())
+            if (model->isOpaque() && model->isActivated())
                 model->draw();
             else
             {

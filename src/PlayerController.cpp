@@ -63,15 +63,15 @@ void PlayerController::update()
                 FireGun* temp = _firesGuns.front();
                 _firesGuns.erase(_firesGuns.begin());
                 _firesGuns.push_back(temp);
-                temp->getGameObject().setActivate(false);
-                _firesGuns.front()->getGameObject().setActivate(true);
+                temp->getGameObject().setActive(false);
+                _firesGuns.front()->getGameObject().setActive(true);
             }
             else
             {
                 FireGun* temp = _firesGuns.back();
                 _firesGuns.pop_back();
-                temp->getGameObject().setActivate(true);
-                _firesGuns.front()->getGameObject().setActivate(false);
+                temp->getGameObject().setActive(true);
+                _firesGuns.front()->getGameObject().setActive(false);
                 _firesGuns.insert(_firesGuns.begin(), temp);
             }
         }
@@ -170,7 +170,7 @@ void PlayerController::addFireGun(FireGun* fireGun)
     }
     else 
     {
-        _firesGuns.back()->getGameObject().setActivate(false);
+        _firesGuns.back()->getGameObject().setActive(false);
     }
 }
 

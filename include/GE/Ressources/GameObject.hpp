@@ -110,7 +110,7 @@ namespace Engine::Ressources
          */
         std::list<std::unique_ptr<Component>>::iterator destroyComponent (Component* pComponent) noexcept;
 
-        void setActivate(bool newState);
+        void setActive(bool newState);
 
         std::list<std::unique_ptr<Component>>::iterator destroyComponent (const std::list<std::unique_ptr<Component>>::iterator& it) noexcept;
 

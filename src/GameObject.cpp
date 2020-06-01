@@ -135,11 +135,11 @@ std::list<std::unique_ptr<Component>>::iterator GameObject::destroyComponent (Co
     return _components.end();
 }
 
-void GameObject::setActivate(bool newState)
+void GameObject::setActive(bool newState)
 {
     for (auto &&i : _components)
     {
-        i->setActivate(newState);
+        i->setActive(newState);
     }
 }
 

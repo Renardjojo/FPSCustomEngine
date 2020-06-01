@@ -45,7 +45,7 @@ void PhysicSystem::update() noexcept
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping() || !object->isActivate())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isActivated())
             continue;
 
         if (object->useGravity())
@@ -54,12 +54,12 @@ void PhysicSystem::update() noexcept
 
     for (Collider* collider1 : pColliders)
     {
-        if (!collider1->isActivate())
+        if (!collider1->isActivated())
             continue;
 
         for (Collider* collider2 : pColliders)
         {
-            if (!collider2->isActivate())
+            if (!collider2->isActivated())
                 continue;
 
             // is kinematic todo
@@ -128,7 +128,7 @@ void PhysicSystem::update() noexcept
 
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty() || !object->isActivate())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty() || !object->isActivated())
             continue;
         
         /*update movement and torque induct by the differente force on the object*/

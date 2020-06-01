@@ -18,7 +18,7 @@ void ScriptSystem::update() noexcept
 {
     for (ScriptComponent *script : _scripts)
     {
-        if (script != nullptr && script->isActivate())
+        if (script != nullptr && script->isActivated())
             script->update();
     }
 }
@@ -27,7 +27,7 @@ void ScriptSystem::fixedUpdate() noexcept
 {
     for (ScriptComponent *script : _scripts)
     {
-        if (script != nullptr && script->isActivate())
+        if (script != nullptr && script->isActivated())
             script->fixedUpdate();
     }
 }

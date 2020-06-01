@@ -60,6 +60,8 @@ namespace Game
         void setCameraType(CameraType type);
         void toggleCameraType();
         void addFireGun(FireGun* fireGun);
+        
+        void activateLotMachine();
 
         void update() override;
         void start() override;

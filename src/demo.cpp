@@ -447,7 +447,7 @@ void Demo::loadSpotLightRessource     (t_RessourcesManager& ressourceManager)
 
 void Demo::loadGroundRessource        (t_RessourcesManager& ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(10));
+    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(100));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name = "Ground";
