@@ -23,7 +23,9 @@ EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player, G
     _player{player},
     _nexus{nexus},
     _checkpointManager{checkpoint}
-{}
+{
+    _name = __FUNCTION__;
+}
 
 EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
@@ -39,7 +41,7 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _cooldown{std::stof(params[12])},
       _damage{std::stoi(params[13])}
 {
-    
+    _name = __FUNCTION__;
 }
 void EnnemyController::start()
 {
@@ -133,7 +135,7 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", "EnnemyController"));
+    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
 
     newNode->append_attribute(doc.allocate_attribute("player", doc.allocate_string(_player->getRelativePath().c_str())));
     newNode->append_attribute(doc.allocate_attribute("nexus", doc.allocate_string(_nexus->getRelativePath().c_str())));

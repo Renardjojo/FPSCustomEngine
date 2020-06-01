@@ -29,7 +29,7 @@ Nexus::Nexus(GameObject &_gameObject)
 
 Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
-    _life{std::stof(params[0])}
+    _life{std::stoi(params[0])}
 {}
 
 void Nexus::start()

@@ -12,9 +12,7 @@
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
 #include "GE/LowRenderer/model.hpp"
-#include "GE/Ressources/sample.hpp"
 #include "GE/Ressources/material.hpp"
-#include "GE/Ressources/music.hpp"
 #include "GE/Ressources/font.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "GE/Core/Maths/vec.hpp"
@@ -51,11 +49,10 @@ namespace Game
 
             #pragma region attribut
 
-            Engine::GE& gameEngine_;
-            std::unique_ptr<Engine::Ressources::Scene> scene_;
+            Engine::GE& _gameEngine;
+            std::unique_ptr<Engine::Ressources::Scene> _scene;
 
             bool flagleftClicIsDown;
-            bool flagF1IsDown;
             bool usingMouse;
 
             Engine::Ressources::GameObject* sunLight;
@@ -72,6 +69,7 @@ namespace Game
             #pragma region methods
 
             void loadRessources             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadSounds                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadRockRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTreeRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyboxRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);
@@ -81,16 +79,19 @@ namespace Game
             void loadSpotLightRessource     (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTowerRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGroundRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);    
-            void loadCrateRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
             void loadNexusRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);         
+            void loadCrateRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGlassRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
+            void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);          
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadSkybox                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadPlayer                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);    
-            
+            void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadFog                    (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);    
+            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);      
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
@@ -100,6 +101,7 @@ namespace Game
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadATH                (Engine::Ressources::t_RessourcesManager& ressourceManager);    
             void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadTimeManager        ();
             void loadCamera             ();
 
             void updateControl          ();

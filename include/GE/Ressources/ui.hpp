@@ -68,15 +68,16 @@ namespace Engine::Ressources
         float w;
         float h;
 
+        std::string _additionnalTextBeforValue;
+
     public:
         GLuint texture;
         std::string value;
         int* valuePtr;
-        std::unique_ptr<Engine::Physics::Transform> transform;
-        bool isActive;
         E_GAME_STATE whenIsActive;
+        std::unique_ptr<Engine::Physics::Transform> transform;
 
-        ReferencedTitle(Font *, Engine::Ressources::Shader *, float, float, float, float, SDL_Color, int*, E_GAME_STATE);
+        ReferencedTitle(Font *, Engine::Ressources::Shader *, float, float, float, float, const SDL_Color&, int*, const std::string& additionnalTextBeforValue, E_GAME_STATE);
         // ReferencedTitle(const ReferencedTitle &other) = delete;
         // ReferencedTitle(ReferencedTitle &&other) = delete;
         virtual ~ReferencedTitle();
@@ -88,7 +89,6 @@ namespace Engine::Ressources
         void draw() ;
         void update();
         void updateTexture();
-
     };
 
     class Button

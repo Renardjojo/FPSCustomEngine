@@ -23,6 +23,8 @@ namespace Engine::Ressources
     #define LIGHT_BLIN_PHONG            1  // 2^0, bit 1
     #define SKYBOX                      2  // 2^1, bit 2
     #define AMBIANTE_COLOR_ONLY         4  // 2^2, bit 4
+    #define SCALE_TIME_ACC              8  // 2^3, bit 8
+    #define UNSCALED_TIME_ACC          16  // 2^4, bit 16
 
     //Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
     class Shader

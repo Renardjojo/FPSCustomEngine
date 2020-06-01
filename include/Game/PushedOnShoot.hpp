@@ -22,15 +22,6 @@ namespace Game
 
         public:
 
-        /**
-         * @brief Construct a new Ranged Enemies Spawner object
-         * 
-         * @param gameObject 
-         * @param spawnPosition 
-         * @param zoneRadius 
-         * @param spawnDelay 
-         * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
-         */
         PushedOnShoot(Engine::Ressources::GameObject &gameObject)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _attachedPhysicalObject                     {nullptr}
@@ -50,7 +41,7 @@ namespace Game
             if (hitInfo.gameObject->getTag() == "Bullet")
             {
                 GE_assertInfo(_attachedPhysicalObject != nullptr, "Physical gameObject missing on dependant script");
-                _attachedPhysicalObject->addForceAtPoint(-hitInfo.intersectionsInfo.normalI1 * 100.f, hitInfo.intersectionsInfo.intersection1);
+                _attachedPhysicalObject->addForceAtPoint(-hitInfo.intersectionsInfo.normalI1 * hitInfo.gameObjectInertia, hitInfo.intersectionsInfo.intersection1);
             }
         }
 

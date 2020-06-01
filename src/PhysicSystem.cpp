@@ -45,7 +45,7 @@ void PhysicSystem::update() noexcept
 {
     for (PhysicalObject *object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isActivated())
             continue;
 
         if (object->useGravity())
@@ -63,8 +63,11 @@ void PhysicSystem::update() noexcept
         {
             if (collider1 != collider2)
             {
-                if (!collider1->GetAttachedPhysicalObject())
-                    continue;
+                if (collider2->GetAttachedPhysicalObject())
+                {
+                    if (collider2->GetAttachedPhysicalObject()->isKinematic())
+                        continue;
+                }
                 if (dynamic_cast<SphereCollider *>(collider1) && dynamic_cast<OrientedBoxCollider *>(collider2))
                 {
                     Intersection intersection;
@@ -88,7 +91,6 @@ void PhysicSystem::update() noexcept
                         Vec3 OB = OA + AB;
                         float ABLength = AB.length();
                         float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
-                        float tAP = 1.f - tPB;
 
                         // /*Compute the new position and the new velocity of the entity*/
                         Vec3 velocity = collider1->GetAttachedPhysicalObject()->getVelocity();
@@ -106,8 +108,8 @@ void PhysicSystem::update() noexcept
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
                         /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
-                        HitInfo hitInfo1{intersection, &collider2->getGameObject()};
-                        HitInfo hitInfo2{intersection, &collider1->getGameObject()};
+                        HitInfo hitInfo1{intersection, &collider2->getGameObject(), 0.f /*Static object*/};
+                        HitInfo hitInfo2{intersection, &collider1->getGameObject(), velocity.length()};
                         collider1->OnCollisionEnter(hitInfo1);
                         collider2->OnCollisionEnter(hitInfo2);
                     }
@@ -120,7 +122,7 @@ void PhysicSystem::update() noexcept
 
     for (PhysicalObject *object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty() || !object->isActivated())
             continue;
 
         /*update movement and torque induct by the differente force on the object*/
@@ -272,9 +274,9 @@ bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject *pTriggerGameOb
 {
     if (rayCast(ray, rayHitInfo))
     {
-        Collider *pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-        HitInfo hitInfo{rayHitInfo.intersectionsInfo, pTriggerGameObject};
-        pCollider->OnCollisionEnter(hitInfo);
+        Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
+        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject, ray.getLenght()};
+        pCollider->OnCollisionEnter(hitInfo);    
         return true;
     }
     return false;
@@ -297,8 +299,8 @@ bool PhysicSystem::triggerRayCast(const std::string &tag, const Engine::Core::Ma
         Collider *pCollider = rayHitInfo.gameObject->getComponent<Collider>();
         GameObject tempGOWithTag;
         tempGOWithTag.setTag(tag);
-        HitInfo hitInfo1{rayHitInfo.intersectionsInfo, &tempGOWithTag};
-        pCollider->OnCollisionEnter(hitInfo1);
+        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag, ray.getLenght()};
+        pCollider->OnCollisionEnter(hitInfo1);    
         return true;
     }
     return false;

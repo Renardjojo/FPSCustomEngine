@@ -19,15 +19,6 @@ namespace Game
 
         public:
 
-        /**
-         * @brief Construct a new Ranged Enemies Spawner object
-         * 
-         * @param gameObject 
-         * @param spawnPosition 
-         * @param zoneRadius 
-         * @param spawnDelay 
-         * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
-         */
         MaxElementConteneur(Engine::Ressources::GameObject &gameObject, unsigned int maxElement)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _maxElement                                 {maxElement}

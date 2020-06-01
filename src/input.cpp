@@ -56,6 +56,7 @@ void Input::pollEvent(Uint32 windowID)
 	window.isMaximized = false;
 	keyboard.escIsRelease = false;
 	mouse.motion = {0, 0};
+	mouse.wheel_scrollingFlag = 0;
 
 
 	mouse.oldLeftClicDown = mouse.leftClicDown;
@@ -227,6 +228,7 @@ void Input::pollEventMouse(SDL_Event *event)
 		mouse.wheel_value.y = event->wheel.y;
 
 		mouse.wheel_scrolling += event->wheel.y;
+		mouse.wheel_scrollingFlag = event->wheel.y;
 		break;
 	}
 }

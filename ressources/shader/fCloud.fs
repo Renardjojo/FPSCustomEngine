@@ -5,10 +5,10 @@ in float time;
 uniform sampler2D ourTexture;
 
 
-float cloudDensity = 1.0; 	// overall density [0,1]
+float cloudDensity = 0.9; 	// overall density [0,1]
 float noisiness = 0.35; 	// overall strength of the noise effect [0,1]
 float speed = 0.2;			// controls the animation speed [0, 0.1 ish)
-float cloudHeight = 2.5; 	// (inverse) height of the input gradient [0,...)
+float cloudHeight = 0.9; 	// (inverse) height of the input gradient [0,...)
 
 
 // Simplex noise below = ctrl+c, ctrl+v:
@@ -135,11 +135,11 @@ float gradient(vec2 uv) {
 void main()
 {
 	vec2 uv = TexCoord.xy;
-    vec3 p = vec3(uv, time);
-    vec3 someRandomOffset = vec3(0.9, 0.5, 0.2);
-    vec2 duv = vec2(fBm(p), fBm(p + someRandomOffset)) * noisiness;
-    float q = 1.0 - gradient(uv + duv) * cloudDensity;
+  vec3 p = vec3(uv, time * speed);
+  vec3 someRandomOffset = vec3(0.9, 0.5, 0.2);
+  vec2 duv = vec2(fBm(p), fBm(p + someRandomOffset)) * noisiness;
+  float q = 1.0 - gradient(uv + duv) * cloudDensity;
 
-    vec4 color = texture(ourTexture, TexCoord);
-    FragColor = vec4(q, q, q, color.x);
+  vec4 color = texture(ourTexture, TexCoord);
+  FragColor = vec4(q, q, q, color.x) * vec4(1.0, 1.0, 1.0, q);
 }

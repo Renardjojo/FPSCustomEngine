@@ -5,9 +5,9 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Ressources;
 
 Material::Material (const MaterialAndTextureCreateArg& arg)
-    :   comp_                           (arg.comp_),
+    :   comp_                           (arg.comp),
         pDiffuseTexturetexture_         (),
-        name_                           (arg.name_)
+        name_                           (arg.name)
 {
     if (arg.pathDiffuseTexture == nullptr)
     {

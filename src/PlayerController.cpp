@@ -6,9 +6,13 @@
 #include "GE/Physics/PhysicSystem.hpp"
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "Game/LootMachine.hpp"
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
+#include "GE/Core/Debug/assert.hpp"
 
 #include <math.h>
 #include <algorithm>
@@ -28,83 +32,128 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-    _camera{Camera::getCamUse()}
+      _rm{t_RessourcesManager::getRessourceManagerUse()},
+      _camera{Camera::getCamUse()}
 {
     _name = __FUNCTION__;
 }
 
-
 void PlayerController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
+    GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
     _playerForce = _airForce;
+
+    _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
+    GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
 };
 
 void PlayerController::update()
 {
     move();
 
-    if (Input::mouse.leftClicDownOnce)
-        shoot();
-
     if (_life <= 0)
         std::cout << "player is dead" << std::endl;
+    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
+    {
+        shoot();
+    }
+
+    if (Input::keyboard.getKeyState(SDL_SCANCODE_R) == E_KEY_STATE::TOUCHED)
+    {
+        activateLootMachine();
+    }
+
+    /*Choose fire gun*/
+    if (_firesGuns.size() > 1)
+    {
+        if (Input::mouse.wheel_scrollingFlag != 0)
+        {
+            if (Input::mouse.wheel_scrollingFlag == 1)
+            {
+                FireGun* temp = _firesGuns.front();
+                _firesGuns.erase(_firesGuns.begin());
+                _firesGuns.push_back(temp);
+                temp->getGameObject().setActive(false);
+                _firesGuns.front()->getGameObject().setActive(true);
+            }
+            else
+            {
+                FireGun* temp = _firesGuns.back();
+                _firesGuns.pop_back();
+                temp->getGameObject().setActive(true);
+                _firesGuns.front()->getGameObject().setActive(false);
+                _firesGuns.insert(_firesGuns.begin(), temp);
+            }
+        }
+    }
 }
 
 void PlayerController::fixedUpdate()
 {
     if (_jump && _isGrounded)
     {
-        _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
+        _physics->addForce(Vec3::up * _jumpForce);
         _jump = false;
         _playerForce = _airForce;
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
-    
-    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _jump = false;
 
+    _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
 };
+
+void PlayerController::switchFlashLightState()
+{
+    _flashLightOn = !_flashLightOn;
+    _flashLight->enable(_flashLightOn);
+}
 
 void PlayerController::shoot()
 {
-    HitInfo rayInfo;
-    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
-    {
-        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("TextureOnly"), 
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                                "TextureOnly", 
-                                                {"BulletHole"}, 
-                                                "Plane"};
+    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
 
-        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-                                "Color",
-                                {"RedMaterial"},
-                                "Plane"};
+    
+//     HitInfo rayInfo;
+//     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+//     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
+//     {
+//         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+//         decaleGOPref.transformArg.scale = Vec3::one / 20.f;
+//         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"), 
+//                                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
+//                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+//                                                 "LightAndTexture", 
+//                                                 {"BulletHole"}, 
+//                                                 "Plane"};
+// /*
+//         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
+//                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
+//                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
+//                                 "Color",
+//                                 {"RedMaterial"},
+//                                 "PlaneZ"};
 
-        ParticuleGenerator::ParticleSystemCreateArg particalArg;
-        particalArg.modelCreateArg = modelArg3;
-        particalArg.isBillBoard = true;
-        particalArg.physicalObjectCreateArg.useGravity = true;
-        particalArg.useScaledTime = true;
-        particalArg.velocityEvolutionCoef = 1.f;
-        particalArg.spawnCountBySec = 100.f;
-        particalArg.lifeDuration = 0.5f;
-        particalArg.physicalObjectCreateArg.mass = 1.f;
-        particalArg.scale = {0.05, 0.05, 0.05};
+//         ParticuleGenerator::ParticleSystemCreateArg particalArg;
+//         particalArg.modelCreateArg = modelArg3;
+//         particalArg.isBillBoard = true;
+//         particalArg.physicalObjectCreateArg.useGravity = true;
+//         particalArg.useScaledTime = true;
+//         particalArg.velocityEvolutionCoef = 1.f;
+//         particalArg.spawnCountBySec = 100.f;
+//         particalArg.lifeDuration = 0.5f;
+//         particalArg.physicalObjectCreateArg.mass = 1.f;
+//         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
-        particleGO.addComponent<ParticuleGenerator>(particalArg);
-        particleGO.addComponent<LifeDuration>(3.f);
+//         GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+//         particleGO.addComponent<ParticuleGenerator>(particalArg);
+//         particleGO.addComponent<LifeDuration>(3.f);*/
 
-        ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        //rayInfo.gameObject->destroy();
-    }
+//         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
+//         if (rayInfo.gameObject->getTag() != "Ground")
+//             rayInfo.gameObject->destroy();
+//     }
 }
 
 void PlayerController::setCameraType(CameraType type)
@@ -116,9 +165,30 @@ void PlayerController::setCameraType(CameraType type)
     _type = type;
 }
 
+void PlayerController::activateLootMachine()
+{
+    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition());
+}
+
 void PlayerController::toggleCameraType()
 {
     _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson : CameraType::FirstPerson;
+}
+
+void PlayerController::addFireGun(FireGun* fireGun)
+{
+    GE_assert(fireGun != nullptr);
+
+    _firesGuns.emplace_back(fireGun);
+
+    if (_firesGuns.size() == 1)
+    {
+
+    }
+    else 
+    {
+        _firesGuns.back()->getGameObject().setActive(false);
+    }
 }
 
 Vec3 PlayerController::cylindricalCoord(float r, float angle)
@@ -132,17 +202,17 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-    mouseMotion *= TimeSystem::getDeltaTime() * _mouseSpeed;
+    mouseMotion *= _mouseSpeed* TimeSystem::getDeltaTime();
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
 
     _orbit.y = fmod(_orbit.y, M_PI * 2);
     _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
-    _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
 
     if (_type == CameraType::FirstPerson)
     {
+        _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
         _camera->setTranslation(_gameObject.getPosition());
         _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
         _camera->update();
@@ -151,6 +221,7 @@ void PlayerController::camera()
     }
 
     //Camera orbit
+    //todo change distance
     Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
     coordinates.y += _cameraYoffset;
     _camera->setTranslation(coordinates);
@@ -164,6 +235,10 @@ void PlayerController::move()
 {
     if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
         _jump = true;
+
+    if (Input::keyboard.getKeyState(Input::keyboard.switchFlashLightState) == E_KEY_STATE::TOUCHED)
+        switchFlashLightState();
+
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == 1)
         toggleCameraType();
@@ -194,9 +269,11 @@ void PlayerController::move()
         _movement.x += _direction.z;
         _movement.z -= _direction.x;
     }
+
+    //clamp max speed
 }
 
-void PlayerController::onCollisionEnter(HitInfo& hitInfo)
+void PlayerController::onCollisionEnter(HitInfo &hitInfo)
 {
     if (hitInfo.gameObject->getTag() == "Ground")
     {
@@ -206,13 +283,13 @@ void PlayerController::onCollisionEnter(HitInfo& hitInfo)
     }
 }
 
-void PlayerController::save(xml_document<>& doc, xml_node<>* nodeParent)
+void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
     if (!nodeParent)
         return;
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
     newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
-    
+
     nodeParent->append_node(newNode);
 }

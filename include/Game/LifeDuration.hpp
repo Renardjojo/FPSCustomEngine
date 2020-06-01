@@ -21,15 +21,6 @@ namespace Game
 
         public:
 
-        /**
-         * @brief Construct a new Ranged Enemies Spawner object
-         * 
-         * @param gameObject 
-         * @param spawnPosition 
-         * @param zoneRadius 
-         * @param spawnDelay 
-         * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
-         */
         LifeDuration(Engine::Ressources::GameObject &gameObject, float lifeMaxDelay, bool useScaledTime = true)
             :   Engine::Core::Component::ScriptComponent    {gameObject},
                 _lifeMaxDelay                               {lifeMaxDelay},
@@ -52,7 +43,7 @@ namespace Game
 
         void update() override
         {   
-            _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDetlaTime();
+            _delayCount += _useScaledTime ? Engine::Core::System::TimeSystem::getDeltaTime() : Engine::Core::System::TimeSystem::getUnscaledDeltaTime();
 
             if(_delayCount >= _lifeMaxDelay)
             {

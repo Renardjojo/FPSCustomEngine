@@ -26,7 +26,9 @@ namespace Engine::Core::InputSystem
         SDL_Point position{0, 0};
         SDL_Point motion{0, 0};
         SDL_Point wheel_value{0, 0};
-        int wheel_scrolling{1};
+        int       wheel_scrolling{1};
+        int       wheel_scrollingFlag{0}; //-1 for move backward, 0 for neutral, 1 for move forward
+
         bool wheelClic{false};
         bool isTouch{false};
         bool rightClicDown{false};
@@ -69,6 +71,7 @@ namespace Engine::Core::InputSystem
         SDL_Scancode right{SDL_SCANCODE_D};
         SDL_Scancode left{SDL_SCANCODE_A};
         SDL_Scancode jump{SDL_SCANCODE_SPACE};
+        SDL_Scancode switchFlashLightState{SDL_SCANCODE_E};
 
         bool isTouch{false};
         bool flagEscIsRelease{false};

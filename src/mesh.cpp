@@ -219,7 +219,7 @@ void Mesh::draw () const noexcept
 	}
 }
 
-MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY)
+MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY, Axis towardAxis)
 {
 	MeshConstructorArg mesh;
     mesh.objName = "Plane";
@@ -228,7 +228,7 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
     mesh.vBuffer    .reserve(4);
     mesh.vtBuffer   .reserve(4);
     mesh.vnBuffer   .reserve(2);
-	mesh.iBuffer.push_back({});
+	mesh.iBuffer	.push_back({});
     mesh.iBuffer    .reserve(2);
 
 	//Face 1
@@ -248,10 +248,34 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
     mesh.iBuffer	[0].emplace_back(Indice{3, 2, 1});
 
 	//initialize vertex :
-	mesh.vBuffer	.push_back({-0.5f, 0.f, -0.5});
-	mesh.vBuffer	.push_back({ 0.5f, 0.f, -0.5});
-	mesh.vBuffer	.push_back({ 0.5f, 0.f,  0.5});
-	mesh.vBuffer	.push_back({-0.5f, 0.f,  0.5});
+
+	switch (towardAxis)
+	{
+	case Axis::X:
+		mesh.vBuffer	.push_back({0.f, -0.5f, -0.5});
+		mesh.vBuffer	.push_back({0.f,  0.5f, -0.5});
+		mesh.vBuffer	.push_back({0.f,  0.5f,  0.5});
+		mesh.vBuffer	.push_back({0.f, -0.5f,  0.5});
+		break;
+
+	case Axis::Y:
+		mesh.vBuffer	.push_back({-0.5f, 0.f, -0.5});
+		mesh.vBuffer	.push_back({ 0.5f, 0.f, -0.5});
+		mesh.vBuffer	.push_back({ 0.5f, 0.f,  0.5});
+		mesh.vBuffer	.push_back({-0.5f, 0.f,  0.5});
+		break;
+		
+	case Axis::Z:
+		mesh.vBuffer	.push_back({-0.5f, -0.5, 0.f});
+		mesh.vBuffer	.push_back({ 0.5f, -0.5, 0.f});
+		mesh.vBuffer	.push_back({ 0.5f,  0.5, 0.f});
+		mesh.vBuffer	.push_back({-0.5f,  0.5, 0.f});
+		break;
+	
+	default:
+		functWarning(std::string("Other axis not implemented"))
+		break;
+	}
 
 	//initialize texture coord : 
 	float shiftX = indexTextureX * textureRepetition;
@@ -262,7 +286,7 @@ MeshConstructorArg Mesh::createPlane	(float textureRepetition, unsigned int inde
 	mesh.vtBuffer	.push_back({ shiftX + textureRepetition, shiftY + textureRepetition});
 
 	//initialize normal :
-	mesh.vnBuffer	.push_back({ 0.f,  -1.f,  0.f});
+	mesh.vnBuffer	.push_back({ 0.f, -1.f,  0.f});
 	mesh.vnBuffer	.push_back({ 0.f, 1.f,  0.f});
 
 	return mesh;
@@ -458,7 +482,7 @@ MeshConstructorArg Mesh::createCylindre(unsigned int prescision)
 	mesh.vnBuffer. reserve(prescision * 2 + 2);
 	mesh.vtBuffer. reserve(prescision * 2 + 2);
 
-	float angleRad = M_PI*2 / prescision;
+	float angleRad = M_PI * 2 / static_cast<float>(prescision);
 
 	//near face
 

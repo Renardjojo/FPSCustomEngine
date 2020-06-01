@@ -24,6 +24,16 @@
 #include "Game/MaxElementConteneur.hpp"
 #include "Game/LifeDuration.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "Game/GroundController.hpp"
+#include "Game/WaveManager.hpp"
+#include "Game/CircularEntitiesSpawner.hpp"
+#include "Game/DayNightCycle.hpp"
+#include "Game/FireGun.hpp"
+#include "Game/Sniper.hpp"
+#include "Game/Shotgun.hpp"
+#include "Game/SubMachineGun.hpp"
+#include "Game/LootMachine.hpp"
+#include "Game/Loot.hpp"
 
 using namespace rapidxml;
 
@@ -240,6 +250,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         for (; attr; attr = attr->next_attribute())
             params.push_back(attr->value());
 
+        //TODO: Can be optimaze. Use unorderde map with lambda
         if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
@@ -268,6 +279,26 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<LifeDuration>(params);
         else if (type.compare("ParticuleGenerator") == 0)
             parent.addComponent<ParticuleGenerator>(params);
+        else if (type.compare("GroundController") == 0)
+            parent.addComponent<GroundController>();
+        else if (type.compare("WaveManager") == 0)
+            parent.addComponent<WaveManager>(params);
+        else if (type.compare("CircularEntitiesSpawner") == 0)
+            parent.addComponent<CircularEntitiesSpawner>(params);
+        else if (type.compare("DayNightCycle") == 0)
+            parent.addComponent<DayNightCycle>(params);
+        else if (type.compare("Sniper") == 0)
+            parent.addComponent<Sniper>(params);
+        else if (type.compare("Shotgun") == 0)
+            parent.addComponent<Shotgun>(params);
+        else if (type.compare("SubMachineGun") == 0)
+            parent.addComponent<SubMachineGun>(params);
+        else if (type.compare("FireGun") == 0)
+            parent.addComponent<FireGun>(params);
+        else if (type.compare("LootMachine") == 0)
+            parent.addComponent<LootMachine>(params);
+        else if (type.compare("Loot") == 0)
+            parent.addComponent<Loot>(params);
 
         newGameObject = &parent;
     }
@@ -352,47 +383,110 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         SLog::log(std::string("Saving : ") + gameObjectParent.getName());
     }
 
-    if (gameObjectParent.getComponent<Model>())
-        gameObjectParent.getComponent<Model>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<Model>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PlayerController>())
-        gameObjectParent.getComponent<PlayerController>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PlayerController>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<OrientedBoxCollider>())
-        gameObjectParent.getComponent<OrientedBoxCollider>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<OrientedBoxCollider>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<SphereCollider>())
-        gameObjectParent.getComponent<SphereCollider>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<SphereCollider>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PhysicalObject>())
-        gameObjectParent.getComponent<PhysicalObject>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PhysicalObject>())
+    {
+        i->save(doc, newNode);
+    }
+    
+    for (auto &&i : gameObjectParent.getComponents<PointLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PointLight>())
-        gameObjectParent.getComponent<PointLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<DirectionnalLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<DirectionnalLight>())
-        gameObjectParent.getComponent<DirectionnalLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<SpotLight>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<SpotLight>())
-        gameObjectParent.getComponent<SpotLight>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<EnnemyController>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<EnnemyController>())
-        gameObjectParent.getComponent<EnnemyController>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<Checkpoint>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<Checkpoint>())
-        gameObjectParent.getComponent<Checkpoint>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<PushedOnShoot>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<PushedOnShoot>())
-        gameObjectParent.getComponent<PushedOnShoot>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<MaxElementConteneur>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<MaxElementConteneur>())
-        gameObjectParent.getComponent<MaxElementConteneur>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<LifeDuration>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<LifeDuration>())
-        gameObjectParent.getComponent<LifeDuration>()->save(doc, newNode);
+    for (auto &&i : gameObjectParent.getComponents<ParticuleGenerator>())
+    {
+        i->save(doc, newNode);
+    }
 
-    if (gameObjectParent.getComponent<ParticuleGenerator>())
-        gameObjectParent.getComponent<ParticuleGenerator>()->save(doc, newNode);        
+    for (auto &&i : gameObjectParent.getComponents<GroundController>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<WaveManager>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<CircularEntitiesSpawner>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<DayNightCycle>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<FireGun>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<LootMachine>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<Loot>())
+    {
+        i->save(doc, newNode);
+    }
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);

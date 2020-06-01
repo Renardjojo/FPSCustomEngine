@@ -49,7 +49,7 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::Sphere        getGlobalSphere()  const noexcept
         { 
-            return Engine::Core::Maths::Shape3D::Sphere{_gameObject.getScale().x / 2.f + sphere_.getRadius(), _gameObject.getPosition() + sphere_.getCenter()};; 
+            return Engine::Core::Maths::Shape3D::Sphere{_gameObject.getScale().x / 2.f + sphere_.getRadius(), _gameObject.getGlobalPosition() + sphere_.getCenter()};; 
         }
         
         const Engine::Core::Maths::Shape3D::Sphere& getLocalSphere()  const noexcept

@@ -37,6 +37,14 @@ Light::Light (Engine::Ressources::GameObject &refGameObject, const LightCreateAr
     enable (arg.isEnable);
 }
 
+Light::~Light()
+{
+    if (isEnable_)
+    {
+        enable(false);
+    }
+}
+
 void Light::enable (bool flag) throw() 
 {
     if(isEnable_ == flag)

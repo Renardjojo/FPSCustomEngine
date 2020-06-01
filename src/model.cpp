@@ -4,6 +4,7 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/LowRenderer/Light/light.hpp"
 #include "GE/Ressources/GameObject.hpp"
+#include "GE/Core/System/TimeSystem.hpp"
 
 #include "save/rapidxml-1.13/rapidxml.hpp"
 #include "save/rapidxml-1.13/rapidxml_print.hpp"
@@ -12,6 +13,7 @@
 using namespace rapidxml;
 
 using namespace Engine::Ressources;
+using namespace Engine::Core::System;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core::Maths;
@@ -90,14 +92,6 @@ void Model::draw () const noexcept
 
     pShader_->use();
 
-    static float time = 0.f;
-    time += 0.00001f;
-
-    if(!isOpaque_)
-    {
-        pShader_->setFloat("timeR", time);
-    }
-
     if ((pShader_->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         const std::vector<light>& lightBuffer = Light::getLightsToUseInAlignasStruct();
@@ -119,6 +113,16 @@ void Model::draw () const noexcept
         sendToShaderModelMatrix();
         pShader_->setMat4("view", &Camera::getCamUse()->getView().mat[0]);
         pShader_->setMat4("projection", &Camera::getCamUse()->getProjection().mat[0]);
+    }
+
+    if ((pShader_->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    {
+        pShader_->setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
+    }
+
+    if ((pShader_->getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    {
+        pShader_->setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
     }
 
     const GLuint* pIdVAO = pMesh_->getVAOId();
