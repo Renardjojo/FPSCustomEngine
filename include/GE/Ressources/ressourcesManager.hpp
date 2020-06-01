@@ -12,13 +12,12 @@
 #include "GE/Core/Debug/log.hpp"
 
 #include "GE/Ressources/ui.hpp"
-#include "GE/Ressources/music.hpp"
 #include "GE/Ressources/mesh.hpp"
 #include "GE/Ressources/shader.hpp"
 #include "GE/Ressources/material.hpp"
 #include "GE/Ressources/texture.hpp"
 #include "GE/Ressources/text.hpp"
-#include "GE/Ressources/sample.hpp"
+#include "GE/Ressources/Sound.hpp"
 #include "GE/Ressources/font.hpp"
 
 
@@ -221,8 +220,7 @@ namespace Engine::Ressources
                                                 std::vector<Engine::Ressources::Material>,
                                                 Engine::Ressources::Text,
                                                 Engine::Ressources::Texture,
-                                                Engine::Ressources::Sample,
-                                                Engine::Ressources::Music,
+                                                Engine::Ressources::Sound,
                                                 Engine::Ressources::Font,
                                                 Engine::Ressources::Title,
                                                 Engine::Ressources::Button,

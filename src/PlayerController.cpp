@@ -9,6 +9,8 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
 #include "GE/Core/Debug/assert.hpp"
 
 #include <math.h>
@@ -29,11 +31,11 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-    _camera{Camera::getCamUse()}
+      _rm{t_RessourcesManager::getRessourceManagerUse()},
+      _camera{Camera::getCamUse()}
 {
     _name = __FUNCTION__;
 }
-
 
 void PlayerController::start()
 {
@@ -80,15 +82,20 @@ void PlayerController::update()
 
 void PlayerController::fixedUpdate()
 {
+    if (_isGrounded)
+    {
+        _physics->setVelocity(_physics->getVelocity()*_deceleration);
+    }
+
     if (_jump && _isGrounded)
     {
-        _physics->addForce(-PhysicSystem::getGravity() * 0.5f);
-        _jump = false;
+        _physics->addForce(Vec3::up * _jumpForce);
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
+    _jump = false;
 
-    _physics->addForce(_movement * _playerForce * TimeSystem::getDeltaTime());
+    _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
     _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
@@ -185,7 +192,7 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 void PlayerController::camera()
 {
     Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-    mouseMotion *= _mouseSpeed;
+    mouseMotion *= _mouseSpeed* TimeSystem::getDeltaTime();
 
     _orbit.y += mouseMotion.x;
     _orbit.x += mouseMotion.y;
@@ -272,6 +279,6 @@ void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
     xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
     newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
-    
+
     nodeParent->append_node(newNode);
 }
