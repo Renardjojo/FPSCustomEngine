@@ -702,50 +702,50 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
-    GameObjectCreateArg cubeGameObject{"cube1",
-                                       {{-0.7f, -5.f, 0.f},
-                                        {0.f, 0.f, 45.f},
-                                        {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cubeGameObject{"cube1",
+    //                                    {{-0.7f, -5.f, 0.f},
+    //                                     {0.f, 0.f, 45.f},
+    //                                     {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube1arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "PinkMaterial",
-                            "Cube"};
+    // ModelCreateArg cube1arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         "PinkMaterial",
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
-    scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cubeGameObject).addComponent<Model>(cube1arg);
+    // scene_->getGameObject("world/cube1").addComponent<OrientedBoxCollider>();
 
-    GameObjectCreateArg cube2GameObject{"cube2",
-                                        {{-5.f, -10.f, 0.f},
-                                         {0.f, 0.f, -45.f},
-                                         {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cube2GameObject{"cube2",
+    //                                     {{-5.f, -10.f, 0.f},
+    //                                      {0.f, 0.f, -45.f},
+    //                                      {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube2arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "DefaultMaterial",
-                            "Cube"};
+    // ModelCreateArg cube2arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         "DefaultMaterial",
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
-    scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cube2GameObject).addComponent<Model>(cube2arg);
+    // scene_->getGameObject("world/cube2").addComponent<OrientedBoxCollider>();
 
-    GameObjectCreateArg cube3GameObject{"cube3",
-                                        {{0.f, -11.f, 0.f},
-                                         {0.f, 0.f, 45.f},
-                                         {5.f, 1.f, 5.f}}};
+    // GameObjectCreateArg cube3GameObject{"cube3",
+    //                                     {{0.f, -11.f, 0.f},
+    //                                      {0.f, 0.f, 45.f},
+    //                                      {5.f, 1.f, 5.f}}};
 
-    ModelCreateArg cube3arg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
-                            "ColorWithLight",
-                            "DefaultMaterial",
-                            "Cube"};
+    // ModelCreateArg cube3arg{&ressourceManager.get<Shader>("ColorWithLight"),
+    //                         &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
+    //                         &ressourceManager.get<Mesh>("Cube"),
+    //                         "ColorWithLight",
+    //                         "DefaultMaterial",
+    //                         "Cube"};
 
-    scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
-    scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
+    // scene_->add<GameObject>(scene_->getWorld(), cube3GameObject).addComponent<Model>(cube3arg);
+    // scene_->getGameObject("world/cube3").addComponent<OrientedBoxCollider>();
 /*
     GameObjectCreateArg playerGameObject{"Player",
                                          {{-2.f, 5.f, 0.f},
@@ -1222,9 +1222,25 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
 {
+    GameObjectCreateArg NexusGameObjectArg{"Nexus"};
+
+    ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                          &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
+                          &ressourceManager.get<Mesh>("NexusMesh"),
+                          "LightAndTexture",
+                          "NexusMaterial",
+                          "NexusMesh"};
+    modelNexusArg.isOpaque = false;
+
+    GameObject& nexus = scene_->add<GameObject>(scene_->getWorld(), NexusGameObjectArg);
+    nexus.setTranslation(Vec3{-10, -15, -10});
+    nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
+    nexus.addComponent<Model>(modelNexusArg);
+    nexus.addComponent<Nexus>();
+
     GameObject* checkpoint1 = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg {"checkpoint1"});
-    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -10, 10});
-    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -10, -10});
+    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -15, 10});
+    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -15, -10});
 
     enemiesContener = &scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
@@ -1240,11 +1256,16 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
         GameObject& enemy1 = scene_->add<GameObject>(scene_->getWorld(), Ennemy1GameObjectArg);
 
+        enemy1.setScale(Vec3{3.f, 5.f, 3.f});
+
         enemy1.addComponent<Model>(modelArg);
         enemy1.addComponent<PhysicalObject>().setMass(1);
-        enemy1.addComponent<SphereCollider>().setBounciness(0.4f);
+        enemy1.addComponent<SphereCollider>().setBounciness(0.f);
+        enemy1.getComponent<SphereCollider>()->setFriction(0.97f);
 
-        enemy1.addComponent<EnnemyController>(&Scene::getCurrentScene()->getGameObject("world/Players/Player1"), checkpoint1->getComponent<Checkpoint>());
+        enemy1.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"), 
+                                                checkpoint1->getComponent<Checkpoint>());
 
         Save::createPrefab(enemy1, "enemy1");
         enemy1.destroy();
@@ -1296,25 +1317,6 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     //particleGO.addComponent<LifeDuration>(10.f);
     
     scene_->add<GameObject>(scene_->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
-
-    GameObjectCreateArg NexusGameObjectArg{"Nexus"};
-
-    ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
-                          &ressourceManager.get<Mesh>("NexusMesh"),
-                          "LightAndTexture",
-                          "NexusMaterial",
-                          "NexusMesh"};
-    modelNexusArg.isOpaque = false;
-
-    GameObject& nexus = scene_->add<GameObject>(scene_->getWorld(), NexusGameObjectArg);
-    nexus.setTag("Nexus");
-    nexus.setTranslation(Vec3{15.f, 3.f, 0.f});
-    nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
-    nexus.addComponent<Model>(modelNexusArg);
-    // nexus.addComponent<Model>(modelCrateArg);
-    nexus.addComponent<OrientedBoxCollider>().setBounciness(0.1f);
-    nexus.addComponent<Nexus>();
 }
 
 void Demo::updateControl()

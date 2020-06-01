@@ -22,6 +22,7 @@ namespace Game
 
     private:
         Engine::Physics::PhysicalObject *_physics;
+        Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
         float _mouseSpeed{1.f};
         float _playerForce{1000.f};
         float _airForce{20.f};
@@ -29,7 +30,7 @@ namespace Game
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
-        Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
+        int   _life{5};
         bool _jump{false};
         bool _isGrounded{false};
         
@@ -57,6 +58,8 @@ namespace Game
         void update() override;
         void start() override;
         void fixedUpdate() override;
+
+        void InflictDamage(int damage) { _life -= damage; } 
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 

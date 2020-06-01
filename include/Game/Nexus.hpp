@@ -20,17 +20,19 @@ namespace Game
 
     private:
 
-    int life;
+    int _life;
 
     public:
         Nexus(Engine::Ressources::GameObject &gameObject);
+        Nexus(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);
+
         virtual ~Nexus() = default;
 
         void start() override;
         void update() override;
         void fixedUpdate() override;
 
-        void InflictDamage(int damage) { life -= damage; }
+        void InflictDamage(int damage) { _life -= damage; }
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 

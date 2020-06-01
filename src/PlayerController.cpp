@@ -45,9 +45,10 @@ void PlayerController::update()
     move();
 
     if (Input::mouse.leftClicDownOnce)
-    {
         shoot();
-    }
+
+    if (_life <= 0)
+        std::cout << "player is dead" << std::endl;
 }
 
 void PlayerController::fixedUpdate()
