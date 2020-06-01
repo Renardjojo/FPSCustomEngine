@@ -37,6 +37,7 @@
 #include "Game/Shotgun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LevitationMovement.hpp"
 
 #include "../src/stb_image.h"
 
@@ -1580,11 +1581,19 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                           "NexusMesh"};
     modelNexusArg.isOpaque = false;
 
+    PointLightCreateArg lightArgNexusLight{{0.f, 0.2f, 1.f, 0.2f},
+                                {0.f, 0.2f, 1.f, 0.5f},
+                                {0.f, 0.2f, 1.f, 0.7f},
+                                0.f, 0.05f, 0.f, true};
+
     GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
     nexus.setTranslation(Vec3{-10, -15, -10});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
     nexus.addComponent<Model>(modelNexusArg);
     nexus.addComponent<Nexus>();
+    nexus.addComponent<LevitationMovement>(1.f, 1.f);
+    nexus.addComponent<PointLight>(lightArgNexusLight);
+    
 
     GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
     checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -15, 10});
@@ -1648,7 +1657,6 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                                 {1.f, 0.f, 0.f, 0.7f},
                                 {1.f, 1.f, 1.f, 0.3f},
                                 0.f, 0.05f, 0.f, true};
-
     {
         spawnerGOArg.name = "Spawner1";
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};

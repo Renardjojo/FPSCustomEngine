@@ -34,6 +34,7 @@
 #include "Game/SubMachineGun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LevitationMovement.hpp"
 
 using namespace rapidxml;
 
@@ -299,6 +300,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<LootMachine>(params);
         else if (type.compare("Loot") == 0)
             parent.addComponent<Loot>(params);
+        else if (type.compare("LevitationMovement") == 0)
+            parent.addComponent<LevitationMovement>(params);
 
         newGameObject = &parent;
     }
@@ -484,6 +487,11 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<Loot>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<LevitationMovement>())
     {
         i->save(doc, newNode);
     }
