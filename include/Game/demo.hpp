@@ -90,7 +90,7 @@ namespace Game
             void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadFog                    (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);    
-            void loadLotMachin              (Engine::Ressources::t_RessourcesManager& ressourceManager);      
+            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);      
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);

@@ -98,7 +98,7 @@ void PhysicSystem::update() noexcept
                         Vec3 atCollisionVelocity = atBeginVelocity + gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tAP;
                         Vec3 newDirection = -(2.f * (atCollisionVelocity.dotProduct(intersection.normalI1)) * intersection.normalI1 - atCollisionVelocity).getNormalize();
                         Vec3 gravityAfterCollision = gravity * collider1->GetAttachedPhysicalObject()->getMass() * TimeSystem::getFixedDeltaTime() * tPB;
-                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * collider1->getBounciness();
+                        Vec3 afterCollisionVelocity = newDirection * atCollisionVelocity.length() * ((collider1->getBounciness() + collider2->getBounciness()) / 2.f);
 
                         /*Check if the gravity is upper than velocity.*/
                         if ((afterCollisionVelocity + gravityAfterCollision).dotProduct(intersection.normalI1) > std::numeric_limits<float>::epsilon())

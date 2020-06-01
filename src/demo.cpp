@@ -31,6 +31,8 @@
 #include "Game/Sniper.hpp"
 #include "Game/SubMachineGun.hpp"
 #include "Game/Shotgun.hpp"
+#include "Game/LootMachine.hpp"
+#include "Game/Loot.hpp"
 
 #include "../src/stb_image.h"
 
@@ -843,14 +845,15 @@ void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressource
     }
 }
 
-void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
+void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 {
-    GameObjectCreateArg lotMachinArgGameObject{"LotMachin",
+    GameObjectCreateArg lootMachinArgGameObject{"LootMachine",
                                             {{20.f, 5.f, 20.f},
-                                             {0.f, 0.f, 0.f},
+                                             {0.f, M_PI_4, 0.f},
                                              {1.f, 1.f, 1.f}}};
 
-    GameObject& lotMachin = _scene->add<GameObject>(_scene->getWorld(), lotMachinArgGameObject);
+    GameObject& lootMachin = _scene->add<GameObject>(_scene->getWorld(), lootMachinArgGameObject);
+    lootMachin.addComponent<LootMachine>();
 
     float wrapHeight = 10.f;
     float wrapWidth = 4.f;
@@ -859,16 +862,16 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
 
     /*Lever*/
     GameObjectCreateArg leverArgGameObject{"Lever",
-                                            {{wrapWidth, 0.f, 0.f},
+                                            {{wrapWidth - wrapWidth / 4.f, 0.f, 0.f},
                                             {0, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
 
-    GameObject& lever = _scene->add<GameObject>(lotMachin, leverArgGameObject);
+    GameObject& lever = _scene->add<GameObject>(lootMachin, leverArgGameObject);
 
     GameObjectCreateArg cylinderArgGameObject{"Cylinder",
-                                            {{-0.5f, 0.f, 0.f},
+                                            {{0.f, cylinderArgGameObject.transformArg.scale.z / 2.f, 0.f},
                                             {M_PI_2, 0.f, 0.f},
-                                            {.5f, 0.5f, 3.f}}};
+                                            {.3f, 0.3f, 3.f}}};
                                              
     ModelCreateArg cylinderArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
@@ -881,9 +884,9 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
     _scene->add<GameObject>(lever, cylinderArgGameObject).addComponent<Model>(cylinderArg);
 
      GameObjectCreateArg sphereArgGameObject{"Sphere",
-                                            {{-0.5f, cylinderArgGameObject.transformArg.scale.z / 2.f, 0.f},
+                                            {{0.f, cylinderArgGameObject.transformArg.scale.z, 0.f},
                                             {0, 0.f, 0.f},
-                                            {1.5f, 1.5f, 1.5f}}};
+                                            {1.f, 1.f, 1.f}}};
                                              
     ModelCreateArg sphereArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("RedMaterial"),
@@ -895,9 +898,9 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
     _scene->add<GameObject>(lever, sphereArgGameObject).addComponent<Model>(sphereArg);
 
     GameObjectCreateArg cylinderBaseArgGameObject{"CylinderBase",
-                                            {{-1.f, -cylinderArgGameObject.transformArg.scale.z / 2.f, 0.f},
+                                            {{-0.25f, 0.f, 0.f},
                                             {0.f, M_PI_2, 0.f},
-                                            {1.f, 1.f, 2.f}}};
+                                            {0.7f, 0.7f, 1.5f}}};
                                              
     ModelCreateArg cylinderBaseArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
@@ -915,7 +918,7 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
                                             {0, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
 
-    GameObject& mechanism = _scene->add<GameObject>(lotMachin, mechanismArgGameObject);
+    GameObject& mechanism = _scene->add<GameObject>(lootMachin, mechanismArgGameObject);
     
     GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
                                             {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
@@ -982,7 +985,7 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
     fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     distributorInclinedPlatformGO.addComponent<Model>(redPlatformArg);
-    distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(1.f);
 
 
     /*Wrap*/
@@ -991,7 +994,7 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
                                             {0, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
 
-    GameObject& wrap = _scene->add<GameObject>(lotMachin, wrapArgGameObject);
+    GameObject& wrap = _scene->add<GameObject>(lootMachin, wrapArgGameObject);
     
                                              
     GameObjectCreateArg leftFaceArgGameObject{"leftFace",
@@ -1055,6 +1058,7 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
     lot1GO.addComponent<Model>(greenPlatformArg);
     lot1GO.addComponent<PhysicalObject>().setMass(1);
     lot1GO.addComponent<SphereCollider>().setBounciness(0.4f);
+    lot1GO.addComponent<Loot>();
 
     Save::createPrefab(lot1GO, "Lot1");
     lot1GO.destroy();
@@ -1074,13 +1078,10 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
     lot2GO.addComponent<Model>(modelCrateArg);
     lot2GO.addComponent<PhysicalObject>().setMass(1);
     lot2GO.addComponent<SphereCollider>().setBounciness(0.4f);
+    lot2GO.addComponent<Loot>();
 
     Save::createPrefab(lot2GO, "Lot2");
     lot2GO.destroy();
-
-    std::vector<EntityPrefabCount> entitySpawnerInfo;
-    entitySpawnerInfo.push_back({20, "Lot1"});
-    entitySpawnerInfo.push_back({20, "Lot2"});
 
     /*Create spawner*/
     GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
@@ -1090,8 +1091,8 @@ void Demo::loadLotMachin              (t_RessourcesManager& ressourceManager)
         spawnerGOArg.name = "Spawner";
         spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
 
-        GameObject& spawnerGO = _scene->add<GameObject>(lotMachin, spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, entitySpawnerInfo, 0.1f, 0.5f, 0.f);
+        GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
         //spawnerGO.destroy();
@@ -1115,7 +1116,7 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     loadGround                  (ressourceManager);
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
-    loadLotMachin               (ressourceManager);
+    loadLootMachin               (ressourceManager);
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {

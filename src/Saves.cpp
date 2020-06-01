@@ -32,6 +32,8 @@
 #include "Game/Sniper.hpp"
 #include "Game/Shotgun.hpp"
 #include "Game/SubMachineGun.hpp"
+#include "Game/LootMachine.hpp"
+#include "Game/Loot.hpp"
 
 using namespace rapidxml;
 
@@ -293,6 +295,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<SubMachineGun>(params);
         else if (type.compare("FireGun") == 0)
             parent.addComponent<FireGun>(params);
+        else if (type.compare("LootMachine") == 0)
+            parent.addComponent<LootMachine>(params);
+        else if (type.compare("Loot") == 0)
+            parent.addComponent<Loot>(params);
 
         newGameObject = &parent;
     }
@@ -468,6 +474,16 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<FireGun>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<LootMachine>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<Loot>())
     {
         i->save(doc, newNode);
     }
