@@ -55,7 +55,7 @@ namespace Engine::Physics::ColliderShape
         
         Engine::Core::Maths::Shape3D::OrientedBox        getGlobalOrientedBox() const noexcept
         { 
-            const Engine::Core::Maths::Referential globalReferential {  orientedBox_.getReferential().origin + _gameObject.getPosition(),
+            const Engine::Core::Maths::Referential globalReferential {  orientedBox_.getReferential().origin + _gameObject.getGlobalPosition(),
                                                                         (Engine::Core::Maths::Mat3(_gameObject.getModelMatrix()).getVectorRight()).normalize(),
                                                                         (Engine::Core::Maths::Mat3(_gameObject.getModelMatrix()).getVectorUp()).normalize(),
                                                                         (Engine::Core::Maths::Mat3(_gameObject.getModelMatrix()).getVectorForward()).normalize()};

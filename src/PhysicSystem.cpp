@@ -45,7 +45,7 @@ void PhysicSystem::update() noexcept
 {
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isActivated())
             continue;
 
         if (object->useGravity())
@@ -54,13 +54,14 @@ void PhysicSystem::update() noexcept
 
     for (Collider* collider1 : pColliders)
     {
-        // if (collider1->GetAttachedPhysicalObject())
-        // {
-        //     if (collider1->GetAttachedPhysicalObject()-iIsKinematic())
-        //         continue;
-        // }
+        if (!collider1->isActivated())
+            continue;
+
         for (Collider* collider2 : pColliders)
         {
+            if (!collider2->isActivated())
+                continue;
+
             // is kinematic todo
 
             if (collider1 != collider2)
@@ -114,8 +115,8 @@ void PhysicSystem::update() noexcept
                         collider1->GetAttachedPhysicalObject()->setDirtyFlag(false);
 
                         /*Assign both game object collinding on the hit indo and call OnCollisionEnter function*/
-                        HitInfo hitInfo1{intersection, &collider2->getGameObject()};
-                        HitInfo hitInfo2{intersection, &collider1->getGameObject()};
+                        HitInfo hitInfo1{intersection, &collider2->getGameObject(), 0.f /*Static object*/};
+                        HitInfo hitInfo2{intersection, &collider1->getGameObject(), afterCollisionVelocity.length()};
                         collider1->OnCollisionEnter(hitInfo1);
                         collider2->OnCollisionEnter(hitInfo2);
                     }
@@ -127,7 +128,7 @@ void PhysicSystem::update() noexcept
 
     for (PhysicalObject* object : pPhysicalObjects)
     {
-        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty())
+        if (!object || object->isKinematic() || object->isSleeping() || !object->isDirty() || !object->isActivated())
             continue;
         
         /*update movement and torque induct by the differente force on the object*/
@@ -281,7 +282,7 @@ bool PhysicSystem::triggerRayCast(Engine::Ressources::GameObject* pTriggerGameOb
     if (rayCast(ray, rayHitInfo))
     {
         Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
-        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject};
+        HitInfo hitInfo {rayHitInfo.intersectionsInfo, pTriggerGameObject, ray.getLenght()};
         pCollider->OnCollisionEnter(hitInfo);    
         return true;
     }
@@ -305,7 +306,7 @@ bool PhysicSystem::triggerRayCast(const std::string& tag, const Engine::Core::Ma
         Collider* pCollider = rayHitInfo.gameObject->getComponent<Collider>();
         GameObject tempGOWithTag;
         tempGOWithTag.setTag(tag);
-        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag};
+        HitInfo hitInfo1 {rayHitInfo.intersectionsInfo, &tempGOWithTag, ray.getLenght()};
         pCollider->OnCollisionEnter(hitInfo1);    
         return true;
     }

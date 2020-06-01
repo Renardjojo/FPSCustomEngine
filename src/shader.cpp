@@ -24,7 +24,7 @@ void computFragPos(mat4 Mesh, vec3 aPos)
 
 )";
 
-static const char* lightBlinPhongFragmentShaderStr = R"(#define MAX_LIGHT_NUMBER 10
+static const char* lightBlinPhongFragmentShaderStr = R"(#define MAX_LIGHT_NUMBER 15
 
 #define LIGHT               0.f
 #define POINT_LIGHT         1.f

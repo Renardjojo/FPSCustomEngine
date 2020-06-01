@@ -50,9 +50,33 @@ void PlayerController::update()
 {
     move();
 
-    if (Input::mouse.leftClicDownOnce)
+    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
     {
         shoot();
+    }
+
+    /*Choose fire gun*/
+    if (_firesGuns.size() > 1)
+    {
+        if (Input::mouse.wheel_scrollingFlag != 0)
+        {
+            if (Input::mouse.wheel_scrollingFlag == 1)
+            {
+                FireGun* temp = _firesGuns.front();
+                _firesGuns.erase(_firesGuns.begin());
+                _firesGuns.push_back(temp);
+                temp->getGameObject().setActive(false);
+                _firesGuns.front()->getGameObject().setActive(true);
+            }
+            else
+            {
+                FireGun* temp = _firesGuns.back();
+                _firesGuns.pop_back();
+                temp->getGameObject().setActive(true);
+                _firesGuns.front()->getGameObject().setActive(false);
+                _firesGuns.insert(_firesGuns.begin(), temp);
+            }
+        }
     }
 }
 
@@ -83,47 +107,48 @@ void PlayerController::switchFlashLightState()
 
 void PlayerController::shoot()
 {
-    SoundPlayer::play(_rm->get<Sound>("gunshot"));
+    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
 
-    HitInfo rayInfo;
-    Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
-    {
-        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-        decaleGOPref.transformArg.scale = Vec3::one / 20.f;
-        ModelCreateArg      modelDecaleGOPref   {&_rm->get<Shader>("LightAndTexture"), 
-                                                &_rm->get<std::vector<Material>>("BulletHole"), 
-                                                &_rm->get<Mesh>("Plane"),
-                                                "LightAndTexture", 
-                                                {"BulletHole"}, 
-                                                "Plane"};
-/*
-        ModelCreateArg modelArg3{&_rm->get<Shader>("Color"),
-                                &_rm->get<std::vector<Material>>("RedMaterial"),
-                                &_rm->get<Mesh>("PlaneZ"),
-                                "Color",
-                                {"RedMaterial"},
-                                "PlaneZ"};
+    
+//     HitInfo rayInfo;
+//     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
+//     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
+//     {
+//         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
+//         decaleGOPref.transformArg.scale = Vec3::one / 20.f;
+//         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"), 
+//                                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"), 
+//                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+//                                                 "LightAndTexture", 
+//                                                 {"BulletHole"}, 
+//                                                 "Plane"};
+// /*
+//         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
+//                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
+//                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
+//                                 "Color",
+//                                 {"RedMaterial"},
+//                                 "PlaneZ"};
 
-        ParticuleGenerator::ParticleSystemCreateArg particalArg;
-        particalArg.modelCreateArg = modelArg3;
-        particalArg.isBillBoard = true;
-        particalArg.physicalObjectCreateArg.useGravity = true;
-        particalArg.useScaledTime = true;
-        particalArg.velocityEvolutionCoef = 1.f;
-        particalArg.spawnCountBySec = 100.f;
-        particalArg.lifeDuration = 0.5f;
-        particalArg.physicalObjectCreateArg.mass = 1.f;
-        particalArg.scale = {0.05, 0.05, 0.05};
+//         ParticuleGenerator::ParticleSystemCreateArg particalArg;
+//         particalArg.modelCreateArg = modelArg3;
+//         particalArg.isBillBoard = true;
+//         particalArg.physicalObjectCreateArg.useGravity = true;
+//         particalArg.useScaledTime = true;
+//         particalArg.velocityEvolutionCoef = 1.f;
+//         particalArg.spawnCountBySec = 100.f;
+//         particalArg.lifeDuration = 0.5f;
+//         particalArg.physicalObjectCreateArg.mass = 1.f;
+//         particalArg.scale = {0.05, 0.05, 0.05};
 
-        GameObject &particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
-        particleGO.addComponent<ParticuleGenerator>(particalArg);
-        particleGO.addComponent<LifeDuration>(3.f);*/
+//         GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
+//         particleGO.addComponent<ParticuleGenerator>(particalArg);
+//         particleGO.addComponent<LifeDuration>(3.f);*/
 
-        ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-        if (rayInfo.gameObject->getTag() != "Ground")
-            rayInfo.gameObject->destroy();
-    }
+//         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
+//         if (rayInfo.gameObject->getTag() != "Ground")
+//             rayInfo.gameObject->destroy();
+//     }
 }
 
 void PlayerController::setCameraType(CameraType type)
@@ -138,6 +163,22 @@ void PlayerController::setCameraType(CameraType type)
 void PlayerController::toggleCameraType()
 {
     _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson : CameraType::FirstPerson;
+}
+
+void PlayerController::addFireGun(FireGun* fireGun)
+{
+    GE_assert(fireGun != nullptr);
+
+    _firesGuns.emplace_back(fireGun);
+
+    if (_firesGuns.size() == 1)
+    {
+
+    }
+    else 
+    {
+        _firesGuns.back()->getGameObject().setActive(false);
+    }
 }
 
 Vec3 PlayerController::cylindricalCoord(float r, float angle)

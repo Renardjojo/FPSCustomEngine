@@ -482,7 +482,7 @@ MeshConstructorArg Mesh::createCylindre(unsigned int prescision)
 	mesh.vnBuffer. reserve(prescision * 2 + 2);
 	mesh.vtBuffer. reserve(prescision * 2 + 2);
 
-	float angleRad = M_PI*2 / prescision;
+	float angleRad = M_PI * 2 / static_cast<float>(prescision);
 
 	//near face
 

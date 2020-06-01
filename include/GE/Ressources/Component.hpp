@@ -38,6 +38,9 @@ namespace Engine::Ressources
 
     std::string toString() const noexcept {return _name; };
 
+    bool isActivated () const noexcept {return _isActivated;}
+    void setActive (bool newState) noexcept { _isActivated = newState;}
+
 #ifndef DNEDITOR
     virtual void serializeOnEditor () noexcept {};
 #endif
@@ -46,6 +49,7 @@ namespace Engine::Ressources
 
     GameObject& _gameObject;
     std::string _name;
+    bool        _isActivated {true};
 
     };
 
