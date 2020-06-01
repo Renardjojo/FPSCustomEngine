@@ -12,7 +12,7 @@ Collider::Collider (GameObject& refGameObject)
     : Component(refGameObject)
 {
     _name = __FUNCTION__;
-    attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
+    _attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
     PhysicSystem::addCollider(this);
     for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
     {
@@ -20,11 +20,30 @@ Collider::Collider (GameObject& refGameObject)
     }       
 }
 
+Collider::Collider (GameObject& refGameObject, float bounciness, float friction)
+    : Component(refGameObject)
+{
+    _name = __FUNCTION__;
+    _attachedPhysicalObject = static_cast<PhysicalObject*>(_gameObject.getComponent<PhysicalObject>());
+    PhysicSystem::addCollider(this);
+    std::cout << refGameObject.getName() << std::endl;
+    for (ScriptComponent* script : refGameObject.getComponents<ScriptComponent>())
+    {
+        std::cout << script->toString() << std::endl;
+        functions.push_back([script](HitInfo& HitInfo){script->onCollisionEnter(HitInfo);});
+
+    }       
+
+    _bounciness = bounciness;
+    _friction = friction;
+}
+
 Collider::Collider (const Collider& other)
     :   Component(*this)
 {
     _name = __FUNCTION__;
-    attachedPhysicalObject = other.attachedPhysicalObject;
+    _attachedPhysicalObject = other._attachedPhysicalObject;
+    _bounciness = other._bounciness;
     PhysicSystem::addCollider(this);
 }
 
@@ -32,7 +51,8 @@ Collider::Collider (Collider&& other)
     :   Component(*this)
 {
     _name = __FUNCTION__;
-    attachedPhysicalObject = std::move(other.attachedPhysicalObject);
+    _attachedPhysicalObject = std::move(other._attachedPhysicalObject);
+    _bounciness = std::move(other._bounciness);
     PhysicSystem::updateColliderPointor(this, &other);
 }
 
