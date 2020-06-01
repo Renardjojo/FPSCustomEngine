@@ -27,6 +27,11 @@ Nexus::Nexus(GameObject &_gameObject)
 {
 }
 
+Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
+    : ScriptComponent{gameObject},
+    _life{std::stoi(params[0])}
+{}
+
 void Nexus::start()
 {
     _life = 10;
@@ -40,6 +45,11 @@ void Nexus::update()
 
 void Nexus::fixedUpdate()
 {
+}
+
+void Nexus::onCollisionEnter(HitInfo& hitInfo)
+{
+    (void)hitInfo;
 }
 
 void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)

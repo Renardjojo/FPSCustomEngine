@@ -20,21 +20,30 @@ namespace Game
         };
 
     private:
-        float _radius{5.f};
-        float _exclusionRadius{0.6f};
-        float _speed{5.f};
-        Engine::Ressources::GameObject* _player;
-        States _state{States::Walking};
+        Engine::Physics::PhysicalObject *_physics;
+        Engine::Ressources::GameObject* _player{nullptr};
+        Engine::Ressources::GameObject* _nexus{nullptr};
+        States _state{States::Idle};
         Game::CheckpointManager _checkpointManager;
+        float _radius{20.f};
+        float _attackRadius{5.f};
+        float _speed{25.f};
+        float _attackSpeed{1.f};
+        float _cooldown{0.f};
+        int _damage{1};
 
 
         void idle();
         void walk();
         void chasing();
+        void autoDestroy();
+
     public:
-        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Game::Checkpoint* checkpoint);
+        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Engine::Ressources::GameObject* nexus, Game::Checkpoint* checkpoint);
         EnnemyController(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);
         virtual ~EnnemyController() = default;
+
+        void start() override;
 
         void update() override;
 

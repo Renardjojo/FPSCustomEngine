@@ -42,6 +42,7 @@ void PlayerController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
     GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
+    _playerForce = _airForce;
 
     _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
     GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
@@ -51,6 +52,8 @@ void PlayerController::update()
 {
     move();
 
+    if (_life <= 0)
+        std::cout << "player is dead" << std::endl;
     if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
     {
         shoot();
@@ -88,21 +91,17 @@ void PlayerController::update()
 
 void PlayerController::fixedUpdate()
 {
-    if (_isGrounded)
-    {
-        _physics->setVelocity(_physics->getVelocity()*_deceleration);
-    }
-
     if (_jump && _isGrounded)
     {
         _physics->addForce(Vec3::up * _jumpForce);
+        _jump = false;
+        _playerForce = _airForce;
         _physics->setUseGravity(true);
         _isGrounded = false;
     }
     _jump = false;
 
     _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
-    _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
 void PlayerController::switchFlashLightState()
@@ -279,7 +278,8 @@ void PlayerController::onCollisionEnter(HitInfo &hitInfo)
     if (hitInfo.gameObject->getTag() == "Ground")
     {
         _isGrounded = true;
-        _physics->setUseGravity(false);
+        _playerForce = _groundForce;
+        // _physics->setIsKinematic(false);
     }
 }
 

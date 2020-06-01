@@ -24,6 +24,8 @@ namespace Game
 
     public:
         Nexus(Engine::Ressources::GameObject &gameObject);
+        Nexus(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);
+
         virtual ~Nexus() = default;
 
         void start() override;
@@ -32,7 +34,7 @@ namespace Game
 
         void InflictDamage(int damage) { _life -= damage; }
 
-        void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override = 0;
+        void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);
 
