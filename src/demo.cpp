@@ -853,11 +853,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
 
-
-
     GameObjectCreateArg WallArgGameObject{"Wall",
                                             {{-20.f, 0.f, -20.f},
-                                             {M_PI_4, 0.f, 0.f},
+                                             {M_PI_4, M_PI, 0.f},
                                              {100.f, 1.f, 100.f}}};
 
     ModelCreateArg WallArg{&ressourceManager.get<Shader>("LightAndTexture"),
@@ -919,7 +917,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     float wrapHeight = 10.f;
     float wrapWidth = 4.f;
     float wrapDepth = 2.5f;
-    float wrapThickness = 0.3f;
+    float wrapThickness = 0.6f;
 
     /*Lever*/
     GameObjectCreateArg leverArgGameObject{"Lever",
@@ -1027,6 +1025,12 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                             "RedMaterial",
                             "Cube"};
 
+    firstInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
+    secondInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
+    thirdInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
+    forthInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
+    distributorInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
+
     GameObject& firstInclinedPlatformGO = _scene->add<GameObject>(mechanism, firstInclinedPlatformArgGameObject);
     GameObject& secondInclinedPlatformGO = _scene->add<GameObject>(mechanism, secondInclinedPlatformArgGameObject);
     GameObject& thirdInclinedPlatformGO = _scene->add<GameObject>(mechanism, thirdInclinedPlatformArgGameObject);
@@ -1034,19 +1038,19 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& distributorInclinedPlatformGO = _scene->add<GameObject>(mechanism, distributorInclinedPlatformArgGameObject);
 
     firstInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
-    firstInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    //firstInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     secondInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
-    secondInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    //secondInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     thirdInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
-    thirdInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    //thirdInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     fourthInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
-    fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+   // fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     distributorInclinedPlatformGO.addComponent<Model>(redPlatformArg);
-    distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(1.f);
+   // distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(1.f);
 
 
     /*Wrap*/
@@ -1117,15 +1121,12 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
     GameObject& wrap4GO = _scene->add<GameObject>(wrap, topFaceArgGameObject);
     wrap4GO.addComponent<Model>(blackPlatformArg);
-    wrap4GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap5GO = _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject);
     wrap5GO.addComponent<Model>(blackPlatformArg);
-    wrap5GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap6GO = _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject);
     wrap6GO.addComponent<Model>(glassPlatformArg);
-    wrap6GO.addComponent<OrientedBoxCollider>();
 
     /*Create lots prefabs*/
     GameObjectCreateArg lot1GameObjectArg{"Lot1"};
@@ -1167,7 +1168,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObjectCreateArg spawnerGOArg;
     {
         spawnerGOArg.name = "Spawner";
-        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
+        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);

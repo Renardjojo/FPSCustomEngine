@@ -28,10 +28,10 @@ namespace Game
         Engine::LowRenderer::SpotLight *_flashLight;
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
         float _mouseSpeed{1.f};
-        float _playerForce{1000.f};
+        float _playerForce{50.f};
         float _jumpForce{5.f};
         float _airForce{20.f};
-        float _groundForce{1000.f};
+        float _groundForce{50.f};
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
