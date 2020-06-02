@@ -5,7 +5,7 @@
 #ifndef _SHOTGUN_H
 #define _SHOTGUN_H
 
-#include "Game/FireGun.hpp"
+#include "Game/Firearm.hpp"
 
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
@@ -13,10 +13,13 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Core/Maths/Random.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
+#include "GE/Ressources/Sound.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+
 
 namespace Game
 {
-    class Shotgun : public FireGun
+    class Shotgun : public Firearm
     {
         protected:
 
@@ -24,15 +27,15 @@ namespace Game
 
         public:
 
-        Shotgun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float realoadTime, unsigned int munitionCapacity, float shotIntervalDelay, float radiusPrescisionAtOnMeter)
-            :   FireGun {gameObject, bulletDamage, bulletVelocity, bulletPerShot, realoadTime, munitionCapacity, shotIntervalDelay, false},
+        Shotgun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float reloadTime, unsigned int munitionCapacity, float shotIntervalDelay, float radiusPrescisionAtOnMeter,Engine::Ressources::Sound* sound)
+            :   Firearm {gameObject, bulletDamage, bulletVelocity, bulletPerShot, reloadTime, munitionCapacity, shotIntervalDelay, false,sound},
                 _radiusPrescisionAtOnMeter {radiusPrescisionAtOnMeter}
         {
             _name = __FUNCTION__;
         }
 
         Shotgun (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   FireGun {refGameObject, params},
+            :   Firearm {refGameObject, params},
                 _radiusPrescisionAtOnMeter{std::stof(params[11])}
         {
             _name = __FUNCTION__;
@@ -42,7 +45,7 @@ namespace Game
 
         void shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept override
         {
-            if (_isRelaoading || _isWaitingForNextShot)
+            if (_isReloading || _isWaitingForNextShot)
             {
                 return;
             }
@@ -53,6 +56,9 @@ namespace Game
                 reload();
                 return;
             }
+            
+            if(_sound)
+                Engine::Ressources::SoundPlayer::play(*_sound);
 
             _munition -= _bulletPerShot;
             _isWaitingForNextShot = true;
@@ -93,12 +99,12 @@ namespace Game
             newNode->append_attribute(doc.allocate_attribute("bulletDamage", doc.allocate_string(std::to_string(_bulletDamage).c_str())));
             newNode->append_attribute(doc.allocate_attribute("bulletVelocity", doc.allocate_string(std::to_string(_bulletVelocity).c_str())));
             newNode->append_attribute(doc.allocate_attribute("bulletPerShot", doc.allocate_string(std::to_string(_bulletPerShot).c_str())));
-            newNode->append_attribute(doc.allocate_attribute("realoadTime", doc.allocate_string(std::to_string(_realoadTime).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("reloadTime", doc.allocate_string(std::to_string(_reloadTime).c_str())));
             newNode->append_attribute(doc.allocate_attribute("munitionCapacity", doc.allocate_string(std::to_string(_munitionCapacity).c_str())));
             newNode->append_attribute(doc.allocate_attribute("shotIntervalDelay", doc.allocate_string(std::to_string(_shotIntervalDelay).c_str())));
             newNode->append_attribute(doc.allocate_attribute("munition", doc.allocate_string(std::to_string(_munition).c_str())));
             newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
-            newNode->append_attribute(doc.allocate_attribute("isRelaoading", doc.allocate_string(std::to_string(_isRelaoading).c_str())));
+            newNode->append_attribute(doc.allocate_attribute("isRelaoading", doc.allocate_string(std::to_string(_isReloading).c_str())));
             newNode->append_attribute(doc.allocate_attribute("isWaitingForNextShot", doc.allocate_string(std::to_string(_isWaitingForNextShot).c_str())));
             newNode->append_attribute(doc.allocate_attribute("isAutomatic", doc.allocate_string(std::to_string(_isAutomatic).c_str())));
             newNode->append_attribute(doc.allocate_attribute("radiusPrescisionAtOnMeter", doc.allocate_string(std::to_string(_radiusPrescisionAtOnMeter).c_str())));
