@@ -32,7 +32,7 @@ namespace Game
         void update() override;
         void fixedUpdate() override;
 
-        void InflictDamage(int damage) { _life -= damage; }
+        void inflictDamage(int damage) { _life -= damage; }
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 

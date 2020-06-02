@@ -28,7 +28,7 @@
 #include "Game/WaveManager.hpp"
 #include "Game/CircularEntitiesSpawner.hpp"
 #include "Game/DayNightCycle.hpp"
-#include "Game/FireGun.hpp"
+#include "Game/Firearm.hpp"
 #include "Game/Sniper.hpp"
 #include "Game/Shotgun.hpp"
 #include "Game/SubMachineGun.hpp"
@@ -294,8 +294,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<Shotgun>(params);
         else if (type.compare("SubMachineGun") == 0)
             parent.addComponent<SubMachineGun>(params);
-        else if (type.compare("FireGun") == 0)
-            parent.addComponent<FireGun>(params);
+        else if (type.compare("Firearm") == 0)
+            parent.addComponent<Firearm>(params);
         else if (type.compare("LootMachine") == 0)
             parent.addComponent<LootMachine>(params);
         else if (type.compare("Loot") == 0)
@@ -476,7 +476,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         i->save(doc, newNode);
     }
 
-    for (auto &&i : gameObjectParent.getComponents<FireGun>())
+    for (auto &&i : gameObjectParent.getComponents<Firearm>())
     {
         i->save(doc, newNode);
     }

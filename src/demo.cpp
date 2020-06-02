@@ -31,7 +31,7 @@
 #include "Game/GroundController.hpp"
 #include "Game/WaveManager.hpp"
 #include "Game/DayNightCycle.hpp"
-#include "Game/FireGun.hpp"
+#include "Game/Firearm.hpp"
 #include "Game/Sniper.hpp"
 #include "Game/SubMachineGun.hpp"
 #include "Game/Shotgun.hpp"
@@ -84,6 +84,7 @@ Demo::Demo(Engine::GE& gameEngine)
     Scene::_currentScene = &_scene;
 
     loadRessources(_gameEngine.ressourceManager_);
+    loadSounds(_gameEngine.ressourceManager_);
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
@@ -92,7 +93,6 @@ Demo::Demo(Engine::GE& gameEngine)
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
     loadReferential(_gameEngine.ressourceManager_);
-    loadSounds(_gameEngine.ressourceManager_);
     loadUI(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
@@ -261,10 +261,14 @@ void Demo::loadSounds(t_RessourcesManager &rm)
 {
     SoundPlayer::initialize();
     //SoundPlayer::listDevices();
-    rm.add<Sound>("gunshot","./ressources/sound/9_mm_gunshot-mike-koenig-123.wav");
+    rm.add<Sound>("pistol","./ressources/sound/pistol.wav").setGain(_effectsVolume);
+    rm.add<Sound>("chaingun","./ressources/sound/chaingun.wav").setGain(_effectsVolume);
+    rm.add<Sound>("Sniper","./ressources/sound/rifle.wav").setGain(_effectsVolume);
+    rm.add<Sound>("Shotgun","./ressources/sound/shotgun.wav").setGain(_effectsVolume);
+    rm.add<Sound>("Machinegun","./ressources/sound/machinegun.wav").setGain(_effectsVolume);
     
     Sound& bg = rm.add<Sound>("background","./ressources/music/dark_forces.wav");
-    bg.setGain(0.35f);
+    bg.setGain(_musicVolume);
     bg.setLooping(true);
 
     //play background sound at startup
@@ -688,61 +692,66 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     _scene->add<GameObject>(player1GO, flashlightGameObject).addComponent<SpotLight>(lightArg);
 
     //load guns
-    
-    GameObjectCreateArg sniperGameObject    {"Sniper",
-                                            {{-0.5f, -1.5f, 3.2f},
-                                            {0.f, -M_PI_2, 0.f},
-                                            {0.02f, 0.02f, 0.02f}}};
 
-    std::vector<Material> &vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
-
-    ModelCreateArg sniperModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                  &vecMaterialsGun,
-                                  &ressourceManager.get<Mesh>("SniperMesh"),
-                                  "LightAndTexture",
-                                  "SniperMaterials",
-                                  "SniperMesh"};
-
-    GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
-    sniperGO.addComponent<Model>(sniperModelArg);
-    FireGun& sniperComponent = sniperGO.addComponent<Sniper>(10.f, 1000.f, 1, 1.f, 50, 0.2f);
-    playerControllerPlayer1.addFireGun(&sniperComponent);
-
-    GameObjectCreateArg shotgunGameObject    {"shotgun",
-                                            {{-0.5f, -1.5f, 3.8f}, {0.f, M_PI, 0.f}}};
-
-    std::vector<Material>& vecMaterialsShotgun = ressourceManager.get<std::vector<Material>>("ShotgunMaterials");
-
-    ModelCreateArg shotgunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                    &vecMaterialsShotgun,
-                                    &ressourceManager.get<Mesh>("ShotgunMesh"),
-                                    "LightAndTexture",
-                                    "ShotgunMaterials",
-                                    "ShotgunMesh"};
-
-    GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
-    shotgunGO.addComponent<Model>(shotgunModelArg);
-    FireGun& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5);
-    playerControllerPlayer1.addFireGun(&shotgunComponent);
-
-    GameObjectCreateArg subMachineGunGameObject {"SubMachineGun",
+    //Sniper
+    {
+        GameObjectCreateArg sniperGameObject    {"Sniper",
                                                 {{-0.5f, -1.5f, 3.2f},
-                                                {0.f, M_PI, 0.f},
-                                                {0.3f, 0.3f, 0.3f}}};
+                                                {0.f, -M_PI_2, 0.f},
+                                                {0.02f, 0.02f, 0.02f}}};
 
-    std::vector<Material>& vecMaterialsSubMachineGun = ressourceManager.get<std::vector<Material>>("SubMachineGunMaterials");
+        std::vector<Material> &vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
 
-    ModelCreateArg subMachineGunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                    &vecMaterialsSubMachineGun,
-                                    &ressourceManager.get<Mesh>("SubMachineGunMesh"),
-                                    "LightAndTexture",
-                                    "SubMachineGunMaterials",
-                                    "SubMachineGunMesh"};
+        ModelCreateArg sniperModelArg{  &ressourceManager.get<Shader>("LightAndTexture"),
+                                        &vecMaterialsGun,
+                                        &ressourceManager.get<Mesh>("SniperMesh"),
+                                        "LightAndTexture",
+                                        "SniperMaterials",
+                                        "SniperMesh"};
+            
+        GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
+        sniperGO.addComponent<Model>(sniperModelArg);
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(10.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
+        playerControllerPlayer1.addFirearm(&sniperComponent);
+    }
+    //Shotgun
+    {
+        GameObjectCreateArg shotgunGameObject{"shotgun",{{-0.5f, -1.5f, 3.8f}, {0.f, M_PI, 0.f}}};
+        std::vector<Material>& vecMaterialsShotgun = ressourceManager.get<std::vector<Material>>("ShotgunMaterials");
 
-    GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
-    subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
-    FireGun& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(10.f, 1000.f, 1, 1.f, 50, 0.1f);
-    playerControllerPlayer1.addFireGun(&subMachineGunComponent);
+        ModelCreateArg shotgunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                        &vecMaterialsShotgun,
+                                        &ressourceManager.get<Mesh>("ShotgunMesh"),
+                                        "LightAndTexture",
+                                        "ShotgunMaterials",
+                                        "ShotgunMesh"};
+
+        GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
+        shotgunGO.addComponent<Model>(shotgunModelArg);
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
+        playerControllerPlayer1.addFirearm(&shotgunComponent);
+    }
+    //SubMachinegun
+    {
+        GameObjectCreateArg subMachineGunGameObject {"SubMachineGun",
+                                                    {{-0.5f, -1.5f, 3.2f},
+                                                    {0.f, M_PI, 0.f},
+                                                    {0.3f, 0.3f, 0.3f}}};
+
+        std::vector<Material>& vecMaterialsSubMachineGun = ressourceManager.get<std::vector<Material>>("SubMachineGunMaterials");
+
+        ModelCreateArg subMachineGunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                        &vecMaterialsSubMachineGun,
+                                        &ressourceManager.get<Mesh>("SubMachineGunMesh"),
+                                        "LightAndTexture",
+                                        "SubMachineGunMaterials",
+                                        "SubMachineGunMesh"};
+
+        GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
+        subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
+        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(10.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
+        playerControllerPlayer1.addFirearm(&subMachineGunComponent);
+    }
 
     //load billboards
     std::vector<Material> &vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");

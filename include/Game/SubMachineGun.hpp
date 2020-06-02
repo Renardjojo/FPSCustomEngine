@@ -5,30 +5,32 @@
 #ifndef _SUB_MACHINE_GUN_H
 #define _SUB_MACHINE_GUN_H
 
-#include "Game/FireGun.hpp"
+#include "Game/Firearm.hpp"
 
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
+#include "GE/Ressources/Sound.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
 
 namespace Game
 {
-    class SubMachineGun : public FireGun
+    class SubMachineGun : public Firearm
     {
         private:
 
         public:
 
-        SubMachineGun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float realoadTime, unsigned int munitionCapacity, float shotIntervalDelay)
-            :   FireGun {gameObject, bulletDamage, bulletVelocity, bulletPerShot, realoadTime, munitionCapacity, shotIntervalDelay, true}   
+        SubMachineGun(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float reloadTime, unsigned int munitionCapacity, float shotIntervalDelay,Engine::Ressources::Sound* sound)
+            :   Firearm {gameObject, bulletDamage, bulletVelocity, bulletPerShot, reloadTime, munitionCapacity, shotIntervalDelay, true,sound}   
         {
             _name = __FUNCTION__;
         }
 
         SubMachineGun (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   FireGun {refGameObject, params} 
+            :   Firearm {refGameObject, params} 
         {
             _name = __FUNCTION__;
         }

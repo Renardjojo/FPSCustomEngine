@@ -44,6 +44,10 @@ namespace Game
             void display        () const noexcept;
 
             #pragma endregion //!methods
+        
+        private:
+            float _musicVolume{0.35f};
+            float _effectsVolume{0.5f};
 
         protected:
 
@@ -63,7 +67,7 @@ namespace Game
             Engine::Core::Maths::Vec3 dirCamera;
             Engine::Ressources::GameObject* mainCamera;
 
-            Engine::Physics::PhysicalObject* physictest;
+
             #pragma endregion //!attribut
 
             #pragma region methods

@@ -110,7 +110,7 @@ void EnnemyController::chasing()
         float length{direction.length()};
         if (_cooldown >= _attackSpeed && length < _attackRadius)
         {
-           _player->getComponent<PlayerController>()->InflictDamage(_damage);
+           _player->getComponent<PlayerController>()->inflictDamage(_damage);
            _cooldown = 0.f;
         }
         if (length > _radius)
@@ -120,7 +120,7 @@ void EnnemyController::chasing()
 
 void EnnemyController::autoDestroy()
 {
-    _nexus->getComponent<Nexus>()->InflictDamage(_damage);
+    _nexus->getComponent<Nexus>()->inflictDamage(_damage);
     _gameObject.destroy();
 }
 
