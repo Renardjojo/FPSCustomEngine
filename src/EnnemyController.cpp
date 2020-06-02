@@ -43,7 +43,8 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _speed{std::stof(params[10])},
       _attackSpeed{std::stof(params[11])},
       _cooldown{std::stof(params[12])},
-      _damage{std::stoi(params[13])}
+      _damage{std::stoi(params[13])},
+      _life{std::stoi(params[14])}
 {
     _name = __FUNCTION__;
 }
@@ -158,6 +159,7 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("attackSpeed", doc.allocate_string(std::to_string(_attackSpeed).c_str())));
     newNode->append_attribute(doc.allocate_attribute("cooldown", doc.allocate_string(std::to_string(_cooldown).c_str())));
     newNode->append_attribute(doc.allocate_attribute("damage", doc.allocate_string(std::to_string(_damage).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("life", doc.allocate_string(std::to_string(_life).c_str())));
 
     nodeParent->append_node(newNode);
 }

@@ -1619,40 +1619,55 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                         "GreenMaterial",
                         "Cube"};
 
-        GameObject& enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
 
-        enemy1.setScale(Vec3{3.f, 5.f, 3.f});
+    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
 
-        enemy1.addComponent<Model>(modelArg);
-        enemy1.addComponent<PhysicalObject>().setMass(1);
-        enemy1.addComponent<SphereCollider>().setBounciness(0.f);
-        enemy1.getComponent<SphereCollider>()->setFriction(0.97f);
+    enemyBase.addComponent<Model>(modelArg);
+    enemyBase.addComponent<PhysicalObject>().setMass(1);
+    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
 
-        enemy1.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-    Save::createPrefab(enemy1, "enemy1");
-    enemy1.destroy();
+    Save::createPrefab(enemyBase, "enemy1");
 
-    GameObjectCreateArg CrateGameObjectArg{"Crate"};
+    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(8);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
+    enemyBase.getComponent<EnnemyController>()->setDamage(2);
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                 &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                                 &ressourceManager.get<Mesh>("Cube"),
-                                 "LightAndTexture",
-                                 "CrateMaterial",
-                                 "Cube"};
+    Save::createPrefab(enemyBase, "enemy2");
 
-    GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(3);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setRadius(50);
 
-    crate.addComponent<Model>(modelCrateArg);
-    PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
-    physicalObjectComp.setMass(3);
-    crate.addComponent<PushedOnShoot>();
-    crate.addComponent<SphereCollider>().setBounciness(0.f);
-    crate.getComponent<SphereCollider>()->setFriction(0.97f);
-    Save::createPrefab(crate, "Crate");
-    crate.destroy();
+    Save::createPrefab(enemyBase, "enemy3");
+
+    enemyBase.destroy();
+
+    // GameObjectCreateArg CrateGameObjectArg{"Crate"};
+
+    // ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    //                              &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+    //                              &ressourceManager.get<Mesh>("Cube"),
+    //                              "LightAndTexture",
+    //                              "CrateMaterial",
+    //                              "Cube"};
+
+    // GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+
+    // crate.addComponent<Model>(modelCrateArg);
+    // PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
+    // physicalObjectComp.setMass(3);
+    // crate.addComponent<PushedOnShoot>();
+    // crate.addComponent<SphereCollider>().setBounciness(0.f);
+    // crate.getComponent<SphereCollider>()->setFriction(0.97f);
+    // Save::createPrefab(crate, "Crate");
+    // crate.destroy();
 
     _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 
@@ -1718,7 +1733,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
-    EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
+    EnemiesPrefabs enemiesPrefs {"enemy1", "enemy2", "enemy3"};
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
 }
 

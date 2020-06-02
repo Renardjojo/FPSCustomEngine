@@ -25,12 +25,13 @@ namespace Game
         Engine::Ressources::GameObject* _nexus{nullptr};
         States _state{States::Idle};
         Game::CheckpointManager _checkpointManager;
-        float _radius{20.f};
+        float _radius{35.f};
         float _attackRadius{5.f};
         float _speed{25.f};
         float _attackSpeed{1.f};
         float _cooldown{0.f};
         int _damage{1};
+        int _life{5};
 
 
         void idle();
@@ -50,6 +51,13 @@ namespace Game
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
         
         void setCheckpoint(Game::Checkpoint* checkpoint);
+        void setRadius(float radius){ _radius = radius; }
+        void setAttackRadius(float attackRadius){ _attackRadius = attackRadius; }
+        void setSpeed(float speed){ _speed = speed; }
+        void setAttackSpeed(float attackSpeed){ _attackSpeed = attackSpeed; }
+        void setCooldown(float cooldown){ _cooldown = cooldown; }
+        void setDamage(int damage){ _damage = damage; }
+        void setLife(int life){ _life = life; }
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);     
     };
