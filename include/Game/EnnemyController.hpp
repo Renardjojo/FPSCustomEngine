@@ -39,7 +39,7 @@ namespace Game
         void autoDestroy();
 
     public:
-        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Engine::Ressources::GameObject* nexus, Game::Checkpoint* checkpoint);
+        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Engine::Ressources::GameObject* nexus);
         EnnemyController(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);
         virtual ~EnnemyController() = default;
 
@@ -49,6 +49,8 @@ namespace Game
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
         
+        void setCheckpoint(Game::Checkpoint* checkpoint);
+
         void save(xml_document<>& doc, xml_node<>* nodeParent);     
     };
 }

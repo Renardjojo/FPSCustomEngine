@@ -18,13 +18,17 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::Maths;
 using namespace Engine::LowRenderer;
 
-EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player, GameObject* nexus, Checkpoint* checkpoint) 
+EnnemyController::EnnemyController(GameObject &gameObject, GameObject *player, GameObject* nexus) 
 :   ScriptComponent{gameObject},
     _player{player},
-    _nexus{nexus},
-    _checkpointManager{checkpoint}
+    _nexus{nexus}
 {
     _name = __FUNCTION__;
+}
+
+void EnnemyController::setCheckpoint(Game::Checkpoint* checkpoint)
+{
+    _checkpointManager = CheckpointManager{checkpoint};
 }
 
 EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std::string> &params)
@@ -32,7 +36,7 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _player{&Scene::getCurrentScene()->getGameObject(params[0])},
       _nexus{&Scene::getCurrentScene()->getGameObject(params[1])},
       _state{static_cast<States>(std::stoi(params[2]))},
-      _checkpointManager{Scene::getCurrentScene()->getGameObject(params[3]).getComponent<Checkpoint>(), 
+      _checkpointManager{params[3].compare("nullptr") == 0 ? nullptr : Scene::getCurrentScene()->getGameObject(params[3]).getComponent<Checkpoint>(), 
       Vec3{std::stof(params[4]),std::stof(params[5]),std::stof(params[6])}, static_cast<unsigned int>(std::stoi(params[7]))},
       _radius{std::stof(params[8])},
       _attackRadius{std::stof(params[9])},
@@ -142,7 +146,7 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
 
     newNode->append_attribute(doc.allocate_attribute("state", doc.allocate_string(std::to_string(_state).c_str())));
 
-    newNode->append_attribute(doc.allocate_attribute("checkpointName", doc.allocate_string(_checkpointManager._checkpoints->getGameObject().getRelativePath().c_str())));
+    newNode->append_attribute(doc.allocate_attribute("checkpointName", doc.allocate_string(_checkpointManager._checkpoints ? _checkpointManager._checkpoints->getGameObject().getRelativePath().c_str() : "nullptr")));
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetX", doc.allocate_string(std::to_string(_checkpointManager._targetPos.x).c_str())));
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetY", doc.allocate_string(std::to_string(_checkpointManager._targetPos.y).c_str())));
     newNode->append_attribute(doc.allocate_attribute("checkpointTargetZ", doc.allocate_string(std::to_string(_checkpointManager._targetPos.z).c_str())));

@@ -516,7 +516,7 @@ void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
     matNexus.name = "NexusMaterial";
     matNexus.comp.shininess = 32.f;
     matNexus.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
-    matNexus.pathDiffuseTexture = "./ressources/texture/text2.png";
+    matNexus.pathDiffuseTexture = "./ressources/texture/Nexus.png";
 
     {
         std::vector<Material> material;
@@ -1131,7 +1131,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
         //spawnerGO.destroy();
@@ -1629,8 +1629,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         enemy1.getComponent<SphereCollider>()->setFriction(0.97f);
 
         enemy1.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"), 
-                                                checkpoint1->getComponent<Checkpoint>());
+                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
     Save::createPrefab(enemy1, "enemy1");
     enemy1.destroy();
@@ -1671,7 +1670,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1683,7 +1682,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1695,7 +1694,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1707,7 +1706,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
