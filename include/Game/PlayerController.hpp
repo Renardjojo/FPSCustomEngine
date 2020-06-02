@@ -35,10 +35,12 @@ namespace Game
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
-        int   _life{5};
         bool _jump{false};
         bool _isGrounded{false};
         bool _flashLightOn{false};
+        int _maxLife{500};
+        int _life{500};
+        int _points{0};
 
         std::vector<FireGun*> _firesGuns {}; /*First element is the weapon used*/
 
@@ -54,7 +56,6 @@ namespace Game
         void camera();
         void move();
         void switchFlashLightState();
-        void showReticle();
         void shoot();
 
     public:
@@ -71,6 +72,10 @@ namespace Game
         void update() override;
         void start() override;
         void fixedUpdate() override;
+
+        int* getLife();
+        int* getMaxLife();
+        int* getPoints();
 
         void InflictDamage(int damage) { _life -= damage; } 
 

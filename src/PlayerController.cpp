@@ -283,6 +283,20 @@ void PlayerController::onCollisionEnter(HitInfo &hitInfo)
     }
 }
 
+int* PlayerController::getLife()
+{
+    return &_life;
+}
+int* PlayerController::getMaxLife()
+{
+    return &_maxLife;
+}
+
+int* PlayerController::getPoints()
+{
+    return &_points;
+}
+
 void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
     if (!nodeParent)
