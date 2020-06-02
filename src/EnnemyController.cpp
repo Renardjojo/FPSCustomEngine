@@ -55,6 +55,9 @@ void EnnemyController::start()
 
 void EnnemyController::update()
 {
+    if (_life <= 0)
+        _gameObject.destroy();
+
     switch (_state)
     {
         case States::Idle:

@@ -50,6 +50,8 @@ namespace Game
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
         
+        void inflictDamage(int damage) { _life -= damage; }
+
         void setCheckpoint(Game::Checkpoint* checkpoint);
         void setRadius(float radius){ _radius = radius; }
         void setAttackRadius(float attackRadius){ _attackRadius = attackRadius; }

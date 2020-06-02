@@ -13,6 +13,8 @@
 #include "GE/Ressources/Sound.hpp"
 #include "GE/Ressources/SoundPlayer.hpp"
 
+#include "Game/EnnemyController.hpp"
+
 
 namespace Game
 {
@@ -147,8 +149,8 @@ namespace Game
                     Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
                     pCollider->OnCollisionEnter(hitInfo1);
 
-                    if (rayInfo.gameObject->getTag() != "Ground")
-                        rayInfo.gameObject->destroy();
+                    if (rayInfo.gameObject->compareTag("Enemy"))
+                        rayInfo.gameObject->getComponent<Game::EnnemyController>()->inflictDamage(_bulletDamage);
                 }
             }
         }

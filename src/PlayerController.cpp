@@ -60,7 +60,7 @@ void PlayerController::update()
     if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
         _jump = true;
 
-    if (Input::keyboard.getKeyState(Input::keyboard.switchFlashLightState) == E_KEY_STATE::TOUCHED)
+    if (Input::keyboard.getKeyState(Input::keyboard.flashLight) == E_KEY_STATE::TOUCHED)
         switchFlashLightState();
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == E_KEY_STATE::TOUCHED)
@@ -70,15 +70,15 @@ void PlayerController::update()
 
     if (_life <= 0)
         std::cout << "player is dead" << std::endl;
-    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
-    {
-        shoot();
-    }
 
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_R) == E_KEY_STATE::TOUCHED)
-    {
+    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
+        shoot();
+
+    if (Input::keyboard.getKeyState(Input::keyboard.use) == E_KEY_STATE::TOUCHED)
         activateLootMachine();
-    }
+
+    if (Input::keyboard.getKeyState(Input::keyboard.reload) == E_KEY_STATE::TOUCHED)
+        _firesGuns[0]->reload();
 
     /*Choose fire gun*/
     if (_firesGuns.size() > 1)
