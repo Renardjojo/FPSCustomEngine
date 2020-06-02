@@ -10,7 +10,7 @@
 #include "GE/Physics/ColliderShape/Collider.hpp"
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Ressources/ui.hpp"
-#include "Game/FireGun.hpp"
+#include "Game/Firearm.hpp"
 
 namespace Game
 {
@@ -40,7 +40,7 @@ namespace Game
         bool _isGrounded{false};
         bool _flashLightOn{false};
 
-        std::vector<FireGun*> _firesGuns {}; /*First element is the weapon used*/
+        std::vector<Firearm*> _firesGuns {}; /*First element is the weapon used*/
 
         CameraType _type{CameraType::FirstPerson};
 
@@ -54,7 +54,6 @@ namespace Game
         void camera();
         void move();
         void switchFlashLightState();
-        void showReticle();
         void shoot();
 
     public:
@@ -62,20 +61,18 @@ namespace Game
         PlayerController(Engine::Ressources::GameObject &gameObject);
         virtual ~PlayerController() = default;
 
-        void setCameraType(CameraType type);
-        void toggleCameraType();
-        void addFireGun(FireGun* fireGun);
         
-        void activateLootMachine();
-
         void update() override;
         void start() override;
         void fixedUpdate() override;
 
-        void InflictDamage(int damage) { _life -= damage; } 
-
+        void setCameraType(CameraType type);
+        void toggleCameraType();
+        void addFirearm(Firearm* Firearm);
+        
+        void activateLootMachine();
+        void inflictDamage(int damage);
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
-
         void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
 } // namespace Game
