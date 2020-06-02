@@ -243,8 +243,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    loadRockRessource          (ressourceManager);
-    loadTreeRessource          (ressourceManager);
+    //loadRockRessource          (ressourceManager);
+    //loadTreeRessource          (ressourceManager);
     loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
     loadPseudoRessource        (ressourceManager);
@@ -472,7 +472,7 @@ void Demo::loadSpotLightRessource(t_RessourcesManager &ressourceManager)
 
 void Demo::loadGroundRessource(t_RessourcesManager &ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(100));
+    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(300));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name = "Ground";
@@ -834,9 +834,9 @@ void Demo::loadTower(t_RessourcesManager &ressourceManager)
 void Demo::loadGround(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg groundArgGameObject{"Ground",
-                                            {{0.f, -20.f, 0.f},
+                                            {{0.f, 0.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {1000.f, 1.f, 1000.f}}};
+                                             {3000.f, 1.f, 3000.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("Ground"),
@@ -852,6 +852,27 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.addComponent<GroundController>();
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
+
+
+
+    GameObjectCreateArg WallArgGameObject{"Wall",
+                                            {{-20.f, 0.f, -20.f},
+                                             {M_PI_4, 0.f, 0.f},
+                                             {100.f, 1.f, 100.f}}};
+
+    ModelCreateArg WallArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                             &ressourceManager.get<std::vector<Material>>("Ground"),
+                             &ressourceManager.get<Mesh>("GroundMesh"),
+                             "LightAndTexture",
+                             "Ground",
+                             "GroundMesh",
+                             true,
+                             false};
+
+    GameObject& Wall = _scene->add<GameObject>(_scene->getWorld(), WallArgGameObject);
+    Wall.addComponent<Model>(WallArg);
+    Wall.addComponent<OrientedBoxCollider>();
+    Wall.setTag("Wall");
 }
 
 void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
@@ -871,16 +892,17 @@ void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressource
                             true, false, false};
     
     /*Create tree with random size, position and rotation and add it on tre contener*/
+    float rotAngleRadStep = M_PI * 2.f / number;
     for (size_t i = 0; i < number; i++)
     {
         fogGameObjectArg.name = "Fog" + std::to_string(i);
-        fogGameObjectArg.transformArg.position.x = Random::ranged<float>(-250.f, 250.f);
-        fogGameObjectArg.transformArg.position.z = Random::ranged<float>(-250.f, 250.f);
-        fogGameObjectArg.transformArg.rotation.y = Random::ranged<float>(360.f * M_PI / 180.f);
-        fogGameObjectArg.transformArg.scale = {Random::ranged<float>(50.f, 100.f), Random::ranged<float>(20.f, 55.f), 1.f};
-        fogGameObjectArg.transformArg.position.y = fogGameObjectArg.transformArg.scale.y / 2.f;
+        fogGameObjectArg.transformArg.position.x = cos(i * rotAngleRadStep) * (i % 2 == 0 ? 1000.f : 800.f);
+        fogGameObjectArg.transformArg.position.z = sin(i * rotAngleRadStep) * (i % 2 == 0 ? 1000.f : 800.f);
+        fogGameObjectArg.transformArg.rotation.y = i * -rotAngleRadStep + M_PI_2;
+        fogGameObjectArg.transformArg.scale = {500.f, 200.f, 1.f};
+        fogGameObjectArg.transformArg.position.y = fogGameObjectArg.transformArg.scale.y / 10.f * 4.f;
 
-        _scene->add<GameObject>(fogContener, fogGameObjectArg).addComponent<BillBoard>(fogModelArg);
+        _scene->add<GameObject>(fogContener, fogGameObjectArg).addComponent<Model>(fogModelArg);
     }
 }
 
@@ -1081,12 +1103,29 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                             "Cube"};
     glassPlatformArg.isOpaque = false;
 
-    _scene->add<GameObject>(wrap, rightFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, leftFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, backwardFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, topFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject).addComponent<Model>(glassPlatformArg);
+    GameObject& wrap1GO = _scene->add<GameObject>(wrap, rightFaceArgGameObject);
+    wrap1GO.addComponent<Model>(blackPlatformArg);
+    wrap1GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap2GO = _scene->add<GameObject>(wrap, leftFaceArgGameObject);
+    wrap2GO.addComponent<Model>(blackPlatformArg);
+    wrap2GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap3GO = _scene->add<GameObject>(wrap, backwardFaceArgGameObject);
+    wrap3GO.addComponent<Model>(blackPlatformArg);
+    wrap3GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap4GO = _scene->add<GameObject>(wrap, topFaceArgGameObject);
+    wrap4GO.addComponent<Model>(blackPlatformArg);
+    wrap4GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap5GO = _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject);
+    wrap5GO.addComponent<Model>(blackPlatformArg);
+    wrap5GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap6GO = _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject);
+    wrap6GO.addComponent<Model>(glassPlatformArg);
+    wrap6GO.addComponent<OrientedBoxCollider>();
 
     /*Create lots prefabs*/
     GameObjectCreateArg lot1GameObjectArg{"Lot1"};
@@ -1148,8 +1187,8 @@ void Demo::loadCamera()
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
     loadTimeManager             ();
-    loadRock                    (ressourceManager, 100);
-    loadTree                    (ressourceManager, 50);
+    //loadRock                    (ressourceManager, 100);
+    //loadTree                    (ressourceManager, 50);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);
@@ -1596,7 +1635,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                                 0.f, 0.05f, 0.f, true};
 
     GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
-    nexus.setTranslation(Vec3{-10, -15, -10});
+    nexus.setTranslation(Vec3{-10, 8, -10});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
     nexus.addComponent<Model>(modelNexusArg);
     nexus.addComponent<Nexus>();
