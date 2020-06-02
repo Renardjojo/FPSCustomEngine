@@ -47,7 +47,7 @@ namespace Game
 
         void update () noexcept override
         {
-            std::cout << (_playerGO->getGlobalPosition() - _gameObject.getGlobalPosition()).length() << "   " <<  _activationRadius << std::endl;
+            //std::cout << (_playerGO->getGlobalPosition() - _gameObject.getGlobalPosition()).length() << "   " <<  _activationRadius << std::endl;
             if ((_playerGO->getGlobalPosition() - _gameObject.getGlobalPosition()).length() <= _activationRadius)
             {
                 effect();
