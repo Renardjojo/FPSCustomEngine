@@ -183,7 +183,7 @@ namespace Engine::Ressources
     protected:
 
         std::list<std::unique_ptr<Component>>   _components;
-        std::string                             _tag;
+        std::string                             _tag{"GameObject"};
         bool                                    _isDead {false}; //Flag that inform it parent that this transform must be destroy on update loop
     };
 } // namespace Engine::Ressources

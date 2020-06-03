@@ -36,9 +36,11 @@ namespace Game
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
         int   _life{5};
+        int   _money{500};
         bool _jump{false};
         bool _isGrounded{false};
         bool _flashLightOn{false};
+
 
         std::vector<Firearm*> _firesGuns {}; /*First element is the weapon used*/
 
@@ -69,6 +71,10 @@ namespace Game
 
         float getMouseSpeed () const noexcept { return _mouseSpeed;}
         void setMouseSpeed (float newSpeed) noexcept { _mouseSpeed = newSpeed;}
+
+        int getMoney() { return _money; }
+        void addMoney(int money) { _money += money; }
+        void setMoney(int money) { _money = money; }
 
         void setCameraType(CameraType type);
         void toggleCameraType();
