@@ -77,9 +77,6 @@ namespace Game
                     tempGOWithTag.setTag("Bullet");
                     Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
                     pCollider->OnCollisionEnter(hitInfo1);
-
-                    if (rayInfo.gameObject->getTag() != "Ground")
-                        rayInfo.gameObject->destroy();   
                 }
             }
             
