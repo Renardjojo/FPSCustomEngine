@@ -57,7 +57,7 @@ void PlayerController::start()
 void PlayerController::update()
 {
 
-    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
+    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
         _jump = true;
 
     if (Input::keyboard.getKeyState(Input::keyboard.switchFlashLightState) == E_KEY_STATE::TOUCHED)
