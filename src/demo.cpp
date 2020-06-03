@@ -37,6 +37,8 @@
 #include "Game/Shotgun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LifeLoot.hpp"
+#include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
 
 #include "../src/stb_image.h"
@@ -221,6 +223,15 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     matDefault.name = "BrownMaterial";
     matDefault.comp.ambient.rgbi = Vec4{0.4f, 0.2f, 0.f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
+    }
+
+    matDefault.name = "YellowMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{1.f, 1.f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
@@ -1174,7 +1185,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         SphereCollider& colliderComp = lot1GO.addComponent<SphereCollider>();
         colliderComp.setBounciness(0.4f);
         colliderComp.setFriction(0.9f);
-        lot1GO.addComponent<Loot>();
+        lot1GO.addComponent<BombeLoot>();
 
         Save::createPrefab(lot1GO, "Lot1");
         lot1GO.destroy();
@@ -1198,7 +1209,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         SphereCollider& colliderComp = lot2GO.addComponent<SphereCollider>();
         colliderComp.setBounciness(0.1f);
         colliderComp.setFriction(0.95f);
-        lot2GO.addComponent<Loot>();
+        lot2GO.addComponent<LifeLoot>();
 
         Save::createPrefab(lot2GO, "Lot2");
         lot2GO.destroy();
