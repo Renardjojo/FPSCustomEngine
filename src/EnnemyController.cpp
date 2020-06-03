@@ -56,7 +56,10 @@ void EnnemyController::start()
 void EnnemyController::update()
 {
     if (_life <= 0)
+    {
         _gameObject.destroy();
+        _player->getComponent<PlayerController>()->addMoney(_valueOnDeath);
+    }
 
     switch (_state)
     {
@@ -134,7 +137,8 @@ void EnnemyController::autoDestroy()
 
 void EnnemyController::onCollisionEnter(Engine::Physics::ColliderShape::HitInfo &hitInfo)
 {
-    (void)hitInfo;
+    if (hitInfo.gameObject->compareTag("Bullet"))
+        _player->getComponent<PlayerController>()->addMoney(_valueOnHit);
 }
 
 void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)

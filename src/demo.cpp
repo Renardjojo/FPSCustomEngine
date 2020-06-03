@@ -1832,12 +1832,15 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     enemyBase.getComponent<EnnemyController>()->setLife(8);
     enemyBase.getComponent<EnnemyController>()->setSpeed(10);
     enemyBase.getComponent<EnnemyController>()->setDamage(2);
+    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
+    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
 
     Save::createPrefab(enemyBase, "enemy2");
 
     enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
     enemyBase.getComponent<EnnemyController>()->setLife(3);
     enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setDamage(1);
     enemyBase.getComponent<EnnemyController>()->setRadius(50);
 
     Save::createPrefab(enemyBase, "enemy3");

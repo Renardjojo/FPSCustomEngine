@@ -32,6 +32,8 @@ namespace Game
         float _cooldown{0.f};
         int _damage{1};
         int _life{5};
+        int _valueOnHit{5};
+        int _valueOnDeath{50};
 
 
         void idle();
@@ -60,6 +62,8 @@ namespace Game
         void setCooldown(float cooldown){ _cooldown = cooldown; }
         void setDamage(int damage){ _damage = damage; }
         void setLife(int life){ _life = life; }
+        void setValueOnHit(int valueOnHit){ _valueOnHit = valueOnHit; }
+        void setValueOnDeath(int valueOnDeath){ _valueOnDeath = valueOnDeath; }
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);     
     };
