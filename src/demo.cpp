@@ -1195,8 +1195,8 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         lot2GO.addComponent<Model>(modelCrateArg);
         lot2GO.addComponent<PhysicalObject>().setMass(1);
         SphereCollider& colliderComp = lot2GO.addComponent<SphereCollider>();
-        colliderComp.setBounciness(0.4f);
-        colliderComp.setFriction(0.9f);
+        colliderComp.setBounciness(0.1f);
+        colliderComp.setFriction(0.95f);
         lot2GO.addComponent<Loot>();
 
         Save::createPrefab(lot2GO, "Lot2");
@@ -1742,7 +1742,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(10);
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(30);
 
     /*Create spawner*/
 
