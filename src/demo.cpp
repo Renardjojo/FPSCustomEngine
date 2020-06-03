@@ -588,7 +588,9 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
 
         rockGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
+        GameObject& rockGO = _scene->add<GameObject>(rockContener, rockGameObject);
+        rockGO.addComponent<Model>(rockModelArg);
+        rockGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -620,7 +622,17 @@ void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
 
         treeGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
+        GameObject& treeGO = _scene->add<GameObject>(treeContener, treeGameObject);
+        treeGO.addComponent<Model>(treeModelArg);
+
+        GameObjectCreateArg treeColliderArg{"TreeCollider",
+                                       {{0.f, 0.f, 0.f},
+                                        {0.f, 0.f, 0.f},
+                                        treeGameObject.transformArg.scale}};
+        treeColliderArg.transformArg.scale.y *= 10.f;  
+        treeColliderArg.transformArg.scale.x *= 0.001f;  
+        treeColliderArg.transformArg.scale.z *= 0.001f;          
+        _scene->add<GameObject>(treeGO, treeColliderArg).addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -961,29 +973,29 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& mechanism = _scene->add<GameObject>(lootMachin, mechanismArgGameObject);
     
     GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg secondInclinedPlatformArgGameObject{"SecondInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg thirdInclinedPlatformArgGameObject{"ThirdInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                         
     GameObjectCreateArg forthInclinedPlatformArgGameObject{"ForthInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                             
     GameObjectCreateArg distributorInclinedPlatformArgGameObject{"DistributorInclinedPlatform",
                                             {{0.f, (wrapHeight / 8.f * 1) - wrapHeight / 2.f, 0.f},
                                             {M_PI_4, 0.f, 0.f},
-                                            {wrapWidth, wrapThickness, wrapDepth}}};
+                                            {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
     ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1013,19 +1025,19 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& distributorInclinedPlatformGO = _scene->add<GameObject>(mechanism, distributorInclinedPlatformArgGameObject);
 
     firstInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
-    //firstInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    firstInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     secondInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
-    //secondInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    secondInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     thirdInclinedPlatformGO.addComponent<Model>(greenPlatformArg);
-    //thirdInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    thirdInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     fourthInclinedPlatformGO.addComponent<Model>(pinkPlatformArg);
-   // fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
+    fourthInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
 
     distributorInclinedPlatformGO.addComponent<Model>(redPlatformArg);
-   // distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(1.f);
+    distributorInclinedPlatformGO.addComponent<OrientedBoxCollider>().setBounciness(1.f);
 
 
     /*Wrap*/

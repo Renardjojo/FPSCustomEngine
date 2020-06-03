@@ -69,7 +69,7 @@ void keepNearestGameObject(GameObject *& currentGameObjectHit,
     }
 }
 
-void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInfo>& collisionsTempInfo, std::vector<Collider *>& pColliders)
+void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInfo>& collisionsTempInfo, std::vector<OrientedBoxCollider *>& pOrientedBoxColliders)
 {
     for (std::vector<CollisionTempInfo>::iterator it = collisionsTempInfo.begin(); it != collisionsTempInfo.end(); it++)
     {
@@ -82,47 +82,55 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
         float firstIntersectionDistance = std::numeric_limits<float>().max();
 
         /*Try all collision and sort to obtain the first collision*/
-        for (Collider *collider2 : pColliders)
+        for (OrientedBoxCollider *pOrientedBoxCollider : pOrientedBoxColliders)
         {
-            if ((*it).collider != collider2)
-            {
-                if (dynamic_cast<OrientedBoxCollider *>(collider2))
-                {
-                    Intersection newIntersection;
-                    if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(globalSphere, dynamic_cast<OrientedBoxCollider *>(collider2)->getGlobalOrientedBox(), AB, newIntersection))
-                    {
-                        if (newIntersection.intersectionType == EIntersectionType::InfinyIntersection)
-                        {
-                            globalSphere.setCenter(globalSphere.getCenter() - AB);
-                            if (!MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(globalSphere, dynamic_cast<OrientedBoxCollider *>(collider2)->getGlobalOrientedBox(), AB, newIntersection))
-                            {
-                                continue;
-                            }
-                            currentGameObjectHit = &collider2->getGameObject();
-                            firstIntersectionDistance = 0.f;
-                            intersection = newIntersection;
-                            collisionHappend = true;
-                            break;
-                        }
+            OrientedBox globalOrientedBox = pOrientedBoxCollider->getGlobalOrientedBox();
 
-                        std::cout << (int)newIntersection.intersectionType << std::endl;
-                        std::cout << (*it).collider->getGameObject().getCName() << "    " << collider2->getGameObject().getCName() << std::endl;
-                        keepNearestGameObject(currentGameObjectHit, intersection, firstIntersectionDistance, newIntersection, &collider2->getGameObject(), globalSphere.getCenter());
-                        collisionHappend = true;
-                    }     
-                }
+            /*Try firstly with sphere bounding box*/
+            float maxHalfLenght = std::max(globalOrientedBox.getExtK(), std::max(globalOrientedBox.getExtI(), globalOrientedBox.getExtJ()));
+            if ((globalOrientedBox.getReferential().origin - globalSphere.getCenter()).length() > (globalSphere.getRadius() + maxHalfLenght) * 2.f)
+            {
+                continue;
             }
+
+            Intersection newIntersection;
+            if (MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(globalSphere, globalOrientedBox, AB, newIntersection))
+            {
+                /*If the point is inside the collider, back oof the point*/
+                if (newIntersection.intersectionType == EIntersectionType::InfinyIntersection)
+                {
+                    globalSphere.setCenter(globalSphere.getCenter() - AB);
+                    if (!MovingSphereOrientedBox::isMovingSphereOrientedBoxCollided(globalSphere, globalOrientedBox, AB, newIntersection))
+                    {
+                        continue;
+                    }
+                    currentGameObjectHit = &pOrientedBoxCollider->getGameObject();
+                    firstIntersectionDistance = 0.f;
+                    intersection = newIntersection;
+                    collisionHappend = true;
+                    break;
+                }
+
+                /*Check if false intersection*/
+                if (!(Vec3::dot(AB, newIntersection.intersection1 - globalSphere.getCenter()) > 0.f && (newIntersection.intersection1 - globalSphere.getCenter()).length() < AB.length()))
+                {
+                    continue;
+                }
+
+                /*Else if intersection is good, check if its the first object meet*/
+                keepNearestGameObject(currentGameObjectHit, intersection, firstIntersectionDistance, newIntersection, &pOrientedBoxCollider->getGameObject(), globalSphere.getCenter());
+                collisionHappend = true;
+            }     
         }
 
         if (collisionHappend)
         {
-            std::cout << "Keep :" << (*it).collider->getGameObject().getCName() << "    " << currentGameObjectHit->getCName() << std::endl;
             /*Compute tAP and tPB*/
             Vec3 OP = intersection.intersection1; /*Position of the sphere at the collision*/
             Vec3 OA = globalSphere.getCenter();
             Vec3 OB = OA + AB;
             float ABLength = AB.length();
-            float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / AB.length() : 0.f;
+            float tPB = ABLength > std::numeric_limits<float>::epsilon() ? (OB - OP).length() / ABLength : 0.f;
 
             // /*Compute the new position and the new velocity of the entity*/
             Vec3 velocity = (*it).currentVelocity;
@@ -131,8 +139,7 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
             Vec3 remainingVelocity = newVelocity * tPB;
             Vec3 newPos = intersection.intersection1 + intersection.normalI1 * 0.001f;
             Vec3 angularVelocity = -Vec3::cross(((intersection.intersection1 + AB.getNormalize() * globalSphere.getRadius()) - (*it).collider->getGameObject().getPosition()), newVelocity);
-            
-            //(*it).collider->getGameObject().setTranslation(newPos);
+
             (*it).position = newPos;
             (*it).newVelocity = newVelocity;
             (*it).newAngularVelocity = angularVelocity;
@@ -173,38 +180,48 @@ void PhysicSystem::update() noexcept
     std::vector<CollisionTempInfo> collisionsTempInfo;
     collisionsTempInfo.reserve(pColliders.size());
 
+    std::vector<OrientedBoxCollider *> pOrientedBoxColliders;
+    pOrientedBoxColliders.reserve(pColliders.size());
+
     for (auto &&i : pColliders)
     {
         /*Only add moving object*/
         SphereCollider* pSphereCollider =  dynamic_cast<SphereCollider *>(i);
 
-        if (pSphereCollider && i->GetAttachedPhysicalObject() && !i->GetAttachedPhysicalObject()->isKinematic())
+        if (pSphereCollider)
         {
-            collisionsTempInfo.push_back(CollisionTempInfo{pSphereCollider,
-                                            i->GetAttachedPhysicalObject(),
-                                            pSphereCollider->getGlobalSphere().getCenter(),
-                                            i->GetAttachedPhysicalObject()->getVelocity(),
-                                            i->GetAttachedPhysicalObject()->getAngularVelocity(), 
-                                            i->GetAttachedPhysicalObject()->getVelocity()});
+            if (i->GetAttachedPhysicalObject() && !i->GetAttachedPhysicalObject()->isKinematic())
+            {
+                collisionsTempInfo.push_back(CollisionTempInfo{pSphereCollider,
+                                                i->GetAttachedPhysicalObject(),
+                                                pSphereCollider->getGlobalSphere().getCenter(),
+                                                i->GetAttachedPhysicalObject()->getVelocity(),
+                                                i->GetAttachedPhysicalObject()->getAngularVelocity(), 
+                                                i->GetAttachedPhysicalObject()->getVelocity()});
+            }
+            continue;
+        }
+
+        OrientedBoxCollider* pOrienterdBocxCollider =  dynamic_cast<OrientedBoxCollider *>(i);
+
+        if (pOrienterdBocxCollider)
+        {
+            pOrientedBoxColliders.push_back(pOrienterdBocxCollider);
         }
     }
 
-    unsigned int maxIt = 50;
+    unsigned int maxIt = 10;
     while (!collisionsTempInfo.empty())
     {
-        checkCollisionBetweenMovingSphereAndStaticBox (collisionsTempInfo, pColliders);
+        checkCollisionBetweenMovingSphereAndStaticBox (collisionsTempInfo, pOrientedBoxColliders);
         maxIt--;
         if (maxIt == 0)
             break;
     }
-
     if (maxIt == 0)
     {
-        exit(0);
         SLog::logWarning("Risk of infinit collision (iteration > 10)");
     }
-
-    /*TODO: If object collied with another object, we apply two time the displacement. Use isDirty flag*/
 
     for (PhysicalObject *object : pPhysicalObjects)
     {
