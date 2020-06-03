@@ -13,8 +13,6 @@
 #include "GE/Ressources/Sound.hpp"
 #include "GE/Ressources/SoundPlayer.hpp"
 
-#include "Game/EnnemyController.hpp"
-
 
 namespace Game
 {
