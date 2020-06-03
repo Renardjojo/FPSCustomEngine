@@ -89,6 +89,7 @@ Demo::Demo(Engine::GE& gameEngine)
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
     loadATH(_gameEngine.ressourceManager_);
+    loadBulletHoleContenor (50);
     loadEnemies(_gameEngine.ressourceManager_);
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
@@ -219,7 +220,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     }
 
     matDefault.name = "BrownMaterial";
-    matDefault.comp.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
+    matDefault.comp.ambient.rgbi = Vec4{0.4f, 0.2f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
@@ -1742,7 +1743,6 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(30);
 
     /*Create spawner*/
 
@@ -1808,6 +1808,11 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
     EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
+}
+
+void Demo::loadBulletHoleContenor (int maxDecale)
+{
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(maxDecale);
 }
 
 void Demo::loadTimeManager        ()

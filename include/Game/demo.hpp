@@ -102,6 +102,7 @@ namespace Game
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadBulletHoleContenor (int maxDecale);
             //void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadATH                (Engine::Ressources::t_RessourcesManager& ressourceManager);    
