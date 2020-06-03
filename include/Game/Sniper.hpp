@@ -6,14 +6,20 @@
 #define _SNIPER_H
 
 #include "Game/Firearm.hpp"
+#include "Game/PlayerController.hpp"
 
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/Physics/PhysicSystem.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/Sound.hpp"
 #include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/ui.hpp"
+#include "GE/LowRenderer/model.hpp"
+#include "GE/LowRenderer/camera.hpp"
+#include "GE/Ressources/scene.hpp"
 
 namespace Game
 {
@@ -23,24 +29,13 @@ namespace Game
 
         public:
 
-        Sniper(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float reloadTime, unsigned int munitionCapacity, float shotIntervalDelay,Engine::Ressources::Sound* sound)
-            :   Firearm {gameObject, bulletDamage, bulletVelocity, bulletPerShot, reloadTime, munitionCapacity, shotIntervalDelay, false,sound}   
-        {
-            _name = __FUNCTION__;
-        }
+        Sniper(Engine::Ressources::GameObject &gameObject, float bulletDamage, float bulletVelocity, unsigned int bulletPerShot, float reloadTime, unsigned int munitionCapacity, float shotIntervalDelay,Engine::Ressources::Sound* sound);
 
-        Sniper (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
-            :   Firearm {refGameObject, params} 
-        {
-            _name = __FUNCTION__;
-        }
+        Sniper (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 
         virtual ~Sniper() = default;
 
-        virtual void aim () noexcept
-        {
-
-        }
+        virtual void switchAimState () noexcept;
     };
 
 } //namespace Game
