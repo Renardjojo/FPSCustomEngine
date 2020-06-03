@@ -70,9 +70,15 @@ void PlayerController::update()
 
     if (_life <= 0)
         std::cout << "player is dead" << std::endl;
+
     if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
     {
         shoot();
+    }
+
+    if (!_firesGuns.empty() && Input::mouse.rightClicDownOnce)
+    {
+        switchAimState();
     }
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_R) == E_KEY_STATE::TOUCHED)
@@ -85,6 +91,11 @@ void PlayerController::update()
     {
         if (Input::mouse.wheel_scrollingFlag != 0)
         {
+            if (_firesGuns.front()->isAiming())
+            {
+                _firesGuns.front()->switchAimState();
+            }
+
             if (Input::mouse.wheel_scrollingFlag == 1)
             {
                 Firearm *temp = _firesGuns.front();
@@ -130,6 +141,12 @@ void PlayerController::shoot()
 {
     _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
 }
+
+void PlayerController::switchAimState()
+{
+    _firesGuns[0]->switchAimState();
+}
+
 
 void PlayerController::setCameraType(CameraType type)
 {

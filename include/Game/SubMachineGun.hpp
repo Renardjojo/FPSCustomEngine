@@ -36,11 +36,6 @@ namespace Game
         }
 
         virtual ~SubMachineGun() = default;
-
-        virtual void aim () noexcept
-        {
-
-        }
     };
 
 } //namespace Game

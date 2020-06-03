@@ -27,11 +27,11 @@ namespace Game
         Engine::Physics::PhysicalObject *_physics;
         Engine::LowRenderer::SpotLight *_flashLight;
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
-        float _mouseSpeed{1.f};
-        float _playerForce{50.f};
-        float _jumpForce{5.f};
-        float _airForce{20.f};
-        float _groundForce{50.f};
+        float _mouseSpeed{0.5f};
+        float _playerForce{30.f};
+        float _jumpForce{7.f};
+        float _airForce{5.f};
+        float _groundForce{30.f};
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
@@ -55,6 +55,7 @@ namespace Game
         void move();
         void switchFlashLightState();
         void shoot();
+        void switchAimState();
 
     public:
     
@@ -65,6 +66,9 @@ namespace Game
         void update() override;
         void start() override;
         void fixedUpdate() override;
+
+        float getMouseSpeed () const noexcept { return _mouseSpeed;}
+        void setMouseSpeed (float newSpeed) noexcept { _mouseSpeed = newSpeed;}
 
         void setCameraType(CameraType type);
         void toggleCameraType();
