@@ -576,9 +576,9 @@ void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matCrate;
     matCrate.name = "RedCrateMaterial";
-    matCrate.comp.ambient.rgbi = {1.f, 0.5f, 0.5f, 1.f};
-    matCrate.comp.diffuse.rgbi = {1.f, 0.5f, 0.5f, 1.f};
-    matCrate.comp.specular.rgbi = {1.f, 0.5f, 0.5f, 0.1f};
+    matCrate.comp.ambient.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 0.3f, 0.3f, 0.1f};
     matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
 
     {
@@ -588,9 +588,9 @@ void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
     }
 
     matCrate.name = "BlueCrateMaterial";
-    matCrate.comp.ambient.rgbi = {0.5f, 0.5f, 1.f, 1.f};
-    matCrate.comp.diffuse.rgbi = {0.5f, 0.5f, 1.f, 1.f};
-    matCrate.comp.specular.rgbi = {0.5f, 0.5f, 1.f, 0.1f};
+    matCrate.comp.ambient.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 0.3f, 1.f, 0.1f};
 
     {
         std::vector<Material> material;
@@ -599,9 +599,20 @@ void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
     }
 
     matCrate.name = "GreenCrateMaterial";
-    matCrate.comp.ambient.rgbi = {0.5f, 1.f, 0.5f, 1.f};
-    matCrate.comp.diffuse.rgbi = {0.5f, 1.f, 0.5f, 1.f};
-    matCrate.comp.specular.rgbi = {0.5f, 1.f, 0.5f, 0.1f};
+    matCrate.comp.ambient.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 1.f, 0.3f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "YellowCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 1.f, 0.3f, 0.1f};
 
     {
         std::vector<Material> material;
@@ -1174,10 +1185,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
 
         ModelCreateArg modelBlueCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("BlueCrateMaterial"),
+                            &ressourceManager.get<std::vector<Material>>("YellowCrateMaterial"),
                             &ressourceManager.get<Mesh>("Cube"),
                             "LightAndTexture",
-                            "BlueCrateMaterial",
+                            "YellowCrateMaterial",
                             "Cube"};
 
         lot1GO.addComponent<Model>(modelBlueCrateArg);
