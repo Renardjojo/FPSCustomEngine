@@ -1688,7 +1688,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(10);
 
     /*Create spawner*/
 
@@ -1764,12 +1764,14 @@ void Demo::loadTimeManager        ()
 
 void Demo::updateControl()
 {
-    /*
-    float dist = 5.f;
-    _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
-    _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
-    _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
-    */
+    // for (auto &&i : Scene::getCurrentScene()->getGameObject("world/DecalContenor").children)
+    // {
+    //     std::cout << Scene::getCurrentScene()->getGameObject("world/DecalContenor").getModelMatrix() << std::endl;
+    //     std::cout << i->getScale() << std::endl;
+    //     std::cout << i->getModelMatrix() << std::endl;
+    //     exit(1);
+    // }
+
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
