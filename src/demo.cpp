@@ -88,7 +88,6 @@ Demo::Demo(Engine::GE& gameEngine)
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
-    loadATH(_gameEngine.ressourceManager_);
     loadEnemies(_gameEngine.ressourceManager_);
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
@@ -1572,15 +1571,10 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                 E_GAME_STATE::RUNNING);
 
     ressourceManager.add<ReferencedTitle>("lifeIndicator", pfont, buttonShader,
-                                halfWidth  - halfWidth / 10.f, halfHeight - halfHeight / 10.f * 9.f,
-                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255},_scene->getGameObject("Player1").getComponent<PlayerController>()->getLife(),"Wave ", E_GAME_STATE::RUNNING);
+                                halfWidth  - halfWidth / 2.f, halfHeight - halfHeight / 10.f,
+                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"Wave ", E_GAME_STATE::RUNNING);
 
 #pragma endregion
-}
-
-void Demo::loadATH(t_RessourcesManager &ressourceManager)
-{
-
 }
 
 void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
