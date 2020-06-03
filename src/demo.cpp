@@ -254,16 +254,17 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    loadRockRessource          (ressourceManager);
-    loadTreeRessource          (ressourceManager);
-    loadSkyboxRessource        (ressourceManager);
-    loadGunRessource           (ressourceManager);
-    loadPseudoRessource        (ressourceManager);
-    loadPlayerRessource        (ressourceManager);
-    //loadSpotLightRessource     (ressourceManager);
-    //loadTowerRessource         (ressourceManager);
+    loadRockRessource           (ressourceManager);
+    loadTreeRessource           (ressourceManager);
+    loadSkyboxRessource         (ressourceManager);
+    loadGunRessource            (ressourceManager);
+    loadPseudoRessource         (ressourceManager);
+    loadPlayerRessource         (ressourceManager);
+    // loadSpotLightRessource      (ressourceManager);
+    // loadTowerRessource          (ressourceManager);
     loadNexusRessource          (ressourceManager);  
     loadGroundRessource         (ressourceManager);
+    loadEnemiesRessource        (ressourceManager);  
     loadCrateRessource          (ressourceManager);  
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
@@ -516,6 +517,28 @@ void Demo::loadCrateRessource(t_RessourcesManager &ressourceManager)
     }
 }
 
+void Demo::loadEnemiesRessource(t_RessourcesManager &ressourceManager)
+{
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materialAttribs;
+
+    loadObjWithMTL("./ressources/obj/pumpkin.obj", &attrib, &shape, &materialAttribs);
+
+    ressourceManager.add<Mesh>("PumpkinMesh" , attrib, shape);
+
+    MaterialAndTextureCreateArg matPumpkin;
+    matPumpkin.name = "PumpkinMaterial";
+    matPumpkin.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
+    matPumpkin.pathDiffuseTexture = "./ressources/texture/pumpkin.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matPumpkin);
+        ressourceManager.add<std::vector<Material>>(matPumpkin.name, std::move(material));
+    }
+}
+
 void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
 {
     Attrib                      attrib;
@@ -530,7 +553,7 @@ void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
     matNexus.name = "NexusMaterial";
     matNexus.comp.shininess = 32.f;
     matNexus.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
-    matNexus.pathDiffuseTexture = "./ressources/texture/text2.png";
+    matNexus.pathDiffuseTexture = "./ressources/texture/Nexus.png";
 
     {
         std::vector<Material> material;
@@ -832,7 +855,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(10.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
@@ -849,7 +872,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
         shotgunGO.addComponent<Model>(shotgunModelArg);
-        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
         playerControllerPlayer1.addFirearm(&shotgunComponent);
     }
     //SubMachinegun
@@ -870,7 +893,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
         subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
-        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(10.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
+        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
         playerControllerPlayer1.addFirearm(&subMachineGunComponent);
     }
 
@@ -1282,7 +1305,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
         //spawnerGO.destroy();
@@ -1473,13 +1496,15 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 #pragma region Option
 
+    int decal = 250;
+
     ressourceManager.add<Title>("OptionForwardTitle", pfont, buttonShader,
-                                tempX - 155, tempY - 400,
+                                tempX - decal - 155, tempY - 400,
                                 175.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Forward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionForwardButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 400,
+                                 tempX - decal + 50, tempY - 400,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.up)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1494,12 +1519,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionBackwardTitle", pfont, buttonShader,
-                                tempX - 185, tempY - 300,
+                                tempX - decal - 185, tempY - 300,
                                 200.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Backward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionBackwardButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 300,
+                                 tempX - decal + 50, tempY - 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.down)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1514,12 +1539,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionLeftTitle", pfont, buttonShader,
-                                tempX - 75, tempY - 200,
+                                tempX - decal - 75, tempY - 200,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Left :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionLeftButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 200,
+                                 tempX - decal + 50, tempY - 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.left)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1534,12 +1559,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionRightTitle", pfont, buttonShader,
-                                tempX - 100, tempY - 100,
+                                tempX - decal - 100, tempY - 100,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Right :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionRightButton", pfont, buttonShader,
-                                 tempX + 50, tempY - 100,
+                                 tempX - decal + 50, tempY - 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.right)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1553,33 +1578,13 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
-    ressourceManager.add<Title>("OptionSwitchLightStateTitle", pfont, buttonShader,
-                                tempX - 310, tempY,
-                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Switch light state :",
-                                E_GAME_STATE::OPTION);
-
-    ressourceManager.add<Button>("OptionSwitchLightStateButton", pfont, buttonShader,
-                                 tempX + 50, tempY,
-                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.switchFlashLightState)),
-                                 E_GAME_STATE::OPTION)
-        .function = [&]() {
-        SDL_Scancode key = Input::waitForKey();
-        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
-        {
-            Input::keyboard.switchFlashLightState = key;
-            ressourceManager.get<Button>("OptionSwitchLightStateButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionSwitchLightStateButton").updateTexture();
-            Input::resetKeyDown();
-        }
-    };
-
     ressourceManager.add<Title>("OptionJumpTitle", pfont, buttonShader,
-                                tempX - 105, tempY + 100,
+                                tempX - decal - 105, tempY,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Jump :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionJumpButton", pfont, buttonShader,
-                                 tempX + 50, tempY + 100,
+                                 tempX - decal + 50, tempY,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1594,7 +1599,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("OptionSwitchButton", pfont, buttonShader,
-                                 tempX - 45, tempY + 200,
+                                 tempX - decal - 45, tempY + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1632,6 +1637,66 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         downButton->updateTexture();
         rightButton->updateTexture();
         leftButton->updateTexture();
+    };
+
+    ressourceManager.add<Title>("OptionFlashLightTitle", pfont, buttonShader,
+                                tempX + decal - 200, tempY - 400,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Flash Light :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionFlashLightButton", pfont, buttonShader,
+                                 tempX + decal + 50, tempY - 400,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.flashLight)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.flashLight = key;
+            ressourceManager.get<Button>("OptionFlashLightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionFlashLightButton").updateTexture();
+            Input::resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionReloadTitle", pfont, buttonShader,
+                                tempX + decal - 130, tempY - 300,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Reload :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionReloadButton", pfont, buttonShader,
+                                 tempX + decal + 50, tempY - 300,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.reload)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.reload = key;
+            ressourceManager.get<Button>("OptionReloadButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionReloadButton").updateTexture();
+            Input::resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionUseTitle", pfont, buttonShader,
+                                tempX + decal - 72, tempY - 200,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Use :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionUseButton", pfont, buttonShader,
+                                 tempX + decal + 50, tempY - 200,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.use)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.use = key;
+            ressourceManager.get<Button>("OptionUseButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionUseButton").updateTexture();
+            Input::resetKeyDown();
+        }
     };
 
     ressourceManager.add<Button>("Return", pfont, buttonShader,
@@ -1742,47 +1807,65 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                        &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                        &ressourceManager.get<std::vector<Material>>("PumpkinMaterial"),
                         &ressourceManager.get<Mesh>("Cube"),
                         "ColorWithLight",
-                        "GreenMaterial",
+                        "PumpkinMaterial",
                         "Cube"};
 
-        GameObject& enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    enemyBase.setTag("Enemy");
 
-        enemy1.setScale(Vec3{3.f, 5.f, 3.f});
+    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
 
-        enemy1.addComponent<Model>(modelArg);
-        enemy1.addComponent<PhysicalObject>().setMass(1);
-        enemy1.addComponent<SphereCollider>().setBounciness(0.f);
-        enemy1.getComponent<SphereCollider>()->setFriction(0.97f);
+    enemyBase.addComponent<Model>(modelArg);
+    enemyBase.addComponent<PhysicalObject>().setMass(1);
+    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
 
-        enemy1.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"), 
-                                                checkpoint1->getComponent<Checkpoint>());
+    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-    Save::createPrefab(enemy1, "enemy1");
-    enemy1.destroy();
+    Save::createPrefab(enemyBase, "enemy1");
 
-    GameObjectCreateArg CrateGameObjectArg{"Crate"};
+    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(8);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
+    enemyBase.getComponent<EnnemyController>()->setDamage(2);
+    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
+    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                 &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                                 &ressourceManager.get<Mesh>("Cube"),
-                                 "LightAndTexture",
-                                 "CrateMaterial",
-                                 "Cube"};
+    Save::createPrefab(enemyBase, "enemy2");
 
-    GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(3);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setDamage(1);
+    enemyBase.getComponent<EnnemyController>()->setRadius(50);
 
-    crate.addComponent<Model>(modelCrateArg);
-    PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
-    physicalObjectComp.setMass(3);
-    crate.addComponent<PushedOnShoot>();
-    crate.addComponent<SphereCollider>().setBounciness(0.f);
-    crate.getComponent<SphereCollider>()->setFriction(0.97f);
-    Save::createPrefab(crate, "Crate");
-    crate.destroy();
+    Save::createPrefab(enemyBase, "enemy3");
+
+    enemyBase.destroy();
+
+    // GameObjectCreateArg CrateGameObjectArg{"Crate"};
+
+    // ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    //                              &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+    //                              &ressourceManager.get<Mesh>("Cube"),
+    //                              "LightAndTexture",
+    //                              "CrateMaterial",
+    //                              "Cube"};
+
+    // GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+
+    // crate.addComponent<Model>(modelCrateArg);
+    // PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
+    // physicalObjectComp.setMass(3);
+    // crate.addComponent<PushedOnShoot>();
+    // crate.addComponent<SphereCollider>().setBounciness(0.f);
+    // crate.getComponent<SphereCollider>()->setFriction(0.97f);
+    // Save::createPrefab(crate, "Crate");
+    // crate.destroy();
 
 
     /*Create spawner*/
@@ -1799,7 +1882,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1811,7 +1894,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1823,7 +1906,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1835,7 +1918,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1847,7 +1930,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
-    EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
+    EnemiesPrefabs enemiesPrefs {"enemy1", "enemy2", "enemy3"};
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
 }
 
