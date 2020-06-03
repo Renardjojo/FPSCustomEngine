@@ -2034,11 +2034,6 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     
     nexus.addComponent<Nexus>();
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
-    
-
-    GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
-    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -15, 10});
-    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -15, -10});
 
     enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
@@ -2115,13 +2110,26 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
                                 {1.f, 0.f, 0.f, 0.7f},
                                 {1.f, 1.f, 1.f, 0.3f},
                                 0.f, 0.05f, 0.f, true};
+    ModelCreateArg modelSpawnerArg{&ressourceManager.get<Shader>("ColorWithLight"),
+                            &ressourceManager.get<std::vector<Material>>("BlueMaterial"),
+                            &ressourceManager.get<Mesh>("Sphere"),
+                            "ColorWithLight",
+                            "BlueMaterial",
+                            "Sphere"};
     {
         spawnerGOArg.name = "Spawner1";
-        spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
+        spawnerGOArg.transformArg.position = {-120.f, 5.f, -175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, 145.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
+        
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroy();
@@ -2129,10 +2137,16 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner2";
-        spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
+        spawnerGOArg.transformArg.position = {-150.f, 5.f, 59.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint2"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-116.f, 5.f, 21.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-95.f, 5.f, -6.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-52.f, 5.f, -2.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-15.f, 5.f, -4.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -2141,10 +2155,16 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner3";
-        spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
+        spawnerGOArg.transformArg.position = {95.f, 5.f, 175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint3"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{52.f, 5.f, 170.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{30.f, 5.f, 110.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{5.f, 5.f, 35.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, -6.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -2153,10 +2173,17 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner4";
-        spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
+        spawnerGOArg.transformArg.position = {108.f, 5.f, -173.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint4"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{135.f, 5.f, -109.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{114.f, 5.f, -60.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{90.f, 5.f, -21.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{35.f, 5.f, -15.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-4.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
