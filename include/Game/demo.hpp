@@ -86,7 +86,8 @@ namespace Game
             void loadNexusRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);         
             void loadCrateRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGlassRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
-            void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);          
+            void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);   
+            void loadLootRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);          
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);

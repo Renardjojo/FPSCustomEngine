@@ -63,7 +63,7 @@ using namespace Engine;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
-using namespace Engine::Ressources::Save;
+using namespace Save;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
@@ -256,6 +256,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadCrateRessource          (ressourceManager);  
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
+    loadLootRessource           (ressourceManager); 
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
@@ -539,7 +540,7 @@ void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager)
+void Demo::loadFogRessource           (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matFog;
     matFog.name = "FogMaterials";
@@ -557,6 +558,44 @@ void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& 
 
     ressourceManager.add<Mesh>("BillBoardFogMesh", Mesh::createPlane(0.25, 3, 3, Mesh::Axis::Z));
     ressourceManager.add<Shader>("BillBoardFogShader", "./ressources/shader/vCloud.vs", "./ressources/shader/fCloud.fs", SCALE_TIME_ACC);
+}
+
+void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matCrate;
+    matCrate.name = "RedCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 0.5f, 0.5f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 0.5f, 0.5f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 0.5f, 0.5f, 0.1f};
+    matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "BlueCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.5f, 0.5f, 1.f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.5f, 0.5f, 1.f, 1.f};
+    matCrate.comp.specular.rgbi = {0.5f, 0.5f, 1.f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "GreenCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.5f, 1.f, 0.5f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.5f, 1.f, 0.5f, 1.f};
+    matCrate.comp.specular.rgbi = {0.5f, 1.f, 0.5f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
 }
 
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
@@ -866,7 +905,7 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.setTag("Ground");
 }
 
-void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
+void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned int number)
 {
    GameObjectCreateArg fogGameObjectArg  {"FogContener"};
 
@@ -1116,38 +1155,53 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     wrap6GO.addComponent<Model>(glassPlatformArg);
 
     /*Create lots prefabs*/
-    GameObjectCreateArg lot1GameObjectArg{"Lot1"};
-    lot1GameObjectArg.transformArg.scale /= 2.f;
+    {
+        GameObjectCreateArg lot1GameObjectArg{"Lot1"};
+        lot1GameObjectArg.transformArg.scale /= 2.f;
 
-    GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
+        GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
 
-    lot1GO.addComponent<Model>(greenPlatformArg);
-    lot1GO.addComponent<PhysicalObject>().setMass(1);
-    lot1GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot1GO.addComponent<Loot>();
+        ModelCreateArg modelBlueCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("BlueCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "BlueCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot1GO, "Lot1");
-    lot1GO.destroy();
+        lot1GO.addComponent<Model>(modelBlueCrateArg);
+        lot1GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot1GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.4f);
+        colliderComp.setFriction(0.9f);
+        lot1GO.addComponent<Loot>();
 
-    GameObjectCreateArg lot2GameObjectArg{"Lot2"};
-    lot2GameObjectArg.transformArg.scale /= 2.f;
+        Save::createPrefab(lot1GO, "Lot1");
+        lot1GO.destroy();
+    }
 
-    GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
+    {
+        GameObjectCreateArg lot2GameObjectArg{"Lot2"};
+        lot2GameObjectArg.transformArg.scale /= 2.f;
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                          &ressourceManager.get<Mesh>("Cube"),
-                          "LightAndTexture",
-                          "CrateMaterial",
-                          "Cube"};
+        GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
 
-    lot2GO.addComponent<Model>(modelCrateArg);
-    lot2GO.addComponent<PhysicalObject>().setMass(1);
-    lot2GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot2GO.addComponent<Loot>();
+        ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("RedCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "RedCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot2GO, "Lot2");
-    lot2GO.destroy();
+        lot2GO.addComponent<Model>(modelCrateArg);
+        lot2GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot2GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.4f);
+        colliderComp.setFriction(0.9f);
+        lot2GO.addComponent<Loot>();
+
+        Save::createPrefab(lot2GO, "Lot2");
+        lot2GO.destroy();
+    }
 
     /*Create spawner*/
     GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
@@ -1611,7 +1665,7 @@ void Demo::loadATH(t_RessourcesManager &ressourceManager)
                                 E_GAME_STATE::RUNNING);
 }
 
-void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
+void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg NexusGameObjectArg{"Nexus"};
 

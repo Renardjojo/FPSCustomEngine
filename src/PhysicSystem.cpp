@@ -138,7 +138,7 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
             Vec3 newVelocity = (velocity + reactionForce) * (*it).collider->getFriction() + reactionForce * (*it).collider->getBounciness();
             Vec3 remainingVelocity = newVelocity * tPB;
             Vec3 newPos = intersection.intersection1 + intersection.normalI1 * 0.001f;
-            Vec3 angularVelocity = -Vec3::cross(((intersection.intersection1 + AB.getNormalize() * globalSphere.getRadius()) - (*it).collider->getGameObject().getPosition()), newVelocity);
+            Vec3 angularVelocity =  -Vec3::cross(((intersection.intersection1 - intersection.normalI1) - OA), remainingVelocity);
 
             (*it).position = newPos;
             (*it).newVelocity = newVelocity;
@@ -155,6 +155,7 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
         {
             (*it).collider->getGameObject().setTranslation((*it).position + (*it).currentVelocity * TimeSystem::getFixedDeltaTime());
             (*it).physicalObject->setAngularVelocity((*it).newAngularVelocity);
+            (*it).physicalObject->getGameObject().rotate((*it).newAngularVelocity * TimeSystem::getFixedDeltaTime());
             (*it).physicalObject->setVelocity((*it).newVelocity);
             (*it).physicalObject->setDirtyFlag(false);
 
