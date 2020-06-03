@@ -43,7 +43,7 @@ void Engine::Core::Debug::SLog::logHeading () noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::log (std::string msg) noexcept
+void Engine::Core::Debug::SLog::log (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GE: "; 
@@ -60,7 +60,7 @@ void Engine::Core::Debug::SLog::log (std::string msg) noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::logError (std::string msg) noexcept
+void Engine::Core::Debug::SLog::logError (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GE: "; 
@@ -97,7 +97,7 @@ void Engine::Core::Debug::SLog::logError (std::string msg) noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::GlCheckAndLogError (std::string msg) noexcept
+void Engine::Core::Debug::SLog::GlCheckAndLogError (const std::string& msg) noexcept
 {
     switch (glGetError())
     {
@@ -139,7 +139,7 @@ void Engine::Core::Debug::SLog::GlCheckAndLogError (std::string msg) noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::logWarning (std::string msg) noexcept
+void Engine::Core::Debug::SLog::logWarning (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GE: "; 
@@ -176,7 +176,7 @@ void Engine::Core::Debug::SLog::logWarning (std::string msg) noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::logHelp (std::string msg) noexcept
+void Engine::Core::Debug::SLog::logHelp (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GE: "; 
@@ -213,19 +213,19 @@ void Engine::Core::Debug::SLog::logHelp (std::string msg) noexcept
 }
 
 inline 
-void Engine::Core::Debug::SLog::logInitializationStart (std::string elem) noexcept
+void Engine::Core::Debug::SLog::logInitializationStart (const std::string& elem) noexcept
 {
     log((std::string(elem) + " being initialized...").c_str());
 }
 
 inline 
-void Engine::Core::Debug::SLog::logInitializationStep   (std::string elem, unsigned int count) noexcept
+void Engine::Core::Debug::SLog::logInitializationStep   (const std::string& elem, unsigned int count) noexcept
 {
     log((std::string(elem) + " initialization [" + std::to_string(count) + "%]").c_str());
 }
 
 inline 
-void Engine::Core::Debug::SLog::logInitializationEnd   (std::string elem) noexcept
+void Engine::Core::Debug::SLog::logInitializationEnd   (const std::string& elem) noexcept
 {
     log((std::string(elem) + " initialization completed").c_str());
 }

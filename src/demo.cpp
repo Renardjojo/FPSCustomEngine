@@ -243,8 +243,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    //loadRockRessource          (ressourceManager);
-    //loadTreeRessource          (ressourceManager);
+    loadRockRessource          (ressourceManager);
+    loadTreeRessource          (ressourceManager);
     loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
     loadPseudoRessource        (ressourceManager);
@@ -588,7 +588,9 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
 
         rockGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
+        GameObject& rockGO = _scene->add<GameObject>(rockContener, rockGameObject);
+        rockGO.addComponent<Model>(rockModelArg);
+        rockGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -620,7 +622,17 @@ void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
 
         treeGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
+        GameObject& treeGO = _scene->add<GameObject>(treeContener, treeGameObject);
+        treeGO.addComponent<Model>(treeModelArg);
+
+        GameObjectCreateArg treeColliderArg{"TreeCollider",
+                                       {{0.f, 0.f, 0.f},
+                                        {0.f, 0.f, 0.f},
+                                        treeGameObject.transformArg.scale}};
+        treeColliderArg.transformArg.scale.y *= 10.f;  
+        treeColliderArg.transformArg.scale.x *= 0.001f;  
+        treeColliderArg.transformArg.scale.z *= 0.001f;          
+        _scene->add<GameObject>(treeGO, treeColliderArg).addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -852,27 +864,6 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.addComponent<GroundController>();
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
-
-
-
-    GameObjectCreateArg WallArgGameObject{"Wall",
-                                            {{-20.f, 0.f, -20.f},
-                                             {M_PI_4, 0.f, 0.f},
-                                             {100.f, 1.f, 100.f}}};
-
-    ModelCreateArg WallArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                             &ressourceManager.get<std::vector<Material>>("Ground"),
-                             &ressourceManager.get<Mesh>("GroundMesh"),
-                             "LightAndTexture",
-                             "Ground",
-                             "GroundMesh",
-                             true,
-                             false};
-
-    GameObject& Wall = _scene->add<GameObject>(_scene->getWorld(), WallArgGameObject);
-    Wall.addComponent<Model>(WallArg);
-    Wall.addComponent<OrientedBoxCollider>();
-    Wall.setTag("Wall");
 }
 
 void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
@@ -919,7 +910,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     float wrapHeight = 10.f;
     float wrapWidth = 4.f;
     float wrapDepth = 2.5f;
-    float wrapThickness = 0.3f;
+    float wrapThickness = 0.6f;
 
     /*Lever*/
     GameObjectCreateArg leverArgGameObject{"Lever",
@@ -982,29 +973,29 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& mechanism = _scene->add<GameObject>(lootMachin, mechanismArgGameObject);
     
     GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg secondInclinedPlatformArgGameObject{"SecondInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg thirdInclinedPlatformArgGameObject{"ThirdInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                         
     GameObjectCreateArg forthInclinedPlatformArgGameObject{"ForthInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                             
     GameObjectCreateArg distributorInclinedPlatformArgGameObject{"DistributorInclinedPlatform",
                                             {{0.f, (wrapHeight / 8.f * 1) - wrapHeight / 2.f, 0.f},
                                             {M_PI_4, 0.f, 0.f},
-                                            {wrapWidth, wrapThickness, wrapDepth}}};
+                                            {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
     ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1117,15 +1108,12 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
     GameObject& wrap4GO = _scene->add<GameObject>(wrap, topFaceArgGameObject);
     wrap4GO.addComponent<Model>(blackPlatformArg);
-    wrap4GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap5GO = _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject);
     wrap5GO.addComponent<Model>(blackPlatformArg);
-    wrap5GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap6GO = _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject);
     wrap6GO.addComponent<Model>(glassPlatformArg);
-    wrap6GO.addComponent<OrientedBoxCollider>();
 
     /*Create lots prefabs*/
     GameObjectCreateArg lot1GameObjectArg{"Lot1"};
@@ -1167,7 +1155,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObjectCreateArg spawnerGOArg;
     {
         spawnerGOArg.name = "Spawner";
-        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
+        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);
@@ -1186,15 +1174,21 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
+    /*Fixe the seed to obtain a fixed procedural scene*/
+    Random::initSeed(10.f);
+
     loadTimeManager             ();
-    //loadRock                    (ressourceManager, 100);
-    //loadTree                    (ressourceManager, 50);
+    loadRock                    (ressourceManager, 100);
+    loadTree                    (ressourceManager, 50);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
     loadLootMachin               (ressourceManager);
+
+    /*Add randome seed*/
+    Random::initSeed();
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
@@ -1694,7 +1688,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     Save::createPrefab(crate, "Crate");
     crate.destroy();
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(10);
 
     /*Create spawner*/
 
@@ -1770,12 +1764,14 @@ void Demo::loadTimeManager        ()
 
 void Demo::updateControl()
 {
-    /*
-    float dist = 5.f;
-    _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
-    _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
-    _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
-    */
+    // for (auto &&i : Scene::getCurrentScene()->getGameObject("world/DecalContenor").children)
+    // {
+    //     std::cout << Scene::getCurrentScene()->getGameObject("world/DecalContenor").getModelMatrix() << std::endl;
+    //     std::cout << i->getScale() << std::endl;
+    //     std::cout << i->getModelMatrix() << std::endl;
+    //     exit(1);
+    // }
+
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
