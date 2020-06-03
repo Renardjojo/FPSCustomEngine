@@ -12,7 +12,7 @@
 
 ## Description
 
-Vous êtes seule dans une plaine désertique à défendre le coeur de ce lieu, un cristale aussi appellé nexus. Des vagues d'ennemies esseyrons de vous envahir afin de récuperer les essences de ce cristale. A vous de défendre se lieu de jours comme de nuit ! Qui sais se qu'il pourrait arriverer si ce cristalle venait à mourir... 
+Vous êtes seul dans une plaine désertique à défendre le coeur de ce lieu, un cristale aussi appellé nexus. Des vagues d'ennemies essayerons de vous envahir afin de récuperer les essences de ce cristale. A vous de défendre ce lieu de jours comme de nuit ! Qui sais ce qu'il pourrait arriver si ce cristalle venait à mourir... 
 
 ![Screen shoot Engine 1](screens/ScreenShootMD1.png "Screen shoot Engine example 1")
 ![Screen shoot Engine 2](screens/ScreenShootMD2.png "Screen shoot Engine example 2")
@@ -21,21 +21,21 @@ Vous êtes seule dans une plaine désertique à défendre le coeur de ce lieu, u
 ## Commandes
 
 ### Clavier :
-Les commandes sont réglave via le menu option du jeu. Par default :
+Les commandes sont réglabes via le menu option du jeu. Par default :
 
 Commande 		| Action
 ------------- 	| -------------
 Q/Z/S/D         | Déplacer le joueur : gauche/haut/bas/droite
-Espace        	| Sauter / Monter en camera editeur
+Espace        	| Sauter / Monter en camera éditeur
 Clic gauche     | Tirer
-Clic droit      | viser (pour le sniper)
-molette         | changer d'arme
-R               | recharger
-F               | utiliser la machine à butin
+Clic droit      | Viser (pour le sniper)
+molette         | Changer d'arme
+R               | Recharger
+F               | Utiliser la machine à butin
 Esc             | Pause/Quitter
-F1 				| utiliser l'éditeur du moteur (graphe de scene, inspector, camera libre...)
+F1 				| Utiliser l'éditeur du moteur (graphe de scene, inspector, camera éditeur...)
 F2 				| Switch 3eme personne/1er personne
-ctrl            | descendre en camera editeur
+ctrl            | Descendre en camera éditeur
 
 ## Comment compiler
 Ouvrez un terminal et taper la commande suivante :
@@ -43,11 +43,30 @@ Ouvrez un terminal et taper la commande suivante :
 ```
 make
 ```
-Vous pouvez également compiler en multi thread via la comment
+Vous pouvez également compiler en multi thread via la commende
 ```
 make multi
 ```
-D'autre commande sont disponible dans le fichier makefile
+D'autre commandes sont disponibles dans le fichier makefile
+
+Les librairies suivantes sont nécéssaire :
+
+lib OpenGL : 
+- sudo apt-get install libglew-dev
+- sudo apt-get install glew-utils
+
+C, C++ compilor
+- sudo apt-get install gcc
+- sudo apt-get install g++
+
+lib SDL2
+- sudo apt-get install libsdl2-dev
+- sudo apt-get install libsdl2-ttf-dev
+- sudo apt-get install libsdl2-image-dev
+
+lib OpenAl :
+- sudo apt-get install libopenal-dev
+- sudo apt-get install libalut-dev
 
 ## Comment executer
 Ouvrez un terminal à la racine du projet et tapez :
@@ -56,7 +75,7 @@ make run
 ou
 ./bin/exe
 ```
-/!\ Attention vous devez utiliser un terminal indépendant et non celui d'un IDE. Sinon le son ne fonctionnera pas.
+/!\ Attention vous devez utiliser un terminal indépendant et non celui d'un IDE sinon, le son ne fonctionnera pas.
 
 ## Bug
 
@@ -81,7 +100,7 @@ Projet réaliser grâce à un moteur fonctionnant grâce au libraire suivante :
 - STB_image
 - OpenAl
 
-Moteur physique réalisé grâce à nos propres libraires de mathématique. Ce moteur est réliaser en suivant l'architecture ECS (Entity-Components-System) et reprend certain interface que le moteur unity nous a inspiré.
+Moteur physique réalisé grâce à nos propres libraires de mathématique. Ce moteur est réliasé en suivant l'architecture ECS (Entity-Components-System) et reprend certain interface que le moteur unity nous a inspiré.
 
 - time manager (possède un system de fixed update et unfixed update pour les calcule de physique. Possibilité d'utiliser un time scale pour accélerer ou ralentir le temps)
 - input manager
@@ -98,23 +117,4 @@ Moteur physique réalisé grâce à nos propres libraires de mathématique. Ce m
 - multi texturing et multi matériaux pour les meshs
 - Lumière fonctionnant avec l'agorythm Blinn-Phong
 - Générateur de particule et de décalle
-
-If Lib is missing (undefine reference or include probleme)
-Please check if this lib is install :
-
-lib OpenGL : 
-- sudo apt-get install libglew-dev
-- sudo apt-get install glew-utils
-
-C, C++ compilor
-- sudo apt-get install gcc
-- sudo apt-get install g++
-
-lib SDL2
-- sudo apt-get install libsdl2-dev
-- sudo apt-get install libsdl2-ttf-dev
-- sudo apt-get install libsdl2-image-dev
-
-lib OpenAl :
-- sudo apt-get install libopenal-dev
-- sudo apt-get install libalut-dev
+- Sauvegarde des prefabs et des scene en XML
