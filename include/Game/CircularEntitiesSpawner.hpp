@@ -13,6 +13,7 @@
 #include "GE/LowRenderer/model.hpp"
 #include "GE/Ressources/Saves.hpp"
 #include "Game/LifeDuration.hpp"
+#include "Game/Checkpoint.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/SphereCollider.hpp"
 #include "GE/Ressources/scene.hpp"
@@ -29,13 +30,14 @@ namespace Game
     {
         private:
         
-        std::vector<EntityPrefabCount>          _entitiesToSpawnInfo   {};
-        float                                   _zoneRadius            {3.f};  /*in sec*/
-        float                                   _spawnDelay            {1.f};  /*in sec*/
-        float                                   _spawnDelayInterval    {0.f}; /*in sec*/
-        float                                   _delayCount            {0.f};
-        float                                   _nextDelay             {_spawnDelay};
-        Engine::Ressources::GameObject*         _contenor              {nullptr};
+        std::vector<EntityPrefabCount>          _entitiesToSpawnInfo    {};
+        float                                   _zoneRadius             {3.f};  /*in sec*/
+        float                                   _spawnDelay             {1.f};  /*in sec*/
+        float                                   _spawnDelayInterval     {0.f}; /*in sec*/
+        float                                   _delayCount             {0.f};
+        float                                   _nextDelay              {_spawnDelay};
+        Engine::Ressources::GameObject*         _contenor               {nullptr};
+        Game::Checkpoint*                       _checkpoint             {nullptr};
         
         public:
 
@@ -50,7 +52,7 @@ namespace Game
          */
         CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* contenor, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
 
-        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* contenor, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
+        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* contenor, Game::Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
 
         CircularEntitiesSpawner (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 

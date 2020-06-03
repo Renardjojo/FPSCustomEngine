@@ -34,6 +34,8 @@
 #include "Game/SubMachineGun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LifeLoot.hpp"
+#include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
 
 using namespace rapidxml;
@@ -155,7 +157,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         if (str.compare("Empty") == 0)
         {
             Vec3 pos, rot, scale;
-            std::string name;
+            std::string name;            
+            std::string tag;
 
             for (; attr; attr = attr->next_attribute())
             {
@@ -189,11 +192,15 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
                     scale.z = std::stof(attr->value());
 
                 else if (str.compare("name") == 0)
-                    name = attr->value();
+                    name = attr->value();                 
+                    
+                else if (str.compare("tag") == 0)
+                    tag = attr->value();
             }
 
             GameObjectCreateArg gameObjectArg{name, {pos, rot, scale}};
             newGameObject = &parent.addChild<GameObject>(gameObjectArg);
+            newGameObject->setTag(tag);
         }
         else if (str.compare("Camera") == 0)
         {
@@ -202,6 +209,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             float far = 0.0f;
             float fov = 0.0f;
             std::string name;
+            std::string tag;
 
             for (; attr; attr = attr->next_attribute())
             {
@@ -236,10 +244,14 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
 
                 else if (str.compare("name") == 0)
                     name = attr->value();
+
+                 else if (str.compare("tag") == 0)
+                    tag = attr->value();
             }
 
             CameraPerspectiveCreateArg camArg{pos, rot, WIDTH / static_cast<float>(HEIGHT), near, far, fov, name.c_str()};
             newGameObject = &parent.addChild<Camera>(camArg);
+            newGameObject->setTag(tag);
             dynamic_cast<Camera *>(newGameObject)->use();
         }
     } // Gameobject
@@ -298,6 +310,10 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<Firearm>(params);
         else if (type.compare("LootMachine") == 0)
             parent.addComponent<LootMachine>(params);
+            else if (type.compare("BombeLoot") == 0)
+            parent.addComponent<BombeLoot>(params);
+        else if (type.compare("LifeLoot") == 0)
+            parent.addComponent<LifeLoot>(params);
         else if (type.compare("Loot") == 0)
             parent.addComponent<Loot>(params);
         else if (type.compare("LevitationMovement") == 0)
@@ -370,6 +386,7 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     {
         newNode->append_attribute(doc.allocate_attribute("type", "Empty"));
         newNode->append_attribute(doc.allocate_attribute("name", gameObjectParent.getCName()));
+        newNode->append_attribute(doc.allocate_attribute("tag", doc.allocate_string(gameObjectParent.getTag().c_str())));
         
         newNode->append_attribute(doc.allocate_attribute("posX", doc.allocate_string(std::to_string(gameObjectParent.getPosition().x).c_str())));
         newNode->append_attribute(doc.allocate_attribute("posY", doc.allocate_string(std::to_string(gameObjectParent.getPosition().y).c_str())));
@@ -482,6 +499,16 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<LootMachine>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<BombeLoot>())
+    {
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<LifeLoot>())
     {
         i->save(doc, newNode);
     }

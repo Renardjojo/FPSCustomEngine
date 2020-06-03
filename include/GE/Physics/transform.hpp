@@ -101,13 +101,15 @@ namespace Engine::Physics
                 modelMat_.setVectorForward(newForward.getNormalize());
                 modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
                 modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());
+                modelMat_ *= Engine::Core::Maths::Mat4::createScaleMatrix (scale_);
             }
 
             virtual void setVecRight(const Engine::Core::Maths::Vec3& newRight)  noexcept
             {
                 modelMat_.setVectorRight(newRight.getNormalize());
                 modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
-                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize());   
+                modelMat_.setVectorUp(modelMat_.getVectorForward().getCross(modelMat_.getVectorRight()).normalize()); 
+                modelMat_ *= Engine::Core::Maths::Mat4::createScaleMatrix (scale_);  
             }
 
             virtual void setVecUp(const Engine::Core::Maths::Vec3& newUp)  noexcept
@@ -115,6 +117,7 @@ namespace Engine::Physics
                 modelMat_.setVectorUp(newUp.getNormalize());
                 modelMat_.setVectorForward(modelMat_.getVectorRight().getCross(modelMat_.getVectorUp()).normalize());
                 modelMat_.setVectorRight(modelMat_.getVectorForward().getCross(modelMat_.getVectorUp()).normalize());
+                modelMat_ *= Engine::Core::Maths::Mat4::createScaleMatrix (scale_);
             }
 
             virtual Engine::Core::Maths::Vec3 getGlobalPosition() const noexcept   { return {modelMat_[3][0], modelMat_[3][1], modelMat_[3][2]}; }

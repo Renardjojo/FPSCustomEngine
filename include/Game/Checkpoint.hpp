@@ -46,6 +46,11 @@ namespace Game
         Engine::Core::Maths::Vec3 _targetPos;
         unsigned int _cpNumber{0};
 
+        CheckpointManager()
+        {
+            _checkpoints = nullptr;
+        }
+
         CheckpointManager(Checkpoint* checkpoints, Engine::Core::Maths::Vec3 targetPos, unsigned int cpNumber)
         {
             _checkpoints = checkpoints;

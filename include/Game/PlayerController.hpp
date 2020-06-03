@@ -27,20 +27,22 @@ namespace Game
         Engine::Physics::PhysicalObject *_physics;
         Engine::LowRenderer::SpotLight *_flashLight;
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
-        float _mouseSpeed{1.f};
-        float _playerForce{1000.f};
-        float _jumpForce{5.f};
-        float _airForce{20.f};
-        float _groundForce{1000.f};
+        float _mouseSpeed{0.5f};
+        float _playerForce{30.f};
+        float _jumpForce{7.f};
+        float _airForce{5.f};
+        float _groundForce{30.f};
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
+        int   _money{500};
         bool _jump{false};
         bool _isGrounded{false};
         bool _flashLightOn{false};
         int _maxLife{500};
         int _life{500};
         int _points{0};
+
 
         std::vector<Firearm*> _firesGuns {}; /*First element is the weapon used*/
 
@@ -57,6 +59,7 @@ namespace Game
         void move();
         void switchFlashLightState();
         void shoot();
+        void switchAimState();
 
     public:
     
@@ -71,6 +74,13 @@ namespace Game
         int* getLife();
         int* getMaxLife();
         int* getPoints();
+        int getMoney() { return _money; }
+        
+        float getMouseSpeed () const noexcept { return _mouseSpeed;}
+        void setMouseSpeed (float newSpeed) noexcept { _mouseSpeed = newSpeed;}
+
+        void addMoney(int money) { _money += money; }
+        void setMoney(int money) { _money = money; }
 
         void setCameraType(CameraType type);
         void toggleCameraType();

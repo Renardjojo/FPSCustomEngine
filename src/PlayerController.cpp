@@ -56,11 +56,12 @@ void PlayerController::start()
 
 void PlayerController::update()
 {
+    std::cout << _money << std::endl;
 
-    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::TOUCHED)
+    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
         _jump = true;
 
-    if (Input::keyboard.getKeyState(Input::keyboard.switchFlashLightState) == E_KEY_STATE::TOUCHED)
+    if (Input::keyboard.getKeyState(Input::keyboard.flashLight) == E_KEY_STATE::TOUCHED)
         switchFlashLightState();
 
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == E_KEY_STATE::TOUCHED)
@@ -70,21 +71,29 @@ void PlayerController::update()
 
     if (_life <= 0)
         std::cout << "player is dead" << std::endl;
-    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
-    {
-        shoot();
-    }
 
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_R) == E_KEY_STATE::TOUCHED)
-    {
+    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
+        shoot();
+
+    if (!_firesGuns.empty() && Input::mouse.rightClicDownOnce)
+        switchAimState();
+
+    if (Input::keyboard.getKeyState(Input::keyboard.use) == E_KEY_STATE::TOUCHED)
         activateLootMachine();
-    }
+
+    if (Input::keyboard.getKeyState(Input::keyboard.reload) == E_KEY_STATE::TOUCHED)
+        _firesGuns[0]->reload();
 
     /*Choose fire gun*/
     if (_firesGuns.size() > 1)
     {
         if (Input::mouse.wheel_scrollingFlag != 0)
         {
+            if (_firesGuns.front()->isAiming())
+            {
+                _firesGuns.front()->switchAimState();
+            }
+
             if (Input::mouse.wheel_scrollingFlag == 1)
             {
                 Firearm *temp = _firesGuns.front();
@@ -129,47 +138,13 @@ void PlayerController::switchFlashLightState()
 void PlayerController::shoot()
 {
     _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
-
-    //     HitInfo rayInfo;
-    //     Vec3 shootDirection = _gameObject.getModelMatrix().getVectorForward();
-    //     if (PhysicSystem::triggerRayCast("Bullet", _gameObject.getGlobalPosition() + shootDirection * 6.f, shootDirection, 10000.f, rayInfo))
-    //     {
-    //         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", rayInfo.intersectionsInfo.intersection1};
-    //         decaleGOPref.transformArg.scale = Vec3::one / 20.f;
-    //         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"),
-    //                                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"),
-    //                                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
-    //                                                 "LightAndTexture",
-    //                                                 {"BulletHole"},
-    //                                                 "Plane"};
-    // /*
-    //         ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
-    //                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("RedMaterial"),
-    //                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
-    //                                 "Color",
-    //                                 {"RedMaterial"},
-    //                                 "PlaneZ"};
-
-    //         ParticuleGenerator::ParticleSystemCreateArg particalArg;
-    //         particalArg.modelCreateArg = modelArg3;
-    //         particalArg.isBillBoard = true;
-    //         particalArg.physicalObjectCreateArg.useGravity = true;
-    //         particalArg.useScaledTime = true;
-    //         particalArg.velocityEvolutionCoef = 1.f;
-    //         particalArg.spawnCountBySec = 100.f;
-    //         particalArg.lifeDuration = 0.5f;
-    //         particalArg.physicalObjectCreateArg.mass = 1.f;
-    //         particalArg.scale = {0.05, 0.05, 0.05};
-
-    //         GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {rayInfo.intersectionsInfo.intersection1}});
-    //         particleGO.addComponent<ParticuleGenerator>(particalArg);
-    //         particleGO.addComponent<LifeDuration>(3.f);*/
-
-    //         ParticleSystemFactory::createDecale(Scene::getCurrentScene()->getGameObject("world/DecalContenor"), decaleGOPref, modelDecaleGOPref, rayInfo.intersectionsInfo.normalI1);
-    //         if (rayInfo.gameObject->getTag() != "Ground")
-    //             rayInfo.gameObject->destroy();
-    //     }
 }
+
+void PlayerController::switchAimState()
+{
+    _firesGuns[0]->switchAimState();
+}
+
 
 void PlayerController::setCameraType(CameraType type)
 {

@@ -37,6 +37,8 @@
 #include "Game/Shotgun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LifeLoot.hpp"
+#include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
 
 #include "../src/stb_image.h"
@@ -63,7 +65,7 @@ using namespace Engine;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
-using namespace Engine::Ressources::Save;
+using namespace Save;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
@@ -88,6 +90,7 @@ Demo::Demo(Engine::GE& gameEngine)
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
+    loadBulletHoleContenor (50);
     loadEnemies(_gameEngine.ressourceManager_);
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
@@ -218,7 +221,16 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     }
 
     matDefault.name = "BrownMaterial";
-    matDefault.comp.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
+    matDefault.comp.ambient.rgbi = Vec4{0.4f, 0.2f, 0.f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
+    }
+
+    matDefault.name = "YellowMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{1.f, 1.f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
@@ -242,19 +254,23 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    //loadRockRessource          (ressourceManager);
-    //loadTreeRessource          (ressourceManager);
-    loadSkyboxRessource        (ressourceManager);
-    loadGunRessource           (ressourceManager);
-    loadPseudoRessource        (ressourceManager);
-    loadPlayerRessource        (ressourceManager);
-    //loadSpotLightRessource     (ressourceManager);
-    //loadTowerRessource         (ressourceManager);
+    loadRockRessource           (ressourceManager);
+    loadTreeRessource           (ressourceManager);
+    loadSkyboxRessource         (ressourceManager);
+    loadGunRessource            (ressourceManager);
+    loadPseudoRessource         (ressourceManager);
+    loadPlayerRessource         (ressourceManager);
+    // loadSpotLightRessource      (ressourceManager);
+    // loadTowerRessource          (ressourceManager);
     loadNexusRessource          (ressourceManager);  
     loadGroundRessource         (ressourceManager);
+    loadEnemiesRessource        (ressourceManager);  
     loadCrateRessource          (ressourceManager);  
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
+    loadLootRessource           (ressourceManager); 
+    loadGuiRessource            (ressourceManager); 
+    loadSniperScopeRessource    (ressourceManager); 
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
@@ -501,6 +517,28 @@ void Demo::loadCrateRessource(t_RessourcesManager &ressourceManager)
     }
 }
 
+void Demo::loadEnemiesRessource(t_RessourcesManager &ressourceManager)
+{
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materialAttribs;
+
+    loadObjWithMTL("./ressources/obj/pumpkin.obj", &attrib, &shape, &materialAttribs);
+
+    ressourceManager.add<Mesh>("PumpkinMesh" , attrib, shape);
+
+    MaterialAndTextureCreateArg matPumpkin;
+    matPumpkin.name = "PumpkinMaterial";
+    matPumpkin.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
+    matPumpkin.pathDiffuseTexture = "./ressources/texture/pumpkin.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matPumpkin);
+        ressourceManager.add<std::vector<Material>>(matPumpkin.name, std::move(material));
+    }
+}
+
 void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
 {
     Attrib                      attrib;
@@ -515,7 +553,7 @@ void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
     matNexus.name = "NexusMaterial";
     matNexus.comp.shininess = 32.f;
     matNexus.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
-    matNexus.pathDiffuseTexture = "./ressources/texture/text2.png";
+    matNexus.pathDiffuseTexture = "./ressources/texture/Nexus.png";
 
     {
         std::vector<Material> material;
@@ -538,7 +576,7 @@ void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager)
+void Demo::loadFogRessource           (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matFog;
     matFog.name = "FogMaterials";
@@ -556,6 +594,101 @@ void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& 
 
     ressourceManager.add<Mesh>("BillBoardFogMesh", Mesh::createPlane(0.25, 3, 3, Mesh::Axis::Z));
     ressourceManager.add<Shader>("BillBoardFogShader", "./ressources/shader/vCloud.vs", "./ressources/shader/fCloud.fs", SCALE_TIME_ACC);
+}
+
+void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matCrate;
+    matCrate.name = "RedCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 0.3f, 0.3f, 0.1f};
+    matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "BlueCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 0.3f, 1.f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "GreenCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 1.f, 0.3f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "YellowCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 1.f, 0.3f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+}
+
+void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceManager)
+{
+    float halfWidth = _gameEngine.getWinSize().width / 2.f;
+    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
+    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
+
+    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
+                                                        "./ressources/shader/text.vs",
+                                                        "./ressources/shader/texture.fs");
+
+    TextureCreateArg tcaCrosshair{
+        "./ressources/texture/crossair.png",
+        E_WrapType::CLAMP_TO_BORDER,
+    };
+
+    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
+
+    ressourceManager.add<Image>("CrosshairImage",
+                                t_crosshair.getID(),
+                                imageShader,
+                                halfWidth - halfcrosshairSize,
+                                halfHeight - halfcrosshairSize,
+                                crosshairSize,
+                                crosshairSize,
+                                E_GAME_STATE::RUNNING);
+}        
+
+void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
+{
+    TextureCreateArg tcaSniperScope{
+        "./ressources/texture/sniperScope.png",
+        E_WrapType::CLAMP_TO_BORDER,
+    };
+
+    Texture &sniperScopeTexture = ressourceManager.add<Texture>("sniperScopeTexture", tcaSniperScope);
+
+    ressourceManager.add<Image>("SniperScope",
+                                sniperScopeTexture.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                0, 0,
+                                _gameEngine.getWinSize().width,
+                                _gameEngine.getWinSize().heigth,
+                                E_GAME_STATE::RUNNING).isActive = false;;
 }
 
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
@@ -587,7 +720,9 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
 
         rockGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
+        GameObject& rockGO = _scene->add<GameObject>(rockContener, rockGameObject);
+        rockGO.addComponent<Model>(rockModelArg);
+        rockGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -619,7 +754,17 @@ void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
 
         treeGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
+        GameObject& treeGO = _scene->add<GameObject>(treeContener, treeGameObject);
+        treeGO.addComponent<Model>(treeModelArg);
+
+        GameObjectCreateArg treeColliderArg{"TreeCollider",
+                                       {{0.f, 0.f, 0.f},
+                                        {0.f, 0.f, 0.f},
+                                        treeGameObject.transformArg.scale}};
+        treeColliderArg.transformArg.scale.y *= 10.f;  
+        treeColliderArg.transformArg.scale.x *= 0.001f;  
+        treeColliderArg.transformArg.scale.z *= 0.001f;          
+        _scene->add<GameObject>(treeGO, treeColliderArg).addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -659,7 +804,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
-    player1GO.getComponent<SphereCollider>()->setFriction(0.70f);
+    player1GO.getComponent<SphereCollider>()->setFriction(0.95f);
 
     playerGameObject.name = "Skin";
     playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
@@ -710,7 +855,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(10.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
@@ -727,7 +872,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
         shotgunGO.addComponent<Model>(shotgunModelArg);
-        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(10.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
         playerControllerPlayer1.addFirearm(&shotgunComponent);
     }
     //SubMachinegun
@@ -748,7 +893,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
         subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
-        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(10.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
+        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
         playerControllerPlayer1.addFirearm(&subMachineGunComponent);
     }
 
@@ -851,30 +996,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.addComponent<GroundController>();
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
-
-
-
-    GameObjectCreateArg WallArgGameObject{"Wall",
-                                            {{-20.f, 0.f, -20.f},
-                                             {M_PI_4, 0.f, 0.f},
-                                             {100.f, 1.f, 100.f}}};
-
-    ModelCreateArg WallArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                             &ressourceManager.get<std::vector<Material>>("Ground"),
-                             &ressourceManager.get<Mesh>("GroundMesh"),
-                             "LightAndTexture",
-                             "Ground",
-                             "GroundMesh",
-                             true,
-                             false};
-
-    GameObject& Wall = _scene->add<GameObject>(_scene->getWorld(), WallArgGameObject);
-    Wall.addComponent<Model>(WallArg);
-    Wall.addComponent<OrientedBoxCollider>();
-    Wall.setTag("Wall");
 }
 
-void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
+void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned int number)
 {
    GameObjectCreateArg fogGameObjectArg  {"FogContener"};
 
@@ -918,7 +1042,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     float wrapHeight = 10.f;
     float wrapWidth = 4.f;
     float wrapDepth = 2.5f;
-    float wrapThickness = 0.3f;
+    float wrapThickness = 0.6f;
 
     /*Lever*/
     GameObjectCreateArg leverArgGameObject{"Lever",
@@ -981,29 +1105,29 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& mechanism = _scene->add<GameObject>(lootMachin, mechanismArgGameObject);
     
     GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg secondInclinedPlatformArgGameObject{"SecondInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg thirdInclinedPlatformArgGameObject{"ThirdInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                         
     GameObjectCreateArg forthInclinedPlatformArgGameObject{"ForthInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                             
     GameObjectCreateArg distributorInclinedPlatformArgGameObject{"DistributorInclinedPlatform",
                                             {{0.f, (wrapHeight / 8.f * 1) - wrapHeight / 2.f, 0.f},
                                             {M_PI_4, 0.f, 0.f},
-                                            {wrapWidth, wrapThickness, wrapDepth}}};
+                                            {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
     ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1116,49 +1240,61 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
     GameObject& wrap4GO = _scene->add<GameObject>(wrap, topFaceArgGameObject);
     wrap4GO.addComponent<Model>(blackPlatformArg);
-    wrap4GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap5GO = _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject);
     wrap5GO.addComponent<Model>(blackPlatformArg);
-    wrap5GO.addComponent<OrientedBoxCollider>();
 
     GameObject& wrap6GO = _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject);
     wrap6GO.addComponent<Model>(glassPlatformArg);
-    wrap6GO.addComponent<OrientedBoxCollider>();
 
     /*Create lots prefabs*/
-    GameObjectCreateArg lot1GameObjectArg{"Lot1"};
-    lot1GameObjectArg.transformArg.scale /= 2.f;
+    {
+        GameObjectCreateArg lot1GameObjectArg{"Lot1"};
+        lot1GameObjectArg.transformArg.scale /= 2.f;
 
-    GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
+        GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
 
-    lot1GO.addComponent<Model>(greenPlatformArg);
-    lot1GO.addComponent<PhysicalObject>().setMass(1);
-    lot1GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot1GO.addComponent<Loot>();
+        ModelCreateArg modelBlueCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("YellowCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "YellowCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot1GO, "Lot1");
-    lot1GO.destroy();
+        lot1GO.addComponent<Model>(modelBlueCrateArg);
+        lot1GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot1GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.4f);
+        colliderComp.setFriction(0.9f);
+        lot1GO.addComponent<BombeLoot>();
 
-    GameObjectCreateArg lot2GameObjectArg{"Lot2"};
-    lot2GameObjectArg.transformArg.scale /= 2.f;
+        Save::createPrefab(lot1GO, "Lot1");
+        lot1GO.destroy();
+    }
 
-    GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
+    {
+        GameObjectCreateArg lot2GameObjectArg{"Lot2"};
+        lot2GameObjectArg.transformArg.scale /= 2.f;
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                          &ressourceManager.get<Mesh>("Cube"),
-                          "LightAndTexture",
-                          "CrateMaterial",
-                          "Cube"};
+        GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
 
-    lot2GO.addComponent<Model>(modelCrateArg);
-    lot2GO.addComponent<PhysicalObject>().setMass(1);
-    lot2GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot2GO.addComponent<Loot>();
+        ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("RedCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "RedCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot2GO, "Lot2");
-    lot2GO.destroy();
+        lot2GO.addComponent<Model>(modelCrateArg);
+        lot2GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot2GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.1f);
+        colliderComp.setFriction(0.95f);
+        lot2GO.addComponent<LifeLoot>();
+
+        Save::createPrefab(lot2GO, "Lot2");
+        lot2GO.destroy();
+    }
 
     /*Create spawner*/
     GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
@@ -1166,10 +1302,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObjectCreateArg spawnerGOArg;
     {
         spawnerGOArg.name = "Spawner";
-        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
+        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, 0.1f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
         //spawnerGO.destroy();
@@ -1185,15 +1321,21 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
+    /*Fixe the seed to obtain a fixed procedural scene*/
+    Random::initSeed(10.f);
+
     loadTimeManager             ();
-    //loadRock                    (ressourceManager, 100);
-    //loadTree                    (ressourceManager, 50);
+    loadRock                    (ressourceManager, 100);
+    loadTree                    (ressourceManager, 50);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
     loadLootMachin               (ressourceManager);
+
+    /*Add randome seed*/
+    Random::initSeed();
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
@@ -1356,13 +1498,15 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 #pragma region Option
 
+    int decal = 250;
+
     ressourceManager.add<Title>("OptionForwardTitle", pfont, buttonShader,
                                 halfWidth - 155, halfHeight - 400,
                                 175.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Forward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionForwardButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight - 400,
+                                 halfWidth - decal + 50, halfHeight - 400,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.up)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1377,12 +1521,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionBackwardTitle", pfont, buttonShader,
-                                halfWidth - 185, halfHeight - 300,
+                                halfWidth - decal - 185, halfHeight - 300,
                                 200.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Backward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionBackwardButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight - 300,
+                                 halfWidth - decal + 50, halfHeight - 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.down)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1397,12 +1541,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionLeftTitle", pfont, buttonShader,
-                                halfWidth - 75, halfHeight - 200,
+                                halfWidth  - decal - 75, halfHeight - 200,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Left :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionLeftButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight - 200,
+                                 halfWidth - decal + 50, halfHeight - 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.left)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1417,12 +1561,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionRightTitle", pfont, buttonShader,
-                                halfWidth - 100, halfHeight - 100,
+                                halfWidth - decal - 100, halfHeight - 100,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Right :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionRightButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight - 100,
+                                 halfWidth  - decal + 50, halfHeight - 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.right)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1436,33 +1580,13 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         }
     };
 
-    ressourceManager.add<Title>("OptionSwitchLightStateTitle", pfont, buttonShader,
-                                halfWidth - 310, halfHeight,
-                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Switch light state :",
-                                E_GAME_STATE::OPTION);
-
-    ressourceManager.add<Button>("OptionSwitchLightStateButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight,
-                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.switchFlashLightState)),
-                                 E_GAME_STATE::OPTION)
-        .function = [&]() {
-        SDL_Scancode key = Input::waitForKey();
-        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
-        {
-            Input::keyboard.switchFlashLightState = key;
-            ressourceManager.get<Button>("OptionSwitchLightStateButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionSwitchLightStateButton").updateTexture();
-            Input::resetKeyDown();
-        }
-    };
-
     ressourceManager.add<Title>("OptionJumpTitle", pfont, buttonShader,
-                                halfWidth - 105, halfHeight + 100,
+                                halfWidth - decal - 105, halfHeight,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Jump :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionJumpButton", pfont, buttonShader,
-                                 halfWidth + 50, halfHeight + 100,
+                                 halfWidth - decal + 50, halfHeight,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1477,7 +1601,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("OptionSwitchButton", pfont, buttonShader,
-                                 halfWidth - 45, halfHeight + 200,
+                                 halfWidth - decal - 45, halfHeight + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1515,6 +1639,66 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         downButton->updateTexture();
         rightButton->updateTexture();
         leftButton->updateTexture();
+    };
+
+    ressourceManager.add<Title>("OptionFlashLightTitle", pfont, buttonShader,
+                                halfWidth + decal - 200, halfHeight - 400,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Flash Light :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionFlashLightButton", pfont, buttonShader,
+                                 halfWidth + decal + 50, halfHeight - 400,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.flashLight)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.flashLight = key;
+            ressourceManager.get<Button>("OptionFlashLightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionFlashLightButton").updateTexture();
+            Input::resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionReloadTitle", pfont, buttonShader,
+                                halfWidth + decal - 130, halfHeight - 300,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Reload :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionReloadButton", pfont, buttonShader,
+                                 halfWidth + decal + 50, halfHeight - 300,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.reload)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.reload = key;
+            ressourceManager.get<Button>("OptionReloadButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionReloadButton").updateTexture();
+            Input::resetKeyDown();
+        }
+    };
+
+    ressourceManager.add<Title>("OptionUseTitle", pfont, buttonShader,
+                                halfWidth + decal - 72, halfHeight - 200,
+                                400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Use :",
+                                E_GAME_STATE::OPTION);
+
+    ressourceManager.add<Button>("OptionUseButton", pfont, buttonShader,
+                                 halfWidth + decal + 50, halfHeight - 200,
+                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.use)),
+                                 E_GAME_STATE::OPTION)
+        .function = [&]() {
+        SDL_Scancode key = Input::waitForKey();
+        if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
+        {
+            Input::keyboard.use = key;
+            ressourceManager.get<Button>("OptionUseButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionUseButton").updateTexture();
+            Input::resetKeyDown();
+        }
     };
 
     ressourceManager.add<Button>("Return", pfont, buttonShader,
@@ -1651,49 +1835,66 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
     ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                        &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                        &ressourceManager.get<std::vector<Material>>("PumpkinMaterial"),
                         &ressourceManager.get<Mesh>("Cube"),
                         "ColorWithLight",
-                        "GreenMaterial",
+                        "PumpkinMaterial",
                         "Cube"};
 
-        GameObject& enemy1 = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    enemyBase.setTag("Enemy");
 
-        enemy1.setScale(Vec3{3.f, 5.f, 3.f});
+    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
 
-        enemy1.addComponent<Model>(modelArg);
-        enemy1.addComponent<PhysicalObject>().setMass(1);
-        enemy1.addComponent<SphereCollider>().setBounciness(0.f);
-        enemy1.getComponent<SphereCollider>()->setFriction(0.97f);
+    enemyBase.addComponent<Model>(modelArg);
+    enemyBase.addComponent<PhysicalObject>().setMass(1);
+    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
 
-        enemy1.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"), 
-                                                checkpoint1->getComponent<Checkpoint>());
+    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-    Save::createPrefab(enemy1, "enemy1");
-    enemy1.destroy();
+    Save::createPrefab(enemyBase, "enemy1");
 
-    GameObjectCreateArg CrateGameObjectArg{"Crate"};
+    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(8);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
+    enemyBase.getComponent<EnnemyController>()->setDamage(2);
+    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
+    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                 &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                                 &ressourceManager.get<Mesh>("Cube"),
-                                 "LightAndTexture",
-                                 "CrateMaterial",
-                                 "Cube"};
+    Save::createPrefab(enemyBase, "enemy2");
 
-    GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(3);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setDamage(1);
+    enemyBase.getComponent<EnnemyController>()->setRadius(50);
 
-    crate.addComponent<Model>(modelCrateArg);
-    PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
-    physicalObjectComp.setMass(3);
-    crate.addComponent<PushedOnShoot>();
-    crate.addComponent<SphereCollider>().setBounciness(0.f);
-    crate.getComponent<SphereCollider>()->setFriction(0.97f);
-    Save::createPrefab(crate, "Crate");
-    crate.destroy();
+    Save::createPrefab(enemyBase, "enemy3");
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
+    enemyBase.destroy();
+
+    // GameObjectCreateArg CrateGameObjectArg{"Crate"};
+
+    // ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    //                              &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
+    //                              &ressourceManager.get<Mesh>("Cube"),
+    //                              "LightAndTexture",
+    //                              "CrateMaterial",
+    //                              "Cube"};
+
+    // GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
+
+    // crate.addComponent<Model>(modelCrateArg);
+    // PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
+    // physicalObjectComp.setMass(3);
+    // crate.addComponent<PushedOnShoot>();
+    // crate.addComponent<SphereCollider>().setBounciness(0.f);
+    // crate.getComponent<SphereCollider>()->setFriction(0.97f);
+    // Save::createPrefab(crate, "Crate");
+    // crate.destroy();
+
 
     /*Create spawner*/
 
@@ -1709,7 +1910,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1721,7 +1922,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1733,7 +1934,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1745,7 +1946,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
         spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1757,8 +1958,13 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
 
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
-    EnemiesPrefabs enemiesPrefs {"Crate", "enemy1"};
+    EnemiesPrefabs enemiesPrefs {"enemy1", "enemy2", "enemy3"};
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
+}
+
+void Demo::loadBulletHoleContenor (int maxDecale)
+{
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(maxDecale);
 }
 
 void Demo::loadTimeManager        ()
@@ -1769,12 +1975,14 @@ void Demo::loadTimeManager        ()
 
 void Demo::updateControl()
 {
-    /*
-    float dist = 5.f;
-    _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
-    _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
-    _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
-    */
+    // for (auto &&i : Scene::getCurrentScene()->getGameObject("world/DecalContenor").children)
+    // {
+    //     std::cout << Scene::getCurrentScene()->getGameObject("world/DecalContenor").getModelMatrix() << std::endl;
+    //     std::cout << i->getScale() << std::endl;
+    //     std::cout << i->getModelMatrix() << std::endl;
+    //     exit(1);
+    // }
+
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
