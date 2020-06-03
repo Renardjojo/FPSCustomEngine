@@ -37,6 +37,7 @@
 #include "Game/LifeLoot.hpp"
 #include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
+#include "Game/UpgradeStation.hpp"
 
 using namespace rapidxml;
 
@@ -310,7 +311,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<Firearm>(params);
         else if (type.compare("LootMachine") == 0)
             parent.addComponent<LootMachine>(params);
-            else if (type.compare("BombeLoot") == 0)
+        else if (type.compare("BombeLoot") == 0)
             parent.addComponent<BombeLoot>(params);
         else if (type.compare("LifeLoot") == 0)
             parent.addComponent<LifeLoot>(params);
@@ -318,8 +319,25 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<Loot>(params);
         else if (type.compare("LevitationMovement") == 0)
             parent.addComponent<LevitationMovement>(params);
+        else if (type.compare("UpgradeStation") == 0)
+            parent.addComponent<UpgradeStation>(params);
+        else if (type.compare("MunitionCapacityUpgradeStation") == 0)
+            parent.addComponent<MunitionCapacityUpgradeStation>(params);
+        else if (type.compare("DamageUpgradeStation") == 0)
+            parent.addComponent<DamageUpgradeStation>(params);
+        else if (type.compare("FireRateUpgradeStation") == 0)
+            parent.addComponent<FireRateUpgradeStation>(params);
+        else if (type.compare("ReloadTimeUpgradeStation") == 0)
+            parent.addComponent<ReloadTimeUpgradeStation>(params);
+        else if (type.compare("AutoUpgradeStation") == 0)
+            parent.addComponent<AutoUpgradeStation>(params);
 
-        newGameObject = &parent;
+        
+            
+                
+                    
+                        
+                            newGameObject = &parent;
     }
 
     for (xml_node<>* children = node->first_node(); children; children = children->next_sibling())
@@ -404,124 +422,94 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<Model>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<PlayerController>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<OrientedBoxCollider>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<SphereCollider>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<PhysicalObject>())
-    {
         i->save(doc, newNode);
-    }
     
     for (auto &&i : gameObjectParent.getComponents<PointLight>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<DirectionnalLight>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<SpotLight>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<EnnemyController>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<Checkpoint>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<PushedOnShoot>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<MaxElementConteneur>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<LifeDuration>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<ParticuleGenerator>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<GroundController>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<WaveManager>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<CircularEntitiesSpawner>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<DayNightCycle>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<Firearm>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<LootMachine>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<BombeLoot>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<LifeLoot>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<Loot>())
-    {
         i->save(doc, newNode);
-    }
 
     for (auto &&i : gameObjectParent.getComponents<LevitationMovement>())
-    {
         i->save(doc, newNode);
-    }
+
+    for (auto &&i : gameObjectParent.getComponents<UpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<MunitionCapacityUpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<DamageUpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<FireRateUpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<ReloadTimeUpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<AutoUpgradeStation>())
+        i->save(doc, newNode);
 
     for (auto&& gameObjectParent : gameObjectParent.children)
         saveEntity(*gameObjectParent, doc, newNode);

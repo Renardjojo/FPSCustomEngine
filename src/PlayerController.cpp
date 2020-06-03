@@ -7,6 +7,7 @@
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/LootMachine.hpp"
+#include "Game/UpgradeStation.hpp"
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
@@ -30,7 +31,6 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-      _rm{t_RessourcesManager::getRessourceManagerUse()},
       _camera{Camera::getCamUse()}
 {
     _name = __FUNCTION__;
@@ -56,8 +56,6 @@ void PlayerController::start()
 
 void PlayerController::update()
 {
-    std::cout << _money << std::endl;
-
     if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
         _jump = true;
 
@@ -69,8 +67,8 @@ void PlayerController::update()
 
     move();
 
-    if (_life <= 0)
-        std::cout << "player is dead" << std::endl;
+    // if (_life <= 0)
+    //     std::cout << "player is dead" << std::endl;
 
     if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
         shoot();
@@ -112,6 +110,7 @@ void PlayerController::update()
             }
         }
     }
+    std::cout << getCurrentFirearm()->getMagazine() << std::endl;
 }
 
 void PlayerController::fixedUpdate()
@@ -145,7 +144,6 @@ void PlayerController::switchAimState()
     _firesGuns[0]->switchAimState();
 }
 
-
 void PlayerController::setCameraType(CameraType type)
 {
     // if(_type!=type)
@@ -162,7 +160,8 @@ void PlayerController::toggleCameraType()
 
 void PlayerController::activateLootMachine()
 {
-    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition());
+    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition(), _money);
+    Scene::getCurrentScene()->getGameObject("MunitionCapacityUpgradeStation").getComponent<MunitionCapacityUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
 }
 
 void PlayerController::addFirearm(Firearm *Firearm)

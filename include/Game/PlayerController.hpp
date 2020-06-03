@@ -23,7 +23,6 @@ namespace Game
         };
 
     private:
-        Engine::Ressources::t_RessourcesManager* _rm;
         Engine::Physics::PhysicalObject *_physics;
         Engine::LowRenderer::SpotLight *_flashLight;
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
@@ -78,8 +77,10 @@ namespace Game
 
         void setCameraType(CameraType type);
         void toggleCameraType();
+
         void addFirearm(Firearm* Firearm);
-        
+        Firearm* getCurrentFirearm() { return _firesGuns[0];}
+
         void activateLootMachine();
         void inflictDamage(int damage);
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;

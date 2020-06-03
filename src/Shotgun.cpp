@@ -1,4 +1,5 @@
 #include "Game/Shotgun.hpp"
+#include "Game/EnnemyController.hpp"
 
 using namespace Game;
 
@@ -33,7 +34,7 @@ void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
     if(_sound)
         Engine::Ressources::SoundPlayer::play(*_sound);
 
-    _munition -= _bulletPerShot;
+    _munition -= 1;
     _isWaitingForNextShot = true;
     
     Engine::Physics::ColliderShape::HitInfo rayInfo;
@@ -50,6 +51,9 @@ void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             tempGOWithTag.setTag("Bullet");
             Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
             pCollider->OnCollisionEnter(hitInfo1);
+
+            if (rayInfo.gameObject->getComponent<EnnemyController>())
+                rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
         }
     }
 }

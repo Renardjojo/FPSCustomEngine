@@ -21,8 +21,9 @@ LootMachine::LootMachine (GameObject &refGameObject, const std::vector<std::stri
         _forwardAnimDelay   {std::stof(params[0])},
         _delay              {std::stof(params[1])},
         _activationRadius   {std::stof(params[2])},
-        _leverMoveForward   {static_cast<bool>(std::stoi(params[3]))},
-        _isActivated        {static_cast<bool>(std::stoi(params[4]))}
+        _cost               {std::stoi(params[3])},
+        _leverMoveForward   {static_cast<bool>(std::stoi(params[4]))},
+        _isActivated        {static_cast<bool>(std::stoi(params[5]))}
 {
     _name = __FUNCTION__;
 }
@@ -64,10 +65,16 @@ void LootMachine::update () noexcept
     }
 }
 
-void LootMachine::activate(Vec3 playerPosition)
+void LootMachine::activate(Vec3 playerPosition, int& money)
 {
-    if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
-        _isActivated = true;
+    if (money >= _cost)
+    {
+        if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
+        {
+            _isActivated = true;
+            money -= _cost;
+        }
+    }
 }
 
 void LootMachine::save(xml_document<>& doc, xml_node<>* nodeParent) 
@@ -78,6 +85,7 @@ void LootMachine::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("forwardAnimDelay", doc.allocate_string(std::to_string(_forwardAnimDelay).c_str())));
     newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
     newNode->append_attribute(doc.allocate_attribute("activationRadius", doc.allocate_string(std::to_string(_activationRadius).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("cost", doc.allocate_string(std::to_string(_cost).c_str())));
     newNode->append_attribute(doc.allocate_attribute("leverMoveForward", doc.allocate_string(std::to_string(_leverMoveForward).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isActivated", doc.allocate_string(std::to_string(_isActivated).c_str())));
 

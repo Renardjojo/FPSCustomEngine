@@ -36,7 +36,7 @@ namespace Game
         float           _delay                  {0.f};
         bool            _isReloading            {false};
         bool            _isWaitingForNextShot   {false};
-        bool            _isAutomatic            {false}; //on fire gun stats but her for memory alignas
+        bool            _isAutomatic            {false}; //on fire gun stats but here for memory alignas
         bool            _isAiming               {false};
 
         /*Shot sound*/
@@ -67,6 +67,20 @@ namespace Game
         unsigned int* getPMunition () noexcept {return &_munition;}
 
         unsigned int getMagazine () const noexcept { return _munitionCapacity;}
+
+
+        void addDamage(int bulletDamage) { _bulletDamage += bulletDamage; } 
+
+        float getReloadTime() { return _reloadTime; }
+        void setReloadTime (float reloadTime) { _reloadTime = reloadTime; }
+
+        void addMunitionCapacity(float munitionCapacity) { _munitionCapacity += munitionCapacity; }
+       
+        float getShotIntervalDelay() { return _shotIntervalDelay; }
+        void setShotIntervalDelay(float shotIntervalDelay) { _shotIntervalDelay = shotIntervalDelay; }
+        
+        bool getAutomaticState() { return _isAutomatic; }
+        void setAutomaticState(bool state) { _isAutomatic = state; }
 
         virtual void save(xml_document<>& doc, xml_node<>* nodeParent);
     };

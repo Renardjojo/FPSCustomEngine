@@ -36,6 +36,7 @@
 #include "Game/SubMachineGun.hpp"
 #include "Game/Shotgun.hpp"
 #include "Game/LootMachine.hpp"
+#include "Game/UpgradeStation.hpp"
 #include "Game/Loot.hpp"
 #include "Game/LifeLoot.hpp"
 #include "Game/BombeLoot.hpp"
@@ -96,6 +97,7 @@ Demo::Demo(Engine::GE& gameEngine)
     // mainCamera = &_scene->getGameObject("world/MainCamera");
     loadReferential(_gameEngine.ressourceManager_);
     loadUI(_gameEngine.ressourceManager_);
+    loadUpgradeStation(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
 
@@ -270,7 +272,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadFogRessource            (ressourceManager);
     loadLootRessource           (ressourceManager); 
     loadGuiRessource            (ressourceManager); 
-    loadSniperScopeRessource    (ressourceManager); 
+    loadSniperScopeRessource    (ressourceManager);
+    loadUpgradeStationRessource (ressourceManager);
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
@@ -691,6 +694,53 @@ void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
                                 E_GAME_STATE::RUNNING).isActive = false;;
 }
 
+void Demo::loadUpgradeStationRessource(t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg frontMat;
+    frontMat.name = "ReloadMaterial";
+    frontMat.comp.ambient.rgbi = {1.f, 1.f, 1.f, 1.f};
+    frontMat.comp.diffuse.rgbi = {1.f, 1.f, 1.f, 1.f};
+    frontMat.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    frontMat.pathDiffuseTexture = "./ressources/texture/reload.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "FireRateMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/firerate.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "DamageMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/damage.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "AutoMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/auto.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "MunitionMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/munition.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+}
+
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
 {
     GameObjectCreateArg rockGameObject{"Rocks",
@@ -855,7 +905,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 5, 0.2f,&ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
@@ -872,7 +922,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
         shotgunGO.addComponent<Model>(shotgunModelArg);
-        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 2, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
         playerControllerPlayer1.addFirearm(&shotgunComponent);
     }
     //SubMachinegun
@@ -893,7 +943,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
         subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
-        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
+        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 30, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
         playerControllerPlayer1.addFirearm(&subMachineGunComponent);
     }
 
@@ -1032,8 +1082,8 @@ void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned in
 void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 {
     GameObjectCreateArg lootMachinArgGameObject{"LootMachine",
-                                            {{20.f, 5.f, 20.f},
-                                             {0.f, M_PI_4, 0.f},
+                                            {{-30.f, 5.f, -80.f},
+                                             {0.f, 0.f, 0.f},
                                              {1.f, 1.f, 1.f}}};
 
     GameObject& lootMachin = _scene->add<GameObject>(_scene->getWorld(), lootMachinArgGameObject);
@@ -1311,6 +1361,191 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         //spawnerGO.destroy();
     }
 }
+
+void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& ressourceManager, GameObject& parent, std::string mat)
+{
+    {// Back
+        GameObjectCreateArg plankGOArg{"upgradePlankBack",
+                                    {{0.f, 0.f, 0.f},
+                                    {0.f, 0.f, 0.f},
+                                    {5.f, 5.f, 0.5f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    { // Left
+        GameObjectCreateArg plankGOArg{"upgradePlankLeft",
+                                    {{-2.5f, 0.f, 1.f},
+                                    {0.f, M_PI, 0.f},
+                                    {0.5f, 5.f, 2.f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    { // right
+        GameObjectCreateArg plankGOArg{"upgradePlankRight",
+                                    {{2.5f, 0.f, 1.f},
+                                    {0.f, M_PI, 0.f},
+                                    {0.5f, 5.f, 2.f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {// Deck
+        GameObjectCreateArg plankGOArg{"upgradePlanDeck",
+                                    {{0.f, 1.3f, 0.5f},
+                                    {0.f, 0.f, 0.f},
+                                    {5.f, 0.5f, 1.3f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {// Button
+        GameObjectCreateArg sphereGOarg{"upgradeButton",
+                                    {{0.f, 1.5f, 0.5f},
+                                    {0.f, 0.f, 0.f},
+                                    {0.5f, 0.5f, 0.5f}}};
+
+        GameObject& sphereGO = scene->add<GameObject>(parent, sphereGOarg);
+
+        ModelCreateArg sphereModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("YellowMaterial"),
+                                &ressourceManager.get<Mesh>("Sphere"),
+                                "LightAndTexture",
+                                "YellowMaterial",
+                                "Sphere"};
+
+        sphereGO.addComponent<Model>(sphereModelArg);
+    }
+    {// Front
+        GameObjectCreateArg plankGOArg{"upgradePlankFront",
+                                    {{0.f, -0.5f, 1.4f},
+                                    {degres_to_rad(-10.f), 0.f, 0.f},
+                                    {5.f, 4.f, 0.5f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>(mat),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                mat,
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {
+        GameObjectCreateArg lightGOarg{"Light",
+                                    {{0.f, 0.f, 0.4f},
+                                    {0.f, 0.f, 0.f},
+                                    {1.f, 1.f, 1.f}}};
+
+        GameObject& lightGO = scene->add<GameObject>(parent, lightGOarg);
+
+        PointLightCreateArg lightArg{ {0.5f, 0.2f, 0.2f, 0.2f},
+                                    {0.5f, 0.2f, 0.2f, 0.5f},
+                                    {0.5f, 0.2f, 0.2f, 0.7f},
+                                    0.f, 0.2f, 0.f, true};
+        
+        lightGO.addComponent<PointLight>(lightArg);
+    }
+}
+
+void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
+{
+    {
+        GameObjectCreateArg upgradeStationGOArg{"ReloadTimeUpgradeStation",
+                                                {{30.f, 2.5f, -50.f},
+                                                {0.f, -M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<ReloadTimeUpgradeStation>(1000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "ReloadMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"AutoUpgradeStation",
+                                                {{-75.f, 2.5f, -20.f},
+                                                {0.f, M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<AutoUpgradeStation>(2000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "AutoMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"DamageUpgradeStation",
+                                                {{75.f, 2.5f, -40.f},
+                                                {0.f, -M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<DamageUpgradeStation>(1500);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "DamageMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"FireRateUpgradeStation",
+                                                {{65.f, 2.5f, 40.f},
+                                                {0.f, -M_PI_4 - M_PI_2, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<FireRateUpgradeStation>(1000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "FireRateMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"MunitionCapacityUpgradeStation",
+                                                {{-55.f, 2.5f, 40.f},
+                                                {0.f, M_PI_2, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<MunitionCapacityUpgradeStation>(800);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "MunitionMaterial");
+    }
+}         
 
 void Demo::loadCamera()
 {
@@ -1776,6 +2011,8 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg NexusGameObjectArg{"Nexus"};
 
+    GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
+
     ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
                           &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
                           &ressourceManager.get<Mesh>("NexusMesh"),
@@ -1783,19 +2020,20 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
                           "NexusMaterial",
                           "NexusMesh"};
     modelNexusArg.isOpaque = false;
+    nexus.addComponent<Model>(modelNexusArg);
 
     PointLightCreateArg lightArgNexusLight{{0.f, 0.2f, 1.f, 0.2f},
                                 {0.f, 0.2f, 1.f, 0.5f},
                                 {0.f, 0.2f, 1.f, 0.7f},
                                 0.f, 0.05f, 0.f, true};
+    
+    nexus.addComponent<PointLight>(lightArgNexusLight);
 
-    GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
     nexus.setTranslation(Vec3{-10, 8, -10});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
-    nexus.addComponent<Model>(modelNexusArg);
+    
     nexus.addComponent<Nexus>();
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
-    nexus.addComponent<PointLight>(lightArgNexusLight);
     
 
     GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});

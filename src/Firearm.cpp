@@ -19,7 +19,6 @@ Firearm::Firearm(Engine::Ressources::GameObject &gameObject, float bulletDamage,
         _sound                                      {sound}
 {
     _name = __FUNCTION__;
-    GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
     GE_assert(reloadTime > 0.f);
     GE_assert(shotIntervalDelay > 0.f);
 }
@@ -41,7 +40,6 @@ Firearm::Firearm (Engine::Ressources::GameObject &refGameObject, const std::vect
         _sound                                      {nullptr}
 {
     _name = __FUNCTION__;
-    GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
     GE_assert(_reloadTime > 0.f);
     GE_assert(_shotIntervalDelay > 0.f);
 }
@@ -88,7 +86,7 @@ void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
     if(_sound)
         Engine::Ressources::SoundPlayer::play(*_sound);
 
-    _munition -= _bulletPerShot;
+    _munition -= 1;
     _isWaitingForNextShot = true;
     
     Engine::Physics::ColliderShape::HitInfo rayInfo;

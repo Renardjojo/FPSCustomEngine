@@ -21,6 +21,7 @@ namespace Game
         float       _forwardAnimDelay   {1.f};
         float       _delay              {0.f};
         float       _activationRadius   {20.f};
+        int         _cost               {500};
         bool        _leverMoveForward   {true};
         bool        _isActivated        {false};
 
@@ -36,7 +37,7 @@ namespace Game
 
         void update () noexcept override;
 
-        void activate(Engine::Core::Maths::Vec3 playerPosition);
+        void activate(Engine::Core::Maths::Vec3 playerPosition, int& money);
 
         virtual void save(xml_document<>& doc, xml_node<>* nodeParent);
     };

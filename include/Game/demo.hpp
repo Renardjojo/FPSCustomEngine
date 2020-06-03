@@ -90,7 +90,8 @@ namespace Game
             void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);   
             void loadLootRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGuiRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);              
-            void loadSniperScopeRessource   (Engine::Ressources::t_RessourcesManager& ressourceManager);          
+            void loadSniperScopeRessource   (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadUpgradeStationRessource       (Engine::Ressources::t_RessourcesManager& ressourceManager);            
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
@@ -99,7 +100,8 @@ namespace Game
             void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadFog                    (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);    
-            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);      
+            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadUpgradeStation         (Engine::Ressources::t_RessourcesManager& ressourceManager);            
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
