@@ -86,7 +86,8 @@ namespace Game
             void loadNexusRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);         
             void loadCrateRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGlassRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
-            void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);          
+            void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);   
+            void loadLootRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);          
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
@@ -101,6 +102,7 @@ namespace Game
             void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadBulletHoleContenor (int maxDecale);
             //void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadATH                (Engine::Ressources::t_RessourcesManager& ressourceManager);    

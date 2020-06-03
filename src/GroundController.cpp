@@ -31,10 +31,10 @@ void GroundController::onCollisionEnter (HitInfo& hitInfo)
 {
     if (hitInfo.gameObject->getTag() == "Bullet")
     {
-        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("Color"),
+        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("ColorWithLight"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BrownMaterial"),
                                 &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
-                                "Color",
+                                "ColorWithLight",
                                 "BrownMaterial",
                                 "PlaneZ"};
 
@@ -51,11 +51,12 @@ void GroundController::onCollisionEnter (HitInfo& hitInfo)
         particalArg.generationRange = 0.1f;
         particalArg.instanteParticuleGeneration = true;
 
-        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {hitInfo.intersectionsInfo.intersection1}});
+        Vec3 realImpact =  hitInfo.intersectionsInfo.intersection1 - hitInfo.intersectionsInfo.normalI1 + hitInfo.intersectionsInfo.normalI1 * (_gameObject.getScale().y / 2.f + 0.1f);
+        GameObject& particleGO = Scene::getCurrentScene()->add<GameObject>(Scene::getCurrentScene()->getWorld(), GameObjectCreateArg{"ParticleContenerBlood", {realImpact}});
         particleGO.addComponent<ParticuleGenerator>(particalArg);
         particleGO.addComponent<LifeDuration>(1.f);
 
-        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", hitInfo.intersectionsInfo.intersection1};
+        GameObjectCreateArg decaleGOPref {"bulletHoleDecal", realImpact};
         decaleGOPref.transformArg.scale = Vec3::one * 0.4f;
         ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"),
                                                 &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"),
