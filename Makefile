@@ -24,7 +24,7 @@ VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
 LIBSGL= -ldl
-LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lopenal -lalut
+LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lopenal -lalut
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
 #Cpp and C wildcard
