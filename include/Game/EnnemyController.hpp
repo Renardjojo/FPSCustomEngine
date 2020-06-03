@@ -25,12 +25,15 @@ namespace Game
         Engine::Ressources::GameObject* _nexus{nullptr};
         States _state{States::Idle};
         Game::CheckpointManager _checkpointManager;
-        float _radius{20.f};
+        float _radius{35.f};
         float _attackRadius{5.f};
         float _speed{25.f};
         float _attackSpeed{1.f};
         float _cooldown{0.f};
         int _damage{1};
+        int _life{5};
+        int _valueOnHit{5};
+        int _valueOnDeath{50};
 
 
         void idle();
@@ -39,7 +42,7 @@ namespace Game
         void autoDestroy();
 
     public:
-        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Engine::Ressources::GameObject* nexus, Game::Checkpoint* checkpoint);
+        EnnemyController(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* player, Engine::Ressources::GameObject* nexus);
         EnnemyController(Engine::Ressources::GameObject &gameObject, const std::vector<std::string>& params);
         virtual ~EnnemyController() = default;
 
@@ -49,6 +52,19 @@ namespace Game
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
         
+        void inflictDamage(int damage) { _life -= damage; }
+
+        void setCheckpoint(Game::Checkpoint* checkpoint);
+        void setRadius(float radius){ _radius = radius; }
+        void setAttackRadius(float attackRadius){ _attackRadius = attackRadius; }
+        void setSpeed(float speed){ _speed = speed; }
+        void setAttackSpeed(float attackSpeed){ _attackSpeed = attackSpeed; }
+        void setCooldown(float cooldown){ _cooldown = cooldown; }
+        void setDamage(int damage){ _damage = damage; }
+        void setLife(int life){ _life = life; }
+        void setValueOnHit(int valueOnHit){ _valueOnHit = valueOnHit; }
+        void setValueOnDeath(int valueOnDeath){ _valueOnDeath = valueOnDeath; }
+
         void save(xml_document<>& doc, xml_node<>* nodeParent);     
     };
 }

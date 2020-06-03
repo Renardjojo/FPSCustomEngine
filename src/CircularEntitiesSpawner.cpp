@@ -1,4 +1,5 @@
 #include "Game/CircularEntitiesSpawner.hpp"
+#include "Game/EnnemyController.hpp"
 #include "GE/Ressources/scene.hpp"
 
 using namespace Game;
@@ -7,27 +8,28 @@ using namespace Engine::Core::Component;
 using namespace Engine::Core::Maths;
 
 CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObject* contenor, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval)
-    :   ScriptComponent    {gameObject},
-        _entitiesToSpawnInfo                        {entitiesToSpawnInfo},
-        _zoneRadius                                 {zoneRadius},
-        _spawnDelay                                 {spawnDelay},
-        _spawnDelayInterval                         {spawnDelayInterval}, 
-        _delayCount                                 {0.f},
-        _nextDelay                                  {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
-        _contenor                                   {contenor}
+    :   ScriptComponent         {gameObject},
+        _entitiesToSpawnInfo    {entitiesToSpawnInfo},
+        _zoneRadius             {zoneRadius},
+        _spawnDelay             {spawnDelay},
+        _spawnDelayInterval     {spawnDelayInterval}, 
+        _delayCount             {0.f},
+        _nextDelay              {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
+        _contenor               {contenor}
 {
     _name = __FUNCTION__;
 }
 
-CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObject* contenor, float zoneRadius, float spawnDelay, float spawnDelayInterval)
-    :   ScriptComponent    {gameObject},
-        _entitiesToSpawnInfo                        {},
-        _zoneRadius                                 {zoneRadius},
-        _spawnDelay                                 {spawnDelay},
-        _spawnDelayInterval                         {spawnDelayInterval}, 
-        _delayCount                                 {0.f},
-        _nextDelay                                  {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
-        _contenor                                   {contenor}
+CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObject* contenor, Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval)
+    :   ScriptComponent         {gameObject},
+        _entitiesToSpawnInfo    {},
+        _zoneRadius             {zoneRadius},
+        _spawnDelay             {spawnDelay},
+        _spawnDelayInterval     {spawnDelayInterval}, 
+        _delayCount             {0.f},
+        _nextDelay              {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
+        _contenor               {contenor},
+        _checkpoint             {checkpoint}
 {
     _name = __FUNCTION__;
 }
@@ -40,11 +42,12 @@ CircularEntitiesSpawner::CircularEntitiesSpawner (GameObject &refGameObject, con
         _spawnDelayInterval                         {std::stof(params[2])}, 
         _delayCount                                 {std::stof(params[3])},
         _nextDelay                                  {std::stof(params[4])},
-        _contenor                                   {&Scene::getCurrentScene()->getGameObject(params[5])}
+        _contenor                                   {&Scene::getCurrentScene()->getGameObject(params[5])}, 
+        _checkpoint{params[6].compare("nullptr") == 0 ? nullptr : Scene::getCurrentScene()->getGameObject(params[6]).getComponent<Checkpoint>()}
 {
     _name = __FUNCTION__;
 
-    size_t count = 6;
+    size_t count = 7;
 
     while (params.size() > count)
     {
@@ -77,7 +80,9 @@ void CircularEntitiesSpawner::update()
         unsigned int indexEntityToSpawn = Random::ranged<int>(_entitiesToSpawnInfo.size() - 1);
 
         /*Spawn this entity*/
-        Save::loadPrefab( _contenor == nullptr ? _gameObject : *_contenor, newPosition, _entitiesToSpawnInfo[indexEntityToSpawn].pathPrefabs);
+        GameObject* spawnedEntity = &Save::loadPrefab( _contenor == nullptr ? _gameObject : *_contenor, newPosition, _entitiesToSpawnInfo[indexEntityToSpawn].pathPrefabs);
+        if (spawnedEntity->getComponent<EnnemyController>())
+            spawnedEntity->getComponent<EnnemyController>()->setCheckpoint(_checkpoint);
 
         /*Remove this entity. If all the entities of a type were generated, remove this entity's type*/
         _entitiesToSpawnInfo[indexEntityToSpawn].numberEntity--;
@@ -101,6 +106,8 @@ void CircularEntitiesSpawner::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("nextDelay", doc.allocate_string(std::to_string(_nextDelay).c_str())));
 
     newNode->append_attribute(doc.allocate_attribute("contenorName", doc.allocate_string(_contenor->getRelativePath().c_str())));
+
+    newNode->append_attribute(doc.allocate_attribute("checkpointName", doc.allocate_string(_checkpoint ? _checkpoint->getGameObject().getRelativePath().c_str() : "nullptr")));
 
     int count = 0;
     for (auto &&i : _entitiesToSpawnInfo)

@@ -43,13 +43,13 @@ Vec3 PhysicSystem::gravity = {0, -9.81f, 0};
 
 struct CollisionTempInfo
 {
-    SphereCollider * collider;
-    PhysicalObject * physicalObject;
+    SphereCollider * collider        {nullptr};
+    PhysicalObject * physicalObject  {nullptr};
 
-    Vec3 position;
-    Vec3 newVelocity;
-    Vec3 newAngularVelocity;
-    Vec3 currentVelocity;
+    Vec3 position                   {Vec3::zero};
+    Vec3 newVelocity                {Vec3::zero};
+    Vec3 newAngularVelocity         {Vec3::zero};
+    Vec3 currentVelocity            {Vec3::zero};
 };
 
 void keepNearestGameObject(GameObject *& currentGameObjectHit,
@@ -154,8 +154,8 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
         else
         {
             (*it).collider->getGameObject().setTranslation((*it).position + (*it).currentVelocity * TimeSystem::getFixedDeltaTime());
-            (*it).physicalObject->setAngularVelocity((*it).newAngularVelocity);
-            (*it).physicalObject->getGameObject().rotate((*it).newAngularVelocity * TimeSystem::getFixedDeltaTime());
+            (*it).physicalObject->addTorque((*it).newAngularVelocity);
+            (*it).physicalObject->getGameObject().rotate((*it).physicalObject->getAngularVelocity() * TimeSystem::getFixedDeltaTime());
             (*it).physicalObject->setVelocity((*it).newVelocity);
             (*it).physicalObject->setDirtyFlag(false);
 

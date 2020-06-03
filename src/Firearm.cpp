@@ -1,4 +1,5 @@
 #include "Game/Firearm.hpp"
+#include "Game/EnnemyController.hpp"
 
 using namespace Game;
 
@@ -102,6 +103,9 @@ void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             tempGOWithTag.setTag("Bullet");
             Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
             pCollider->OnCollisionEnter(hitInfo1);
+
+            if (rayInfo.gameObject->getComponent<EnnemyController>())
+                rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
         }
     }
 }
