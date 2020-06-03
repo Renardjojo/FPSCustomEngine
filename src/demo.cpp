@@ -243,8 +243,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
-    //loadRockRessource          (ressourceManager);
-    //loadTreeRessource          (ressourceManager);
+    loadRockRessource          (ressourceManager);
+    loadTreeRessource          (ressourceManager);
     loadSkyboxRessource        (ressourceManager);
     loadGunRessource           (ressourceManager);
     loadPseudoRessource        (ressourceManager);
@@ -852,25 +852,6 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.addComponent<GroundController>();
     ground.addComponent<OrientedBoxCollider>();
     ground.setTag("Ground");
-
-    GameObjectCreateArg WallArgGameObject{"Wall",
-                                            {{-20.f, 0.f, -20.f},
-                                             {M_PI_4, M_PI, 0.f},
-                                             {100.f, 1.f, 100.f}}};
-
-    ModelCreateArg WallArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                             &ressourceManager.get<std::vector<Material>>("Ground"),
-                             &ressourceManager.get<Mesh>("GroundMesh"),
-                             "LightAndTexture",
-                             "Ground",
-                             "GroundMesh",
-                             true,
-                             false};
-
-    GameObject& Wall = _scene->add<GameObject>(_scene->getWorld(), WallArgGameObject);
-    Wall.addComponent<Model>(WallArg);
-    Wall.addComponent<OrientedBoxCollider>();
-    Wall.setTag("Wall");
 }
 
 void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
@@ -1024,12 +1005,6 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                             "LightAndTexture",
                             "RedMaterial",
                             "Cube"};
-
-    firstInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
-    secondInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
-    thirdInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
-    forthInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
-    distributorInclinedPlatformArgGameObject.transformArg.scale *= 0.1;
 
     GameObject& firstInclinedPlatformGO = _scene->add<GameObject>(mechanism, firstInclinedPlatformArgGameObject);
     GameObject& secondInclinedPlatformGO = _scene->add<GameObject>(mechanism, secondInclinedPlatformArgGameObject);
@@ -1187,15 +1162,21 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
+    /*Fixe the seed to obtain a fixed procedural scene*/
+    Random::initSeed(10.f);
+
     loadTimeManager             ();
-    //loadRock                    (ressourceManager, 100);
-    //loadTree                    (ressourceManager, 50);
+    loadRock                    (ressourceManager, 100);
+    loadTree                    (ressourceManager, 50);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
     loadLootMachin               (ressourceManager);
+
+    /*Add randome seed*/
+    Random::initSeed();
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
