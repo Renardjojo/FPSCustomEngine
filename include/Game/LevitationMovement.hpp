@@ -54,7 +54,6 @@ namespace Game
             {
                _delay -= M_PI * 2.f;
             }
-            //std::cout << _delay << std::endl;
             
             _gameObject.setTranslation({_gameObject.getPosition().x, _initialY + cosf(_delay * _speed) * _heightIntensity, _gameObject.getPosition().z});
         }

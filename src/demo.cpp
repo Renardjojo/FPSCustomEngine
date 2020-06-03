@@ -519,23 +519,52 @@ void Demo::loadCrateRessource(t_RessourcesManager &ressourceManager)
 
 void Demo::loadEnemiesRessource(t_RessourcesManager &ressourceManager)
 {
-    Attrib                      attrib;
-    std::vector<Shape>          shape;
-    std::vector<MaterialAttrib> materialAttribs;
+    {
+        Attrib                      attrib;
+        std::vector<Shape>          shape;
+        std::vector<MaterialAttrib> materialAttribs;
 
-    loadObjWithMTL("./ressources/obj/pumpkin.obj", &attrib, &shape, &materialAttribs);
+        loadObjWithMTL("./ressources/obj/eyeball.obj", &attrib, &shape, &materialAttribs);
+        ressourceManager.add<Mesh>("EyesBallMesh" , attrib, shape);
 
-    ressourceManager.add<Mesh>("PumpkinMesh" , attrib, shape);
-
-    MaterialAndTextureCreateArg matPumpkin;
-    matPumpkin.name = "PumpkinMaterial";
-    matPumpkin.comp.specular.rgbi = {1.f, 1.f, 1.f, 1.0f};
-    matPumpkin.pathDiffuseTexture = "./ressources/texture/pumpkin.png";
+        std::vector<Material> material;
+        material.reserve(materialAttribs.size());
+        /*Instanciate material vector with data read on materalAtribs*/
+        material.assign(materialAttribs.begin(), materialAttribs.end());
+        ressourceManager.add<std::vector<Material>>("EyesBallMaterial", std::move(material));
+        
+    }
 
     {
+        Attrib                      attrib;
+        std::vector<Shape>          shape;
+        std::vector<MaterialAttrib> materialAttribs;
+
+        loadObjWithMTL("./ressources/obj/spider.obj", &attrib, &shape, &materialAttribs);
+
+        ressourceManager.add<Mesh>("SpiderMesh" , attrib, shape);
+
         std::vector<Material> material;
-        material.emplace_back(matPumpkin);
-        ressourceManager.add<std::vector<Material>>(matPumpkin.name, std::move(material));
+        material.reserve(materialAttribs.size());
+        /*Instanciate material vector with data read on materalAtribs*/
+        material.assign(materialAttribs.begin(), materialAttribs.end());
+        ressourceManager.add<std::vector<Material>>("SpiderMaterial", std::move(material));
+    }
+
+    {
+        Attrib                      attrib;
+        std::vector<Shape>          shape;
+        std::vector<MaterialAttrib> materialAttribs;
+
+        loadObjWithMTL("./ressources/obj/plantMonster.obj", &attrib, &shape, &materialAttribs);
+
+        ressourceManager.add<Mesh>("PlantMonsterMesh" , attrib, shape);
+
+        std::vector<Material> material;
+        material.reserve(materialAttribs.size());
+        /*Instanciate material vector with data read on materalAtribs*/
+        material.assign(materialAttribs.begin(), materialAttribs.end());
+        ressourceManager.add<std::vector<Material>>("PlantMonsterMaterial", std::move(material));
     }
 }
 
@@ -1797,78 +1826,116 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
     nexus.addComponent<PointLight>(lightArgNexusLight);
     
-
     GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
-    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, -15, 10});
-    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, -15, -10});
+    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, 5, 10});
+    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, 5, -10});
 
     enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
+    
+    { /*Eyes ball enemie*/
+        GameObjectCreateArg Ennemy1GameObjectArg{"EyesBallEnnemy"};
+        Ennemy1GameObjectArg.transformArg.position = Vec3{0.f, 5.f, 0.f};
+        //Ennemy1GameObjectArg.transformArg.scale = Vec3{0.3f, 0.3f, 0.3f};
 
-    GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("EyesBallMaterial"),
+                            &ressourceManager.get<Mesh>("EyesBallMesh"),
+                            "LightAndTexture",
+                            "EyesBallMaterial",
+                            "EyesBallMesh"};
 
-    ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                        &ressourceManager.get<std::vector<Material>>("PumpkinMaterial"),
-                        &ressourceManager.get<Mesh>("Cube"),
-                        "ColorWithLight",
-                        "PumpkinMaterial",
-                        "Cube"};
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
 
-    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
-    enemyBase.setTag("Enemy");
+        enemyBase.addComponent<Model>(modelArg);
+        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
+        enemyPhysicalObjComp.setFreezeRotX(true);
+        enemyPhysicalObjComp.setFreezeRotY(true);
+        enemyPhysicalObjComp.setFreezeRotZ(true);
+        enemyBase.addComponent<LevitationMovement>(1.f, 0.1f);
+        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
 
-    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
+        enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-    enemyBase.addComponent<Model>(modelArg);
-    enemyBase.addComponent<PhysicalObject>().setMass(1);
-    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
-    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+        Save::createPrefab(enemyBase, "enemy1");
+        enemyBase.destroyImmediate();
+    }
 
-    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
-
-    Save::createPrefab(enemyBase, "enemy1");
-
-    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
-    enemyBase.getComponent<EnnemyController>()->setLife(8);
-    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
-    enemyBase.getComponent<EnnemyController>()->setDamage(2);
-    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
-    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
-
-    Save::createPrefab(enemyBase, "enemy2");
-
-    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
-    enemyBase.getComponent<EnnemyController>()->setLife(3);
-    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
-    enemyBase.getComponent<EnnemyController>()->setDamage(1);
-    enemyBase.getComponent<EnnemyController>()->setRadius(50);
-
-    Save::createPrefab(enemyBase, "enemy3");
-
-    enemyBase.destroyImmediate();
-
-    // GameObjectCreateArg CrateGameObjectArg{"Crate"};
-
-    // ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-    //                              &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-    //                              &ressourceManager.get<Mesh>("Cube"),
-    //                              "LightAndTexture",
-    //                              "CrateMaterial",
-    //                              "Cube"};
-
-    // GameObject& crate = _scene->add<GameObject>(_scene->getWorld(), CrateGameObjectArg);
-
-    // crate.addComponent<Model>(modelCrateArg);
-    // PhysicalObject &physicalObjectComp = crate.addComponent<PhysicalObject>();
-    // physicalObjectComp.setMass(3);
-    // crate.addComponent<PushedOnShoot>();
-    // crate.addComponent<SphereCollider>().setBounciness(0.f);
-    // crate.getComponent<SphereCollider>()->setFriction(0.97f);
-    // Save::createPrefab(crate, "Crate");
-    // crate.destroy();
+    {   /*Pumpink ennemie*/
+        GameObjectCreateArg Ennemy1GameObjectArg{"PumpinkEnnemie"};
+        Ennemy1GameObjectArg.transformArg.position = Vec3{0.f, 5.f, 0.f};
 
 
-    /*Create spawner*/
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("SpiderMaterial"),
+                            &ressourceManager.get<Mesh>("SpiderMesh"),
+                            "LightAndTexture",
+                            "SpiderMaterial",
+                            "SpiderMesh"};
+
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
+
+        enemyBase.addComponent<Model>(modelArg);
+        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
+        enemyPhysicalObjComp.setFreezeRotX(true);
+        enemyPhysicalObjComp.setFreezeRotY(true);
+        enemyPhysicalObjComp.setFreezeRotZ(true);
+        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+
+        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+
+        ennemyControllerComp.setLife(8);
+        ennemyControllerComp.setSpeed(10);
+        ennemyControllerComp.setDamage(2);
+        ennemyControllerComp.setValueOnHit(10);
+        ennemyControllerComp.setValueOnDeath(100);
+
+        Save::createPrefab(enemyBase, "enemy2");
+        enemyBase.destroyImmediate();
+    }
+
+
+    {   /*?????? ennemie*/
+        GameObjectCreateArg Ennemy1GameObjectArg{"??????"};
+        Ennemy1GameObjectArg.transformArg.scale = Vec3{4.f, 6.f, 4.f};
+
+
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("PlantMonsterMaterial"),
+                            &ressourceManager.get<Mesh>("PlantMonsterMesh"),
+                            "LightAndTexture",
+                            "PlantMonsterMaterial",
+                            "PlantMonsterMesh"};
+
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
+
+        enemyBase.addComponent<Model>(modelArg);
+        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
+        enemyPhysicalObjComp.setFreezeTrX(true);
+        enemyPhysicalObjComp.setFreezeTrZ(true);
+        enemyPhysicalObjComp.setFreezeTrY(true);
+        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+
+        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+
+        ennemyControllerComp.setLife(3);
+        ennemyControllerComp.setSpeed(35);
+        ennemyControllerComp.setDamage(1);
+        ennemyControllerComp.setRadius(50);
+        ennemyControllerComp.setValueOnHit(10);
+        ennemyControllerComp.setValueOnDeath(100);
+
+        Save::createPrefab(enemyBase, "enemy3");
+        enemyBase.destroyImmediate();
+    }
 
     GameObjectCreateArg spawnerGOArg;
 
@@ -1947,14 +2014,6 @@ void Demo::loadTimeManager        ()
 
 void Demo::updateControl()
 {
-    // for (auto &&i : Scene::getCurrentScene()->getGameObject("world/DecalContenor").children)
-    // {
-    //     std::cout << Scene::getCurrentScene()->getGameObject("world/DecalContenor").getModelMatrix() << std::endl;
-    //     std::cout << i->getScale() << std::endl;
-    //     std::cout << i->getModelMatrix() << std::endl;
-    //     exit(1);
-    // }
-
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
