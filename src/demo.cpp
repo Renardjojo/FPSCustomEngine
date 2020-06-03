@@ -37,6 +37,8 @@
 #include "Game/Shotgun.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/Loot.hpp"
+#include "Game/LifeLoot.hpp"
+#include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
 
 #include "../src/stb_image.h"
@@ -63,7 +65,7 @@ using namespace Engine;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
-using namespace Engine::Ressources::Save;
+using namespace Save;
 using namespace Engine::LowRenderer;
 using namespace Engine::Core::Maths;
 using namespace Engine::Core::Parsers;
@@ -88,7 +90,7 @@ Demo::Demo(Engine::GE& gameEngine)
     loadCamera();
     loadEntity(_gameEngine.ressourceManager_);
     loadLights(_gameEngine.ressourceManager_);
-    loadATH(_gameEngine.ressourceManager_);
+    loadBulletHoleContenor (50);
     loadEnemies(_gameEngine.ressourceManager_);
     // setupScene(*_scene, _gameEngine, "./ressources/saves/testtest.xml");
     // mainCamera = &_scene->getGameObject("world/MainCamera");
@@ -219,7 +221,16 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     }
 
     matDefault.name = "BrownMaterial";
-    matDefault.comp.ambient.rgbi = Vec4{0.45f, 0.25f, 0.04f, 1.f};
+    matDefault.comp.ambient.rgbi = Vec4{0.4f, 0.2f, 0.f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
+    }
+
+    matDefault.name = "YellowMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{1.f, 1.f, 0.f, 1.f};
 
     {
         std::vector<Material> material;
@@ -257,6 +268,9 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadCrateRessource          (ressourceManager);  
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
+    loadLootRessource           (ressourceManager); 
+    loadGuiRessource            (ressourceManager); 
+    loadSniperScopeRessource    (ressourceManager); 
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
@@ -473,7 +487,7 @@ void Demo::loadSpotLightRessource(t_RessourcesManager &ressourceManager)
 
 void Demo::loadGroundRessource(t_RessourcesManager &ressourceManager)
 {
-    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(100));
+    ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(300));
 
     MaterialAndTextureCreateArg matGround;
     matGround.name = "Ground";
@@ -562,7 +576,7 @@ void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager)
+void Demo::loadFogRessource           (t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matFog;
     matFog.name = "FogMaterials";
@@ -580,6 +594,101 @@ void Demo::loadFogRessource           (Engine::Ressources::t_RessourcesManager& 
 
     ressourceManager.add<Mesh>("BillBoardFogMesh", Mesh::createPlane(0.25, 3, 3, Mesh::Axis::Z));
     ressourceManager.add<Shader>("BillBoardFogShader", "./ressources/shader/vCloud.vs", "./ressources/shader/fCloud.fs", SCALE_TIME_ACC);
+}
+
+void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg matCrate;
+    matCrate.name = "RedCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 0.3f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 0.3f, 0.3f, 0.1f};
+    matCrate.pathDiffuseTexture = "./ressources/texture/crate.png";
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "BlueCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 0.3f, 1.f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 0.3f, 1.f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "GreenCrateMaterial";
+    matCrate.comp.ambient.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {0.3f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {0.3f, 1.f, 0.3f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+
+    matCrate.name = "YellowCrateMaterial";
+    matCrate.comp.ambient.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.diffuse.rgbi = {1.f, 1.f, 0.3f, 1.f};
+    matCrate.comp.specular.rgbi = {1.f, 1.f, 0.3f, 0.1f};
+
+    {
+        std::vector<Material> material;
+        material.emplace_back(matCrate);
+        ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
+    }
+}
+
+void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceManager)
+{
+    float halfWidth = _gameEngine.getWinSize().width / 2.f;
+    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
+    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
+
+    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
+                                                        "./ressources/shader/text.vs",
+                                                        "./ressources/shader/texture.fs");
+
+    TextureCreateArg tcaCrosshair{
+        "./ressources/texture/crossair.png",
+        E_WrapType::CLAMP_TO_BORDER,
+    };
+
+    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
+
+    ressourceManager.add<Image>("CrosshairImage",
+                                t_crosshair.getID(),
+                                imageShader,
+                                halfWidth - halfcrosshairSize,
+                                halfHeight - halfcrosshairSize,
+                                crosshairSize,
+                                crosshairSize,
+                                E_GAME_STATE::RUNNING);
+}        
+
+void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
+{
+    TextureCreateArg tcaSniperScope{
+        "./ressources/texture/sniperScope.png",
+        E_WrapType::CLAMP_TO_BORDER,
+    };
+
+    Texture &sniperScopeTexture = ressourceManager.add<Texture>("sniperScopeTexture", tcaSniperScope);
+
+    ressourceManager.add<Image>("SniperScope",
+                                sniperScopeTexture.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                0, 0,
+                                _gameEngine.getWinSize().width,
+                                _gameEngine.getWinSize().heigth,
+                                E_GAME_STATE::RUNNING).isActive = false;;
 }
 
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
@@ -611,7 +720,9 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
 
         rockGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(rockContener, rockGameObject).addComponent<Model>(rockModelArg);
+        GameObject& rockGO = _scene->add<GameObject>(rockContener, rockGameObject);
+        rockGO.addComponent<Model>(rockModelArg);
+        rockGO.addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -643,7 +754,17 @@ void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
 
         treeGameObject.transformArg.scale = {Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f), Random::ranged<float>(2.f, 8.f)};
 
-        _scene->add<GameObject>(treeContener, treeGameObject).addComponent<Model>(treeModelArg);
+        GameObject& treeGO = _scene->add<GameObject>(treeContener, treeGameObject);
+        treeGO.addComponent<Model>(treeModelArg);
+
+        GameObjectCreateArg treeColliderArg{"TreeCollider",
+                                       {{0.f, 0.f, 0.f},
+                                        {0.f, 0.f, 0.f},
+                                        treeGameObject.transformArg.scale}};
+        treeColliderArg.transformArg.scale.y *= 10.f;  
+        treeColliderArg.transformArg.scale.x *= 0.001f;  
+        treeColliderArg.transformArg.scale.z *= 0.001f;          
+        _scene->add<GameObject>(treeGO, treeColliderArg).addComponent<OrientedBoxCollider>().setBounciness(0.4f);
     }
 }
 
@@ -683,7 +804,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     player1GO.addComponent<PhysicalObject>().setMass(1);
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
-    player1GO.getComponent<SphereCollider>()->setFriction(0.70f);
+    player1GO.getComponent<SphereCollider>()->setFriction(0.95f);
 
     playerGameObject.name = "Skin";
     playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
@@ -857,9 +978,9 @@ void Demo::loadTower(t_RessourcesManager &ressourceManager)
 void Demo::loadGround(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg groundArgGameObject{"Ground",
-                                            {{0.f, -20.f, 0.f},
+                                            {{0.f, 0.f, 0.f},
                                              {0.f, 0.f, 0.f},
-                                             {1000.f, 1.f, 1000.f}}};
+                                             {3000.f, 1.f, 3000.f}}};
 
     ModelCreateArg groundArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("Ground"),
@@ -877,7 +998,7 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
     ground.setTag("Ground");
 }
 
-void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number)
+void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned int number)
 {
    GameObjectCreateArg fogGameObjectArg  {"FogContener"};
 
@@ -894,16 +1015,17 @@ void Demo::loadFog           (Engine::Ressources::t_RessourcesManager& ressource
                             true, false, false};
     
     /*Create tree with random size, position and rotation and add it on tre contener*/
+    float rotAngleRadStep = M_PI * 2.f / number;
     for (size_t i = 0; i < number; i++)
     {
         fogGameObjectArg.name = "Fog" + std::to_string(i);
-        fogGameObjectArg.transformArg.position.x = Random::ranged<float>(-250.f, 250.f);
-        fogGameObjectArg.transformArg.position.z = Random::ranged<float>(-250.f, 250.f);
-        fogGameObjectArg.transformArg.rotation.y = Random::ranged<float>(360.f * M_PI / 180.f);
-        fogGameObjectArg.transformArg.scale = {Random::ranged<float>(50.f, 100.f), Random::ranged<float>(20.f, 55.f), 1.f};
-        fogGameObjectArg.transformArg.position.y = fogGameObjectArg.transformArg.scale.y / 2.f;
+        fogGameObjectArg.transformArg.position.x = cos(i * rotAngleRadStep) * (i % 2 == 0 ? 1000.f : 800.f);
+        fogGameObjectArg.transformArg.position.z = sin(i * rotAngleRadStep) * (i % 2 == 0 ? 1000.f : 800.f);
+        fogGameObjectArg.transformArg.rotation.y = i * -rotAngleRadStep + M_PI_2;
+        fogGameObjectArg.transformArg.scale = {500.f, 200.f, 1.f};
+        fogGameObjectArg.transformArg.position.y = fogGameObjectArg.transformArg.scale.y / 10.f * 4.f;
 
-        _scene->add<GameObject>(fogContener, fogGameObjectArg).addComponent<BillBoard>(fogModelArg);
+        _scene->add<GameObject>(fogContener, fogGameObjectArg).addComponent<Model>(fogModelArg);
     }
 }
 
@@ -920,7 +1042,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     float wrapHeight = 10.f;
     float wrapWidth = 4.f;
     float wrapDepth = 2.5f;
-    float wrapThickness = 0.3f;
+    float wrapThickness = 0.6f;
 
     /*Lever*/
     GameObjectCreateArg leverArgGameObject{"Lever",
@@ -983,29 +1105,29 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObject& mechanism = _scene->add<GameObject>(lootMachin, mechanismArgGameObject);
     
     GameObjectCreateArg firstInclinedPlatformArgGameObject{"FirstInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 6) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg secondInclinedPlatformArgGameObject{"SecondInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 5) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
 
     GameObjectCreateArg thirdInclinedPlatformArgGameObject{"ThirdInclinedPlatform",
-                                            {{wrapWidth / 4.f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
+                                            {{wrapWidth / 4.f - 0.1f, (wrapHeight / 8.f * 4) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                         
     GameObjectCreateArg forthInclinedPlatformArgGameObject{"ForthInclinedPlatform",
-                                            {{-wrapWidth / 4.f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
+                                            {{-wrapWidth / 4.f + 0.1f, (wrapHeight / 8.f * 3) - wrapHeight / 2.f, 0.f},
                                             {0.f, 0.f, -M_PI_4},
-                                            {wrapWidth / 2.f, wrapThickness, wrapDepth}}};
+                                            {wrapWidth / 2.f, wrapThickness / 2.f, wrapDepth}}};
                             
     GameObjectCreateArg distributorInclinedPlatformArgGameObject{"DistributorInclinedPlatform",
                                             {{0.f, (wrapHeight / 8.f * 1) - wrapHeight / 2.f, 0.f},
                                             {M_PI_4, 0.f, 0.f},
-                                            {wrapWidth, wrapThickness, wrapDepth}}};
+                                            {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
     ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
                              &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
@@ -1104,46 +1226,75 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                             "Cube"};
     glassPlatformArg.isOpaque = false;
 
-    _scene->add<GameObject>(wrap, rightFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, leftFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, backwardFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, topFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject).addComponent<Model>(blackPlatformArg);
-    _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject).addComponent<Model>(glassPlatformArg);
+    GameObject& wrap1GO = _scene->add<GameObject>(wrap, rightFaceArgGameObject);
+    wrap1GO.addComponent<Model>(blackPlatformArg);
+    wrap1GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap2GO = _scene->add<GameObject>(wrap, leftFaceArgGameObject);
+    wrap2GO.addComponent<Model>(blackPlatformArg);
+    wrap2GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap3GO = _scene->add<GameObject>(wrap, backwardFaceArgGameObject);
+    wrap3GO.addComponent<Model>(blackPlatformArg);
+    wrap3GO.addComponent<OrientedBoxCollider>();
+
+    GameObject& wrap4GO = _scene->add<GameObject>(wrap, topFaceArgGameObject);
+    wrap4GO.addComponent<Model>(blackPlatformArg);
+
+    GameObject& wrap5GO = _scene->add<GameObject>(wrap, forwardTopFaceArgGameObject);
+    wrap5GO.addComponent<Model>(blackPlatformArg);
+
+    GameObject& wrap6GO = _scene->add<GameObject>(wrap, forwardGlassFaceArgGameObject);
+    wrap6GO.addComponent<Model>(glassPlatformArg);
 
     /*Create lots prefabs*/
-    GameObjectCreateArg lot1GameObjectArg{"Lot1"};
-    lot1GameObjectArg.transformArg.scale /= 2.f;
+    {
+        GameObjectCreateArg lot1GameObjectArg{"Lot1"};
+        lot1GameObjectArg.transformArg.scale /= 2.f;
 
-    GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
+        GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
 
-    lot1GO.addComponent<Model>(greenPlatformArg);
-    lot1GO.addComponent<PhysicalObject>().setMass(1);
-    lot1GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot1GO.addComponent<Loot>();
+        ModelCreateArg modelBlueCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("YellowCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "YellowCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot1GO, "Lot1");
-    lot1GO.destroy();
+        lot1GO.addComponent<Model>(modelBlueCrateArg);
+        lot1GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot1GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.4f);
+        colliderComp.setFriction(0.9f);
+        lot1GO.addComponent<BombeLoot>();
 
-    GameObjectCreateArg lot2GameObjectArg{"Lot2"};
-    lot2GameObjectArg.transformArg.scale /= 2.f;
+        Save::createPrefab(lot1GO, "Lot1");
+        lot1GO.destroy();
+    }
 
-    GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
+    {
+        GameObjectCreateArg lot2GameObjectArg{"Lot2"};
+        lot2GameObjectArg.transformArg.scale /= 2.f;
 
-    ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("CrateMaterial"),
-                          &ressourceManager.get<Mesh>("Cube"),
-                          "LightAndTexture",
-                          "CrateMaterial",
-                          "Cube"};
+        GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
 
-    lot2GO.addComponent<Model>(modelCrateArg);
-    lot2GO.addComponent<PhysicalObject>().setMass(1);
-    lot2GO.addComponent<SphereCollider>().setBounciness(0.4f);
-    lot2GO.addComponent<Loot>();
+        ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("RedCrateMaterial"),
+                            &ressourceManager.get<Mesh>("Cube"),
+                            "LightAndTexture",
+                            "RedCrateMaterial",
+                            "Cube"};
 
-    Save::createPrefab(lot2GO, "Lot2");
-    lot2GO.destroy();
+        lot2GO.addComponent<Model>(modelCrateArg);
+        lot2GO.addComponent<PhysicalObject>().setMass(1);
+        SphereCollider& colliderComp = lot2GO.addComponent<SphereCollider>();
+        colliderComp.setBounciness(0.1f);
+        colliderComp.setFriction(0.95f);
+        lot2GO.addComponent<LifeLoot>();
+
+        Save::createPrefab(lot2GO, "Lot2");
+        lot2GO.destroy();
+    }
 
     /*Create spawner*/
     GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
@@ -1151,7 +1302,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     GameObjectCreateArg spawnerGOArg;
     {
         spawnerGOArg.name = "Spawner";
-        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f, 0.f};
+        spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
         spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
@@ -1170,6 +1321,9 @@ void Demo::loadCamera()
 
 void Demo::loadEntity(t_RessourcesManager &ressourceManager)
 {
+    /*Fixe the seed to obtain a fixed procedural scene*/
+    Random::initSeed(10.f);
+
     loadTimeManager             ();
     loadRock                    (ressourceManager, 100);
     loadTree                    (ressourceManager, 50);
@@ -1179,6 +1333,9 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     loadFog                     (ressourceManager, 20);
     //loadTower                  (ressourceManager);Game
     loadLootMachin               (ressourceManager);
+
+    /*Add randome seed*/
+    Random::initSeed();
 }
 void Demo::loadLights(t_RessourcesManager &ressourceManager)
 {
@@ -1615,35 +1772,7 @@ ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
 #pragma endregion
 }
 
-void Demo::loadATH(t_RessourcesManager &ressourceManager)
-{
-    float halfWidth = _gameEngine.getWinSize().width / 2.f;
-    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
-    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
-    float halfcrosshairSize = crosshairSize * 0.5;
-
-    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
-                                                        "./ressources/shader/text.vs",
-                                                        "./ressources/shader/texture.fs");
-
-    TextureCreateArg tcaCrosshair{
-        "./ressources/texture/crossair.png",
-        E_WrapType::CLAMP_TO_BORDER,
-    };
-
-    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
-
-    ressourceManager.add<Image>("CrosshairImage",
-                                t_crosshair.getID(),
-                                imageShader,
-                                halfWidth - halfcrosshairSize,
-                                halfHeight - halfcrosshairSize,
-                                crosshairSize,
-                                crosshairSize,
-                                E_GAME_STATE::RUNNING);
-}
-
-void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager)
+void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg NexusGameObjectArg{"Nexus"};
 
@@ -1661,7 +1790,7 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
                                 0.f, 0.05f, 0.f, true};
 
     GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
-    nexus.setTranslation(Vec3{-10, -15, -10});
+    nexus.setTranslation(Vec3{-10, 8, -10});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
     nexus.addComponent<Model>(modelNexusArg);
     nexus.addComponent<Nexus>();
@@ -1735,7 +1864,6 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     // Save::createPrefab(crate, "Crate");
     // crate.destroy();
 
-    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}}}).addComponent<MaxElementConteneur>(10);
 
     /*Create spawner*/
 
@@ -1803,6 +1931,11 @@ void Demo::loadEnemies(Engine::Ressources::t_RessourcesManager &ressourceManager
     waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 0).nextWave();
 }
 
+void Demo::loadBulletHoleContenor (int maxDecale)
+{
+    _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"DecalContenor", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}}).addComponent<MaxElementConteneur>(maxDecale);
+}
+
 void Demo::loadTimeManager        ()
 {
     GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
@@ -1811,12 +1944,14 @@ void Demo::loadTimeManager        ()
 
 void Demo::updateControl()
 {
-    /*
-    float dist = 5.f;
-    _scene->getGameObject("Z").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecForward());
-    _scene->getGameObject("Y").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecUp());
-    _scene->getGameObject("X").setTranslation(_scene->getGameObject("Player").getPosition() + dist * _scene->getGameObject("Player").getVecRight());
-    */
+    // for (auto &&i : Scene::getCurrentScene()->getGameObject("world/DecalContenor").children)
+    // {
+    //     std::cout << Scene::getCurrentScene()->getGameObject("world/DecalContenor").getModelMatrix() << std::endl;
+    //     std::cout << i->getScale() << std::endl;
+    //     std::cout << i->getModelMatrix() << std::endl;
+    //     exit(1);
+    // }
+
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
