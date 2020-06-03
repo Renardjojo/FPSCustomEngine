@@ -129,7 +129,7 @@ namespace Engine::Core::Debug
              * @param msg 
              */
             static inline 
-            void log (std::string msg) noexcept;
+            void log (const std::string& msg) noexcept;
 
             /**
              * @brief display message with prefix "Error : " in current stream
@@ -137,7 +137,7 @@ namespace Engine::Core::Debug
              * @param msg 
              */
             static inline 
-            void logError (std::string msg) noexcept;
+            void logError (const std::string& msg) noexcept;
 
             /**
              * @brief display error of openGl with prefix "Error : " in current stream
@@ -145,7 +145,7 @@ namespace Engine::Core::Debug
              * @param msg 
              */
             static inline 
-            void GlCheckAndLogError (std::string msg) noexcept;
+            void GlCheckAndLogError (const std::string& msg) noexcept;
 
             /**
              * @brief display message with prefix "Warning : " in current stream
@@ -153,7 +153,7 @@ namespace Engine::Core::Debug
              * @param msg 
              */
             static inline 
-            void logWarning (std::string msg) noexcept;
+            void logWarning (const std::string& msg) noexcept;
 
             /**
              * @brief display message with prefix "Help : " in current stream
@@ -161,7 +161,7 @@ namespace Engine::Core::Debug
              * @param msg 
              */
             static inline 
-            void logHelp (std::string msg) noexcept;
+            void logHelp (const std::string& msg) noexcept;
 
             /**
              * @brief display message with elem initialized in current stream
@@ -169,7 +169,7 @@ namespace Engine::Core::Debug
              * @param elem initialized 
              */
             static inline 
-            void logInitializationStart (std::string elem) noexcept;
+            void logInitializationStart (const std::string& elem) noexcept;
 
             /**
              * @brief display message with count of elem initialize in current stream
@@ -178,7 +178,7 @@ namespace Engine::Core::Debug
              * @param count in %
              */
             static inline 
-            void logInitializationStep   (std::string elem, unsigned int count) noexcept;
+            void logInitializationStep   (const std::string& elem, unsigned int count) noexcept;
 
         /**
              * @brief display message with elem initialized in current stream
@@ -186,7 +186,7 @@ namespace Engine::Core::Debug
              * @param elem initialized 
              */
             static inline 
-            void logInitializationEnd   (std::string elem) noexcept;
+            void logInitializationEnd   (const std::string& elem) noexcept;
 
             /**
              * @brief Set the Setting object
