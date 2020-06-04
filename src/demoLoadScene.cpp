@@ -1676,7 +1676,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
     EnemiesPrefabs enemiesPrefs {"enemy1", "enemy2", "enemy3"};
-    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 3).nextWave();
+    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 10).nextWave();
 }
 
 void Demo::loadBulletHoleContenor (int maxDecale)
