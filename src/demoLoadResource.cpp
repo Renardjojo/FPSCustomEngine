@@ -117,6 +117,15 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
+    matDefault.name = "CyanMaterial";
+    matDefault.comp.ambient.rgbi = Vec4{0.f, 1.f, 1.f, 1.f};
+
+    {
+        std::vector<Material> material;
+        material.push_back(matDefault);
+        ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
+    }
+
     matDefault.name = "BlueMaterial";
     matDefault.comp.ambient.rgbi = Vec4{0.f, 0.f, 1.f, 1.f};
 
@@ -329,18 +338,19 @@ void Demo::loadGunRessource(t_RessourcesManager &ressourceManager)
 void Demo::loadPseudoRessource(t_RessourcesManager &ressourceManager)
 {
     FontCreateArg fontArg;
-    fontArg.fontRoot = "./ressources/font/COURIER.ttf";
-    fontArg.fontSize = 25;
+    fontArg.fontRoot = "./ressources/font/opensans.ttf";
+    fontArg.fontSize = 10;
 
-    Font &font = ressourceManager.add<Font>("COURIER", fontArg);
+    Font &font = ressourceManager.add<Font>("opensansPseudo", fontArg);
 
     TextCreateArg textArg;
-    textArg.text = "Mjr. Cavalsky";
+    textArg.text = "Press F";
     textArg.pFont = &font;
-    textArg.color = {0.5f, 0.5f, 0.f, 1.f};
+    textArg.color = {0.f, 0.3f, 8.f, 1.f};
+    textArg.wrapType = E_WrapType::CLAMP_TO_BORDER;
 
     MaterialCreateArg matText;
-    matText.name = "PseudoMaterial";
+    matText.name = "IndicatorTextMaterial";
     matText.pTexture = std::make_unique<Text>(textArg);
     matText.comp.ambient.ki = 1.f;
     matText.comp.diffuse.ki = 0.f;

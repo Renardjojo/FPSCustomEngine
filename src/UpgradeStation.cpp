@@ -30,11 +30,20 @@ UpgradeStation::UpgradeStation (GameObject &refGameObject, const std::vector<std
 void UpgradeStation::start () noexcept
 {
     _player = Scene::getCurrentScene()->getGameObject("world/Players/Player1").getComponent<PlayerController>();
+    _billBoardIndicator = _gameObject.getChild("Indicator");
 }
 
 void UpgradeStation::update () noexcept
 {
-
+    if ((_player->getGameObject().getGlobalPosition() - _gameObject.getGlobalPosition()).length() <= _activationRadius)
+    {
+        _billBoardIndicator->setActive(true);
+    }
+    else
+    {
+        _billBoardIndicator->setActive(false);
+    }
+    
 }
 
 void UpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)

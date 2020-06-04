@@ -17,9 +17,10 @@ namespace Game
     {
         protected :
 
-        Game::PlayerController* _player {nullptr};
-        float                   _activationRadius{10.f};
-        int                     _cost{500};
+        Game::PlayerController*         _player             {nullptr};
+        Engine::Ressources::GameObject* _billBoardIndicator {nullptr};
+        float                           _activationRadius   {15.f};
+        int                             _cost               {500};
 
         public:
 

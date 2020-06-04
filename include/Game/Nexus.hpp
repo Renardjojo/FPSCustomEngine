@@ -23,8 +23,8 @@ namespace Game
 
     Engine::LowRenderer::PointLight* _light;
 
-    int _life{10};
-
+    int _life{1000};
+    int _maxLife {1000};
 
     public:
         Nexus(Engine::Ressources::GameObject &gameObject);

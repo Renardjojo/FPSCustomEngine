@@ -10,6 +10,7 @@
 #include "GE/Physics/PhysicSystem.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "Game/BarIndicatorController.hpp"
 
 using namespace Game;
 using namespace Engine::Physics;
@@ -29,13 +30,15 @@ Nexus::Nexus(GameObject &_gameObject)
 
 Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
-    _life{std::stoi(params[0])}
+    _life{std::stoi(params[0])},
+    _maxLife {std::stoi(params[1])}
 {}
 
 void Nexus::start()
 {
     _light = getGameObject().getComponent<PointLight>();
     GE_assertInfo(_light != nullptr, "no Nexus light");
+    _gameObject.getChild("lifeBar")->getComponent<BarIndicatorController>()->init(_life, _maxLife);
 }
 
 void Nexus::update()
@@ -46,6 +49,7 @@ void Nexus::update()
 
 void Nexus::fixedUpdate()
 {
+
 }
 
 void Nexus::onCollisionEnter(HitInfo& hitInfo)
@@ -68,6 +72,7 @@ void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("type", "Nexus"));
 
     newNode->append_attribute(doc.allocate_attribute("life", std::to_string(_life).c_str()));
+    newNode->append_attribute(doc.allocate_attribute("maxLife", std::to_string(_maxLife).c_str()));
 
     nodeParent->append_node(newNode);
 }

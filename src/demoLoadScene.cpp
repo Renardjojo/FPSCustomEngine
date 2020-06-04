@@ -280,24 +280,6 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
         Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 30, 0.1f,ressourceManager.get<Sound>("Machinegun"));
         playerControllerPlayer1.addFirearm(&subMachineGunComponent);
     }
-
-    //load billboards
-    std::vector<Material> *vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
-    Size textureSize = (*vecMaterialsPseudo)[0].getPDiffuseTexture()->getSize();
-
-    GameObjectCreateArg pseudoGameObject{"Pseudo",
-                                         {{0.0f, 5.0f, 0.0f},
-                                          {0.f, 0.f, 0.f},
-                                          {-textureSize.width / 10.f, 1.f, textureSize.height / 10.f}}};
-
-    ModelCreateArg planeArg{ressourceManager.get<Shader>("TextureOnly"),
-                            vecMaterialsPseudo,
-                            ressourceManager.get<Mesh>("Plane"),
-                            "TextureOnly",
-                            "PseudoMaterial",
-                            "Plane", true, false};
-
-    _scene->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 }
 
 void Demo::loadGround(t_RessourcesManager &ressourceManager)
@@ -535,7 +517,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {wrapWidth, wrapHeight / 6.f, wrapThickness}}};
 
     GameObjectCreateArg forwardGlassFaceArgGameObject{"forwardGlassFace",
-                                            {{0.f, wrapHeight / 10.f, wrapDepth / 2.f},
+                                            {{0.f, wrapHeight / 10.f - 1.f, wrapDepth / 2.f},
                                             {0.f, 0.f, 0.f},
                                             {wrapWidth, wrapHeight / 3.f * 2.f, wrapThickness}}};
                                             
@@ -767,6 +749,22 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
 void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 {
+    /*Text indicator*/
+    std::vector<Material> *vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("IndicatorTextMaterial");
+    Size textureSize = (*vecMaterialsPseudo)[0].getPDiffuseTexture()->getSize();
+
+    GameObjectCreateArg pseudoGameObject{"Indicator",
+                                        {{0.0f, 5.0f, 0.0f},
+                                        {0.f, 0.f, 0.f},
+                                        {-textureSize.width / 10.f, 1.f, textureSize.height / 10.f}}};
+
+    ModelCreateArg planeArg{ressourceManager.get<Shader>("TextureOnly"),
+                            vecMaterialsPseudo,
+                            ressourceManager.get<Mesh>("Plane"),
+                            "TextureOnly",
+                            "IndicatorTextMaterial",
+                            "Plane", true, false};
+
     {
         GameObjectCreateArg upgradeStationGOArg{"ReloadTimeUpgradeStation",
                                                 {{30.f, 2.5f, -50.f},
@@ -775,6 +773,7 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 
         GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
         upgradeStationGO.addComponent<ReloadTimeUpgradeStation>(1000);
+        _scene->add<GameObject>(upgradeStationGO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 
         createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "ReloadMaterial");
     }
@@ -786,6 +785,7 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 
         GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
         upgradeStationGO.addComponent<AutoUpgradeStation>(2000);
+        _scene->add<GameObject>(upgradeStationGO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 
         createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "AutoMaterial");
     }
@@ -797,6 +797,7 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 
         GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
         upgradeStationGO.addComponent<DamageUpgradeStation>(1500);
+        _scene->add<GameObject>(upgradeStationGO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 
         createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "DamageMaterial");
     }
@@ -810,7 +811,9 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
         upgradeStationGO.addComponent<FireRateUpgradeStation>(1000);
 
         createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "FireRateMaterial");
+        _scene->add<GameObject>(upgradeStationGO, pseudoGameObject).addComponent<BillBoard>(planeArg);
     }
+
     {
         GameObjectCreateArg upgradeStationGOArg{"MunitionCapacityUpgradeStation",
                                                 {{-55.f, 2.5f, 40.f},
@@ -819,6 +822,7 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 
         GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
         upgradeStationGO.addComponent<MunitionCapacityUpgradeStation>(800);
+        _scene->add<GameObject>(upgradeStationGO, pseudoGameObject).addComponent<BillBoard>(planeArg);
 
         createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "MunitionMaterial");
     }
@@ -1304,12 +1308,25 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
 
+    GameObjectCreateArg lifeBarNexusGameObject{"lifeBar",
+                                        {{0.0f, 25.0f, 0.0f},
+                                        {0.f, 0.f, 0.f},
+                                        {5.f, 0.1f, 0.5f}}};
+
+    ModelCreateArg lifeBarNexusBillboardArg{ressourceManager.get<Shader>("Color"),
+                        ressourceManager.get<std::vector<Material>>("CyanMaterial"),
+                        ressourceManager.get<Mesh>("Plane"),
+                        "Color",
+                        "CyanMaterial",
+                        "Plane", true, false};
+
     ModelCreateArg modelNexusArg{ressourceManager.get<Shader>("LightAndTexture"),
                           ressourceManager.get<std::vector<Material>>("NexusMaterial"),
                           ressourceManager.get<Mesh>("NexusMesh"),
                           "LightAndTexture",
                           "NexusMaterial",
                           "NexusMesh"};
+
     modelNexusArg.isOpaque = false;
     nexus.addComponent<Model>(modelNexusArg);
 
@@ -1325,6 +1342,10 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     
     nexus.addComponent<Nexus>();
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
+    
+    GameObject& lifeBar = _scene->add<GameObject>(nexus, lifeBarNexusGameObject);
+    lifeBar.addComponent<BillBoard>(lifeBarNexusBillboardArg);
+    lifeBar.addComponent<BarIndicatorController>();
 
     GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
     GameObject* checkpoint2 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint2"});
