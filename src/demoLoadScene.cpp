@@ -177,8 +177,6 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
     GameObject& playerContener = _scene->add<GameObject>(_scene->getWorld(), playerGameObject);
 
-    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("Soldier1Materials");
-
     playerGameObject.name = "Player1";
     playerGameObject.transformArg.position = {2.f, 10.f, 2.f};
     GameObject& player1GO = _scene->add<GameObject>(playerContener, playerGameObject);
@@ -187,21 +185,6 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     player1GO.addComponent<SphereCollider>().getLocalSphere().setRadius(5.f);
     player1GO.getComponent<SphereCollider>()->setBounciness(0.f);
     player1GO.getComponent<SphereCollider>()->setFriction(0.95f);
-
-    playerGameObject.name = "Skin";
-    playerGameObject.transformArg.position = {0.f, -10.f, -2.f};
-    playerGameObject.transformArg.rotation = {0.f, 0.f, 0.f};
-    playerGameObject.transformArg.scale = {0.18f, 0.18f, 0.18f};
-
-    ModelCreateArg soldierModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                   &vecMaterials,
-                                   &ressourceManager.get<Mesh>("Soldier1Mesh"),
-                                   "LightAndTexture",
-                                   "Soldier1Materials",
-                                   "Soldier1Mesh"};
-
-    GameObject& skinPlayer1GO = _scene->add<GameObject>(player1GO, playerGameObject);
-    skinPlayer1GO.addComponent<Model>(soldierModelArg);
     
     //load flashlight
     GameObjectCreateArg flashlightGameObject    {"FlashLight",
@@ -296,65 +279,6 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
                             "Plane", true, false};
 
     _scene->add<GameObject>(player1GO, pseudoGameObject).addComponent<BillBoard>(planeArg);
-}
-
-void Demo::loadTower(t_RessourcesManager &ressourceManager)
-{
-    //create the tower
-    GameObjectCreateArg towerArgGameObject{"Tower",
-                                           {{0.f, 0.f, 0.f},
-                                            {0.f, 0.f, 0.f},
-                                            {1.f, 1.f, 1.f}}};
-
-    ModelCreateArg towerModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                 &ressourceManager.get<std::vector<Material>>("GuardTowerMaterials"),
-                                 &ressourceManager.get<Mesh>("GuardTowerMesh"),
-                                 "LightAndTexture",
-                                 "GuardTowerMaterials",
-                                 "GuardTowerMesh"};
-
-    GameObject& towerGO = _scene->add<GameObject>(_scene->getWorld(), towerArgGameObject);
-    towerGO.addComponent<Model>(towerModelArg);
-
-    //create projector
-    GameObjectCreateArg spotLightArgGameObject{"SpotLight",
-                                               {{0.0f, 48.0f, -5.0f},
-                                                {M_PI, 0.f, 0.f},
-                                                {0.05f, 0.05f, 0.05f}}};
-
-    ModelCreateArg spotLightModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                     &ressourceManager.get<std::vector<Material>>("SpotLightMaterial"),
-                                     &ressourceManager.get<Mesh>("SpotLightMesh"),
-                                     "LightAndTexture",
-                                     "SpotLightMaterial",
-                                     "SpotLightMesh"};
-
-    GameObject& spotLightGO = _scene->add<GameObject>(towerGO, spotLightArgGameObject);
-    spotLightGO.addComponent<Model>(spotLightModelArg);
-
-    //create light
-    GameObjectCreateArg lightArgGameObject{"light",
-                                           {{0.0f, 90.0f, -50.0f},
-                                            {0, 0.f, 0.f},
-                                            {21.f, 21.f, 21.f}}};
-
-    ModelCreateArg spherModelarg{&ressourceManager.get<Shader>("ColorWithLight"),
-                                &ressourceManager.get<std::vector<Material>>("DefaultMaterial"),
-                                &ressourceManager.get<Mesh>("Sphere"),
-                                "ColorWithLight",
-                                "PinkMaterial",
-                                "Sphere"};
-
-    SpotLightCreateArg lightSpotArg {{1.f, 1.f, 1.f, 0.f}, 
-                                     {1.f, 1.f, 1.f, 1.f}, 
-                                     {1.f, 1.f, 1.f, 1.f},
-                                     0.f, 0.005f, 0.f,
-                                     /*{0.f, -0.5f, 0.6f}, DIRECTION*/
-                                     5.f, 7.f};
-
-    GameObject& lightGO = _scene->add<GameObject>(spotLightGO, lightArgGameObject);
-    lightGO.addComponent<Model>(spherModelarg);
-    lightGO.addComponent<SpotLight>(lightSpotArg).enable(true);
 }
 
 void Demo::loadGround(t_RessourcesManager &ressourceManager)

@@ -15,7 +15,6 @@
 
 namespace Engine::Core::Maths
 {
-
     class Random
     {
         public:
