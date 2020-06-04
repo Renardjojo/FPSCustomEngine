@@ -84,7 +84,7 @@ namespace Game
         void toggleCameraType();
 
         void addFirearm(Firearm* Firearm);
-        Firearm* getCurrentFirearm() { return _firesGuns[0];}
+        Firearm* getCurrentFirearm() { return _firesGuns.empty() ? nullptr : _firesGuns[0];}
 
         void activateLootMachine();
         void inflictDamage(int damage);

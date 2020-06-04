@@ -493,9 +493,6 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     for (auto &&i : gameObjectParent.getComponents<LevitationMovement>())
         i->save(doc, newNode);
 
-    for (auto &&i : gameObjectParent.getComponents<UpgradeStation>())
-        i->save(doc, newNode);
-
     for (auto &&i : gameObjectParent.getComponents<MunitionCapacityUpgradeStation>())
         i->save(doc, newNode);
 

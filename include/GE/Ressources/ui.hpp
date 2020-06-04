@@ -194,7 +194,7 @@ namespace Engine::Ressources
 
         void draw();
 
-        std::string getName() { return _name; }
+        const std::string& getName() { return _name; }
         void setName(std::string name) { _name = name; }
 
         Engine::Core::Maths::Vec2 getPos();

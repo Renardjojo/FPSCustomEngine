@@ -65,7 +65,7 @@ void LootMachine::update () noexcept
     }
 }
 
-void LootMachine::activate(Vec3 playerPosition, int& money)
+void LootMachine::activate(const Vec3& playerPosition, int& money)
 {
     if (money >= _cost)
     {

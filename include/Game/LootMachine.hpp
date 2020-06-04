@@ -37,7 +37,7 @@ namespace Game
 
         void update () noexcept override;
 
-        void activate(Engine::Core::Maths::Vec3 playerPosition, int& money);
+        void activate(const Engine::Core::Maths::Vec3& playerPosition, int& money);
 
         virtual void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
