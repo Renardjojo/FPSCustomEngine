@@ -61,11 +61,6 @@ namespace Engine::Ressources
             return &it->second;
         }
 
-        void remove(const std::string& key)
-        {
-            ressource_.erase(key);
-        }
-
         /**
          * @brief add element with argument of constructor in parameter
          * 
@@ -144,13 +139,6 @@ namespace Engine::Ressources
             {
                 return RessourcesManager<T>::get(key);
             }
-
-            template<class T>
-            void remove(const std::string& key)
-            {
-                RessourcesManager<T>::remove(key);
-            }
-
 
             #pragma endregion //!accessor
 

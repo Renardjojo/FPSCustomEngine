@@ -36,7 +36,7 @@ namespace Game
                 Engine::Core::Maths::Vec2 _orbit{0.f, 0.f};
                 Engine::Ressources::Title *_bullet{nullptr};
                 unsigned int _weaponIndex{0};
-                float _mouseSpeed{0.01f};
+                float _mouseSpeed{0.02f};
                 float _playerForce{0.f};
                 float _playerMaxSpeed{30.f};
                 float _jumpForce{5.f};

@@ -56,7 +56,7 @@ void PlayerController::start()
 {
     _orbit = Vec2{0.f,0.f};
     _weaponIndex = 0;
-    _mouseSpeed = 0.5f;
+    _mouseSpeed = 0.001f;
     _playerForce = 5.f;
     _playerMaxSpeed = 30.f;
     _jumpForce = 5.f;
@@ -197,8 +197,7 @@ void PlayerController::shoot()
 {
   if (_firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
   {
-    Sound& refS = t_RessourcesManager::getRessourceManagerUse()->get<Sound>("Hit");
-    SoundPlayer::play(refS);
+    SoundPlayer::play(*t_RessourcesManager::getRessourceManagerUse()->get<Sound>("Hit"));
     _hitmarker->isActive = true;
   }
 
