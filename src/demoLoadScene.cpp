@@ -1395,7 +1395,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
                                                                                             &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-        ennemyControllerComp.setLife(8);
+        ennemyControllerComp.setLife(4);
         ennemyControllerComp.setSpeed(20);
         ennemyControllerComp.setDamage(2);
         ennemyControllerComp.setValueOnHit(10);
@@ -1434,7 +1434,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
                                                                                             &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-        ennemyControllerComp.setLife(3);
+        ennemyControllerComp.setLife(8);
         ennemyControllerComp.setSpeed(35);
         ennemyControllerComp.setDamage(1);
         ennemyControllerComp.setRadius(50);
@@ -1538,7 +1538,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     GameObject& waveManagerGO = _scene->add<GameObject>(_scene->getWorld(), waveManagerArg);
     SpawnerPrefabs spawnerPrefs {"Spawner1", "Spawner2", "Spawner3", "Spawner4"};
     EnemiesPrefabs enemiesPrefs {"enemy1", "enemy2", "enemy3"};
-    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 1, 3).nextWave();
+    waveManagerGO.addComponent<WaveManager>(spawnerPrefs, enemiesPrefs, 0, 3).nextWave();
 }
 
 void Demo::loadBulletHoleContenor (int maxDecale)
@@ -1549,5 +1549,5 @@ void Demo::loadBulletHoleContenor (int maxDecale)
 void Demo::loadTimeManager        ()
 {
     GameObject& timeManager = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"TimeManager"});
-    timeManager.addComponent<DayNightCycle>(6.f, 12.f, 3.f, 18.f, 12.f, 3.f, 10.f, 100.f);
+    timeManager.addComponent<DayNightCycle>(60.f, 120.f, 30.f, 180.f, 120.f, 30.f, 100.f, 1000.f);
 }
