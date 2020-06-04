@@ -127,11 +127,6 @@ void EnnemyController::chasing()
         else
             _physics->setVelocity(Vec3::zero);
         
-            
-        
-        
-        
-        std::cout<<length<<std::endl;
         if (_cooldown >= _attackSpeed && length < _attackRadius)
         {
            _player->getComponent<PlayerController>()->inflictDamage(_damage);

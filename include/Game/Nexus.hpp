@@ -25,6 +25,7 @@ namespace Game
 
     int _life{1000};
     int _maxLife {1000};
+    float _maxLightIntensity {0.f};
 
     public:
         Nexus(Engine::Ressources::GameObject &gameObject);

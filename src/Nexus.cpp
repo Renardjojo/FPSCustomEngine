@@ -33,7 +33,8 @@ Nexus::Nexus(GameObject &_gameObject)
 Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
     _life{std::stoi(params[0])},
-    _maxLife {std::stoi(params[1])}
+    _maxLife {std::stoi(params[1])},
+    _maxLightIntensity {std::stof(params[2])}
 {}
 
 void Nexus::start()
@@ -41,6 +42,7 @@ void Nexus::start()
     _light = getGameObject().getComponent<PointLight>();
     GE_assertInfo(_light != nullptr, "no Nexus light");
     _gameObject.getChild("lifeBar")->getComponent<BarIndicatorController>()->init(_life, _maxLife);
+    _maxLightIntensity = _light->getLinear();
 }
 
 void Nexus::update()
@@ -65,7 +67,7 @@ void Nexus::onCollisionEnter(HitInfo &hitInfo)
 void Nexus::inflictDamage(int damage)
 {
     _life -= damage;
-    _light->setLinear(0.05f + (11 - _life) * 0.01f);
+    _light->setLinear(_maxLightIntensity * static_cast<float>(_life) / static_cast<float>(_maxLife));
 }
 
 void Nexus::save(xml_document<> &doc, xml_node<> *nodeParent)
@@ -78,6 +80,7 @@ void Nexus::save(xml_document<> &doc, xml_node<> *nodeParent)
 
     newNode->append_attribute(doc.allocate_attribute("life", std::to_string(_life).c_str()));
     newNode->append_attribute(doc.allocate_attribute("maxLife", std::to_string(_maxLife).c_str()));
+    newNode->append_attribute(doc.allocate_attribute("maxLightIntensity", std::to_string(_maxLightIntensity).c_str()));
 
     nodeParent->append_node(newNode);
 }
