@@ -1339,7 +1339,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         lot1GO.addComponent<BombeLoot>();
 
         Save::createPrefab(lot1GO, "Lot1");
-        lot1GO.destroy();
+        lot1GO.destroyImmediate();
     }
 
     {
@@ -1363,7 +1363,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         lot2GO.addComponent<LifeLoot>();
 
         Save::createPrefab(lot2GO, "Lot2");
-        lot2GO.destroy();
+        lot2GO.destroyImmediate();
     }
 
     /*Create spawner*/
@@ -1378,7 +1378,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
-        //spawnerGO.destroy();
+        //spawnerGO.destroyImmediate();
     }
 }
 
@@ -2098,7 +2098,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     Save::createPrefab(enemyBase, "enemy3");
 
-    enemyBase.destroy();
+    enemyBase.destroyImmediate();
 
     // GameObjectCreateArg CrateGameObjectArg{"Crate"};
 
@@ -2152,7 +2152,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
-        spawnerGO.destroy();
+        spawnerGO.destroyImmediate();
     }
 
     {
@@ -2170,7 +2170,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
-        spawnerGO.destroy();
+        spawnerGO.destroyImmediate();
     }
 
     {
@@ -2188,7 +2188,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
-        spawnerGO.destroy();
+        spawnerGO.destroyImmediate();
     }
 
     {
@@ -2207,7 +2207,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
-        spawnerGO.destroy();
+        spawnerGO.destroyImmediate();
     }
 
     /*Create wave manager and assign spawner and enemies prefabs*/

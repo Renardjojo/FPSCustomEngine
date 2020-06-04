@@ -112,7 +112,7 @@ namespace Engine::Core::Maths
         template<typename T = int>
         static auto ranged(const T& min, const T& max) -> std::enable_if_t<std::is_integral<T>::value, T>
         {
-            return min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/((max + 1) - min)));
+            return min + static_cast <T> (rand()) / (static_cast <T> (RAND_MAX/((max + 1) - min)));
         }
 
 #pragma region Cicular
