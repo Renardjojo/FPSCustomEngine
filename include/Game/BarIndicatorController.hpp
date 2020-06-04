@@ -38,15 +38,12 @@ namespace Game
         void start() override
         {
             _maxScaleX = _gameObject.getScale().x;
-            std::cout << _maxScaleX << "    " << _gameObject.getScale().x << "  " << *_refValue << "    " << _maxValue << std::endl;
         }
 
         void update() override
         {
             Engine::Core::Maths::Vec3 currentScale = _gameObject.getScale();
             currentScale.x = (_maxScaleX * (*_refValue)) / static_cast<float>(_maxValue);
-
-
 
             if (currentScale.x >= 0.f)
                 _gameObject.setScale(currentScale);
