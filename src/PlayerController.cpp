@@ -250,7 +250,6 @@ void PlayerController::onCollisionEnter(HitInfo &hitInfo)
     {
         _isGrounded = true;
         _playerForce = _groundForce;
-        // _physics->setIsKinematic(false);
     }
 }
 
