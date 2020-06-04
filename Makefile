@@ -42,10 +42,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXX_DEBUG) $< -o $@
+	g++ -c $(CXX_BUILD) $< -o $@
 
 %.o: %.c
-	gcc -c $(C_DEBUG) $< -o $@
+	gcc -c $(C_BUILD) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
