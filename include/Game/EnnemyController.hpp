@@ -1,7 +1,6 @@
 #ifndef __ENNEMYCONTROLLER_HPP__
 #define __ENNEMYCONTROLLER_HPP__
 
-
 #include "GE/Core/Component/ScriptComponent.hpp"
 #include "GE/Ressources/GameObject.hpp"
 #include "GE/Core/Maths/vec.hpp"
@@ -32,6 +31,7 @@ namespace Game
         float _cooldown{0.f};
         int _damage{1};
         int _life{2};
+        int _maxLife{2};
         int _valueOnHit{5};
         int _valueOnDeath{50};
         float _exclusionRadius{11.f};

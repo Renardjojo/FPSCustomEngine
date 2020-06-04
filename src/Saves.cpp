@@ -15,6 +15,7 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Core/System/ScriptSystem.hpp"
 #include "GE/Core/Debug/log.hpp"
+#include "GE/LowRenderer/billBoard.hpp"
 
 #include "Game/demo.hpp"
 #include "Game/EnnemyController.hpp"
@@ -38,6 +39,7 @@
 #include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
 #include "Game/UpgradeStation.hpp"
+#include "Game/BarIndicatorController.hpp"
 
 using namespace rapidxml;
 
@@ -120,6 +122,21 @@ void Engine::Ressources::Save::setupScene(Scene& scene, const char* filePath)
     ScriptSystem::start();
 }
 
+void callStartRecusrive(GameObject& go)
+{
+    /*update his start*/
+    for (auto &&i : go.getComponents<ScriptComponent>())
+    {
+        i->start();
+    }
+
+    /*call start for each children*/
+    for (auto &&i : go.children)
+    {
+        callStartRecusrive(*i.get());
+    }
+}
+
 Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject& parent, std::string prefabName)
 {
     file<> xmlFile((std::string("./ressources/Prefabs/") + prefabName + std::string(".xml")).c_str());
@@ -130,10 +147,7 @@ Engine::Ressources::GameObject& Engine::Ressources::Save::loadPrefab(GameObject&
 
     GameObject& newGO = initEntity(parent, node);
 
-    for (auto &&i : newGO.getComponents<ScriptComponent>())
-    {
-        i->start();
-    }
+    callStartRecusrive(newGO);
 
     return newGO;
 }
@@ -265,7 +279,9 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             params.push_back(attr->value());
 
         //TODO: Can be optimaze. Use unorderde map with lambda
-        if (type.compare("Model") == 0)
+        if (type.compare("BillBoard") == 0)
+            parent.addComponent<BillBoard>(params, *t_RessourcesManager::getRessourceManagerUse());      
+        else if (type.compare("Model") == 0)
             parent.addComponent<Model>(params, *t_RessourcesManager::getRessourceManagerUse());
         else if (type.compare("PhysicalObject") == 0)
             parent.addComponent<PhysicalObject>(params);
@@ -331,6 +347,8 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
             parent.addComponent<ReloadTimeUpgradeStation>(params);
         else if (type.compare("AutoUpgradeStation") == 0)
             parent.addComponent<AutoUpgradeStation>(params);
+        else if (type.compare("BarIndicatorController") == 0)
+            parent.addComponent<BarIndicatorController>();  
 
         newGameObject = &parent;
     }
@@ -417,6 +435,13 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
     }
 
     for (auto &&i : gameObjectParent.getComponents<Model>())
+    {
+        if (dynamic_cast<BillBoard*>(i))
+            continue;
+        i->save(doc, newNode);
+    }
+
+    for (auto &&i : gameObjectParent.getComponents<BillBoard>())
         i->save(doc, newNode);
 
     for (auto &&i : gameObjectParent.getComponents<PlayerController>())
@@ -505,6 +530,9 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         i->save(doc, newNode);
 
     for (auto &&i : gameObjectParent.getComponents<AutoUpgradeStation>())
+        i->save(doc, newNode);
+
+    for (auto &&i : gameObjectParent.getComponents<BarIndicatorController>())
         i->save(doc, newNode);
 
     for (auto&& gameObjectParent : gameObjectParent.children)
