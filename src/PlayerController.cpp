@@ -46,6 +46,25 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 
 void PlayerController::start()
 {
+    _orbit = Vec2{0.f,0.f};
+    _mouseSpeed = 0.5f;
+    _playerForce = 30.f;
+    _jumpForce = 7.f;
+    _airForce = 5.f;
+    _groundForce = 30.f;
+    _playerMaxSpeed = 1.f;
+    _cameraSpeed = 10.f;
+    _cameraYoffset = 5.f;
+    _hitmarkerDisplayTime = 0.2f;
+    _hitmarkerDisplaydelay = 0.f;
+    _life = 5;
+    _money = 500;
+    _jump = false;
+    _isGrounded = false;
+
+    _movement = Vec3{0.f, 0.f, 0.f};
+    _direction = Vec3{0.f, 0.f, 0.f};
+
     _physics = _gameObject.getComponent<PhysicalObject>();
     GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
     _playerForce = _airForce;

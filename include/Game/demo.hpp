@@ -109,6 +109,7 @@ namespace Game
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadBulletHoleContenor (int maxDecale);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGUI                (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTimeManager        ();
             void loadCamera             ();
 

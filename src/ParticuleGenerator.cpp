@@ -40,9 +40,9 @@ ParticuleGenerator::ParticuleGenerator(GameObject &gameObject, const ParticleSys
 
 ParticuleGenerator::ParticuleGenerator (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
     :   Engine::Core::Component::ScriptComponent    {refGameObject},
-        _modelCreateArg                             {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>(params[0]),
-                                                    &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>(params[1]),
-                                                    &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>(params[2]),
+        _modelCreateArg                             {t_RessourcesManager::getRessourceManagerUse()->get<Shader>(params[0]),
+                                                    t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>(params[1]),
+                                                    t_RessourcesManager::getRessourceManagerUse()->get<Mesh>(params[2]),
                                                     params[0], params[1], params[2], static_cast<bool>(std::stoi(params[3])),
                                                     static_cast<bool>(std::stoi(params[4])), static_cast<bool>(std::stoi(params[5]))},
         _physicalObjectCreateArg                    {   std::stof(params[6]), static_cast<bool>(std::stoi(params[7])), static_cast<bool>(std::stoi(params[8])),

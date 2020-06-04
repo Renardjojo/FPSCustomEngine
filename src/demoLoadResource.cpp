@@ -169,6 +169,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
+    loadSounds(_gameEngine.ressourceManager_);
     loadRockRessource           (ressourceManager);
     loadTreeRessource           (ressourceManager);
     loadSkyboxRessource         (ressourceManager);
@@ -649,7 +650,7 @@ void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
 
     ressourceManager.add<Image>("SniperScope",
                                 sniperScopeTexture.getID(),
-                                &ressourceManager.get<Shader>("ImageShader"),
+                                ressourceManager.get<Shader>("ImageShader"),
                                 0, 0,
                                 _gameEngine.getWinSize().width,
                                 _gameEngine.getWinSize().heigth,
