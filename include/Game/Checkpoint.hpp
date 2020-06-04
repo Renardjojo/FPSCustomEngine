@@ -42,9 +42,9 @@ namespace Game
     class CheckpointManager
     {
     public:
-        Checkpoint* _checkpoints;
-        Engine::Core::Maths::Vec3 _targetPos;
-        unsigned int _cpNumber{0};
+        Checkpoint* _checkpoints                {nullptr};
+        Engine::Core::Maths::Vec3 _targetPos    {Engine::Core::Maths::Vec3::zero};
+        unsigned int _cpNumber                  {0};
 
         CheckpointManager()
         {
