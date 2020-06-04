@@ -50,15 +50,17 @@ namespace Game
          * @param spawnDelay 
          * @param spawnDelayInterval : spawnDelay will be compute this + or - this intervale.  
          */
-        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* contenor, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
+        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
 
-        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Engine::Ressources::GameObject* contenor, Game::Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
+        CircularEntitiesSpawner(Engine::Ressources::GameObject &gameObject, Game::Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval = 0.f);
 
         CircularEntitiesSpawner (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params);
 
         void addEntitiesToSpawner(unsigned int numberEntities, const std::string& prefabs);
 
         virtual ~CircularEntitiesSpawner() = default;
+
+        void start() override;
 
         /**
          * @brief Return true if the spawn stop to spawn entities
@@ -69,6 +71,8 @@ namespace Game
         bool isEmpty() const noexcept { return _entitiesToSpawnInfo.empty();}
 
         void update() override;
+
+        void setContenor(Engine::Ressources::GameObject* contenor) { _contenor = contenor; };
 
         void save(xml_document<>& doc, xml_node<>* nodeParent);
     };

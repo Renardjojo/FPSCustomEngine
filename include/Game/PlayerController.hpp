@@ -37,7 +37,7 @@ namespace Game
                 Engine::Ressources::Title *_bullet{nullptr};
                 unsigned int _weaponIndex{0};
                 float _mouseSpeed{0.5f};
-                float _playerForce{0.f};
+                float _playerForce{5.f};
                 float _playerMaxSpeed{30.f};
                 float _jumpForce{5.f};
                 float _airForce{5.f};

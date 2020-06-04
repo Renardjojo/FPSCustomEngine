@@ -169,6 +169,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
         ressourceManager.add<std::vector<Material>>(matBulletHole.name, std::move(material));
     }
 
+    loadSounds(_gameEngine.ressourceManager_);
     loadRockRessource           (ressourceManager);
     loadTreeRessource           (ressourceManager);
     loadSkyboxRessource         (ressourceManager);
@@ -186,7 +187,18 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadLootRessource           (ressourceManager); 
     loadSniperScopeRessource    (ressourceManager);
     loadUpgradeStationRessource (ressourceManager);
+
+    TextureCreateArg tcaCrosshair{"./ressources/texture/crossair.png",E_WrapType::CLAMP_TO_BORDER};
+    TextureCreateArg tcaBullet{"./ressources/texture/Bullet.png",E_WrapType::CLAMP_TO_BORDER,E_FilterType::LINEAR,false};
+    TextureCreateArg tcaHealth{"./ressources/texture/Health.png",E_WrapType::CLAMP_TO_BORDER};
+    TextureCreateArg hitmarkerTextureArg{"./ressources/texture/hitmarker.png",E_WrapType::CLAMP_TO_BORDER};
+
+    ressourceManager.add<Texture>("crosshair", tcaCrosshair);
+    ressourceManager.add<Texture>("bullet", tcaBullet);
+    ressourceManager.add<Texture>("Health", tcaHealth);
+    ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
 }
+
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
     SoundPlayer::initialize();
@@ -597,7 +609,7 @@ void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
 
     ressourceManager.add<Image>("SniperScope",
                                 sniperScopeTexture.getID(),
-                                &ressourceManager.get<Shader>("ImageShader"),
+                                ressourceManager.get<Shader>("ImageShader"),
                                 0, 0,
                                 _gameEngine.getWinSize().width,
                                 _gameEngine.getWinSize().height,

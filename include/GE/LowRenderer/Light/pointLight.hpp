@@ -69,6 +69,10 @@ namespace Engine::LowRenderer
             virtual void serializeOnEditor () noexcept override;
             #endif
 
+            float getLinear() { return linear_; }
+            void setLinear(float linear) { linear_ = linear; }
+
+
             #pragma endregion //!methods
 
         protected:
