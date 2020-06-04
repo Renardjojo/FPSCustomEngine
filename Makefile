@@ -9,12 +9,12 @@ EXCLUDE= src/glad.o
 
 #Relase or debug option
 #CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_DEBUG=-O0 -std=gnu++17 -DDNEDITOR -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O3 -std=gnu++17 -DDNEDITOR -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXX_EDITOR=-O0 -std=gnu++17 -g -Wno-unknown-pragmas $(IDIR)
 CXX_BUILD=-O3 -std=gnu++17 -DNDEBUG -DDNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-C_DEBUG=-O0 -DDNEDITOR -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
+C_DEBUG=-O3 -DNDEBUG -DDNEDITOR -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
 C_EDITOR=-O0 -g -Wno-unknown-pragmas $(IDIR)
 C_BUILD=-O3 -D DNDEBUG -DDNEDITOR -Wno-unknown-pragmas $(IDIR)
 
@@ -42,10 +42,10 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXX_BUILD) $< -o $@
+	g++ -c $(CXX_DEBUG) $< -o $@
 
 %.o: %.c
-	gcc -c $(C_BUILD) $< -o $@
+	gcc -c $(C_DEBUG) $< -o $@
 
 $(OUTPUT): $(OBJS)
 	mkdir -p bin
