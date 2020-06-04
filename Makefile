@@ -9,12 +9,12 @@ EXCLUDE= src/glad.o
 
 #Relase or debug option
 #CXX_DEBUG=-Og -std=gnu++17 -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-CXX_DEBUG=-O0 -std=gnu++17 -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
+CXX_DEBUG=-O0 -std=gnu++17 -DNEDITOR -W -Wall -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
 CXX_EDITOR=-O0 -std=gnu++17 -g -Wno-unknown-pragmas $(IDIR)
 CXX_BUILD=-O2 -std=gnu++17 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
 #C_DEBUG=-Og -g -pg -no-pie -MMD -Wno-unknown-pragmas $(IDIR)
-C_DEBUG=-O0 -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
+C_DEBUG=-O0 -DNEDITOR -g -pg -no-pie -MMD -W -Wall -Wno-unknown-pragmas $(IDIR)
 C_EDITOR=-O0 -g -Wno-unknown-pragmas $(IDIR)
 C_BUILD=-O2 -DNDEBUG -DNEDITOR -Wno-unknown-pragmas $(IDIR)
 
@@ -24,7 +24,7 @@ VFLAG=--leak-check=full --show-leak-kinds=all
 
 #Lib
 LIBSGL= -ldl
-LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lopenal -lalut
+LIBSDL2=-lSDL2 -lSDL2_image -lSDL2_ttf -lopenal -lalut
 LDLIBS= $(LIBSDL2) $(LIBSGL)
 
 #Cpp and C wildcard
@@ -42,7 +42,7 @@ multi :
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	g++ -c $(CXX_DEBUG) $< -o $@
+	g++ -c $(CXX_BUILD) $< -o $@
 
 %.o: %.c
 	gcc -c $(C_DEBUG) $< -o $@
