@@ -249,7 +249,6 @@ void Engine::Core::Parsers::loadObjWithMTL (const char* objPath, Attrib* attrib,
         if (line.size() < 2)
             continue;
 
-        //std::cout << line << std::endl;
         parseLine (line, attrib, shape, materials);
     }     
     SLog::logInitializationEnd("Obj parsing");  

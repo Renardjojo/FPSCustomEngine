@@ -24,7 +24,6 @@ void Loot::start () noexcept
 
 void Loot::update () noexcept
 {
-    //std::cout << (_playerGO->getGlobalPosition() - _gameObject.getGlobalPosition()).length() << "   " <<  _activationRadius << std::endl;
     if ((_playerGO->getGlobalPosition() - _gameObject.getGlobalPosition()).length() <= _activationRadius)
     {
         effect();

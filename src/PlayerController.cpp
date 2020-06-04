@@ -3,8 +3,11 @@
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
-#include "GE/Physics/PhysicSystem.hpp"
-#include "GE/Physics/PhysicalObject.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include "Game/LootMachine.hpp"
+#include "Game/UpgradeStation.hpp"
+#include "Game/LifeDuration.hpp"
+#include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ui.hpp"
@@ -31,7 +34,6 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-      _rm{t_RessourcesManager::getRessourceManagerUse()},
       _camera{Camera::getCamUse()}
 {
   _name = __FUNCTION__;
@@ -53,12 +55,20 @@ void PlayerController::start()
 
   _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
   GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
+
+  for (Image *image : UISystem::getImages())
+  {
+    if (image->getName().compare("HitMarker") == 0)
+    {
+      _hitmarker = image;
+      break;
+    }
+  }
+  GE_assertInfo(_hitmarker != nullptr, "no hitmarker found");
 };
 
 void PlayerController::update()
 {
-  // std::cout << _money << std::endl;
-
   if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
     _jump = true;
 
@@ -70,8 +80,8 @@ void PlayerController::update()
 
   move();
 
-  if (_life <= 0)
-    std::cout << "player is dead" << std::endl;
+  // if (_life <= 0)
+  //   std::cout << "player is dead" << std::endl;
 
   if (_firearms.empty())
     return;
@@ -79,6 +89,9 @@ void PlayerController::update()
   if (_firearms.at(_weaponIndex)->isAutomatic() ? Input::mouse.leftClicDown
                                                 : Input::mouse.leftClicDownOnce)
     shoot();
+
+  // if (_life <= 0)
+  //     std::cout << "player is dead" << std::endl;
 
   if (Input::mouse.rightClicDownOnce)
     switchAimState();
@@ -104,9 +117,18 @@ void PlayerController::update()
 
     if (_bullet)
     {
-
       _bullet->value = bulletToString();
       _bullet->updateTexture();
+    }
+  }
+
+  if (_hitmarker->isActive)
+  {
+    _hitmarkerDisplaydelay += TimeSystem::getDeltaTime();
+    if (_hitmarkerDisplaydelay > _hitmarkerDisplayTime)
+    {
+      _hitmarkerDisplaydelay = 0.f;
+      _hitmarker->isActive = false;
     }
   }
 }
@@ -123,7 +145,7 @@ void PlayerController::fixedUpdate()
   }
   _jump = false;
 
-  _physics->addForce(_movement * _playerForce *TimeSystem::getFixedDeltaTime());
+  _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
   _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
@@ -135,7 +157,8 @@ void PlayerController::switchFlashLightState()
 
 void PlayerController::shoot()
 {
-  _firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
+  if (_firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
+    _hitmarker->isActive = true;
 
   if (_bullet)
   {
@@ -143,41 +166,27 @@ void PlayerController::shoot()
     _bullet->updateTexture();
   }
 }
-
-void PlayerController::switchAimState() { _firearms.at(_weaponIndex)->switchAimState(); }
-
 void PlayerController::setCameraType(CameraType type) { _type = type; }
+
+void PlayerController::switchAimState()
+{
+  _firearms.at(_weaponIndex)->switchAimState();
+}
 
 void PlayerController::toggleCameraType()
 {
-  _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson
-                                           : CameraType::FirstPerson;
+  _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson : CameraType::FirstPerson;
 }
 
 void PlayerController::activateLootMachine()
 {
-  Scene::getCurrentScene()
-      ->getGameObject("LootMachine")
-      .getComponent<LootMachine>()
-      ->activate(_gameObject.getGlobalPosition());
-}
-
-void PlayerController::addFirearm(Firearm *Firearm)
-{
-  GE_assert(Firearm != nullptr);
-
-  _firearms.push_back(Firearm);
-
-  if (_firearms.size() != 1)
-  {
-    _firearms.back()->getGameObject().setActive(false);
-  }
+  Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition(), _money);
+  Scene::getCurrentScene()->getGameObject("MunitionCapacityUpgradeStation").getComponent<MunitionCapacityUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
 }
 
 void PlayerController::camera()
 {
-  Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x),
-                   static_cast<float>(Input::mouse.motion.y)};
+  Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
   mouseMotion *= _mouseSpeed * TimeSystem::getDeltaTime();
 
   _orbit.y += mouseMotion.x;
@@ -235,7 +244,6 @@ void PlayerController::move()
     _movement.x += _direction.z;
     _movement.z -= _direction.x;
   }
-
 }
 
 void PlayerController::onCollisionEnter(HitInfo &hitInfo)
@@ -253,6 +261,23 @@ std::string PlayerController::bulletToString()
   return std::to_string(_firearms.at(_weaponIndex)->getMunition()) + " / " + std::to_string(_firearms.at(_weaponIndex)->getMagazine());
 }
 
+void PlayerController::addFirearm(Firearm *Firearm)
+{
+  GE_assert(Firearm != nullptr);
+
+  _firearms.push_back(Firearm);
+
+  if (_firearms.size() != 1)
+  {
+    _firearms.back()->getGameObject().setActive(false);
+  }
+}
+
+Firearm *PlayerController::getCurrentFirearm()
+{
+  return _firearms.empty() ? nullptr : _firearms.at(_weaponIndex);
+}
+
 void PlayerController::inflictDamage(int damage) { _life -= damage; }
 
 int *PlayerController::getLife() { return &_life; }
@@ -264,6 +289,7 @@ int *PlayerController::getMoney() { return &_money; }
 void PlayerController::addMoney(int money) { _money += money; }
 
 void PlayerController::setMoney(int money) { _money = money; }
+
 void PlayerController::setBulletReference(Engine::Ressources::Title *bullet) { _bullet = bullet; }
 
 void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)

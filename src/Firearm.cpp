@@ -19,7 +19,6 @@ Firearm::Firearm(Engine::Ressources::GameObject &gameObject, float bulletDamage,
         _sound                                      {sound}
 {
     _name = __FUNCTION__;
-    GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
     GE_assert(reloadTime > 0.f);
     GE_assert(shotIntervalDelay > 0.f);
 }
@@ -41,7 +40,6 @@ Firearm::Firearm (Engine::Ressources::GameObject &refGameObject, const std::vect
         _sound                                      {nullptr}
 {
     _name = __FUNCTION__;
-    GE_assertInfo(_munitionCapacity % _bulletPerShot == 0, "The magazine must match the number of bullets fired per shot");
     GE_assert(_reloadTime > 0.f);
     GE_assert(_shotIntervalDelay > 0.f);
 }
@@ -71,24 +69,24 @@ void Firearm::update () noexcept
     }
 }
 
-void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
+bool Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
 {
     if (_isReloading || _isWaitingForNextShot)
     {
-        return;
+        return false;
     }
 
     /*Auto reload*/
     if (_munition == 0)
     {
         reload();
-        return;
+        return false;
     }
 
     if(_sound)
         Engine::Ressources::SoundPlayer::play(*_sound);
 
-    _munition -= _bulletPerShot;
+    _munition -= 1;
     _isWaitingForNextShot = true;
     
     Engine::Physics::ColliderShape::HitInfo rayInfo;
@@ -105,9 +103,13 @@ void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             pCollider->OnCollisionEnter(hitInfo1);
 
             if (rayInfo.gameObject->getComponent<EnnemyController>())
+            {
                 rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
+                return true;
+            }
         }
     }
+    return false;
 }
 
 void Firearm::save(xml_document<>& doc, xml_node<>* nodeParent) 

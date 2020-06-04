@@ -89,7 +89,8 @@ namespace Game
             void loadGlassRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
             void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);   
             void loadLootRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadSniperScopeRessource   (Engine::Ressources::t_RessourcesManager& ressourceManager);          
+            void loadSniperScopeRessource   (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadUpgradeStationRessource       (Engine::Ressources::t_RessourcesManager& ressourceManager);            
 
             void loadRock                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
@@ -98,16 +99,15 @@ namespace Game
             void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadFog                    (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);    
-            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);      
+            void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadUpgradeStation         (Engine::Ressources::t_RessourcesManager& ressourceManager);            
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadLights             ();
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadBulletHoleContenor (int maxDecale);
-            //void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTimeManager        ();
             void loadCamera             ();
 

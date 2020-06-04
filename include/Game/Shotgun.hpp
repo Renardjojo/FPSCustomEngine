@@ -33,7 +33,7 @@ namespace Game
 
         virtual ~Shotgun() = default;
 
-        void shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept override;
+        bool shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept override;
 
         virtual void save(xml_document<>& doc, xml_node<>* nodeParent);
     };
