@@ -1,9 +1,9 @@
 <enemy2>
-	<GAMEOBJECT type="Empty" name="PumpinkEnnemie" tag="Enemy" posX="0.000000" posY="5.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+	<GAMEOBJECT type="Empty" name="SpiderEnnemie" tag="Enemy" posX="0.000000" posY="5.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="Model" shaderName="LightAndTexture" materialName="SpiderMaterial" meshName="SpiderMesh"/>
 		<COMPONENT type="SphereCollider" radius="0.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000" bounciness="0.000000" friction="0.970000"/>
 		<COMPONENT type="PhysicalObject" velocity0="0.000000" velocity1="0.000000" velocity2="0.000000" AngularVelocity0="0.000000" AngularVelocity1="0.000000" AngularVelocity2="0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="1" freezeRotY="1" freezeRotZ="1" isKinematic="0" useGravity="1" isDirty="0"/>
-		<COMPONENT type="EnnemyController" player="world/Players/Player1" nexus="world/Nexus" state="0" checkpointName="nullptr" checkpointTargetX="-22.942368" checkpointTargetY="0.000136" checkpointTargetZ="-0.000000" checkpointNumber="0" radius="35.000000" attackRadius="5.000000" speed="10.000000" attackSpeed="1.000000" cooldown="0.000000" damage="2" life="8"/>
+		<COMPONENT type="EnnemyController" player="world/Players/Player1" nexus="world/Nexus" state="0" checkpointName="nullptr" checkpointTargetX="-0.000000" checkpointTargetY="-nan" checkpointTargetZ="-0.000000" checkpointNumber="0" radius="35.000000" attackRadius="5.000000" speed="10.000000" attackSpeed="1.000000" cooldown="0.000000" damage="2" life="8"/>
 	</GAMEOBJECT>
 </enemy2>
 

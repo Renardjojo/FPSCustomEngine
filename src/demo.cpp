@@ -172,7 +172,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -181,7 +181,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -189,7 +189,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     matDefault.comp.ambient.rgbi = Vec4{1.f, 0.f, 0.f, 1.f};
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -198,7 +198,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -207,7 +207,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -216,7 +216,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -225,7 +225,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -234,7 +234,7 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
 
     {
         std::vector<Material> material;
-        material.emplace_back(matDefault);
+        material.push_back(matDefault);
         ressourceManager.add<std::vector<Material>>(matDefault.name, std::move(material));
     }
 
@@ -1086,10 +1086,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {M_PI_2, 0.f, 0.f},
                                             {.3f, 0.3f, 3.f}}};
                                              
-    ModelCreateArg cylinderArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg cylinderArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
                              &ressourceManager.get<Mesh>("Cylinder"),
-                             "LightAndTexture",
+                             "ColorWithLight",
                              "BlackMaterial",
                              "Cylinder", 
                             true, false};
@@ -1101,10 +1101,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
                                              
-    ModelCreateArg sphereArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg sphereArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("RedMaterial"),
                              &ressourceManager.get<Mesh>("Sphere"),
-                             "LightAndTexture",
+                             "ColorWithLight",
                              "RedMaterial",
                              "Sphere"};
 
@@ -1115,10 +1115,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0.f, M_PI_2, 0.f},
                                             {0.7f, 0.7f, 1.5f}}};
                                              
-    ModelCreateArg cylinderBaseArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg cylinderBaseArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
                              &ressourceManager.get<Mesh>("Cylinder"),
-                             "LightAndTexture",
+                             "ColorWithLight",
                              "BlackMaterial",
                              "Cylinder", 
                             true, false};
@@ -1158,24 +1158,24 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {M_PI_4, 0.f, 0.f},
                                             {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
-    ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
                              &ressourceManager.get<Mesh>("Cube"),
-                            "LightAndTexture",
+                            "ColorWithLight",
                             "GreenMaterial",
                             "Cube"};
 
-    ModelCreateArg pinkPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg pinkPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
                              &ressourceManager.get<Mesh>("Cube"),
-                            "LightAndTexture",
+                            "ColorWithLight",
                             "PinkMaterial",
                             "Cube"};
 
-    ModelCreateArg redPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg redPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("RedMaterial"),
                              &ressourceManager.get<Mesh>("Cube"),
-                            "LightAndTexture",
+                            "ColorWithLight",
                             "RedMaterial",
                             "Cube"};
 
@@ -1240,10 +1240,10 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0.f, 0.f, 0.f},
                                             {wrapWidth, wrapHeight / 3.f * 2.f, wrapThickness}}};
                                             
-    ModelCreateArg blackPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
+    ModelCreateArg blackPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
                              &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
                              &ressourceManager.get<Mesh>("Cube"),
-                            "LightAndTexture",
+                            "ColorWithLight",
                             "BlackMaterial",
                             "Cube"};
 
@@ -1863,8 +1863,8 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         enemyBase.destroyImmediate();
     }
 
-    {   /*Pumpink ennemie*/
-        GameObjectCreateArg Ennemy1GameObjectArg{"PumpinkEnnemie"};
+    {   /*Spider ennemie*/
+        GameObjectCreateArg Ennemy1GameObjectArg{"SpiderEnnemie"};
         Ennemy1GameObjectArg.transformArg.position = Vec3{0.f, 5.f, 0.f};
 
 
@@ -1900,8 +1900,8 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     }
 
 
-    {   /*?????? ennemie*/
-        GameObjectCreateArg Ennemy1GameObjectArg{"??????"};
+    {   /*Plant monster ennemie*/
+        GameObjectCreateArg Ennemy1GameObjectArg{"PlantMonsterEnnemie"};
         Ennemy1GameObjectArg.transformArg.scale = Vec3{4.f, 6.f, 4.f};
 
 
