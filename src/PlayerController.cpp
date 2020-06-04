@@ -1,19 +1,20 @@
-#include <iostream>
 #include "Game/PlayerController.hpp"
+#include "GE/Core/Debug/assert.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
-#include "GE/Physics/PhysicalObject.hpp"
-#include "GE/Physics/PhysicSystem.hpp"
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
-#include "Game/ParticuleGenerator.hpp"
-#include "Game/LootMachine.hpp"
-#include "Game/LifeDuration.hpp"
-#include "GE/Ressources/scene.hpp"
+#include "GE/Physics/PhysicSystem.hpp"
+#include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
-#include "GE/Core/Debug/assert.hpp"
+#include "GE/Ressources/scene.hpp"
+#include "GE/Ressources/ui.hpp"
+#include "Game/LifeDuration.hpp"
+#include "Game/LootMachine.hpp"
+#include "Game/ParticuleGenerator.hpp"
+#include <iostream>
 
-#include <math.h>
 #include <algorithm>
+#include <math.h>
 
 using namespace Game;
 using namespace Engine::Physics;
@@ -33,250 +34,245 @@ PlayerController::PlayerController(GameObject &_gameObject)
       _rm{t_RessourcesManager::getRessourceManagerUse()},
       _camera{Camera::getCamUse()}
 {
-    _name = __FUNCTION__;
+  _name = __FUNCTION__;
 }
 
 Vec3 PlayerController::cylindricalCoord(float r, float angle)
 {
-    Vec3 res{Vec3::zero};
-    sincosf(angle - M_PI_2f32, &res.z, &res.x);
-    res *= r;
-    return res;
+  Vec3 res{Vec3::zero};
+  sincosf(angle - M_PI_2f32, &res.z, &res.x);
+  res *= r;
+  return res;
 }
 
 void PlayerController::start()
 {
-    _physics = _gameObject.getComponent<PhysicalObject>();
-    GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
-    _playerForce = _airForce;
+  _physics = _gameObject.getComponent<PhysicalObject>();
+  GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
+  _playerForce = _airForce;
 
-    _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
-    GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
+  _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
+  GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
 };
 
 void PlayerController::update()
 {
-    std::cout << _money << std::endl;
+  // std::cout << _money << std::endl;
 
-    if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
-        _jump = true;
+  if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
+    _jump = true;
 
-    if (Input::keyboard.getKeyState(Input::keyboard.flashLight) == E_KEY_STATE::TOUCHED)
-        switchFlashLightState();
+  if (Input::keyboard.getKeyState(Input::keyboard.flashLight) == E_KEY_STATE::TOUCHED)
+    switchFlashLightState();
 
-    if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == E_KEY_STATE::TOUCHED)
-        toggleCameraType();
+  if (Input::keyboard.getKeyState(SDL_SCANCODE_F2) == E_KEY_STATE::TOUCHED)
+    toggleCameraType();
 
-    move();
+  move();
 
-    if (_life <= 0)
-        std::cout << "player is dead" << std::endl;
+  if (_life <= 0)
+    std::cout << "player is dead" << std::endl;
 
-    if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
-        shoot();
+  if (_firearms.empty())
+    return;
 
-    if (!_firesGuns.empty() && Input::mouse.rightClicDownOnce)
-        switchAimState();
+  if (_firearms.at(_weaponIndex)->isAutomatic() ? Input::mouse.leftClicDown
+                                                : Input::mouse.leftClicDownOnce)
+    shoot();
 
-    if (Input::keyboard.getKeyState(Input::keyboard.use) == E_KEY_STATE::TOUCHED)
-        activateLootMachine();
+  if (Input::mouse.rightClicDownOnce)
+    switchAimState();
 
-    if (Input::keyboard.getKeyState(Input::keyboard.reload) == E_KEY_STATE::TOUCHED)
-        _firesGuns[0]->reload();
+  if (Input::keyboard.getKeyState(Input::keyboard.use) == E_KEY_STATE::TOUCHED)
+    activateLootMachine();
 
-    /*Choose fire gun*/
-    if (_firesGuns.size() > 1)
+  if (Input::keyboard.getKeyState(Input::keyboard.reload) == E_KEY_STATE::TOUCHED)
+    _firearms.at(_weaponIndex)->reload();
+
+  if (Input::mouse.wheel_scrollingFlag != 0)
+  {
+    if (_firearms.at(_weaponIndex)->isAiming())
     {
-        if (Input::mouse.wheel_scrollingFlag != 0)
-        {
-            if (_firesGuns.front()->isAiming())
-            {
-                _firesGuns.front()->switchAimState();
-            }
-
-            if (Input::mouse.wheel_scrollingFlag == 1)
-            {
-                Firearm *temp = _firesGuns.front();
-                _firesGuns.erase(_firesGuns.begin());
-                _firesGuns.push_back(temp);
-                temp->getGameObject().setActive(false);
-                _firesGuns.front()->getGameObject().setActive(true);
-            }
-            else
-            {
-                Firearm *temp = _firesGuns.back();
-                _firesGuns.pop_back();
-                temp->getGameObject().setActive(true);
-                _firesGuns.front()->getGameObject().setActive(false);
-                _firesGuns.insert(_firesGuns.begin(), temp);
-            }
-        }
+      _firearms.at(_weaponIndex)->switchAimState();
     }
+
+    int mod = (Input::mouse.wheel_scrollingFlag + (int)_weaponIndex) % (int)_firearms.size();
+
+    _firearms.at(_weaponIndex)->getGameObject().setActive(false);
+    _weaponIndex = mod >= 0 ? mod : _firearms.size() + mod;
+    _firearms.at(_weaponIndex)->getGameObject().setActive(true);
+
+    if (_bullet)
+    {
+
+      _bullet->value = bulletToString();
+      _bullet->updateTexture();
+    }
+  }
 }
 
 void PlayerController::fixedUpdate()
 {
-    if (_jump && _isGrounded)
-    {
-        _physics->addForce(Vec3::up * _jumpForce);
-        _jump = false;
-        _playerForce = _airForce;
-        _physics->setUseGravity(true);
-        _isGrounded = false;
-    }
+  if (_jump && _isGrounded)
+  {
+    _physics->addForce(Vec3::up * _jumpForce);
     _jump = false;
+    _playerForce = _airForce;
+    _physics->setUseGravity(true);
+    _isGrounded = false;
+  }
+  _jump = false;
 
-    _physics->addForce(_movement * _playerForce * TimeSystem::getFixedDeltaTime());
+  _physics->addForce(_movement * _playerForce *TimeSystem::getFixedDeltaTime());
+  _physics->setVelocity(_physics->getVelocity().clampLength(_playerMaxSpeed));
 };
 
 void PlayerController::switchFlashLightState()
 {
-    _flashLightOn = !_flashLightOn;
-    _flashLight->enable(_flashLightOn);
+  _flashLightOn = !_flashLightOn;
+  _flashLight->enable(_flashLightOn);
 }
 
 void PlayerController::shoot()
 {
-    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
+  _firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
+
+  if (_bullet)
+  {
+    _bullet->value = bulletToString();
+    _bullet->updateTexture();
+  }
 }
 
-void PlayerController::switchAimState()
-{
-    _firesGuns[0]->switchAimState();
-}
+void PlayerController::switchAimState() { _firearms.at(_weaponIndex)->switchAimState(); }
 
-
-void PlayerController::setCameraType(CameraType type)
-{
-    // if(_type!=type)
-    // {
-    //     //animation de transition de position de la camera
-    // }
-    _type = type;
-}
+void PlayerController::setCameraType(CameraType type) { _type = type; }
 
 void PlayerController::toggleCameraType()
 {
-    _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson : CameraType::FirstPerson;
+  _type = _type == CameraType::FirstPerson ? CameraType::ThirdPerson
+                                           : CameraType::FirstPerson;
 }
 
 void PlayerController::activateLootMachine()
 {
-    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition());
+  Scene::getCurrentScene()
+      ->getGameObject("LootMachine")
+      .getComponent<LootMachine>()
+      ->activate(_gameObject.getGlobalPosition());
 }
 
 void PlayerController::addFirearm(Firearm *Firearm)
 {
-    GE_assert(Firearm != nullptr);
+  GE_assert(Firearm != nullptr);
 
-    _firesGuns.push_back(Firearm);
+  _firearms.push_back(Firearm);
 
-    if (_firesGuns.size() != 1)
-    {
-        _firesGuns.back()->getGameObject().setActive(false);
-    }
+  if (_firearms.size() != 1)
+  {
+    _firearms.back()->getGameObject().setActive(false);
+  }
 }
 
 void PlayerController::camera()
 {
-    Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-    mouseMotion *= _mouseSpeed * TimeSystem::getDeltaTime();
+  Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x),
+                   static_cast<float>(Input::mouse.motion.y)};
+  mouseMotion *= _mouseSpeed * TimeSystem::getDeltaTime();
 
-    _orbit.y += mouseMotion.x;
-    _orbit.x += mouseMotion.y;
+  _orbit.y += mouseMotion.x;
+  _orbit.x += mouseMotion.y;
 
-    _orbit.y = fmod(_orbit.y, M_PI * 2);
-    _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
+  _orbit.y = fmod(_orbit.y, M_PI * 2);
+  _orbit.x = std::clamp(_orbit.x, -M_PI_2f32, M_PI_2f32);
 
-    if (_type == CameraType::FirstPerson)
-    {
-        _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
-        _camera->setTranslation(_gameObject.getPosition());
-        _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
-        _camera->update();
-
-        return;
-    }
-
-    //Camera orbit
-    //todo change distance
-    Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
-    coordinates.y += _cameraYoffset;
-    _camera->setTranslation(coordinates);
+  if (_type == CameraType::FirstPerson)
+  {
+    _gameObject.setRotation({_orbit.x, -_orbit.y, 0.f});
+    _camera->setTranslation(_gameObject.getPosition());
+    _camera->setRotation({-_orbit.x, -_orbit.y + M_PIf32, 0.f});
     _camera->update();
 
-    //lookat
-    _camera->lookAt(_camera->getPosition(), _gameObject.getPosition(), Vec3::up);
-}
+    return;
+  }
 
-void PlayerController::inflictDamage(int damage)
-{
-    _life -= damage;
+  // Camera orbit
+  // todo change distance
+  Vec3 coordinates = cylindricalCoord(10.f, _orbit.y) + _gameObject.getPosition();
+  coordinates.y += _cameraYoffset;
+  _camera->setTranslation(coordinates);
+  _camera->update();
+
+  // lookat
+  _camera->lookAt(_camera->getPosition(), _gameObject.getPosition(), Vec3::up);
 }
 
 void PlayerController::move()
 {
-    camera();
+  camera();
 
-    //movements
-    _direction.x = sinf(_orbit.y);
-    _direction.y = 0;
-    _direction.z = -cosf(_orbit.y);
+  // movements
+  _direction.x = sinf(_orbit.y);
+  _direction.y = 0;
+  _direction.z = -cosf(_orbit.y);
 
-    _movement = Vec3::zero;
+  _movement = Vec3::zero;
 
-    //movement
-    if (Input::keyboard.isDown[Input::keyboard.up])
-        _movement -= _direction;
+  // movement
+  if (Input::keyboard.isDown[Input::keyboard.up])
+    _movement -= _direction;
 
-    if (Input::keyboard.isDown[Input::keyboard.down])
-        _movement += _direction;
+  if (Input::keyboard.isDown[Input::keyboard.down])
+    _movement += _direction;
 
-    if (Input::keyboard.isDown[Input::keyboard.left])
-    {
-        _movement.x -= _direction.z;
-        _movement.z += _direction.x;
-    }
-    if (Input::keyboard.isDown[Input::keyboard.right])
-    {
-        _movement.x += _direction.z;
-        _movement.z -= _direction.x;
-    }
+  if (Input::keyboard.isDown[Input::keyboard.left])
+  {
+    _movement.x -= _direction.z;
+    _movement.z += _direction.x;
+  }
+  if (Input::keyboard.isDown[Input::keyboard.right])
+  {
+    _movement.x += _direction.z;
+    _movement.z -= _direction.x;
+  }
 
-    //clamp max speed
 }
 
 void PlayerController::onCollisionEnter(HitInfo &hitInfo)
 {
-    if (hitInfo.gameObject->getTag() == "Ground")
-    {
-        _isGrounded = true;
-        _playerForce = _groundForce;
-        // _physics->setIsKinematic(false);
-    }
+  if (hitInfo.gameObject->getTag() == "Ground")
+  {
+    _isGrounded = true;
+    _playerForce = _groundForce;
+    // _physics->setIsKinematic(false);
+  }
 }
 
-int* PlayerController::getLife()
+std::string PlayerController::bulletToString()
 {
-    return &_life;
-}
-int* PlayerController::getMaxLife()
-{
-    return &_maxLife;
+  return std::to_string(_firearms.at(_weaponIndex)->getMunition()) + " / " + std::to_string(_firearms.at(_weaponIndex)->getMagazine());
 }
 
-int* PlayerController::getPoints()
-{
-    return &_points;
-}
+void PlayerController::inflictDamage(int damage) { _life -= damage; }
+
+int *PlayerController::getLife() { return &_life; }
+
+int *PlayerController::getMaxLife() { return &_maxLife; }
+
+int *PlayerController::getMoney() { return &_money; }
+
+void PlayerController::addMoney(int money) { _money += money; }
+
+void PlayerController::setMoney(int money) { _money = money; }
+void PlayerController::setBulletReference(Engine::Ressources::Title *bullet) { _bullet = bullet; }
 
 void PlayerController::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
-    if (!nodeParent)
-        return;
-    xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+  if (!nodeParent)
+    return;
+  xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
 
-    newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+  newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
 
-    nodeParent->append_node(newNode);
+  nodeParent->append_node(newNode);
 }

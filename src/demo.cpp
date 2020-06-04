@@ -149,7 +149,7 @@ void Demo::display() const noexcept
 
     if (_gameEngine.gameState == E_GAME_STATE::RUNNING || _gameEngine.gameState == E_GAME_STATE::PAUSE)
     {
-        glViewport(0, 0, sizeWin.width, sizeWin.heigth);
+        glViewport(0, 0, sizeWin.width, sizeWin.height);
 
         RenderingSystem::draw();
     }
@@ -269,7 +269,6 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
     loadLootRessource           (ressourceManager); 
-    loadGuiRessource            (ressourceManager); 
     loadSniperScopeRessource    (ressourceManager); 
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
@@ -644,34 +643,7 @@ void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
         ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
     }
 }
-
-void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceManager)
-{
-    float halfWidth = _gameEngine.getWinSize().width / 2.f;
-    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
-    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
-    float halfcrosshairSize = crosshairSize * 0.5;
-
-    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
-                                                        "./ressources/shader/text.vs",
-                                                        "./ressources/shader/texture.fs");
-
-    TextureCreateArg tcaCrosshair{
-        "./ressources/texture/crossair.png",
-        E_WrapType::CLAMP_TO_BORDER,
-    };
-
-    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
-
-    ressourceManager.add<Image>("CrosshairImage",
-                                t_crosshair.getID(),
-                                imageShader,
-                                halfWidth - halfcrosshairSize,
-                                halfHeight - halfcrosshairSize,
-                                crosshairSize,
-                                crosshairSize,
-                                E_GAME_STATE::RUNNING);
-}        
+   
 
 void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
 {
@@ -682,12 +654,17 @@ void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
 
     Texture &sniperScopeTexture = ressourceManager.add<Texture>("sniperScopeTexture", tcaSniperScope);
 
+
+    ressourceManager.add<Shader>("ImageShader",
+                                                        "./ressources/shader/text.vs",
+                                                        "./ressources/shader/texture.fs");
+
     ressourceManager.add<Image>("SniperScope",
                                 sniperScopeTexture.getID(),
                                 &ressourceManager.get<Shader>("ImageShader"),
                                 0, 0,
                                 _gameEngine.getWinSize().width,
-                                _gameEngine.getWinSize().heigth,
+                                _gameEngine.getWinSize().height,
                                 E_GAME_STATE::RUNNING).isActive = false;;
 }
 
@@ -904,7 +881,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg pseudoGameObject{"Pseudo",
                                          {{0.0f, 5.0f, 0.0f},
                                           {0.f, 0.f, 0.f},
-                                          {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f}}};
+                                          {-textureSize.width / 10.f, 1.f, textureSize.height / 10.f}}};
 
     ModelCreateArg planeArg{&ressourceManager.get<Shader>("TextureOnly"),
                             &vecMaterialsPseudo,
@@ -1314,7 +1291,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
 void Demo::loadCamera()
 {
-    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
+    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().height), 0.1f, 10000.0f, 45.0f, "MainCamera"};
     mainCamera = &_scene->add<Camera>(_scene->getWorld(), camArg);
     dynamic_cast<Camera *>(mainCamera)->use();
 }
@@ -1433,8 +1410,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     Shader *buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
     float halfWidth = _gameEngine.getWinSize().width / 2.f;
-    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
-    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
+    float halfHeight = _gameEngine.getWinSize().height / 2.f;
+    float crosshairSize = _gameEngine.getWinSize().height / 15;
     float halfcrosshairSize = crosshairSize * 0.5;
 
 #pragma region Start
@@ -1772,30 +1749,57 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                 150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
 
 
-
-    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
-                                                        "./ressources/shader/text.vs",
-                                                        "./ressources/shader/texture.fs");
-
-    TextureCreateArg tcaCrosshair{
-        "./ressources/texture/crossair.png",
-        E_WrapType::CLAMP_TO_BORDER,
-    };
+    TextureCreateArg tcaCrosshair{"./ressources/texture/crossair.png",E_WrapType::CLAMP_TO_BORDER};
+    TextureCreateArg tcaBullet{"./ressources/texture/Bullet.png",E_WrapType::CLAMP_TO_BORDER,E_FilterType::LINEAR,false};
+    TextureCreateArg tcaHealth{"./ressources/texture/Health.png",E_WrapType::CLAMP_TO_BORDER};
 
     Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
+    Texture &t_bullet = ressourceManager.add<Texture>("bullet", tcaBullet);
+    Texture &t_health = ressourceManager.add<Texture>("Health", tcaHealth);
 
     ressourceManager.add<Image>("CrosshairImage",
                                 t_crosshair.getID(),
-                                imageShader,
+                                &ressourceManager.get<Shader>("ImageShader"),
                                 halfWidth - halfcrosshairSize,
                                 halfHeight - halfcrosshairSize,
                                 crosshairSize,
                                 crosshairSize,
                                 E_GAME_STATE::RUNNING);
+    ressourceManager.add<Image>("HealthImage",
+                                t_health.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                0,
+                                halfHeight*2 - t_health.getSize().height,
+                                t_health.getSize().width,
+                                t_health.getSize().height,
+                                E_GAME_STATE::RUNNING);
+    ressourceManager.add<Image>("BulletImage",
+                                t_bullet.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                halfWidth*2 - t_bullet.getSize().width - t_bullet.getSize().width/2,
+                                halfHeight*2 - t_bullet.getSize().height - t_bullet.getSize().height/15,
+                                t_bullet.getSize().width,
+                                t_bullet.getSize().height,
+                                E_GAME_STATE::RUNNING);
 
     ressourceManager.add<ReferencedTitle>("lifeIndicator", pfont, buttonShader,
-                                halfWidth  - halfWidth / 2.f, halfHeight - halfHeight / 10.f,
-                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"Wave ", E_GAME_STATE::RUNNING);
+                                halfWidth/10.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"", E_GAME_STATE::RUNNING);
+    ressourceManager.add<ReferencedTitle>("maxlifeIndicator", pfont, buttonShader,
+                                halfWidth/5.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMaxLife(),"/ ", E_GAME_STATE::RUNNING);                        
+    
+    ressourceManager.add<ReferencedTitle>("moneyIndicator", pfont, buttonShader,
+                                halfWidth/10.f, halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{120, 240, 120, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMoney(),"$", E_GAME_STATE::RUNNING);                        
+    
+    
+    Title* bulletIndicator = &ressourceManager.add<Title>("bulletIndicator", pfont, buttonShader,
+                                halfWidth*1.75, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255}," Bullets", E_GAME_STATE::RUNNING);
+    
+    _scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->setBulletReference(bulletIndicator);
+                            
 
 #pragma endregion
 }
