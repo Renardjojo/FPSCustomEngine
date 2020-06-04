@@ -1,7 +1,8 @@
 <Spawner1>
-	<GAMEOBJECT type="Empty" name="Spawner1" posX="5.000000" posY="5.000000" posZ="5.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="CircularEntitiesSpawner" zoneRadius="2.000000" spawnDelay="0.500000" spawnDelayInterval="0.000000" delayCount="0.000000" nextDelay="0.500000" contenorName="world/EnemiesContener"/>
-		<GAMEOBJECT type="Empty" name="PointLight" posX="0.000000" posY="2.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+	<GAMEOBJECT type="Empty" name="Spawner1" tag="GameObject" posX="-120.000000" posY="5.000000" posZ="-175.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+		<COMPONENT type="Model" shaderName="ColorWithLight" materialName="BlueMaterial" meshName="Sphere"/>
+		<COMPONENT type="CircularEntitiesSpawner" zoneRadius="2.000000" spawnDelay="0.500000" spawnDelayInterval="0.000000" delayCount="0.000000" nextDelay="0.500000" contenorName="world/EnemiesContener" checkpointName="world/checkpoint1"/>
+		<GAMEOBJECT type="Empty" name="PointLight" tag="GameObject" posX="0.000000" posY="2.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 			<COMPONENT type="PointLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.000000" diffuse0="1.000000" diffuse1="0.000000" diffuse2="0.000000" diffuse3="0.700000" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="0.300000" constant="0.000000" linear="0.050000" quadriatic="0.000000" isEnable="1"/>
 		</GAMEOBJECT>
 	</GAMEOBJECT>

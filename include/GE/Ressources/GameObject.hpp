@@ -114,8 +114,21 @@ namespace Engine::Ressources
 
         std::list<std::unique_ptr<Component>>::iterator destroyComponent (const std::list<std::unique_ptr<Component>>::iterator& it) noexcept;
 
+        /**
+         * @brief Destroy the element at the next frame whe scene graph is update. 
+         * 
+         */
         virtual 
         void destroy() noexcept;
+
+        /**
+         * @brief Destroy the element now, don't way the next frame. 
+         * WARNING : if element his destroy during update of system, it can create conflict or segfault. 
+         * Use this function only if you are sur that the object don't depending af the current frame
+         * 
+         */
+        virtual 
+        void destroyImmediate() noexcept;
 
         /**
          * @brief add specific entity to the graph with arg to construct it and return his id
@@ -170,7 +183,7 @@ namespace Engine::Ressources
     protected:
 
         std::list<std::unique_ptr<Component>>   _components;
-        std::string                             _tag;
+        std::string                             _tag{"GameObject"};
         bool                                    _isDead {false}; //Flag that inform it parent that this transform must be destroy on update loop
     };
 } // namespace Engine::Ressources

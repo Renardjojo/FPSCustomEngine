@@ -155,6 +155,11 @@ void GameObject::destroy() noexcept
     isDirty_ = true;
 }
 
+void GameObject::destroyImmediate() noexcept
+{
+    parent->destroyChild(this);
+}
+
 bool 		GameObject::operator==		(GameObject const& other)
 {
     return (this == &other);
