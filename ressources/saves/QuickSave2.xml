@@ -1,7 +1,7 @@
 <WORLD>
-	<GAMEOBJECT type="Camera" name="MainCamera" posX="7.550950" posY="6.001000" posZ="9.157010" rotX="0.213334" rotY="7.824914" rotZ="0.000000" near="0.100000" far="10000.000000" fov="80.000000"/>
+	<GAMEOBJECT type="Camera" name="MainCamera" posX="2.000000" posY="6.001000" posZ="2.000000" rotX="0.320000" rotY="4.281593" rotZ="0.000000" near="0.100000" far="10000.000000" fov="80.000000"/>
 	<GAMEOBJECT type="Empty" name="TimeManager" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="DayNightCycle" dayStart="60.000000" dayDuration="120.000000" sunRiseDuration="30.000000" nightStart="180.000000" nightDuration="120.000000" sunSetDuration="30.000000" currentTime="159.354324" midDay="120.000000" midNight="120.000000" sunDistance="1000.000000"/>
+		<COMPONENT type="DayNightCycle" dayStart="60.000000" dayDuration="120.000000" sunRiseDuration="30.000000" nightStart="180.000000" nightDuration="120.000000" sunSetDuration="30.000000" currentTime="102.501053" midDay="120.000000" midNight="120.000000" sunDistance="1000.000000"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="Rocks" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<GAMEOBJECT type="Empty" name="Rock0" tag="GameObject" posX="32.905365" posY="0.000000" posZ="55.464935" rotX="1.128755" rotY="3.177835" rotZ="0.000000" scaleX="6.900117" scaleY="3.100830" scaleZ="5.507917">
@@ -711,10 +711,10 @@
 		<COMPONENT type="Model" shaderName="SkyboxShader" materialName="SkyboxMaterial" meshName="SkyboxMesh"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="Players" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<GAMEOBJECT type="Empty" name="Player1" tag="GameObject" posX="7.550950" posY="6.001000" posZ="9.157010" rotX="-0.213334" rotY="4.683321" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+		<GAMEOBJECT type="Empty" name="Player1" tag="GameObject" posX="2.000000" posY="6.001000" posZ="2.000000" rotX="-0.320000" rotY="1.140000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 			<COMPONENT type="PlayerController"/>
 			<COMPONENT type="SphereCollider" radius="5.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000" bounciness="0.000000" friction="0.950000"/>
-			<COMPONENT type="PhysicalObject" velocity0="-0.016838" velocity1="0.000000" velocity2="0.002619" AngularVelocity0="0.001660" AngularVelocity1="0.000000" AngularVelocity2="0.010671" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="0" freezeRotY="0" freezeRotZ="0" isKinematic="0" useGravity="1" isDirty="1"/>
+			<COMPONENT type="PhysicalObject" velocity0="0.000000" velocity1="0.000000" velocity2="0.000000" AngularVelocity0="0.000000" AngularVelocity1="-0.000000" AngularVelocity2="-0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="0" freezeRotY="0" freezeRotZ="0" isKinematic="0" useGravity="1" isDirty="1"/>
 			<GAMEOBJECT type="Empty" name="Skin" tag="GameObject" posX="0.000000" posY="-10.000000" posZ="-2.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.180000" scaleY="0.180000" scaleZ="0.180000">
 				<COMPONENT type="Model" shaderName="LightAndTexture" materialName="Soldier1Materials" meshName="Soldier1Mesh"/>
 			</GAMEOBJECT>
@@ -723,15 +723,15 @@
 			</GAMEOBJECT>
 			<GAMEOBJECT type="Empty" name="Sniper" tag="GameObject" posX="-0.500000" posY="-1.500000" posZ="3.200000" rotX="0.000000" rotY="-1.570796" rotZ="0.000000" scaleX="0.020000" scaleY="0.020000" scaleZ="0.020000">
 				<COMPONENT type="Model" shaderName="LightAndTexture" materialName="SniperMaterials" meshName="SniperMesh"/>
-				<COMPONENT type="Sniper" bulletDamage="2.000000" bulletVelocity="1000.000000" bulletPerShot="1" reloadTime="1.000000" munitionCapacity="5" shotIntervalDelay="0.200000" munition="1" delay="0.000000" isReloading="0" Reloaded="0" isWaitingForNextShot="0" isAutomatic="0" isAiming="0"/>
+				<COMPONENT type="Sniper" bulletDamage="2.000000" bulletVelocity="1000.000000" bulletPerShot="1" reloadTime="1.000000" munitionCapacity="5" shotIntervalDelay="0.200000" munition="2" delay="0.111000" isReloading="0" Reloaded="0" isWaitingForNextShot="1" isAutomatic="0" isAiming="0"/>
 			</GAMEOBJECT>
 			<GAMEOBJECT type="Empty" name="shotgun" tag="GameObject" posX="-0.500000" posY="-1.500000" posZ="3.800000" rotX="0.000000" rotY="3.141593" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 				<COMPONENT type="Model" shaderName="LightAndTexture" materialName="ShotgunMaterials" meshName="ShotgunMesh"/>
-				<COMPONENT type="Shotgun" bulletDamage="1.000000" bulletVelocity="1000.000000" bulletPerShot="10" reloadTime="1.000000" munitionCapacity="2" shotIntervalDelay="0.200000" munition="0" delay="0.118000" isReloading="0" isWaitingForNextShot="1" isAutomatic="0" isAiming="0" radiusPrescisionAtOnMeter="0.500000"/>
+				<COMPONENT type="Shotgun" bulletDamage="1.000000" bulletVelocity="1000.000000" bulletPerShot="10" reloadTime="1.000000" munitionCapacity="2" shotIntervalDelay="0.200000" munition="2" delay="0.000000" isReloading="0" isWaitingForNextShot="0" isAutomatic="0" isAiming="0" radiusPrescisionAtOnMeter="0.500000"/>
 			</GAMEOBJECT>
 			<GAMEOBJECT type="Empty" name="SubMachineGun" tag="GameObject" posX="-0.500000" posY="-1.500000" posZ="3.200000" rotX="0.000000" rotY="3.141593" rotZ="0.000000" scaleX="0.300000" scaleY="0.300000" scaleZ="0.300000">
 				<COMPONENT type="Model" shaderName="LightAndTexture" materialName="SubMachineGunMaterials" meshName="SubMachineGunMesh"/>
-				<COMPONENT type="SubMachineGun" bulletDamage="1.000000" bulletVelocity="1000.000000" bulletPerShot="1" reloadTime="1.000000" munitionCapacity="30" shotIntervalDelay="0.100000" munition="19" delay="0.000000" isReloading="0" Reloaded="0" isWaitingForNextShot="0" isAutomatic="1" isAiming="0"/>
+				<COMPONENT type="SubMachineGun" bulletDamage="1.000000" bulletVelocity="1000.000000" bulletPerShot="1" reloadTime="1.000000" munitionCapacity="30" shotIntervalDelay="0.100000" munition="30" delay="0.000000" isReloading="0" Reloaded="0" isWaitingForNextShot="0" isAutomatic="1" isAiming="0"/>
 			</GAMEOBJECT>
 			<GAMEOBJECT type="Empty" name="Pseudo" tag="GameObject" posX="0.000000" posY="5.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="-19.600000" scaleY="1.000000" scaleZ="2.100000">
 				<COMPONENT type="Model" shaderName="TextureOnly" materialName="PseudoMaterial" meshName="Plane"/>
@@ -868,52 +868,16 @@
 			<COMPONENT type="CircularEntitiesSpawner" zoneRadius="0.100000" spawnDelay="0.500000" spawnDelayInterval="0.000000" delayCount="0.000000" nextDelay="0.500000" contenorName="world/LotsContener" checkpointName="nullptr"/>
 		</GAMEOBJECT>
 	</GAMEOBJECT>
-	<GAMEOBJECT type="Empty" name="Sun" tag="GameObject" posX="-857.450256" posY="514.566895" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="DirectionnalLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.231181" diffuse0="1.000000" diffuse1="1.000000" diffuse2="1.000000" diffuse3="0.340866" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="0.409685" dirX="-0.857450" dirY="0.514567" dirZ="0.000000" isEnable="1"/>
+	<GAMEOBJECT type="Empty" name="Sun" tag="GameObject" posX="442.263977" posY="896.884888" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
+		<COMPONENT type="DirectionnalLight" ambient0="1.000000" ambient1="1.000000" ambient2="1.000000" ambient3="0.158330" diffuse0="1.000000" diffuse1="1.000000" diffuse2="1.000000" diffuse3="0.595846" specular0="1.000000" specular1="1.000000" specular2="1.000000" specular3="0.737516" dirX="0.442264" dirY="0.896885" dirZ="0.000000" isEnable="1"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="DecalContenor" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="MaxElementConteneur" maxElement="50"/>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-163.899857" posY="0.100000" posZ="82.151604" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-136.546936" posY="0.100001" posZ="-211.278748" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-84.481178" posY="0.100000" posZ="-106.324425" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-13.380117" posY="0.100000" posZ="-7.642426" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-12.832689" posY="0.100000" posZ="-8.475206" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-7.922255" posY="0.100000" posZ="-6.245597" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-6.545866" posY="0.100001" posZ="-6.629345" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-4.660326" posY="0.100000" posZ="-7.551387" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-2.941637" posY="0.100001" posZ="-7.781603" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-1.730572" posY="0.100000" posZ="-8.624123" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-1.369968" posY="0.100000" posZ="-8.904009" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="bulletHoleDecal" tag="GameObject" posX="-801.748108" posY="0.100001" posZ="-98.847580" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.400000" scaleY="0.400000" scaleZ="0.400000">
-			<COMPONENT type="Model" shaderName="LightAndTexture" materialName="BulletHole" meshName="Plane"/>
-		</GAMEOBJECT>
 	</GAMEOBJECT>
-	<GAMEOBJECT type="Empty" name="Nexus" tag="GameObject" posX="-10.000000" posY="7.057352" posZ="-10.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.300000" scaleY="0.300000" scaleZ="0.300000">
+	<GAMEOBJECT type="Empty" name="Nexus" tag="GameObject" posX="-10.000000" posY="7.198257" posZ="-10.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="0.300000" scaleY="0.300000" scaleZ="0.300000">
 		<COMPONENT type="Model" shaderName="LightAndTexture" materialName="NexusMaterial" meshName="NexusMesh"/>
 		<COMPONENT type="PointLight" ambient0="0.000000" ambient1="0.200000" ambient2="1.000000" ambient3="0.200000" diffuse0="0.000000" diffuse1="0.200000" diffuse2="1.000000" diffuse3="0.500000" specular0="0.000000" specular1="0.200000" specular2="1.000000" specular3="0.700000" constant="0.000000" linear="0.050000" quadriatic="0.000000" isEnable="1"/>
-		<COMPONENT type="LevitationMovement" speed="1.000000" heightIntensity="1.000000" delay="2.801275"/>
+		<COMPONENT type="LevitationMovement" speed="1.000000" heightIntensity="1.000000" delay="2.501001"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="checkpoint1" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="Checkpoint"/>
@@ -928,21 +892,15 @@
 		<COMPONENT type="Checkpoint"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="EnemiesContener" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<GAMEOBJECT type="Empty" name="Ennemy" tag="Enemy" posX="-102.400429" posY="2.001000" posZ="3.682954" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="3.000000" scaleY="5.000000" scaleZ="3.000000">
+		<GAMEOBJECT type="Empty" name="Ennemy" tag="Enemy" posX="118.553070" posY="2.001000" posZ="-148.054504" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="3.000000" scaleY="5.000000" scaleZ="3.000000">
 			<COMPONENT type="Model" shaderName="ColorWithLight" materialName="RedMaterial" meshName="Cube"/>
 			<COMPONENT type="SphereCollider" radius="0.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000" bounciness="0.000000" friction="0.970000"/>
-			<COMPONENT type="PhysicalObject" velocity0="8.470370" velocity1="0.000000" velocity2="-11.012404" AngularVelocity0="0.000000" AngularVelocity1="0.000000" AngularVelocity2="0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="1" freezeRotY="1" freezeRotZ="1" isKinematic="0" useGravity="1" isDirty="1"/>
-			<COMPONENT type="EnnemyController" player="world/Players/Player1" nexus="world/Nexus" state="1" checkpointName="world/checkpoint2" checkpointTargetX="-95.000000" checkpointTargetY="5.000000" checkpointTargetZ="-6.000000" checkpointNumber="2" radius="35.000000" attackRadius="5.000000" speed="25.000000" attackSpeed="1.000000" cooldown="0.000000" damage="100" life="5"/>
-		</GAMEOBJECT>
-		<GAMEOBJECT type="Empty" name="Ennemy" tag="Enemy" posX="-84.718391" posY="1.501000" posZ="-7.291314" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="2.000000" scaleY="2.000000" scaleZ="2.000000">
-			<COMPONENT type="Model" shaderName="ColorWithLight" materialName="RedMaterial" meshName="Cube"/>
-			<COMPONENT type="SphereCollider" radius="0.000000" localCenter0="0.000000" localCenter1="0.000000" localCenter2="0.000000" bounciness="0.000000" friction="0.970000"/>
-			<COMPONENT type="PhysicalObject" velocity0="18.146364" velocity1="0.000000" velocity2="-0.371832" AngularVelocity0="0.000000" AngularVelocity1="0.000000" AngularVelocity2="0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="1" freezeRotY="1" freezeRotZ="1" isKinematic="0" useGravity="1" isDirty="1"/>
-			<COMPONENT type="EnnemyController" player="world/Players/Player1" nexus="world/Nexus" state="1" checkpointName="world/checkpoint2" checkpointTargetX="-52.000000" checkpointTargetY="5.000000" checkpointTargetZ="-2.000000" checkpointNumber="3" radius="50.000000" attackRadius="5.000000" speed="35.000000" attackSpeed="1.000000" cooldown="0.000000" damage="100" life="3"/>
+			<COMPONENT type="PhysicalObject" velocity0="5.555299" velocity1="0.000000" velocity2="13.191504" AngularVelocity0="0.000000" AngularVelocity1="0.000000" AngularVelocity2="0.000000" mass="1.000000" freezeTrX="0" freezeTrY="0" freezeTrZ="0" freezeRotX="1" freezeRotY="1" freezeRotZ="1" isKinematic="0" useGravity="1" isDirty="1"/>
+			<COMPONENT type="EnnemyController" player="world/Players/Player1" nexus="world/Nexus" state="1" checkpointName="world/checkpoint4" checkpointTargetX="135.000000" checkpointTargetY="5.000000" checkpointTargetZ="-109.000000" checkpointNumber="1" radius="35.000000" attackRadius="5.000000" speed="25.000000" attackSpeed="1.000000" cooldown="0.000000" damage="100" life="5"/>
 		</GAMEOBJECT>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="waveManager" tag="GameObject" posX="0.000000" posY="0.000000" posZ="0.000000" rotX="0.000000" rotY="0.000000" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
-		<COMPONENT type="WaveManager" currentWave="5" waveOffSet="0" waveStepOffSet="1" timeBeforeNextWave="3.000000" delay="0.000000" spawnerPrefabs0="#1Spawner1" spawnerPrefabs1="#1Spawner2" spawnerPrefabs2="#1Spawner3" spawnerPrefabs3="#1Spawner4" enemiesPrefabs0="#2enemy1" enemiesPrefabs1="#2enemy2" enemiesPrefabs2="#2enemy3"/>
+		<COMPONENT type="WaveManager" currentWave="1" waveOffSet="0" waveStepOffSet="1" timeBeforeNextWave="3.000000" delay="0.000000" spawnerPrefabs0="#1Spawner1" spawnerPrefabs1="#1Spawner2" spawnerPrefabs2="#1Spawner3" spawnerPrefabs3="#1Spawner4" enemiesPrefabs0="#2enemy1" enemiesPrefabs1="#2enemy2" enemiesPrefabs2="#2enemy3"/>
 	</GAMEOBJECT>
 	<GAMEOBJECT type="Empty" name="ReloadTimeUpgradeStation" tag="GameObject" posX="30.000000" posY="2.500000" posZ="-50.000000" rotX="0.000000" rotY="-0.785398" rotZ="0.000000" scaleX="1.000000" scaleY="1.000000" scaleZ="1.000000">
 		<COMPONENT type="UpgradeStation" activationRadius="10.000000" cost="1000"/>
