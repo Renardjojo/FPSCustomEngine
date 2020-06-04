@@ -48,6 +48,7 @@ namespace Game
         private:
             float _musicVolume{0.35f};
             float _effectsVolume{0.5f};
+            bool _won{false};
 
         protected:
 
@@ -105,6 +106,7 @@ namespace Game
             void loadBulletHoleContenor (int maxDecale);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGUI                (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadReferencedGUI      (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTimeManager        ();
             void loadCamera             ();
 

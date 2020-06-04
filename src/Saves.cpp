@@ -388,8 +388,6 @@ void Engine::Ressources::Save::createPrefab(GameObject& gameObject, std::string 
     file_stored << doc;
     file_stored.close();
     doc.clear();
-
-    // TODO: add prefab path
 }
 
 void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_document<>& doc, xml_node<>* nodeParent)

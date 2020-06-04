@@ -11,6 +11,8 @@
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
 #include "Game/BarIndicatorController.hpp"
+#include "GE/GE.hpp"
+#include "Game/define.h"
 
 using namespace Game;
 using namespace Engine::Physics;
@@ -44,7 +46,10 @@ void Nexus::start()
 void Nexus::update()
 {
     if (_life <= 0)
-        std::cout << "nexus destroy" << std::endl;
+    {
+        _life = 0;
+        Engine::GE::gameState = Engine::E_GAME_STATE::DEAD;
+    }
 }
 
 void Nexus::fixedUpdate()
@@ -52,18 +57,18 @@ void Nexus::fixedUpdate()
 
 }
 
-void Nexus::onCollisionEnter(HitInfo& hitInfo)
+void Nexus::onCollisionEnter(HitInfo &hitInfo)
 {
     (void)hitInfo;
 }
 
-void Nexus::inflictDamage(int damage) 
-{ 
-    _life -= damage; 
+void Nexus::inflictDamage(int damage)
+{
+    _life -= damage;
     _light->setLinear(0.05f + (11 - _life) * 0.01f);
 }
 
-void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
+void Nexus::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
     if (!nodeParent)
         return;

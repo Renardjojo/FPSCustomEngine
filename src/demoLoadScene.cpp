@@ -858,12 +858,6 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
     int halfHeight = _gameEngine.getWinSize().height / 2.0f;
     float crosshairSize = _gameEngine.getWinSize().height / 15;
     float halfcrosshairSize = crosshairSize * 0.5;
-
-    if (ressourceManager.get<ReferencedTitle>("WaveIndicatorUI"))
-        ressourceManager.remove<ReferencedTitle>("WaveIndicatorUI");
-    ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
-                                _gameEngine.getWinSize().width / 2.0f  - _gameEngine.getWinSize().width / 2.0f / 10.f, _gameEngine.getWinSize().height / 2.0f - _gameEngine.getWinSize().height / 2.0f / 10.f * 9.f,
-                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
     
     Texture* t_hitmarker = ressourceManager.get<Texture>("hitmarker");
 
@@ -880,6 +874,78 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
 
     hitmarker->setName("HitMarker");
     hitmarker->isActive = false;
+}
+
+void Demo::loadReferencedGUI(t_RessourcesManager &ressourceManager)
+{
+    int halfWidth = _gameEngine.getWinSize().width / 2.0f;
+    int halfHeight = _gameEngine.getWinSize().height / 2.0f;
+    float crosshairSize = _gameEngine.getWinSize().height / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
+
+    if(ressourceManager.get<Title>("gameover"))
+        ressourceManager.remove<Title>("gameover");
+
+    ressourceManager.add<Title>("gameover", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth- halfWidth/13.f, halfHeight- halfHeight/10.f,
+                                halfWidth, halfWidth/8.f, SDL_Color{240, 0, 0, 255},"Game over", E_GAME_STATE::DEAD);
+    
+    if(ressourceManager.get<Button>("DeathRestart"))
+        ressourceManager.remove<Button>("DeathRestart");
+
+    ressourceManager.add<Button>("DeathRestart",ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth- halfWidth/20.f, halfHeight + halfHeight/10.f,
+                                 200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Restart",
+                                 E_GAME_STATE::DEAD)
+        .function = [&]() {
+
+            Light::resetLight();
+            _scene.reset();
+            _gameEngine.gameState = E_GAME_STATE::STARTING;
+            usingMouse = true;
+        };
+
+    if(ressourceManager.get<Button>("DeathQuit"))
+        ressourceManager.remove<Button>("DeathQuit");
+    ressourceManager.add<Button>("DeathQuit", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth - 35, halfHeight + 100,
+                                 150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Rage quit",E_GAME_STATE::DEAD)
+        .function = [&]() {
+        _gameEngine.gameState = E_GAME_STATE::EXIT;
+    };
+
+    if(ressourceManager.get<Title>("win"))
+        ressourceManager.remove<Title>("win");
+
+    ressourceManager.add<Title>("win", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth- halfWidth/13.f, halfHeight- halfHeight/10.f,
+                                halfWidth, halfWidth/8.f, SDL_Color{212, 175, 55, 255},"You won !", E_GAME_STATE::WIN);
+
+    if(ressourceManager.get<Button>("WinContinue"))
+        ressourceManager.remove<Button>("WinContinue");
+
+    ressourceManager.add<Button>("WinContinue",ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth- halfWidth/20.f, halfHeight + halfHeight/10.f,
+                                 200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Continue ?",E_GAME_STATE::WIN)
+        .function = [&]() {
+            _gameEngine.gameState = E_GAME_STATE::RUNNING;
+            usingMouse=false;
+    };
+
+    if(ressourceManager.get<Button>("WinQuit"))
+        ressourceManager.remove<Button>("WinQuit");
+    ressourceManager.add<Button>("WinQuit", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth - 35, halfHeight + 100,
+                                 150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",E_GAME_STATE::WIN)
+        .function = [&]() {
+            _gameEngine.gameState = E_GAME_STATE::EXIT;
+    };
+
+    if (ressourceManager.get<ReferencedTitle>("WaveIndicatorUI"))
+        ressourceManager.remove<ReferencedTitle>("WaveIndicatorUI");
+    ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                _gameEngine.getWinSize().width / 2.0f  - _gameEngine.getWinSize().width / 2.0f / 10.f, _gameEngine.getWinSize().height / 2.0f - _gameEngine.getWinSize().height / 2.0f / 10.f * 9.f,
+                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
 
     Texture* t_crosshair = ressourceManager.get<Texture>("crosshair");
 
@@ -974,6 +1040,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         loadEnemies(_gameEngine.ressourceManager_);
         loadUpgradeStation(_gameEngine.ressourceManager_);
         loadGUI(_gameEngine.ressourceManager_);
+        loadReferencedGUI(_gameEngine.ressourceManager_);
     
         ScriptSystem::start();
         _gameEngine.gameState = E_GAME_STATE::RUNNING;
@@ -1260,8 +1327,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     for (std::string &saves : _gameEngine.savePaths)
     {
-        if (saves.size() < 23) // TODO: assert
-            return;
+        GE_assertInfo(!(saves.size() < 23), std::string("wrong savepath paths : ") + saves);
 
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(shortSaveName, pfont2, buttonShader,
@@ -1274,8 +1340,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             Light::resetLight();
             _scene.reset();
             _scene = std::make_unique<Scene>();
-            setupScene(*_scene, saves.c_str());
             loadGUI(_gameEngine.ressourceManager_);
+            setupScene(*_scene, saves.c_str());
+            loadReferencedGUI(_gameEngine.ressourceManager_);
             mainCamera = &_scene->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);
@@ -1380,8 +1447,10 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         sphereColliderComp.setBounciness(0.f);
         sphereColliderComp.setFriction(0.97f);
 
-        enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+        
+        EnnemyController& ennemyControllertruc = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
                                                 &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+        ennemyControllertruc.setDamage(82);
 
         GameObjectCreateArg lifeBarGameObject{"lifeBar",
                                             {{0.f, 1.f, 0.f},
@@ -1434,7 +1503,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
         ennemyControllerComp.setLife(4);
         ennemyControllerComp.setSpeed(20);
-        ennemyControllerComp.setDamage(2);
+        ennemyControllerComp.setDamage(185);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
 
@@ -1489,7 +1558,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
         ennemyControllerComp.setLife(8);
         ennemyControllerComp.setSpeed(35);
-        ennemyControllerComp.setDamage(1);
+        ennemyControllerComp.setDamage(75);
         ennemyControllerComp.setRadius(50);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
