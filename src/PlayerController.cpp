@@ -9,11 +9,16 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/LifeDuration.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
 #include <iostream>
 
 #include <algorithm>
@@ -158,7 +163,11 @@ void PlayerController::switchFlashLightState()
 void PlayerController::shoot()
 {
   if (_firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
+  {
+    Sound& refS = t_RessourcesManager::getRessourceManagerUse()->get<Sound>("Hit");
+    SoundPlayer::play(refS);
     _hitmarker->isActive = true;
+  }
 
   if (_bullet)
   {
@@ -187,7 +196,7 @@ void PlayerController::activateLootMachine()
 void PlayerController::camera()
 {
   Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-  mouseMotion *= _mouseSpeed * TimeSystem::getDeltaTime();
+  mouseMotion *= _mouseSpeed /** TimeSystem::getUnscaledDeltaTime()*/;
 
   _orbit.y += mouseMotion.x;
   _orbit.x += mouseMotion.y;

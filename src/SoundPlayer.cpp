@@ -71,6 +71,7 @@ void SoundPlayer::listDevices()
         }
     }
 }
+
 void SoundPlayer::play(Sound &sound)
 {
     if (!_initialized)
@@ -78,6 +79,7 @@ void SoundPlayer::play(Sound &sound)
 
     alSourcePlay(sound.getSource());
 }
+
 void SoundPlayer::stop(Sound &sound)
 {
     if (!_initialized)
@@ -85,6 +87,7 @@ void SoundPlayer::stop(Sound &sound)
 
     alSourceStop(sound.getSource());
 }
+
 void SoundPlayer::pause(Sound &sound)
 {
     if (!_initialized)

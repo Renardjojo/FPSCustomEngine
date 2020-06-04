@@ -193,7 +193,8 @@ void Demo::loadSounds(t_RessourcesManager &rm)
     rm.add<Sound>("Sniper","./ressources/sound/rifle.wav").setGain(_effectsVolume);
     rm.add<Sound>("Shotgun","./ressources/sound/shotgun.wav").setGain(_effectsVolume);
     rm.add<Sound>("Machinegun","./ressources/sound/machinegun.wav").setGain(_effectsVolume);
-    
+    rm.add<Sound>("Hit","./ressources/sound/Hit.wav").setGain(_effectsVolume * 3.f);
+
     Sound& bg = rm.add<Sound>("background","./ressources/music/dark_forces.wav");
     bg.setGain(_musicVolume);
     bg.setLooping(true);
