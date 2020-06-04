@@ -124,6 +124,69 @@ namespace Engine::Ressources
          */
         void parseName (const char* path, std::string& shaderName);
     };
+
+    inline
+    void Shader::setBool(const char* name, bool value) const
+    {         
+        glUniform1i(glGetUniformLocation(id_, name), (int)value);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setInt(const char* name, int value) const
+    { 
+        glUniform1i(glGetUniformLocation(id_, name), value);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setFloat(const char* name, float value) const
+    { 
+        glUniform1f(glGetUniformLocation(id_, name), value);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setVec3   (const char* name, float v1, float v2, float v3) const
+    {
+        glUniform3f(glGetUniformLocation(id_, name), v1, v2, v3);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setVec4   (const char* name, float v1, float v2, float v3, float v4) const
+    {
+        glUniform4f(glGetUniformLocation(id_, name), v1, v2, v3, v4);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setMat3   (const char* name, const float* value) const
+    {
+        glUniformMatrix3fv(glGetUniformLocation(id_, name), 1, GL_FALSE, value);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setMat4   (const char* name, const float* value) const
+    {
+        glUniformMatrix4fv(glGetUniformLocation(id_, name), 1, GL_FALSE, value);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setpVec3   (const char* name, unsigned int count, const float* pV) const
+    {
+        glUniform3fv(glGetUniformLocation(id_, name), count, pV);
+        functGlCheckAndLogError();
+    }
+
+    inline
+    void Shader::setpVec4   (const char* name, unsigned int count, const float* pV) const
+    {
+        glUniform4fv(glGetUniformLocation(id_, name), count, pV);
+        functGlCheckAndLogError();
+    }
 }
 
 #endif // _GE_SHADER_H

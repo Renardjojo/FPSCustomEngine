@@ -86,6 +86,11 @@ namespace Engine::Ressources
             return rst.first->second;
         }
 
+        void remove(const std::string& key)
+        {
+            ressource_.erase(key);
+        }
+
         void clearRessource  () noexcept
         {
             ressource_.clear();
@@ -135,6 +140,13 @@ namespace Engine::Ressources
             {
                 return RessourcesManager<T>::get(key);
             }
+
+            template<class T>
+            void remove(const std::string& key)
+            {
+                RessourcesManager<T>::remove(key);
+            }
+
 
             #pragma endregion //!accessor
 
