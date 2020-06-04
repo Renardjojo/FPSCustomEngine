@@ -6,6 +6,7 @@
 #include "GE/Ressources/scene.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "Game/BarIndicatorController.hpp"
 #include <math.h>
 
 
@@ -51,6 +52,7 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
 void EnnemyController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
+    _gameObject.getChild("lifeBar")->getComponent<BarIndicatorController>()->init(_life, _maxLife);
 }
 
 void EnnemyController::update()
