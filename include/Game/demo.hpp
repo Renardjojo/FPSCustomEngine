@@ -48,6 +48,7 @@ namespace Game
         private:
             float _musicVolume{0.35f};
             float _effectsVolume{0.5f};
+            bool _won{false};
 
         protected:
 
@@ -78,10 +79,7 @@ namespace Game
             void loadTreeRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadSkyboxRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGunRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadPlayerRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadPseudoRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager); 
-            void loadSpotLightRessource     (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadTowerRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGroundRessource        (Engine::Ressources::t_RessourcesManager& ressourceManager);    
             void loadNexusRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemiesRessource       (Engine::Ressources::t_RessourcesManager& ressourceManager);         
@@ -96,7 +94,6 @@ namespace Game
             void loadTree                   (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);
             void loadSkybox                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadPlayer                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadTower                  (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadGround                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadFog                    (Engine::Ressources::t_RessourcesManager& ressourceManager, unsigned int number);    
             void loadLootMachin             (Engine::Ressources::t_RessourcesManager& ressourceManager);

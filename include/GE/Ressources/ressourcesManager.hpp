@@ -61,11 +61,6 @@ namespace Engine::Ressources
             return &it->second;
         }
 
-        void remove(const std::string& key)
-        {
-            ressource_.erase(key);
-        }
-
         /**
          * @brief add element with argument of constructor in parameter
          * 
@@ -88,6 +83,11 @@ namespace Engine::Ressources
             }
 
             return rst.first->second;
+        }
+
+        void remove(const std::string& key)
+        {
+            ressource_.erase(key);
         }
 
         void clearRessource  () noexcept

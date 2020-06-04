@@ -116,7 +116,15 @@ void Demo::update() noexcept
     {
         ScriptSystem::update();
         _scene->update();
+
+        if(_scene->getGameObject("waveManager").getComponent<WaveManager>()->getCurrentWave()==10 && !_won)
+        {
+            _won=true;
+            _gameEngine.gameState=E_GAME_STATE::WIN;
+            usingMouse=true;
+        }
     }
+    
 
 #ifndef DNEDITOR
     Editor::update(*_scene, _gameEngine);
@@ -150,11 +158,22 @@ void Demo::display() const noexcept
 
 void Demo::updateControl()
 {
+
+    if(_gameEngine.gameState==E_GAME_STATE::DEAD)
+    {
+        usingMouse=true;
+    }
+
+    
+#ifndef DNEDITOR
     if (Input::keyboard.getKeyState(SDL_SCANCODE_F1) == E_KEY_STATE::TOUCHED)
     {
         Editor::_enable = !Editor::_enable;
         usingMouse = Editor::_enable;
     }
+#endif
+
+
     if (Input::keyboard.getKeyState(SDL_SCANCODE_ESCAPE) == E_KEY_STATE::TOUCHED)
     {
         if (_gameEngine.gameState == E_GAME_STATE::RUNNING)

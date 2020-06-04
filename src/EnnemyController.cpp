@@ -6,6 +6,7 @@
 #include "GE/Ressources/scene.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
+#include "Game/BarIndicatorController.hpp"
 #include <math.h>
 
 
@@ -44,13 +45,15 @@ EnnemyController::EnnemyController(GameObject &gameObject, const std::vector<std
       _attackSpeed{std::stof(params[11])},
       _cooldown{std::stof(params[12])},
       _damage{std::stoi(params[13])},
-      _life{std::stoi(params[14])}
+      _life{std::stoi(params[14])},
+      _exclusionRadius{std::stof(params[15])}
 {
     _name = __FUNCTION__;
 }
 void EnnemyController::start()
 {
     _physics = _gameObject.getComponent<PhysicalObject>();
+    _gameObject.getChild("lifeBar")->getComponent<BarIndicatorController>()->init(_life, _maxLife);
 }
 
 void EnnemyController::update()
@@ -115,10 +118,19 @@ void EnnemyController::chasing()
     if (_player)
     {
         Vec3 direction{_player->getPosition() - _gameObject.getPosition()};
-        direction.y = 0;
-        _physics->addForce(direction.getNormalize() * _speed * TimeSystem::getDeltaTime());
-
         float length{direction.length()};
+
+        direction.y = 0;
+        if(length>=_exclusionRadius)
+            _physics->addForce(direction.getNormalize() * _speed * TimeSystem::getDeltaTime());
+        else
+            _physics->setVelocity(Vec3::zero);
+        
+            
+        
+        
+        
+        std::cout<<length<<std::endl;
         if (_cooldown >= _attackSpeed && length < _attackRadius)
         {
            _player->getComponent<PlayerController>()->inflictDamage(_damage);
@@ -167,6 +179,7 @@ void EnnemyController::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("cooldown", doc.allocate_string(std::to_string(_cooldown).c_str())));
     newNode->append_attribute(doc.allocate_attribute("damage", doc.allocate_string(std::to_string(_damage).c_str())));
     newNode->append_attribute(doc.allocate_attribute("life", doc.allocate_string(std::to_string(_life).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("exclusionRadius", doc.allocate_string(std::to_string(_exclusionRadius).c_str())));
 
     nodeParent->append_node(newNode);
 }

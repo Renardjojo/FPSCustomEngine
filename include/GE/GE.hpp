@@ -31,7 +31,7 @@ namespace Engine
 
             Engine::Ressources::t_RessourcesManager ressourceManager_;
 
-            E_GAME_STATE gameState;
+            static E_GAME_STATE gameState;
 
             std::vector<std::string> savePaths;
 
@@ -47,7 +47,16 @@ namespace Engine
 
             #pragma region methods
 
-            void pollEvent              () { Core::InputSystem::Input::pollEvent(ren_->getWin()->getId());}
+            void pollEvent              ()
+            { 
+                Core::InputSystem::Input::pollEvent(ren_->getWin()->getId());
+                
+                if (Core::InputSystem::Input::window.isQuit)
+                {
+                    gameState = E_GAME_STATE::EXIT;
+                }
+            }
+
             void updateTime             () { Core::System::TimeSystem::update();}
             void clearRenderer          () { ren_->clear(); }
             void renderPresent          () { ren_->draw();  }

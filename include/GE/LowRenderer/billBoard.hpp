@@ -10,6 +10,11 @@
 #include "GE/Core/Maths/vec.hpp"
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Core/Debug/assert.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/GameObject.hpp"
+
+#include <vector>
+#include <string>
 
 namespace Engine::LowRenderer
 {
@@ -22,12 +27,32 @@ namespace Engine::LowRenderer
     
             BillBoard (Engine::Ressources::GameObject &refGameObject, const ModelCreateArg& arg)
                 : Model (refGameObject, arg)
-            {}
+            {
+                _name = __FUNCTION__;
+            }
+
+            BillBoard(Engine::Ressources::GameObject &refGameObject, std::vector<std::string>& params, Engine::Ressources::t_RessourcesManager& ressourcesManager)
+                : Model (refGameObject, params, ressourcesManager)
+            {
+                _name = __FUNCTION__;
+            }
 
             BillBoard (const BillBoard& other)        = default;
             BillBoard (BillBoard&& other)             = default;
             BillBoard ();
     
+            void save(xml_document<>& doc, xml_node<>* nodeParent)
+            { 
+                xml_node<> *newNode = doc.allocate_node(node_element, "COMPONENT");
+
+                newNode->append_attribute(doc.allocate_attribute("type", _name.c_str()));
+                newNode->append_attribute(doc.allocate_attribute("shaderName", doc.allocate_string(getShaderName().c_str())));
+                newNode->append_attribute(doc.allocate_attribute("materialName", doc.allocate_string(getMaterialName().c_str())));
+                newNode->append_attribute(doc.allocate_attribute("meshName", doc.allocate_string(getMeshName().c_str())));
+
+                nodeParent->append_node(newNode);
+            }
+
             #pragma endregion //!constructor/destructor
     
             #pragma region methods
@@ -61,32 +86,14 @@ namespace Engine::LowRenderer
 
             void sendToShaderModelMatrix () const noexcept final
             {
-                Engine::Core::Maths::Mat4 modelMat;
-                const Engine::Core::Maths::Mat4& modelMatCam =  Camera::getCamUse()->getModelMatrix();
+                Engine::Core::Maths::Vec3 globalPosition = _gameObject.getGlobalPosition();
 
-                /*Rotation*/
-                /*Right*/
-                modelMat[0][0] = modelMatCam[0][0];
-                modelMat[0][1] = modelMatCam[0][1];
-                modelMat[0][2] = modelMatCam[0][2];
-
-                /*Up*/
-                modelMat[1][0] = modelMatCam[1][0];
-                modelMat[1][1] = modelMatCam[1][1];
-                modelMat[1][2] = modelMatCam[1][2];
-
-                /*Forward*/
-                modelMat[2][0] = modelMatCam[2][0];
-                modelMat[2][1] = modelMatCam[2][1];
-                modelMat[2][2] = modelMatCam[2][2];
-
-                /*Translation*/
-                modelMat[3][0] = _gameObject.getGlobalPosition().x;
-                modelMat[3][1] = _gameObject.getGlobalPosition().y;
-                modelMat[3][2] = _gameObject.getGlobalPosition().z;
-
-                /*Scale*/
-                modelMat *= Engine::Core::Maths::Mat4::createScaleMatrix(_gameObject.getScale());
+                Engine::Core::Maths::Mat4 modelMat = 
+                Engine::Core::Maths::Mat4::createTranslationMatrix(globalPosition) *
+                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(globalPosition, Engine::LowRenderer::Camera::getCamUse()->getGlobalPosition(), Engine::Core::Maths::Vec3::up)) *
+                Engine::Core::Maths::Mat4::createXRotationMatrix(M_PI_2) *
+                Engine::Core::Maths::Mat4::createScaleMatrix(_gameObject.getScale());
+                
                 pShader_->setMat4("model", &modelMat.mat[0]);
             }
 

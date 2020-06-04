@@ -9,17 +9,24 @@
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/LifeDuration.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "GE/GE.hpp"
+#include "Game/define.h"
+#include "GE/Ressources/SoundPlayer.hpp"
+#include "GE/Ressources/Sound.hpp"
+#include "GE/Ressources/ressourcesManager.hpp"
+
 #include <iostream>
 
 #include <algorithm>
 #include <math.h>
 
-using namespace Game;
+    using namespace Game;
 using namespace Engine::Physics;
 using namespace Engine::Physics::ColliderShape;
 using namespace Engine::Ressources;
@@ -49,43 +56,43 @@ Vec3 PlayerController::cylindricalCoord(float r, float angle)
 
 void PlayerController::start()
 {
-    _orbit = Vec2{0.f,0.f};
-    _weaponIndex = 0;
-    _mouseSpeed = 0.5f;
-    _playerForce = 5.f;
-    _playerMaxSpeed = 30.f;
-    _jumpForce = 5.f;
-    _airForce = 5.f;
-    _groundForce = 150.f;
-    _cameraYoffset = 5.f;
-    _hitmarkerDisplayTime = 0.2f;
-    _hitmarkerDisplaydelay = 0.f;
-    _money = 500;
-    _jump = false;
-    _isGrounded = false;
-    _flashLightOn = false;
-    _maxLife = 500;
-    _life = 500;
+  _orbit = Vec2{0.f, 0.f};
+  _weaponIndex = 0;
+  _mouseSpeed = 0.003f;
+  _playerForce = 5.f;
+  _playerMaxSpeed = 30.f;
+  _jumpForce = 5.f;
+  _airForce = 5.f;
+  _groundForce = 150.f;
+  _cameraYoffset = 5.f;
+  _hitmarkerDisplayTime = 0.2f;
+  _hitmarkerDisplaydelay = 0.f;
+  _money = 500;
+  _jump = false;
+  _isGrounded = false;
+  _flashLightOn = false;
+  _maxLife = 500;
+  _life = 500;
 
-    _movement = Vec3{0.f, 0.f, 0.f};
-    _direction = Vec3{0.f, 0.f, 0.f};
+  _movement = Vec3{0.f, 0.f, 0.f};
+  _direction = Vec3{0.f, 0.f, 0.f};
 
-    _physics = _gameObject.getComponent<PhysicalObject>();
-    GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
-    _playerForce = _airForce;
+  _physics = _gameObject.getComponent<PhysicalObject>();
+  GE_assertInfo(_physics != nullptr, "Game object must contain component \"PhysicalObject\"");
+  _playerForce = _airForce;
 
-    _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
-    GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
+  _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
+  GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
 
-    for (Image *image : UISystem::getImages())
+  for (Image *image : UISystem::getImages())
+  {
+    if (image->getName().compare("HitMarker") == 0)
     {
-        if (image->getName().compare("HitMarker") == 0)
-        {
-        _hitmarker = image;
-        break;
-        }
+      _hitmarker = image;
+      break;
     }
-    GE_assertInfo(_hitmarker != nullptr, "no hitmarker found");
+  }
+  GE_assertInfo(_hitmarker != nullptr, "no hitmarker found");
 };
 
 void PlayerController::update()
@@ -101,8 +108,11 @@ void PlayerController::update()
 
   move();
 
-  // if (_life <= 0)
-  //   std::cout << "player is dead" << std::endl;
+  if (_life <= 0)
+  {
+    _life = 0;
+    Engine::GE::gameState = Engine::E_GAME_STATE::DEAD;
+  }
 
   if (_firearms.empty())
     return;
@@ -110,9 +120,6 @@ void PlayerController::update()
   if (_firearms.at(_weaponIndex)->isAutomatic() ? Input::mouse.leftClicDown
                                                 : Input::mouse.leftClicDownOnce)
     shoot();
-
-  // if (_life <= 0)
-  //     std::cout << "player is dead" << std::endl;
 
   if (Input::mouse.rightClicDownOnce)
     switchAimState();
@@ -191,7 +198,10 @@ void PlayerController::switchFlashLightState()
 void PlayerController::shoot()
 {
   if (_firearms.at(_weaponIndex)->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
+  {
+    SoundPlayer::play(*t_RessourcesManager::getRessourceManagerUse()->get<Sound>("Hit"));
     _hitmarker->isActive = true;
+  }
 
   if (_bullet)
   {
@@ -220,7 +230,7 @@ void PlayerController::activateLootMachine()
 void PlayerController::camera()
 {
   Vec2 mouseMotion{static_cast<float>(Input::mouse.motion.x), static_cast<float>(Input::mouse.motion.y)};
-  mouseMotion *= _mouseSpeed * 0.02f;
+  mouseMotion *= _mouseSpeed;
 
   _orbit.y += mouseMotion.x;
   _orbit.x += mouseMotion.y;
