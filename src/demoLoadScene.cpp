@@ -1417,8 +1417,10 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         sphereColliderComp.setBounciness(0.f);
         sphereColliderComp.setFriction(0.97f);
 
-        enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+        
+        EnnemyController& ennemyControllertruc = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
                                                 &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+        ennemyControllertruc.setDamage(82);
 
         Save::createPrefab(enemyBase, "enemy1");
         enemyBase.destroyImmediate();
@@ -1455,7 +1457,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
         ennemyControllerComp.setLife(4);
         ennemyControllerComp.setSpeed(20);
-        ennemyControllerComp.setDamage(2);
+        ennemyControllerComp.setDamage(185);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
 
@@ -1494,7 +1496,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
         ennemyControllerComp.setLife(8);
         ennemyControllerComp.setSpeed(35);
-        ennemyControllerComp.setDamage(1);
+        ennemyControllerComp.setDamage(75);
         ennemyControllerComp.setRadius(50);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
