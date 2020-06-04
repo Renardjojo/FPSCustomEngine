@@ -88,6 +88,8 @@ void EnnemyController::idle()
 {
     float length{(_player->getPosition() - _gameObject.getPosition()).length()};
 
+    _gameObject.setVecForward(_player->getPosition() - _gameObject.getPosition());
+
     if (length <= _radius)
         _state = States::Chasing;
     else

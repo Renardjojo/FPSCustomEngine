@@ -239,7 +239,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 5, 0.2f,ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(4.f, 1000.f, 1, 1.f, 8, 0.4f,ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
@@ -256,7 +256,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
 
         GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
         shotgunGO.addComponent<Model>(shotgunModelArg);
-        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 2, 0.2f, 0.5,ressourceManager.get<Sound>("Shotgun"));
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.5f, 1000.f, 10, 1.f, 2, 0.2f, 0.5,ressourceManager.get<Sound>("Shotgun"));
         playerControllerPlayer1.addFirearm(&shotgunComponent);
     }
     //SubMachinegun
@@ -1404,7 +1404,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     
     nexus.addComponent<PointLight>(lightArgNexusLight);
 
-    nexus.setTranslation(Vec3{-10, 8, -10});
+    nexus.setTranslation(Vec3{-8, 8, -8});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
     
     nexus.addComponent<Nexus>();
@@ -1605,7 +1605,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
         checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
         checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
-        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8, 8, -8});
         spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
@@ -1624,7 +1624,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-95.f, 5.f, -6.f});
         checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-52.f, 5.f, -2.f});
         checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-15.f, 5.f, -4.f});
-        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8, 8, -8});
         spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint2->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
@@ -1642,7 +1642,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{30.f, 5.f, 110.f});
         checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{5.f, 5.f, 35.f});
         checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, -6.f});
-        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8, 8, -8});
         spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint3->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
@@ -1661,7 +1661,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{90.f, 5.f, -21.f});
         checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{35.f, 5.f, -15.f});
         checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{-4.f, 5.f, -10.f});
-        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8, 8, -8});
         spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint4->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
