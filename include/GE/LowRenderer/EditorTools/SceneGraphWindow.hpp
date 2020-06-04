@@ -2,6 +2,7 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-05-15 - 09 h 38
 
+#ifndef DNEDITOR
 #ifndef _SCENE_GRAPH_WINDOW_H
 #define _SCENE_GRAPH_WINDOW_H
 
@@ -67,3 +68,4 @@ namespace Engine::LowRenderer::EditorTools
 } // !namespace Engine::LowRenderer::Editor
 
 #endif //_SCENE_GRAPH_WINDOW_H
+#endif 

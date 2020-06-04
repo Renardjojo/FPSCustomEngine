@@ -31,7 +31,7 @@ namespace Game
         float _attackSpeed{1.f};
         float _cooldown{0.f};
         int _damage{1};
-        int _life{5};
+        int _life{2};
         int _valueOnHit{5};
         int _valueOnDeath{50};
 

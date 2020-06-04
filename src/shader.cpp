@@ -219,60 +219,6 @@ void Shader::use()
         glUseProgram(id_); 
 }
 
-void Shader::setBool(const char* name, bool value) const
-{         
-    glUniform1i(glGetUniformLocation(id_, name), (int)value);
-    functGlCheckAndLogError();
-}
-
-void Shader::setInt(const char* name, int value) const
-{ 
-    glUniform1i(glGetUniformLocation(id_, name), value);
-    functGlCheckAndLogError();
-}
-
-void Shader::setFloat(const char* name, float value) const
-{ 
-    glUniform1f(glGetUniformLocation(id_, name), value);
-    functGlCheckAndLogError();
-}
-
-void Shader::setVec3   (const char* name, float v1, float v2, float v3) const
-{
-    glUniform3f(glGetUniformLocation(id_, name), v1, v2, v3);
-    functGlCheckAndLogError();
-}
-
-void Shader::setVec4   (const char* name, float v1, float v2, float v3, float v4) const
-{
-    glUniform4f(glGetUniformLocation(id_, name), v1, v2, v3, v4);
-    functGlCheckAndLogError();
-}
-
-void Shader::setMat3   (const char* name, const float* value) const
-{
-    glUniformMatrix3fv(glGetUniformLocation(id_, name), 1, GL_FALSE, value);
-    functGlCheckAndLogError();
-}
-
-void Shader::setMat4   (const char* name, const float* value) const
-{
-    glUniformMatrix4fv(glGetUniformLocation(id_, name), 1, GL_FALSE, value);
-    functGlCheckAndLogError();
-}
-
-void Shader::setpVec3   (const char* name, unsigned int count, const float* pV) const
-{
-    glUniform3fv(glGetUniformLocation(id_, name), count, pV);
-    functGlCheckAndLogError();
-}
-
-void Shader::setpVec4   (const char* name, unsigned int count, const float* pV) const
-{
-    glUniform4fv(glGetUniformLocation(id_, name), count, pV);
-    functGlCheckAndLogError();
-}
-
 void Shader::setLightBlock   (const std::vector<light>& lightBuffer, const Engine::Core::Maths::Vec3& viewPos)
 {
     if ((featureMask_ & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)

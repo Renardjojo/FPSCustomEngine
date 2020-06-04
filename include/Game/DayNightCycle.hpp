@@ -42,20 +42,20 @@ namespace Game
             21h -> 2h59 : night					(40,40,70)
         */
 
-        const Engine::Ressources::AmbiantComponent morningSunLightColorAmbiante    {1.f, 1.f, 1.f, 0.3f};        //Sun light color at the evening
+        const Engine::Ressources::AmbiantComponent morningSunLightColorAmbiante    {1.f, 0.7f, 0.3f, 0.3f};        //Sun light color at the evening
         const Engine::Ressources::AmbiantComponent midDaySunLightColorAmbiante     {1.f, 1.f, 1.f, 0.1f};           //Sun light color at the middday
         const Engine::Ressources::AmbiantComponent eveningSunLightColorAmbiante    {1.f, 1.f, 1.f, 0.3f};        //Sun light color at the morning
-        const Engine::Ressources::AmbiantComponent nightColorAmbiante              {0.54f, 0.54f, 1.f, 0.4f};     //Sun light color at the night
+        const Engine::Ressources::AmbiantComponent nightColorAmbiante              {0.4f, 0.4f, 1.f, 0.2f};     //Sun light color at the night
 
-        const Engine::Ressources::DiffuseComponent morningSunLightColorDiffuse     {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the evening
+        const Engine::Ressources::DiffuseComponent morningSunLightColorDiffuse     {1.f, 0.7f, 0.3f, 0.1f};        //Sun light color at the evening
         const Engine::Ressources::DiffuseComponent midDaySunLightColorDiffuse      {1.f, 1.f, 1.f, .8f};           //Sun light color at the middday
         const Engine::Ressources::DiffuseComponent eveningSunLightColorDiffuse     {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the morning
-        const Engine::Ressources::DiffuseComponent nightColorDiffuse               {0.54f, 0.54f, 1.f, 0.f};     //Sun light color at the night
+        const Engine::Ressources::DiffuseComponent nightColorDiffuse               {0.4f, 0.4f, 1.f, 0.f};     //Sun light color at the night
 
-        const Engine::Ressources::SpecularComponent morningSunLightColorSpecular   {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the evening
+        const Engine::Ressources::SpecularComponent morningSunLightColorSpecular   {1.f, 0.7f, 0.3f, 0.1f};        //Sun light color at the evening
         const Engine::Ressources::SpecularComponent midDaySunLightColorSpecular    {1.f, 1.f, 1.f, 1.f};           //Sun light color at the middday
         const Engine::Ressources::SpecularComponent eveningSunLightColorSpecular   {1.f, 1.f, 1.f, 0.1f};        //Sun light color at the morning
-        const Engine::Ressources::SpecularComponent nightColorSpecular             {0.54f, 0.54f, 1.f, 0.f};     //Sun light color at the night
+        const Engine::Ressources::SpecularComponent nightColorSpecular             {0.4f, 0.4f, 1.f, 0.f};     //Sun light color at the night
 
         Engine::LowRenderer::DirectionnalLight* _pSunDirectionnalLight;
 

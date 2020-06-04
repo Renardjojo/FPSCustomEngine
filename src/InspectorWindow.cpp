@@ -1,3 +1,5 @@
+#ifndef DNEDITOR
+
 #include "GE/LowRenderer/EditorTools/InspectorWindow.hpp"
 #include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
 #include <typeinfo>
@@ -141,3 +143,5 @@ bool InspectorWindow::isCloseAfterUpdate(GameObject& gameObject)
 
     return !open;
 }
+
+#endif

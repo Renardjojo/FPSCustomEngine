@@ -2,6 +2,7 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-05-15 - 09 h 38
 
+#ifndef DNEDITOR
 #ifndef _INSPECTOR_WINDOW_H
 #define _INSPECTOR_WINDOW_H
 
@@ -71,3 +72,4 @@ namespace Engine::LowRenderer::EditorTools
 } // !namespace Engine::LowRenderer::Editor
 
 #endif //_INSPECTOR_WINDOW_H
+#endif 
