@@ -32,7 +32,7 @@ Texture::Texture(unsigned char* pixels,
     :   pixels_     (pixels_),
         name_       (name),
         w_          (size.width),
-        h_          (size.heigth),
+        h_          (size.height),
         comp_       (component),
         filterType_ (filterType_),
         wrapType_   (wrapType_)

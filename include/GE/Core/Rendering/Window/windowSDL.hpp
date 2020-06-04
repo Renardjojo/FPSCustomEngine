@@ -44,7 +44,7 @@ namespace Engine::Core::Renderer
             Engine::Ressources::Size    getSize () const noexcept final 
             { 
                 Engine::Ressources::Size rst;
-                SDL_GetWindowSize(win, &rst.width, &rst.heigth);
+                SDL_GetWindowSize(win, &rst.width, &rst.height);
                 return rst;
             }
 

@@ -138,7 +138,7 @@ void Demo::display() const noexcept
 
     if (_gameEngine.gameState == E_GAME_STATE::RUNNING || _gameEngine.gameState == E_GAME_STATE::PAUSE)
     {
-        glViewport(0, 0, sizeWin.width, sizeWin.heigth);
+        glViewport(0, 0, sizeWin.width, sizeWin.height);
 
         RenderingSystem::draw();
     }
