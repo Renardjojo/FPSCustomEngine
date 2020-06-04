@@ -1287,9 +1287,9 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     nexus.addComponent<Model>(modelNexusArg);
 
     PointLightCreateArg lightArgNexusLight{{0.f, 0.2f, 1.f, 0.2f},
-                                {0.f, 0.2f, 1.f, 0.5f},
-                                {0.f, 0.2f, 1.f, 0.7f},
-                                0.f, 0.05f, 0.f, true};
+                                            {0.f, 0.2f, 1.f, 0.5f},
+                                            {0.f, 0.2f, 1.f, 0.7f},
+                                            0.f, 0.05f, 0.f, true};
     
     nexus.addComponent<PointLight>(lightArgNexusLight);
 
@@ -1366,7 +1366,7 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
         GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
-        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, 145.f});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, -145.f});
         checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
         checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
         checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
