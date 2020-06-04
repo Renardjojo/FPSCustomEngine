@@ -239,7 +239,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(4.f, 1000.f, 1, 1.f, 8, 0.4f,ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(4.f, 1000.f, 1, 1.f, 8, 1.f,ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
