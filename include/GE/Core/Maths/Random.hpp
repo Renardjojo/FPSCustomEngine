@@ -9,6 +9,7 @@
 #include <time.h>
 #include <type_traits>
 #include <algorithm>
+#include <limits>
 
 #include "GE/Core/Maths/vec.hpp"
 
@@ -73,7 +74,7 @@ namespace Engine::Core::Maths
         template<typename T = int> 
         static auto unitValue() -> std::enable_if_t<std::is_integral<T>::value, T>
         {
-            return static_cast<T>(rand() % 2);
+            return static_cast<T>(rand() % static_cast<T>(2));
         }
 
         /**
@@ -86,13 +87,13 @@ namespace Engine::Core::Maths
         template<typename T = float>
         static auto ranged(const T& max) -> std::enable_if_t<std::is_floating_point<T>::value, T>
         {
-            return static_cast <T> (rand()) / (static_cast <T> (RAND_MAX / max));
+            return max <= std::numeric_limits<T>::epsilon() ? static_cast<T>(0) : static_cast <T> (rand()) / (static_cast <T> (RAND_MAX / max));
         }
 
         template<typename T = int>
         static auto ranged(const T& max) -> std::enable_if_t<std::is_integral<T>::value, T>
         {
-            return ranged<T>(0, max);
+            return max <= std::numeric_limits<T>::epsilon() ? static_cast<T>(0) : ranged<T>(0, max);
         }
 
         /**
@@ -106,13 +107,13 @@ namespace Engine::Core::Maths
         template<typename T = float>
         static auto ranged(const T& min, const T& max) -> std::enable_if_t<std::is_floating_point<T>::value, T>
         {
-            return min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(max - min)));
+            return max - min <= std::numeric_limits<T>::epsilon() ? max : min + static_cast <T> (rand()) /( static_cast <T> (RAND_MAX/(max - min)));
         }
 
         template<typename T = int>
         static auto ranged(const T& min, const T& max) -> std::enable_if_t<std::is_integral<T>::value, T>
         {
-            return min + static_cast <T> (rand()) / (static_cast <T> (RAND_MAX/((max + 1) - min)));
+            return max - min <= std::numeric_limits<T>::epsilon() ? max : min + static_cast <T> (rand()) / (static_cast <T> (RAND_MAX/((max + static_cast<T>(1)) - min)));
         }
 
 #pragma region Cicular
@@ -146,8 +147,8 @@ namespace Engine::Core::Maths
         template<typename T = float>
         static Vec3 unitPeripheralSphericalCoordonate()
         {
-            T phi = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
-            T theta = ranged<T>(static_cast<T>(0.f), static_cast<T>(M_PI * 2.f));
+            T phi = ranged<T>(static_cast<T>(0), static_cast<T>(M_PI * static_cast<T>(2)));
+            T theta = ranged<T>(static_cast<T>(0), static_cast<T>(M_PI * static_cast<T>(2)));
             return Vec3{std::sin(phi) * std::cos(theta), std::sin(phi) * std::sin(theta), std::cos(phi)};
         }
 
