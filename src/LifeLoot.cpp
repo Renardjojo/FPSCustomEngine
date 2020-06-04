@@ -21,9 +21,9 @@ void LifeLoot::effect()
     /*Give 2 health*/
     _playerGO->getComponent<PlayerController>()->inflictDamage(-2);
 
-    Engine::LowRenderer::ModelCreateArg modelArg3{&Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Shader>("ColorWithLight"),
-                            &Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Engine::Ressources::Material>>("RedMaterial"),
-                            &Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Mesh>("PlaneZ"),
+    Engine::LowRenderer::ModelCreateArg modelArg3{Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Shader>("ColorWithLight"),
+                            Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Engine::Ressources::Material>>("RedMaterial"),
+                            Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Mesh>("PlaneZ"),
                             "ColorWithLight",
                             "RedMaterial",
                             "PlaneZ"};

@@ -31,9 +31,9 @@ void GroundController::onCollisionEnter (HitInfo& hitInfo)
 {
     if (hitInfo.gameObject->getTag() == "Bullet")
     {
-        ModelCreateArg modelArg3{&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("ColorWithLight"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BrownMaterial"),
-                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
+        ModelCreateArg modelArg3{t_RessourcesManager::getRessourceManagerUse()->get<Shader>("ColorWithLight"),
+                                t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BrownMaterial"),
+                                t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("PlaneZ"),
                                 "ColorWithLight",
                                 "BrownMaterial",
                                 "PlaneZ"};
@@ -58,9 +58,9 @@ void GroundController::onCollisionEnter (HitInfo& hitInfo)
 
         GameObjectCreateArg decaleGOPref {"bulletHoleDecal", realImpact};
         decaleGOPref.transformArg.scale = Vec3::one * 0.4f;
-        ModelCreateArg      modelDecaleGOPref   {&t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"),
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"),
-                                                &t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
+        ModelCreateArg      modelDecaleGOPref   {t_RessourcesManager::getRessourceManagerUse()->get<Shader>("LightAndTexture"),
+                                                t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Material>>("BulletHole"),
+                                                t_RessourcesManager::getRessourceManagerUse()->get<Mesh>("Plane"),
                                                 "LightAndTexture",
                                                 "BulletHole",
                                                 "Plane"};

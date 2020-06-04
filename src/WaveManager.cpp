@@ -178,7 +178,7 @@ void WaveManager::save(xml_document<>& doc, xml_node<>* nodeParent)
         std::string data = "#";
         data += std::to_string(1);
         data += path;
-        newNode->append_attribute(doc.allocate_attribute((std::string("spawnerPrefabs") + std::to_string(count)).c_str(), doc.allocate_string(data.c_str())));
+        newNode->append_attribute(doc.allocate_attribute(doc.allocate_string((std::string("spawnerPrefabs") + std::to_string(count)).c_str()), doc.allocate_string(data.c_str())));
         count++;
     }
 
@@ -188,7 +188,7 @@ void WaveManager::save(xml_document<>& doc, xml_node<>* nodeParent)
         std::string data = "#";
         data += std::to_string(2);
         data += path;
-        newNode->append_attribute(doc.allocate_attribute((std::string("enemiesPrefabs") + std::to_string(count)).c_str(), doc.allocate_string(data.c_str())));
+        newNode->append_attribute(doc.allocate_attribute(doc.allocate_string((std::string("enemiesPrefabs") + std::to_string(count)).c_str()), doc.allocate_string(data.c_str())));
         count++;
     }
 

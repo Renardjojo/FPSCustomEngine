@@ -34,7 +34,8 @@ Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
 
 void Nexus::start()
 {
-    _life = 10;
+    _light = getGameObject().getComponent<PointLight>();
+    GE_assertInfo(_light != nullptr, "no Nexus light");
 }
 
 void Nexus::update()
@@ -50,6 +51,12 @@ void Nexus::fixedUpdate()
 void Nexus::onCollisionEnter(HitInfo& hitInfo)
 {
     (void)hitInfo;
+}
+
+void Nexus::inflictDamage(int damage) 
+{ 
+    _life -= damage; 
+    _light->setLinear(0.05f + (11 - _life) * 0.01f);
 }
 
 void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
