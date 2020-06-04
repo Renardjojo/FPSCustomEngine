@@ -1420,6 +1420,22 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
                                                 &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
+        GameObjectCreateArg lifeBarGameObject{"lifeBar",
+                                            {{0.f, 1.f, 0.f},
+                                            {0.f, 0.f, 0.f},
+                                            {1, 1.f, 1}}};
+
+        ModelCreateArg lifeBarBillboardArg{ressourceManager.get<Shader>("Color"),
+                            ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                            ressourceManager.get<Mesh>("Plane"),
+                            "Color",
+                            "GreenMaterial",
+                            "Plane", true, false};
+
+        GameObject& lifeBar = _scene->add<GameObject>(enemyBase, lifeBarGameObject);
+        lifeBar.addComponent<BillBoard>(lifeBarBillboardArg);
+        lifeBar.addComponent<BarIndicatorController>();
+
         Save::createPrefab(enemyBase, "enemy1");
         enemyBase.destroyImmediate();
     }
@@ -1458,6 +1474,22 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         ennemyControllerComp.setDamage(2);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
+
+        GameObjectCreateArg lifeBarGameObject{"lifeBar",
+                                            {{0.0f, 1.0f, 0.0f},
+                                            {0.f, 0.f, 0.f},
+                                            {1, 1.f, 1}}};
+
+        ModelCreateArg lifeBarBillboardArg{ressourceManager.get<Shader>("Color"),
+                            ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                            ressourceManager.get<Mesh>("Plane"),
+                            "Color",
+                            "GreenMaterial",
+                            "Plane", true, false};
+
+        GameObject& lifeBar = _scene->add<GameObject>(enemyBase, lifeBarGameObject);
+        lifeBar.addComponent<BillBoard>(lifeBarBillboardArg);
+        lifeBar.addComponent<BarIndicatorController>();
 
         Save::createPrefab(enemyBase, "enemy2");
         enemyBase.destroyImmediate();
@@ -1498,6 +1530,22 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         ennemyControllerComp.setRadius(50);
         ennemyControllerComp.setValueOnHit(10);
         ennemyControllerComp.setValueOnDeath(100);
+
+        GameObjectCreateArg lifeBarGameObject{"lifeBar",
+                                            {{0.0f, 1.0f, 0.0f},
+                                            {0.f, 0.f, 0.f},
+                                            {1, 1.f, 1}}};
+
+        ModelCreateArg lifeBarBillboardArg{ressourceManager.get<Shader>("Color"),
+                            ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                            ressourceManager.get<Mesh>("Plane"),
+                            "Color",
+                            "GreenMaterial",
+                            "Plane", true, false};
+
+        GameObject& lifeBar = _scene->add<GameObject>(enemyBase, lifeBarGameObject);
+        lifeBar.addComponent<BillBoard>(lifeBarBillboardArg);
+        lifeBar.addComponent<BarIndicatorController>();
 
         Save::createPrefab(enemyBase, "enemy3");
         enemyBase.destroyImmediate();
