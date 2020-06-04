@@ -82,7 +82,7 @@ namespace Engine::Ressources
 
     struct Size
     {
-        int width, heigth;
+        int width, height;
     };
 }
 

@@ -184,7 +184,6 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadGlassRessource          (ressourceManager);
     loadFogRessource            (ressourceManager);
     loadLootRessource           (ressourceManager); 
-    loadGuiRessource            (ressourceManager); 
     loadSniperScopeRessource    (ressourceManager);
     loadUpgradeStationRessource (ressourceManager);
 }
@@ -589,70 +588,19 @@ void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
         ressourceManager.add<std::vector<Material>>(matCrate.name, std::move(material));
     }
 }
-
-void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceManager)
-{
-    float halfWidth = _gameEngine.getWinSize().width / 2.f;
-    float halfHeight = _gameEngine.getWinSize().heigth / 2.f;
-    float crosshairSize = _gameEngine.getWinSize().heigth / 15;
-    float halfcrosshairSize = crosshairSize * 0.5;
-
-    Shader *imageShader = &ressourceManager.add<Shader>("ImageShader",
-                                                        "./ressources/shader/text.vs",
-                                                        "./ressources/shader/texture.fs");
-
-    TextureCreateArg tcaCrosshair{
-        "./ressources/texture/crossair.png",
-        E_WrapType::CLAMP_TO_BORDER,
-    };
-
-    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
-
-    ressourceManager.add<Image>("CrosshairImage",
-                                t_crosshair.getID(),
-                                imageShader,
-                                halfWidth - halfcrosshairSize,
-                                halfHeight - halfcrosshairSize,
-                                crosshairSize,
-                                crosshairSize,
-                                E_GAME_STATE::RUNNING);
-
-        TextureCreateArg hitmarkerTextureArg{
-        "./ressources/texture/hitmarker.png",
-        E_WrapType::CLAMP_TO_BORDER
-    };
-    
-    Texture &hitmarkerTexture = ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
-
-    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
-                                                    hitmarkerTexture.getID(),
-                                                    imageShader,
-                                                    halfWidth - halfcrosshairSize,
-                                                    halfHeight - halfcrosshairSize,
-                                                    crosshairSize,
-                                                    crosshairSize, 
-                                                    E_GAME_STATE::RUNNING);
-    hitmarker->setName("HitMarker");
-
-    hitmarker->isActive = false;
-}        
-
 void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
 {
-    TextureCreateArg tcaSniperScope{
-        "./ressources/texture/sniperScope.png",
-        E_WrapType::CLAMP_TO_BORDER,
-    };
-    tcaSniperScope.flipTexture = false;
-
+    TextureCreateArg tcaSniperScope{"./ressources/texture/sniperScope.png",E_WrapType::CLAMP_TO_BORDER,E_FilterType::LINEAR,false};
     Texture &sniperScopeTexture = ressourceManager.add<Texture>("sniperScopeTexture", tcaSniperScope);
+    
+    ressourceManager.add<Shader>("ImageShader","./ressources/shader/text.vs","./ressources/shader/texture.fs");
 
     ressourceManager.add<Image>("SniperScope",
                                 sniperScopeTexture.getID(),
                                 &ressourceManager.get<Shader>("ImageShader"),
                                 0, 0,
                                 _gameEngine.getWinSize().width,
-                                _gameEngine.getWinSize().heigth,
+                                _gameEngine.getWinSize().height,
                                 E_GAME_STATE::RUNNING).isActive = false;;
 }
 
