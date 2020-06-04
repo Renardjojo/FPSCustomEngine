@@ -1,3 +1,5 @@
+#ifndef DNEDITOR
+
 #include "GE/LowRenderer/EditorTools/SceneGraphWindow.hpp"
 #include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
 
@@ -45,3 +47,5 @@ void SceneGraphWindow::update(Graph& graph)
 }
 
 GameObject* SceneGraphWindow::pTargetGameObject = nullptr;
+
+#endif

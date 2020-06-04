@@ -61,32 +61,14 @@ namespace Engine::LowRenderer
 
             void sendToShaderModelMatrix () const noexcept final
             {
-                Engine::Core::Maths::Mat4 modelMat;
-                const Engine::Core::Maths::Mat4& modelMatCam =  Camera::getCamUse()->getModelMatrix();
+                Engine::Core::Maths::Vec3 globalPosition = _gameObject.getGlobalPosition();
 
-                /*Rotation*/
-                /*Right*/
-                modelMat[0][0] = modelMatCam[0][0];
-                modelMat[0][1] = modelMatCam[0][1];
-                modelMat[0][2] = modelMatCam[0][2];
-
-                /*Up*/
-                modelMat[1][0] = modelMatCam[1][0];
-                modelMat[1][1] = modelMatCam[1][1];
-                modelMat[1][2] = modelMatCam[1][2];
-
-                /*Forward*/
-                modelMat[2][0] = modelMatCam[2][0];
-                modelMat[2][1] = modelMatCam[2][1];
-                modelMat[2][2] = modelMatCam[2][2];
-
-                /*Translation*/
-                modelMat[3][0] = _gameObject.getGlobalPosition().x;
-                modelMat[3][1] = _gameObject.getGlobalPosition().y;
-                modelMat[3][2] = _gameObject.getGlobalPosition().z;
-
-                /*Scale*/
-                modelMat *= Engine::Core::Maths::Mat4::createScaleMatrix(_gameObject.getScale());
+                Engine::Core::Maths::Mat4 modelMat = 
+                Engine::Core::Maths::Mat4::createTranslationMatrix(globalPosition) *
+                Engine::Core::Maths::Mat4(Engine::Core::Maths::Mat3::createLookAtView(globalPosition, Engine::LowRenderer::Camera::getCamUse()->getGlobalPosition(), Engine::Core::Maths::Vec3::up)) *
+                Engine::Core::Maths::Mat4::createXRotationMatrix(M_PI_2) *
+                Engine::Core::Maths::Mat4::createScaleMatrix(_gameObject.getScale());
+                
                 pShader_->setMat4("model", &modelMat.mat[0]);
             }
 

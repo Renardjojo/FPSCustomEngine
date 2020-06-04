@@ -90,7 +90,7 @@ void Input::pollEvent(Uint32 windowID)
 			break;
 
 		case SDL_QUIT:
-			exit(EXIT_SUCCESS);
+			window.isQuit = true;
 			break;
 
 		default:

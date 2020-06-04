@@ -25,6 +25,7 @@ using namespace Engine::LowRenderer;
 Checkpoint::Checkpoint(GameObject &_gameObject)
     : ScriptComponent{_gameObject}
 {
+    _name = __FUNCTION__;
 }
 
 void Checkpoint::start()

@@ -1,3 +1,5 @@
+#ifndef DNEDITOR
+
 #include "GE/LowRenderer/EditorTools/EditModeControllerWindow.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Core/System/TimeSystem.hpp"
@@ -148,3 +150,5 @@ std::unique_ptr<Engine::LowRenderer::Camera> EditModeControllerWindow::pEditMode
 Mode                                         EditModeControllerWindow::mode             {Mode::GameMode};
 Engine::Core::Maths::Vec3                    EditModeControllerWindow::dirCamera        {0.f, 0.f, -1.f};
 float                                        EditModeControllerWindow::focusRange       {15.f};
+
+#endif

@@ -2,6 +2,7 @@
 //Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
 //Date : 2020-05-19 - 12 h 18
 
+#ifndef DNEDITOR
 #ifndef __EDITOR_HPP__
 #define __EDITOR_HPP__
 
@@ -49,3 +50,4 @@ namespace Engine::LowRenderer::EditorTools
 } /*namespace Engine::LowRenderer::Editor*/
 
 #endif // __EDITOR_HPP__
+#endif

@@ -175,9 +175,6 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadSkyboxRessource         (ressourceManager);
     loadGunRessource            (ressourceManager);
     loadPseudoRessource         (ressourceManager);
-    loadPlayerRessource         (ressourceManager);
-    // loadSpotLightRessource      (ressourceManager);
-    // loadTowerRessource          (ressourceManager);
     loadNexusRessource          (ressourceManager);  
     loadGroundRessource         (ressourceManager);
     loadEnemiesRessource        (ressourceManager);  
@@ -208,7 +205,8 @@ void Demo::loadSounds(t_RessourcesManager &rm)
     rm.add<Sound>("Sniper","./ressources/sound/rifle.wav").setGain(_effectsVolume);
     rm.add<Sound>("Shotgun","./ressources/sound/shotgun.wav").setGain(_effectsVolume);
     rm.add<Sound>("Machinegun","./ressources/sound/machinegun.wav").setGain(_effectsVolume);
-    
+    rm.add<Sound>("Hit","./ressources/sound/Hit.wav").setGain(_effectsVolume * 3.f);
+
     Sound& bg = rm.add<Sound>("background","./ressources/music/dark_forces.wav");
     bg.setGain(_musicVolume);
     bg.setLooping(true);
@@ -355,63 +353,6 @@ void Demo::loadPseudoRessource(t_RessourcesManager &ressourceManager)
     }
 }
 
-void Demo::loadPlayerRessource(t_RessourcesManager &ressourceManager)
-{
-    Attrib attrib;
-    std::vector<Shape> shape;
-    std::vector<MaterialAttrib> materialAttribs;
-
-    loadObjWithMTL("./ressources/obj/CODSoldier.obj", &attrib, &shape, &materialAttribs);
-
-    ressourceManager.add<Mesh>("Soldier1Mesh", attrib, shape);
-
-    {
-        std::vector<Material> material;
-        material.reserve(materialAttribs.size());
-        /*Instanciate material vector with data read on materalAtribs*/
-        material.assign(materialAttribs.begin(), materialAttribs.end());
-        ressourceManager.add<std::vector<Material>>("Soldier1Materials", std::move(material));
-    }
-}
-
-void Demo::loadTowerRessource(t_RessourcesManager &ressourceManager)
-{
-    Attrib attrib;
-    std::vector<Shape> shape;
-    std::vector<MaterialAttrib> materialAttribs;
-
-    loadObjWithMTL("./ressources/obj/guardTower.obj", &attrib, &shape, &materialAttribs);
-
-    ressourceManager.add<Mesh>("GuardTowerMesh", attrib, shape);
-
-    {
-        std::vector<Material> material;
-        material.reserve(materialAttribs.size());
-        /*Instanciate material vector with data read on materalAtribs*/
-        material.assign(materialAttribs.begin(), materialAttribs.end());
-        ressourceManager.add<std::vector<Material>>("GuardTowerMaterials", std::move(material));
-    }
-}
-
-void Demo::loadSpotLightRessource(t_RessourcesManager &ressourceManager)
-{
-    Attrib attrib;
-    std::vector<Shape> shape;
-    std::vector<MaterialAttrib> materialAttribs;
-
-    loadObjWithMTL("./ressources/obj/spotLight.obj", &attrib, &shape, &materialAttribs);
-
-    ressourceManager.add<Mesh>("SpotLightMesh", attrib, shape);
-
-    {
-        std::vector<Material> material;
-        material.reserve(materialAttribs.size());
-        /*Instanciate material vector with data read on materalAtribs*/
-        material.assign(materialAttribs.begin(), materialAttribs.end());
-        ressourceManager.add<std::vector<Material>>("SpotLightMaterial", std::move(material));
-    }
-}
-
 void Demo::loadGroundRessource(t_RessourcesManager &ressourceManager)
 {
     ressourceManager.add<Mesh>("GroundMesh" ,Mesh::createPlane(300));
@@ -518,7 +459,7 @@ void Demo::loadNexusRessource(t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
+void Demo::loadGlassRessource(t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matGlass;
     matGlass.name = "GlassMaterial";
@@ -532,7 +473,7 @@ void Demo::loadGlassRessource          (t_RessourcesManager& ressourceManager)
     }
 }
 
-void Demo::loadFogRessource           (t_RessourcesManager& ressourceManager)
+void Demo::loadFogRessource(t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matFog;
     matFog.name = "FogMaterials";
@@ -552,7 +493,7 @@ void Demo::loadFogRessource           (t_RessourcesManager& ressourceManager)
     ressourceManager.add<Shader>("BillBoardFogShader", "./ressources/shader/vCloud.vs", "./ressources/shader/fCloud.fs", SCALE_TIME_ACC);
 }
 
-void Demo::loadLootRessource           (t_RessourcesManager& ressourceManager)
+void Demo::loadLootRessource(t_RessourcesManager& ressourceManager)
 {
     MaterialAndTextureCreateArg matCrate;
     matCrate.name = "RedCrateMaterial";

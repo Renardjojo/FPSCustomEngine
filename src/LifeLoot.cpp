@@ -19,7 +19,7 @@ LifeLoot::LifeLoot (Engine::Ressources::GameObject &refGameObject, const std::ve
 void LifeLoot::effect()
 {
     /*Give 2 health*/
-    _playerGO->getComponent<PlayerController>()->inflictDamage(-2);
+    _playerGO->getComponent<PlayerController>()->inflictDamage(-200);
 
     Engine::LowRenderer::ModelCreateArg modelArg3{Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Shader>("ColorWithLight"),
                             Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<std::vector<Engine::Ressources::Material>>("RedMaterial"),
