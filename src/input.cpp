@@ -98,8 +98,6 @@ void Input::pollEvent(Uint32 windowID)
 		}
 	}
 
-	// std::cout << "old :" << mouse.oldLeftClicDown << " New: " << mouse.leftClicDown << std::endl;
-
 	if (!mouse.oldLeftClicDown && mouse.leftClicDown)
 		mouse.leftClicDownOnce = true;
 	else

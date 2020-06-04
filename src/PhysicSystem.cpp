@@ -154,7 +154,7 @@ void checkCollisionBetweenMovingSphereAndStaticBox (std::vector<CollisionTempInf
         else
         {
             (*it).collider->getGameObject().setTranslation((*it).position + (*it).currentVelocity * TimeSystem::getFixedDeltaTime());
-            (*it).physicalObject->addTorque((*it).newAngularVelocity);
+            (*it).physicalObject->setAngularVelocity((*it).newAngularVelocity);
             (*it).physicalObject->getGameObject().rotate((*it).physicalObject->getAngularVelocity() * TimeSystem::getFixedDeltaTime());
             (*it).physicalObject->setVelocity((*it).newVelocity);
             (*it).physicalObject->setDirtyFlag(false);

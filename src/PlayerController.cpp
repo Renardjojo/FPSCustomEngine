@@ -56,8 +56,6 @@ void PlayerController::start()
 
 void PlayerController::update()
 {
-    std::cout << _money << std::endl;
-
     if (Input::keyboard.getKeyState(Input::keyboard.jump) == E_KEY_STATE::DOWN)
         _jump = true;
 
@@ -252,7 +250,6 @@ void PlayerController::onCollisionEnter(HitInfo &hitInfo)
     {
         _isGrounded = true;
         _playerForce = _groundForce;
-        // _physics->setIsKinematic(false);
     }
 }
 
