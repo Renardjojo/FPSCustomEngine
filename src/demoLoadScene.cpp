@@ -74,6 +74,25 @@ using namespace Engine::Core::System;
 using namespace Engine::Core::DataStructure;
 using namespace Engine::Core::InputSystem;
 
+void Demo::loadEntity(t_RessourcesManager &ressourceManager)
+{
+    /*Fixe the seed to obtain a fixed procedural scene*/
+    Random::initSeed(10.f);
+
+    loadTimeManager             ();
+    loadRock                    (ressourceManager, 100);
+    loadTree                    (ressourceManager, 50);
+    loadSkybox                  (ressourceManager);
+    loadPlayer                  (ressourceManager);
+    loadGround                  (ressourceManager);
+    loadFog                     (ressourceManager, 20);
+    //loadTower                  (ressourceManager);Game
+    loadLootMachin               (ressourceManager);
+
+    /*Add randome seed*/
+    Random::initSeed();
+}
+
 void Demo::loadRock                   (t_RessourcesManager& ressourceManager, unsigned int number)
 {
     GameObjectCreateArg rockGameObject{"Rocks",
@@ -81,11 +100,11 @@ void Demo::loadRock                   (t_RessourcesManager& ressourceManager, un
                                         {0.f, 0.f, 0.f},
                                         {1.f, 1.f, 1.f}}};
 
-    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("RockMaterials");
+    std::vector<Material>* vecMaterials = ressourceManager.get<std::vector<Material>>("RockMaterials");
 
-    ModelCreateArg rockModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &vecMaterials,
-                                &ressourceManager.get<Mesh>("RockMesh"),
+    ModelCreateArg rockModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                vecMaterials,
+                                ressourceManager.get<Mesh>("RockMesh"),
                                 "LightAndTexture",
                                 "RockMaterials",
                                 "RockMesh"};
@@ -117,10 +136,10 @@ void Demo::loadTree(t_RessourcesManager &ressourceManager, unsigned int number)
                                         {1.f, 1.f, 1.f}}};
 
     GameObject& treeContener = _scene->add<GameObject>(_scene->getWorld(), treeGameObject);
-    std::vector<Material> &vecMaterials = ressourceManager.get<std::vector<Material>>("TreeMaterials");
-    ModelCreateArg treeModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &vecMaterials,
-                                &ressourceManager.get<Mesh>("TreeMesh"),
+    std::vector<Material>* vecMaterials = ressourceManager.get<std::vector<Material>>("TreeMaterials");
+    ModelCreateArg treeModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                vecMaterials,
+                                ressourceManager.get<Mesh>("TreeMesh"),
                                 "LightAndTexture",
                                 "TreeMaterials",
                                 "TreeMesh"};
@@ -158,9 +177,9 @@ void Demo::loadSkybox(t_RessourcesManager &ressourceManager)
                                              {0.f, 0.f, 0.f},
                                              {10.f, 10.f, 10.f}}};
 
-    ModelCreateArg skyboxArg{&ressourceManager.get<Shader>("SkyboxShader"),
-                             &ressourceManager.get<std::vector<Material>>("SkyboxMaterial"),
-                             &ressourceManager.get<Mesh>("SkyboxMesh"),
+    ModelCreateArg skyboxArg{ressourceManager.get<Shader>("SkyboxShader"),
+                             ressourceManager.get<std::vector<Material>>("SkyboxMaterial"),
+                             ressourceManager.get<Mesh>("SkyboxMesh"),
                              "SkyboxShader",
                              "SkyboxMaterial",
                              "SkyboxMesh", true, false};
@@ -210,35 +229,35 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
                                                 {0.f, -M_PI_2, 0.f},
                                                 {0.02f, 0.02f, 0.02f}}};
 
-        std::vector<Material> &vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
+        std::vector<Material>* vecMaterialsGun = ressourceManager.get<std::vector<Material>>("SniperMaterials");
 
-        ModelCreateArg sniperModelArg{  &ressourceManager.get<Shader>("LightAndTexture"),
-                                        &vecMaterialsGun,
-                                        &ressourceManager.get<Mesh>("SniperMesh"),
+        ModelCreateArg sniperModelArg{  ressourceManager.get<Shader>("LightAndTexture"),
+                                        vecMaterialsGun,
+                                        ressourceManager.get<Mesh>("SniperMesh"),
                                         "LightAndTexture",
                                         "SniperMaterials",
                                         "SniperMesh"};
             
         GameObject& sniperGO = _scene->add<GameObject>(player1GO, sniperGameObject);
         sniperGO.addComponent<Model>(sniperModelArg);
-        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 50, 0.2f,&ressourceManager.get<Sound>("Sniper"));
+        Firearm& sniperComponent = sniperGO.addComponent<Sniper>(2.f, 1000.f, 1, 1.f, 5, 0.2f,ressourceManager.get<Sound>("Sniper"));
         playerControllerPlayer1.addFirearm(&sniperComponent);
     }
     //Shotgun
     {
         GameObjectCreateArg shotgunGameObject{"shotgun",{{-0.5f, -1.5f, 3.8f}, {0.f, M_PI, 0.f}}};
-        std::vector<Material>& vecMaterialsShotgun = ressourceManager.get<std::vector<Material>>("ShotgunMaterials");
+        std::vector<Material>* vecMaterialsShotgun = ressourceManager.get<std::vector<Material>>("ShotgunMaterials");
 
-        ModelCreateArg shotgunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                        &vecMaterialsShotgun,
-                                        &ressourceManager.get<Mesh>("ShotgunMesh"),
+        ModelCreateArg shotgunModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                        vecMaterialsShotgun,
+                                        ressourceManager.get<Mesh>("ShotgunMesh"),
                                         "LightAndTexture",
                                         "ShotgunMaterials",
                                         "ShotgunMesh"};
 
         GameObject& shotgunGO = _scene->add<GameObject>(player1GO, shotgunGameObject);
         shotgunGO.addComponent<Model>(shotgunModelArg);
-        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 50, 0.2f, 0.5,&ressourceManager.get<Sound>("Shotgun"));
+        Firearm& shotgunComponent = shotgunGO.addComponent<Shotgun>(1.f, 1000.f, 10, 1.f, 2, 0.2f, 0.5,ressourceManager.get<Sound>("Shotgun"));
         playerControllerPlayer1.addFirearm(&shotgunComponent);
     }
     //SubMachinegun
@@ -248,33 +267,33 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
                                                     {0.f, M_PI, 0.f},
                                                     {0.3f, 0.3f, 0.3f}}};
 
-        std::vector<Material>& vecMaterialsSubMachineGun = ressourceManager.get<std::vector<Material>>("SubMachineGunMaterials");
+        std::vector<Material>* vecMaterialsSubMachineGun = ressourceManager.get<std::vector<Material>>("SubMachineGunMaterials");
 
-        ModelCreateArg subMachineGunModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                        &vecMaterialsSubMachineGun,
-                                        &ressourceManager.get<Mesh>("SubMachineGunMesh"),
+        ModelCreateArg subMachineGunModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                        vecMaterialsSubMachineGun,
+                                        ressourceManager.get<Mesh>("SubMachineGunMesh"),
                                         "LightAndTexture",
                                         "SubMachineGunMaterials",
                                         "SubMachineGunMesh"};
 
         GameObject& subMachineGunGO = _scene->add<GameObject>(player1GO, subMachineGunGameObject);
         subMachineGunGO.addComponent<Model>(subMachineGunModelArg);
-        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 50, 0.1f,&ressourceManager.get<Sound>("Machinegun"));
+        Firearm& subMachineGunComponent = subMachineGunGO.addComponent<SubMachineGun>(1.f, 1000.f, 1, 1.f, 30, 0.1f,ressourceManager.get<Sound>("Machinegun"));
         playerControllerPlayer1.addFirearm(&subMachineGunComponent);
     }
 
     //load billboards
-    std::vector<Material> &vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
-    Size textureSize = vecMaterialsPseudo[0].getPDiffuseTexture()->getSize();
+    std::vector<Material> *vecMaterialsPseudo = ressourceManager.get<std::vector<Material>>("PseudoMaterial");
+    Size textureSize = (*vecMaterialsPseudo)[0].getPDiffuseTexture()->getSize();
 
     GameObjectCreateArg pseudoGameObject{"Pseudo",
                                          {{0.0f, 5.0f, 0.0f},
                                           {0.f, 0.f, 0.f},
                                           {-textureSize.width / 10.f, 1.f, textureSize.height / 10.f}}};
 
-    ModelCreateArg planeArg{&ressourceManager.get<Shader>("TextureOnly"),
-                            &vecMaterialsPseudo,
-                            &ressourceManager.get<Mesh>("Plane"),
+    ModelCreateArg planeArg{ressourceManager.get<Shader>("TextureOnly"),
+                            vecMaterialsPseudo,
+                            ressourceManager.get<Mesh>("Plane"),
                             "TextureOnly",
                             "PseudoMaterial",
                             "Plane", true, false};
@@ -289,9 +308,9 @@ void Demo::loadGround(t_RessourcesManager &ressourceManager)
                                              {0.f, 0.f, 0.f},
                                              {3000.f, 1.f, 3000.f}}};
 
-    ModelCreateArg groundArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                             &ressourceManager.get<std::vector<Material>>("Ground"),
-                             &ressourceManager.get<Mesh>("GroundMesh"),
+    ModelCreateArg groundArg{ressourceManager.get<Shader>("LightAndTexture"),
+                             ressourceManager.get<std::vector<Material>>("Ground"),
+                             ressourceManager.get<Mesh>("GroundMesh"),
                              "LightAndTexture",
                              "Ground",
                              "GroundMesh",
@@ -311,11 +330,11 @@ void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned in
 
     GameObject& fogContener = _scene->add<GameObject>(_scene->getWorld(), fogGameObjectArg);
 
-    std::vector<Material>& vecMaterials = ressourceManager.get<std::vector<Material>>("FogMaterials");
+    std::vector<Material>* vecMaterials = ressourceManager.get<std::vector<Material>>("FogMaterials");
     
-    ModelCreateArg fogModelArg{&ressourceManager.get<Shader>("BillBoardFogShader"),
-                            &vecMaterials,
-                            &ressourceManager.get<Mesh>("BillBoardFogMesh"),
+    ModelCreateArg fogModelArg{ressourceManager.get<Shader>("BillBoardFogShader"),
+                            vecMaterials,
+                            ressourceManager.get<Mesh>("BillBoardFogMesh"),
                             "BillBoardFogShader",
                             "FogMaterials",
                             "BillBoardFogMesh",
@@ -338,6 +357,9 @@ void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned in
 
 void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 {
+    GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
+
+
     GameObjectCreateArg lootMachinArgGameObject{"LootMachine",
                                             {{-30.f, 5.f, -80.f},
                                              {0.f, 0.f, 0.f},
@@ -364,9 +386,9 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {M_PI_2, 0.f, 0.f},
                                             {.3f, 0.3f, 3.f}}};
                                              
-    ModelCreateArg cylinderArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                             &ressourceManager.get<Mesh>("Cylinder"),
+    ModelCreateArg cylinderArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             ressourceManager.get<Mesh>("Cylinder"),
                              "ColorWithLight",
                              "BlackMaterial",
                              "Cylinder", 
@@ -379,9 +401,9 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0, 0.f, 0.f},
                                             {1.f, 1.f, 1.f}}};
                                              
-    ModelCreateArg sphereArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("RedMaterial"),
-                             &ressourceManager.get<Mesh>("Sphere"),
+    ModelCreateArg sphereArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                             ressourceManager.get<Mesh>("Sphere"),
                              "ColorWithLight",
                              "RedMaterial",
                              "Sphere"};
@@ -393,9 +415,9 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0.f, M_PI_2, 0.f},
                                             {0.7f, 0.7f, 1.5f}}};
                                              
-    ModelCreateArg cylinderBaseArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                             &ressourceManager.get<Mesh>("Cylinder"),
+    ModelCreateArg cylinderBaseArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             ressourceManager.get<Mesh>("Cylinder"),
                              "ColorWithLight",
                              "BlackMaterial",
                              "Cylinder", 
@@ -436,23 +458,23 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {M_PI_4, 0.f, 0.f},
                                             {wrapWidth, wrapThickness / 2.f, wrapDepth}}};
                                              
-    ModelCreateArg greenPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("GreenMaterial"),
-                             &ressourceManager.get<Mesh>("Cube"),
+    ModelCreateArg greenPlatformArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("GreenMaterial"),
+                             ressourceManager.get<Mesh>("Cube"),
                             "ColorWithLight",
                             "GreenMaterial",
                             "Cube"};
 
-    ModelCreateArg pinkPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("PinkMaterial"),
-                             &ressourceManager.get<Mesh>("Cube"),
+    ModelCreateArg pinkPlatformArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("PinkMaterial"),
+                             ressourceManager.get<Mesh>("Cube"),
                             "ColorWithLight",
                             "PinkMaterial",
                             "Cube"};
 
-    ModelCreateArg redPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("RedMaterial"),
-                             &ressourceManager.get<Mesh>("Cube"),
+    ModelCreateArg redPlatformArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                             ressourceManager.get<Mesh>("Cube"),
                             "ColorWithLight",
                             "RedMaterial",
                             "Cube"};
@@ -518,16 +540,16 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
                                             {0.f, 0.f, 0.f},
                                             {wrapWidth, wrapHeight / 3.f * 2.f, wrapThickness}}};
                                             
-    ModelCreateArg blackPlatformArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                             &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                             &ressourceManager.get<Mesh>("Cube"),
+    ModelCreateArg blackPlatformArg{ressourceManager.get<Shader>("ColorWithLight"),
+                             ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                             ressourceManager.get<Mesh>("Cube"),
                             "ColorWithLight",
                             "BlackMaterial",
                             "Cube"};
 
-    ModelCreateArg glassPlatformArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                             &ressourceManager.get<std::vector<Material>>("GlassMaterial"),
-                             &ressourceManager.get<Mesh>("Cube"),
+    ModelCreateArg glassPlatformArg{ressourceManager.get<Shader>("LightAndTexture"),
+                             ressourceManager.get<std::vector<Material>>("GlassMaterial"),
+                             ressourceManager.get<Mesh>("Cube"),
                             "LightAndTexture",
                             "GlassMaterial",
                             "Cube"};
@@ -561,9 +583,9 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
         GameObject& lot1GO = _scene->add<GameObject>(_scene->getWorld(), lot1GameObjectArg);
 
-        ModelCreateArg modelBlueCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("YellowCrateMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg modelBlueCrateArg{ressourceManager.get<Shader>("LightAndTexture"),
+                            ressourceManager.get<std::vector<Material>>("YellowCrateMaterial"),
+                            ressourceManager.get<Mesh>("Cube"),
                             "LightAndTexture",
                             "YellowCrateMaterial",
                             "Cube"};
@@ -585,9 +607,9 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 
         GameObject& lot2GO = _scene->add<GameObject>(_scene->getWorld(), lot2GameObjectArg);
 
-        ModelCreateArg modelCrateArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("RedCrateMaterial"),
-                            &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg modelCrateArg{ressourceManager.get<Shader>("LightAndTexture"),
+                            ressourceManager.get<std::vector<Material>>("RedCrateMaterial"),
+                            ressourceManager.get<Mesh>("Cube"),
                             "LightAndTexture",
                             "RedCrateMaterial",
                             "Cube"};
@@ -604,7 +626,6 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
     }
 
     /*Create spawner*/
-    GameObject& lotsContener = _scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"LotsContener"});
 
     GameObjectCreateArg spawnerGOArg;
     {
@@ -612,7 +633,7 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         spawnerGOArg.transformArg.position = {wrapWidth / 4.f, wrapHeight / 2.f - 1.f, 0.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(lootMachin, spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(&lotsContener, nullptr,0.1f, 0.5f, 0.f);
+        spawnerGO.addComponent<CircularEntitiesSpawner>(nullptr,0.1f, 0.5f, 0.f).setContenor(&lotsContener);
 
         //Save::createPrefab(spawnerGO, spawnerGOArg.name);
         //spawnerGO.destroyImmediate();
@@ -629,9 +650,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
 
-        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                                &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg plankModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                ressourceManager.get<Mesh>("Cube"),
                                 "LightAndTexture",
                                 "BlackMaterial",
                                 "Cube"};
@@ -647,9 +668,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
 
-        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                                &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg plankModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                ressourceManager.get<Mesh>("Cube"),
                                 "LightAndTexture",
                                 "BlackMaterial",
                                 "Cube"};
@@ -665,9 +686,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
 
-        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                                &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg plankModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                ressourceManager.get<Mesh>("Cube"),
                                 "LightAndTexture",
                                 "BlackMaterial",
                                 "Cube"};
@@ -683,9 +704,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
 
-        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
-                                &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg plankModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                ressourceManager.get<Mesh>("Cube"),
                                 "LightAndTexture",
                                 "BlackMaterial",
                                 "Cube"};
@@ -701,9 +722,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& sphereGO = scene->add<GameObject>(parent, sphereGOarg);
 
-        ModelCreateArg sphereModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>("YellowMaterial"),
-                                &ressourceManager.get<Mesh>("Sphere"),
+        ModelCreateArg sphereModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>("YellowMaterial"),
+                                ressourceManager.get<Mesh>("Sphere"),
                                 "LightAndTexture",
                                 "YellowMaterial",
                                 "Sphere"};
@@ -718,9 +739,9 @@ void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& re
 
         GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
 
-        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                                &ressourceManager.get<std::vector<Material>>(mat),
-                                &ressourceManager.get<Mesh>("Cube"),
+        ModelCreateArg plankModelArg{ressourceManager.get<Shader>("LightAndTexture"),
+                                ressourceManager.get<std::vector<Material>>(mat),
+                                ressourceManager.get<Mesh>("Cube"),
                                 "LightAndTexture",
                                 mat,
                                 "Cube"};
@@ -846,6 +867,100 @@ void Demo::loadLights()
     pl.addComponent<DirectionnalLight>(lightArg2);
 }
 
+void Demo::loadGUI(t_RessourcesManager &ressourceManager)
+{
+    int halfWidth = _gameEngine.getWinSize().width / 2.0f;
+    int halfHeight = _gameEngine.getWinSize().height / 2.0f;
+    float crosshairSize = _gameEngine.getWinSize().height / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
+
+    if (ressourceManager.get<ReferencedTitle>("WaveIndicatorUI"))
+        ressourceManager.remove<ReferencedTitle>("WaveIndicatorUI");
+    ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                _gameEngine.getWinSize().width / 2.0f  - _gameEngine.getWinSize().width / 2.0f / 10.f, _gameEngine.getWinSize().height / 2.0f - _gameEngine.getWinSize().height / 2.0f / 10.f * 9.f,
+                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
+    
+    Texture* t_hitmarker = ressourceManager.get<Texture>("hitmarker");
+
+    if (ressourceManager.get<Image>("hitmarkerImage"))
+        ressourceManager.remove<Image>("hitmarkerImage");
+    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
+                                                    t_hitmarker->getID(),
+                                                    ressourceManager.get<Shader>("ImageShader"),
+                                                    halfWidth - halfcrosshairSize,
+                                                    halfHeight - halfcrosshairSize,
+                                                    crosshairSize,
+                                                    crosshairSize, 
+                                                    E_GAME_STATE::RUNNING);
+
+    hitmarker->setName("HitMarker");
+    hitmarker->isActive = false;
+
+    Texture* t_crosshair = ressourceManager.get<Texture>("crosshair");
+
+    if (ressourceManager.get<Image>("CrosshairImage"))
+        ressourceManager.remove<Image>("CrosshairImage");
+    ressourceManager.add<Image>("CrosshairImage",
+                                t_crosshair->getID(),
+                                ressourceManager.get<Shader>("ImageShader"),
+                                halfWidth - halfcrosshairSize,
+                                halfHeight - halfcrosshairSize,
+                                crosshairSize,
+                                crosshairSize,
+                                E_GAME_STATE::RUNNING);
+
+    Texture* t_health = ressourceManager.get<Texture>("Health");
+    if (ressourceManager.get<Image>("HealthImage"))
+        ressourceManager.remove<Image>("HealthImage");
+    ressourceManager.add<Image>("HealthImage",
+                                t_health->getID(),
+                                ressourceManager.get<Shader>("ImageShader"),
+                                0,
+                                halfHeight*2 - t_health->getSize().height,
+                                t_health->getSize().width,
+                                t_health->getSize().height,
+                                E_GAME_STATE::RUNNING);
+
+    Texture* t_bullet = ressourceManager.get<Texture>("bullet");
+    if (ressourceManager.get<Image>("BulletImage"))
+        ressourceManager.remove<Image>("BulletImage");
+    ressourceManager.add<Image>("BulletImage",
+                                t_bullet->getID(),
+                                ressourceManager.get<Shader>("ImageShader"),
+                                halfWidth*2 - t_bullet->getSize().width - t_bullet->getSize().width/2,
+                                halfHeight*2 - t_bullet->getSize().height - t_bullet->getSize().height/15,
+                                t_bullet->getSize().width,
+                                t_bullet->getSize().height,
+                                E_GAME_STATE::RUNNING);
+
+    if (ressourceManager.get<ReferencedTitle>("lifeIndicator"))
+        ressourceManager.remove<ReferencedTitle>("lifeIndicator");
+    ressourceManager.add<ReferencedTitle>("lifeIndicator", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth/10.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"", E_GAME_STATE::RUNNING);
+    
+    if (ressourceManager.get<ReferencedTitle>("maxlifeIndicator"))
+        ressourceManager.remove<ReferencedTitle>("maxlifeIndicator");
+    ressourceManager.add<ReferencedTitle>("maxlifeIndicator", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth/5.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMaxLife(),"/ ", E_GAME_STATE::RUNNING);                        
+
+    if (ressourceManager.get<ReferencedTitle>("moneyIndicator"))
+        ressourceManager.remove<ReferencedTitle>("moneyIndicator");
+    ressourceManager.add<ReferencedTitle>("moneyIndicator", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth/10.f, halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{120, 240, 120, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMoney(),"$", E_GAME_STATE::RUNNING);                        
+    
+    if (ressourceManager.get<Title>("bulletIndicator"))
+        ressourceManager.remove<Title>("bulletIndicator");
+    Title* bulletIndicator = &ressourceManager.add<Title>("bulletIndicator", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth*1.75, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255}," Bullets", E_GAME_STATE::RUNNING);
+    
+    _scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->setBulletReference(bulletIndicator);
+
+}
+
 void Demo::loadUI(t_RessourcesManager &ressourceManager)
 {
     FontCreateArg fontarg{"./ressources/font/opensans.ttf", 40};
@@ -856,8 +971,6 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     int halfWidth = _gameEngine.getWinSize().width / 2.0f;
     int halfHeight = _gameEngine.getWinSize().height / 2.0f;
-    float crosshairSize = _gameEngine.getWinSize().height / 15;
-    float halfcrosshairSize = crosshairSize * 0.5;
 
 #pragma region Start
 
@@ -866,6 +979,18 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
+
+        _scene = std::make_unique<Scene>();
+        
+        loadCamera();
+        loadEntity(_gameEngine.ressourceManager_);
+        loadLights();
+        loadBulletHoleContenor (50);
+        loadEnemies(_gameEngine.ressourceManager_);
+        loadUpgradeStation(_gameEngine.ressourceManager_);
+        loadGUI(_gameEngine.ressourceManager_);
+    
+        ScriptSystem::start();
         _gameEngine.gameState = E_GAME_STATE::RUNNING;
         usingMouse = false;
     };
@@ -912,6 +1037,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{80, 170, 80, 0}, "Menu",
                                  E_GAME_STATE::PAUSE)
         .function = [&]() {
+
+        Light::resetLight();
+        _scene.reset();
         _gameEngine.gameState = E_GAME_STATE::STARTING;
         usingMouse = true;
     };
@@ -936,8 +1064,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.up = key;
-            ressourceManager.get<Button>("OptionForwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionForwardButton").updateTexture();
+            ressourceManager.get<Button>("OptionForwardButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionForwardButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -956,8 +1084,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.down = key;
-            ressourceManager.get<Button>("OptionBackwardButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionBackwardButton").updateTexture();
+            ressourceManager.get<Button>("OptionBackwardButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionBackwardButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -976,8 +1104,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.left = key;
-            ressourceManager.get<Button>("OptionLeftButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionLeftButton").updateTexture();
+            ressourceManager.get<Button>("OptionLeftButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionLeftButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -996,8 +1124,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.right = key;
-            ressourceManager.get<Button>("OptionRightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionRightButton").updateTexture();
+            ressourceManager.get<Button>("OptionRightButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionRightButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1016,8 +1144,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.jump = key;
-            ressourceManager.get<Button>("OptionJumpButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionJumpButton").updateTexture();
+            ressourceManager.get<Button>("OptionJumpButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionJumpButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1027,11 +1155,11 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
-        Button *switchButton = &ressourceManager.get<Button>("OptionSwitchButton");
-        Button *upButton = &ressourceManager.get<Button>("OptionForwardButton");
-        Button *downButton = &ressourceManager.get<Button>("OptionBackwardButton");
-        Button *rightButton = &ressourceManager.get<Button>("OptionRightButton");
-        Button *leftButton = &ressourceManager.get<Button>("OptionLeftButton");
+        Button *switchButton = ressourceManager.get<Button>("OptionSwitchButton");
+        Button *upButton = ressourceManager.get<Button>("OptionForwardButton");
+        Button *downButton = ressourceManager.get<Button>("OptionBackwardButton");
+        Button *rightButton = ressourceManager.get<Button>("OptionRightButton");
+        Button *leftButton = ressourceManager.get<Button>("OptionLeftButton");
         if (switchButton->value.compare("WASD") == 0)
         {
             Input::keyboard.up = SDL_SCANCODE_Z;
@@ -1077,8 +1205,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.flashLight = key;
-            ressourceManager.get<Button>("OptionFlashLightButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionFlashLightButton").updateTexture();
+            ressourceManager.get<Button>("OptionFlashLightButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionFlashLightButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1097,8 +1225,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.reload = key;
-            ressourceManager.get<Button>("OptionReloadButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionReloadButton").updateTexture();
+            ressourceManager.get<Button>("OptionReloadButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionReloadButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1117,8 +1245,8 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         if (key != SDL_SCANCODE_UNKNOWN && key != SDL_SCANCODE_ESCAPE)
         {
             Input::keyboard.use = key;
-            ressourceManager.get<Button>("OptionUseButton").value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
-            ressourceManager.get<Button>("OptionUseButton").updateTexture();
+            ressourceManager.get<Button>("OptionUseButton")->value = SDL_GetKeyName(SDL_GetKeyFromScancode(key));
+            ressourceManager.get<Button>("OptionUseButton")->updateTexture();
             Input::resetKeyDown();
         }
     };
@@ -1153,7 +1281,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(shortSaveName, pfont2, buttonShader,
                                      halfWidth + i, halfHeight + j,
-                                     75.0f, 60.0f, SDL_Color{200, 200, 200, 0},
+                                     90.0f, 60.0f, SDL_Color{200, 200, 200, 0},
                                      shortSaveName, E_GAME_STATE::STARTSAVE)
             .function = [&]() {
             _gameEngine.gameState = E_GAME_STATE::RUNNING;
@@ -1162,6 +1290,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             _scene.reset();
             _scene = std::make_unique<Scene>();
             setupScene(*_scene, saves.c_str());
+            loadGUI(_gameEngine.ressourceManager_);
             mainCamera = &_scene->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);
@@ -1186,81 +1315,6 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
 #pragma endregion
-
-#pragma region UI in Game
-
-ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
-                                halfWidth  - halfWidth / 10.f, halfHeight - halfHeight / 10.f * 9.f,
-                                150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
-
-
-    TextureCreateArg tcaCrosshair{"./ressources/texture/crossair.png",E_WrapType::CLAMP_TO_BORDER};
-    TextureCreateArg tcaBullet{"./ressources/texture/Bullet.png",E_WrapType::CLAMP_TO_BORDER,E_FilterType::LINEAR,false};
-    TextureCreateArg tcaHealth{"./ressources/texture/Health.png",E_WrapType::CLAMP_TO_BORDER};
-    TextureCreateArg hitmarkerTextureArg{"./ressources/texture/hitmarker.png",E_WrapType::CLAMP_TO_BORDER};
-
-    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
-    Texture &t_bullet = ressourceManager.add<Texture>("bullet", tcaBullet);
-    Texture &t_health = ressourceManager.add<Texture>("Health", tcaHealth);
-    Texture &hitmarkerTexture = ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
-    
-    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
-                                                    hitmarkerTexture.getID(),
-                                                    &ressourceManager.get<Shader>("ImageShader"),
-                                                    halfWidth - halfcrosshairSize,
-                                                    halfHeight - halfcrosshairSize,
-                                                    crosshairSize,
-                                                    crosshairSize, 
-                                                    E_GAME_STATE::RUNNING);
-
-    hitmarker->setName("HitMarker");
-    hitmarker->isActive = false;
-
-    ressourceManager.add<Image>("CrosshairImage",
-                                t_crosshair.getID(),
-                                &ressourceManager.get<Shader>("ImageShader"),
-                                halfWidth - halfcrosshairSize,
-                                halfHeight - halfcrosshairSize,
-                                crosshairSize,
-                                crosshairSize,
-                                E_GAME_STATE::RUNNING);
-    ressourceManager.add<Image>("HealthImage",
-                                t_health.getID(),
-                                &ressourceManager.get<Shader>("ImageShader"),
-                                0,
-                                halfHeight*2 - t_health.getSize().height,
-                                t_health.getSize().width,
-                                t_health.getSize().height,
-                                E_GAME_STATE::RUNNING);
-    ressourceManager.add<Image>("BulletImage",
-                                t_bullet.getID(),
-                                &ressourceManager.get<Shader>("ImageShader"),
-                                halfWidth*2 - t_bullet.getSize().width - t_bullet.getSize().width/2,
-                                halfHeight*2 - t_bullet.getSize().height - t_bullet.getSize().height/15,
-                                t_bullet.getSize().width,
-                                t_bullet.getSize().height,
-                                E_GAME_STATE::RUNNING);
-
-    ressourceManager.add<ReferencedTitle>("lifeIndicator", pfont, buttonShader,
-                                halfWidth/10.f, halfHeight*2 - halfHeight/10.f,
-                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"", E_GAME_STATE::RUNNING);
-    ressourceManager.add<ReferencedTitle>("maxlifeIndicator", pfont, buttonShader,
-                                halfWidth/5.f, halfHeight*2 - halfHeight/10.f,
-                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMaxLife(),"/ ", E_GAME_STATE::RUNNING);                        
-    
-    ressourceManager.add<ReferencedTitle>("moneyIndicator", pfont, buttonShader,
-                                halfWidth/10.f, halfHeight/10.f,
-                                halfWidth, halfWidth/10.f, SDL_Color{120, 240, 120, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMoney(),"$", E_GAME_STATE::RUNNING);                        
-    
-    
-    Title* bulletIndicator = &ressourceManager.add<Title>("bulletIndicator", pfont, buttonShader,
-                                halfWidth*1.75, halfHeight*2 - halfHeight/10.f,
-                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255}," Bullets", E_GAME_STATE::RUNNING);
-    
-    _scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->setBulletReference(bulletIndicator);
-
-    
-#pragma endregion
 }
 
 void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
@@ -1269,9 +1323,9 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
 
-    ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                          &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
-                          &ressourceManager.get<Mesh>("NexusMesh"),
+    ModelCreateArg modelNexusArg{ressourceManager.get<Shader>("LightAndTexture"),
+                          ressourceManager.get<std::vector<Material>>("NexusMaterial"),
+                          ressourceManager.get<Mesh>("NexusMesh"),
                           "LightAndTexture",
                           "NexusMaterial",
                           "NexusMesh"};
@@ -1279,9 +1333,9 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     nexus.addComponent<Model>(modelNexusArg);
 
     PointLightCreateArg lightArgNexusLight{{0.f, 0.2f, 1.f, 0.2f},
-                                {0.f, 0.2f, 1.f, 0.5f},
-                                {0.f, 0.2f, 1.f, 0.7f},
-                                0.f, 0.05f, 0.f, true};
+                                            {0.f, 0.2f, 1.f, 0.5f},
+                                            {0.f, 0.2f, 1.f, 0.7f},
+                                            0.f, 0.05f, 0.f, true};
     
     nexus.addComponent<PointLight>(lightArgNexusLight);
 
@@ -1290,6 +1344,14 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
     
     nexus.addComponent<Nexus>();
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
+
+    GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
+
+    GameObject* checkpoint2 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint2"});
+
+    GameObject* checkpoint3 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint3"});
+
+    GameObject* checkpoint4 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint4"});
 
     enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
@@ -1412,9 +1474,9 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
                                 {1.f, 0.f, 0.f, 0.7f},
                                 {1.f, 1.f, 1.f, 0.3f},
                                 0.f, 0.05f, 0.f, true};
-    ModelCreateArg modelSpawnerArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                            &ressourceManager.get<std::vector<Material>>("BlueMaterial"),
-                            &ressourceManager.get<Mesh>("Sphere"),
+    ModelCreateArg modelSpawnerArg{ressourceManager.get<Shader>("ColorWithLight"),
+                            ressourceManager.get<std::vector<Material>>("BlueMaterial"),
+                            ressourceManager.get<Mesh>("Sphere"),
                             "ColorWithLight",
                             "BlueMaterial",
                             "Sphere"};
@@ -1423,13 +1485,12 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {-120.f, 5.f, -175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
-        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, 145.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, -145.f});
+        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
+        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
+        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
+        checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
         
@@ -1443,13 +1504,12 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {-150.f, 5.f, 59.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint2"});
-        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-116.f, 5.f, 21.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-95.f, 5.f, -6.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-52.f, 5.f, -2.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-15.f, 5.f, -4.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        checkpoint2->addComponent<Checkpoint>().addCheckpoint(Vec3{-116.f, 5.f, 21.f});
+        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-95.f, 5.f, -6.f});
+        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-52.f, 5.f, -2.f});
+        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-15.f, 5.f, -4.f});
+        checkpoint2->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint2->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
@@ -1462,13 +1522,12 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {95.f, 5.f, 175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint3"});
-        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{52.f, 5.f, 170.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{30.f, 5.f, 110.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{5.f, 5.f, 35.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, -6.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        checkpoint3->addComponent<Checkpoint>().addCheckpoint(Vec3{52.f, 5.f, 170.f});
+        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{30.f, 5.f, 110.f});
+        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{5.f, 5.f, 35.f});
+        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, -6.f});
+        checkpoint3->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint3->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
@@ -1481,20 +1540,67 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
         spawnerGOArg.transformArg.position = {108.f, 5.f, -173.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint4"});
-        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{135.f, 5.f, -109.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{114.f, 5.f, -60.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{90.f, 5.f, -21.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{35.f, 5.f, -15.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-4.f, 5.f, -10.f});
-        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        checkpoint4->addComponent<Checkpoint>().addCheckpoint(Vec3{135.f, 5.f, -109.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{114.f, 5.f, -60.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{90.f, 5.f, -21.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{35.f, 5.f, -15.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{-4.f, 5.f, -10.f});
+        checkpoint4->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(checkpoint4->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f).setContenor(enemiesContener);
         spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroyImmediate();
     }
+
+    GameObjectCreateArg EnnemyGameObjectArg{"Ennemy"};
+
+    ModelCreateArg modelArg{ressourceManager.get<Shader>("ColorWithLight"),
+                        ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                        ressourceManager.get<Mesh>("Cube"),
+                        "ColorWithLight",
+                        "RedMaterial",
+                        "Cube"};
+
+    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), EnnemyGameObjectArg);
+    enemyBase.setTag("Enemy");
+
+    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
+
+    enemyBase.addComponent<Model>(modelArg);
+    enemyBase.addComponent<PhysicalObject>().setMass(1);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotX(true);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotY(true);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotZ(true);
+    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+
+
+    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+    enemyBase.getComponent<EnnemyController>()->setDamage(100);
+
+    Save::createPrefab(enemyBase, "enemy1");
+
+    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(8);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
+    enemyBase.getComponent<EnnemyController>()->setDamage(200);
+    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
+    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
+
+    Save::createPrefab(enemyBase, "enemy2");
+
+    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(3);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setDamage(100);
+    enemyBase.getComponent<EnnemyController>()->setRadius(50);
+
+    Save::createPrefab(enemyBase, "enemy3");
+
+    enemyBase.destroyImmediate();
 
     /*Create wave manager and assign spawner and enemies prefabs*/
     GameObjectCreateArg waveManagerArg {"waveManager"};

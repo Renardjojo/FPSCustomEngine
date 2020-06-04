@@ -7,20 +7,19 @@ using namespace Engine::Ressources;
 using namespace Engine::Core::Component;
 using namespace Engine::Core::Maths;
 
-CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObject* contenor, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval)
+CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, const std::vector<EntityPrefabCount>& entitiesToSpawnInfo, float zoneRadius, float spawnDelay, float spawnDelayInterval)
     :   ScriptComponent         {gameObject},
         _entitiesToSpawnInfo    {entitiesToSpawnInfo},
         _zoneRadius             {zoneRadius},
         _spawnDelay             {spawnDelay},
         _spawnDelayInterval     {spawnDelayInterval}, 
         _delayCount             {0.f},
-        _nextDelay              {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
-        _contenor               {contenor}
+        _nextDelay              {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)}
 {
     _name = __FUNCTION__;
 }
 
-CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObject* contenor, Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval)
+CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, Checkpoint* checkpoint, float zoneRadius, float spawnDelay, float spawnDelayInterval)
     :   ScriptComponent         {gameObject},
         _entitiesToSpawnInfo    {},
         _zoneRadius             {zoneRadius},
@@ -28,7 +27,6 @@ CircularEntitiesSpawner::CircularEntitiesSpawner(GameObject &gameObject, GameObj
         _spawnDelayInterval     {spawnDelayInterval}, 
         _delayCount             {0.f},
         _nextDelay              {_spawnDelay + Random::ranged(-_spawnDelayInterval, _spawnDelayInterval)},
-        _contenor               {contenor},
         _checkpoint             {checkpoint}
 {
     _name = __FUNCTION__;
@@ -42,7 +40,7 @@ CircularEntitiesSpawner::CircularEntitiesSpawner (GameObject &refGameObject, con
         _spawnDelayInterval                         {std::stof(params[2])}, 
         _delayCount                                 {std::stof(params[3])},
         _nextDelay                                  {std::stof(params[4])},
-        _contenor                                   {&Scene::getCurrentScene()->getGameObject(params[5])}, 
+        _contenor                                   {params[5].compare("nullptr") == 0 ? nullptr : &Scene::getCurrentScene()->getGameObject(params[5])}, 
         _checkpoint{params[6].compare("nullptr") == 0 ? nullptr : Scene::getCurrentScene()->getGameObject(params[6]).getComponent<Checkpoint>()}
 {
     _name = __FUNCTION__;
@@ -54,6 +52,10 @@ CircularEntitiesSpawner::CircularEntitiesSpawner (GameObject &refGameObject, con
         _entitiesToSpawnInfo.push_back({static_cast<unsigned int>(std::stoi(params[count])), params[count + 1]});
         count+=2;
     }
+}
+
+void CircularEntitiesSpawner::start()
+{
 }
 
 void CircularEntitiesSpawner::addEntitiesToSpawner(unsigned int numberEntities, const std::string& prefabs)
@@ -105,15 +107,15 @@ void CircularEntitiesSpawner::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("delayCount", doc.allocate_string(std::to_string(_delayCount).c_str())));
     newNode->append_attribute(doc.allocate_attribute("nextDelay", doc.allocate_string(std::to_string(_nextDelay).c_str())));
 
-    newNode->append_attribute(doc.allocate_attribute("contenorName", doc.allocate_string(_contenor->getRelativePath().c_str())));
+    newNode->append_attribute(doc.allocate_attribute("contenorName", doc.allocate_string(_contenor ? _contenor->getRelativePath().c_str() : "nullptr")));
 
     newNode->append_attribute(doc.allocate_attribute("checkpointName", doc.allocate_string(_checkpoint ? _checkpoint->getGameObject().getRelativePath().c_str() : "nullptr")));
 
     int count = 0;
     for (auto &&i : _entitiesToSpawnInfo)
     {
-        newNode->append_attribute(doc.allocate_attribute((std::string("numberEntity") + std::to_string(count)).c_str(), doc.allocate_string(std::to_string(i.numberEntity).c_str())));
-        newNode->append_attribute(doc.allocate_attribute((std::string("pathPrefabs") + std::to_string(count)).c_str(), doc.allocate_string(i.pathPrefabs.c_str())));
+        newNode->append_attribute(doc.allocate_attribute(doc.allocate_string((std::string("numberEntity") + std::to_string(count)).c_str()), doc.allocate_string(std::to_string(i.numberEntity).c_str())));
+        newNode->append_attribute(doc.allocate_attribute(doc.allocate_string((std::string("pathPrefabs") + std::to_string(count)).c_str()), doc.allocate_string(i.pathPrefabs.c_str())));
         count++;
     }
 

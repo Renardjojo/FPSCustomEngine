@@ -34,9 +34,10 @@ Firearm::Firearm (Engine::Ressources::GameObject &refGameObject, const std::vect
         _munition                                   {static_cast<unsigned int>(std::stoi(params[6]))},
         _delay                                      {std::stof(params[7])},
         _isReloading                                {static_cast<bool>(std::stoi(params[8]))},
-        _isWaitingForNextShot                       {static_cast<bool>(std::stoi(params[9]))},
-        _isAutomatic                                {static_cast<bool>(std::stoi(params[10]))},
-        _isAiming                                   {static_cast<bool>(std::stoi(params[11]))},
+        _Reloaded                                   {static_cast<bool>(std::stoi(params[9]))},
+        _isWaitingForNextShot                       {static_cast<bool>(std::stoi(params[10]))},
+        _isAutomatic                                {static_cast<bool>(std::stoi(params[11]))},
+        _isAiming                                   {static_cast<bool>(std::stoi(params[12]))},
         _sound                                      {nullptr}
 {
     _name = __FUNCTION__;
@@ -55,6 +56,7 @@ void Firearm::update () noexcept
             _isReloading = false;
             _munition = _munitionCapacity;
             _delay = 0.f;
+            _Reloaded = true;
         }
     }
     else if (_isWaitingForNextShot)
@@ -126,6 +128,7 @@ void Firearm::save(xml_document<>& doc, xml_node<>* nodeParent)
     newNode->append_attribute(doc.allocate_attribute("munition", doc.allocate_string(std::to_string(_munition).c_str())));
     newNode->append_attribute(doc.allocate_attribute("delay", doc.allocate_string(std::to_string(_delay).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isReloading", doc.allocate_string(std::to_string(_isReloading).c_str())));
+    newNode->append_attribute(doc.allocate_attribute("Reloaded", doc.allocate_string(std::to_string(_Reloaded).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isWaitingForNextShot", doc.allocate_string(std::to_string(_isWaitingForNextShot).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isAutomatic", doc.allocate_string(std::to_string(_isAutomatic).c_str())));
     newNode->append_attribute(doc.allocate_attribute("isAiming", doc.allocate_string(std::to_string(_isAiming).c_str())));

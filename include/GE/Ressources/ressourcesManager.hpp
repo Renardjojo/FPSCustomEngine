@@ -49,17 +49,21 @@ namespace Engine::Ressources
          * @param key 
          * @return LType& 
          */
-        LType& get(const std::string& key)
+        LType* get(const std::string& key)
         {    
             //iterator of LType
             auto it = ressource_.find(key);
             if (it == ressource_.end())
             {
-                Engine::Core::Debug::SLog::logError(std::string("Resource not found with key : ") + key + " . Resource type : " + typeid(LType).name());
-                exit(1);    
+                return nullptr; 
             }
 
-            return it->second;
+            return &it->second;
+        }
+
+        void remove(const std::string& key)
+        {
+            ressource_.erase(key);
         }
 
         /**
@@ -136,7 +140,7 @@ namespace Engine::Ressources
              * @return T& 
              */
             template<class T>
-            T& get(const std::string& key)
+            T* get(const std::string& key)
             {
                 return RessourcesManager<T>::get(key);
             }
@@ -149,6 +153,12 @@ namespace Engine::Ressources
 
 
             #pragma endregion //!accessor
+
+            template<class T>
+            void remove(const std::string& key)
+            {
+                RessourcesManager<T>::remove(key);
+            }
 
             #pragma region mutator
 

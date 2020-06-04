@@ -12,6 +12,7 @@
 #include "GE/LowRenderer/camera.hpp"
 #include "GE/Physics/PhysicalObject.hpp"
 #include "GE/Physics/ColliderShape/Collider.hpp"
+#include "GE/LowRenderer/Light/pointLight.hpp"
 
 namespace Game
 {
@@ -20,7 +21,10 @@ namespace Game
 
     private:
 
-    int _life;
+    Engine::LowRenderer::PointLight* _light;
+
+    int _life{10};
+
 
     public:
         Nexus(Engine::Ressources::GameObject &gameObject);
@@ -32,7 +36,7 @@ namespace Game
         void update() override;
         void fixedUpdate() override;
 
-        void inflictDamage(int damage) { _life -= damage; }
+        void inflictDamage(int damage);
 
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;
 

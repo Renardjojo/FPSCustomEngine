@@ -86,16 +86,9 @@ Demo::Demo(Engine::GE& gameEngine)
     Scene::_currentScene = &_scene;
 
     loadRessources(_gameEngine.ressourceManager_);
-    loadSounds(_gameEngine.ressourceManager_);
-    loadCamera();
-    loadEntity(_gameEngine.ressourceManager_);
-    loadLights();
-    loadBulletHoleContenor (50);
-    loadEnemies(_gameEngine.ressourceManager_);
+    
     loadUI(_gameEngine.ressourceManager_);
-    loadUpgradeStation(_gameEngine.ressourceManager_);
 
-    ScriptSystem::start();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -332,12 +332,7 @@ Engine::Ressources::GameObject&  Engine::Ressources::Save::initEntity(Engine::Re
         else if (type.compare("AutoUpgradeStation") == 0)
             parent.addComponent<AutoUpgradeStation>(params);
 
-        
-            
-                
-                    
-                        
-                            newGameObject = &parent;
+        newGameObject = &parent;
     }
 
     for (xml_node<>* children = node->first_node(); children; children = children->next_sibling())
@@ -437,7 +432,11 @@ void Engine::Ressources::Save::saveEntity(GameObject& gameObjectParent, xml_docu
         i->save(doc, newNode);
     
     for (auto &&i : gameObjectParent.getComponents<PointLight>())
+    {
+        if (dynamic_cast<SpotLight*>(i))
+            continue;
         i->save(doc, newNode);
+    }
 
     for (auto &&i : gameObjectParent.getComponents<DirectionnalLight>())
         i->save(doc, newNode);

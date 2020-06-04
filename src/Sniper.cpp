@@ -21,8 +21,8 @@ void Sniper::switchAimState () noexcept
     if(_isAiming)
     {
         /*activate and desactivate GUI and current weapon*/
-        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("SniperScope").isActive = true;
-        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("CrosshairImage").isActive = false;
+        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("SniperScope")->isActive = true;
+        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("CrosshairImage")->isActive = false;
         _gameObject.getComponent<Engine::LowRenderer::Model>()->setActive(false);
 
         /*Chang camera zoom*/
@@ -37,8 +37,8 @@ void Sniper::switchAimState () noexcept
     else
     {
         /*activate and desactivate GUI and current weapon*/
-        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("SniperScope").isActive = false;
-        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("CrosshairImage").isActive = true;
+        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("SniperScope")->isActive = false;
+        Engine::Ressources::t_RessourcesManager::getRessourceManagerUse()->get<Engine::Ressources::Image>("CrosshairImage")->isActive = true;
         _gameObject.getComponent<Engine::LowRenderer::Model>()->setActive(true);
 
         /*Chang camera zoom*/
