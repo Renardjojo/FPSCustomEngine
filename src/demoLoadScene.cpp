@@ -854,6 +854,30 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
     int halfHeight = _gameEngine.getWinSize().height / 2.0f;
     float crosshairSize = _gameEngine.getWinSize().height / 15;
     float halfcrosshairSize = crosshairSize * 0.5;
+    
+    Texture* t_hitmarker = ressourceManager.get<Texture>("hitmarker");
+
+    if (ressourceManager.get<Image>("hitmarkerImage"))
+        ressourceManager.remove<Image>("hitmarkerImage");
+    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
+                                                    t_hitmarker->getID(),
+                                                    ressourceManager.get<Shader>("ImageShader"),
+                                                    halfWidth - halfcrosshairSize,
+                                                    halfHeight - halfcrosshairSize,
+                                                    crosshairSize,
+                                                    crosshairSize, 
+                                                    E_GAME_STATE::RUNNING);
+
+    hitmarker->setName("HitMarker");
+    hitmarker->isActive = false;
+}
+
+void Demo::loadReferencedGUI(t_RessourcesManager &ressourceManager)
+{
+    int halfWidth = _gameEngine.getWinSize().width / 2.0f;
+    int halfHeight = _gameEngine.getWinSize().height / 2.0f;
+    float crosshairSize = _gameEngine.getWinSize().height / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
 
     if(ressourceManager.get<Title>("gameover"))
         ressourceManager.remove<Title>("gameover");
@@ -874,7 +898,7 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
             Light::resetLight();
             _scene.reset();
             _gameEngine.gameState = E_GAME_STATE::STARTING;
-            usingMouse = false;
+            usingMouse = true;
         };
 
     if(ressourceManager.get<Button>("DeathQuit"))
@@ -918,22 +942,6 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
     ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
                                 _gameEngine.getWinSize().width / 2.0f  - _gameEngine.getWinSize().width / 2.0f / 10.f, _gameEngine.getWinSize().height / 2.0f - _gameEngine.getWinSize().height / 2.0f / 10.f * 9.f,
                                 150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
-    
-    Texture* t_hitmarker = ressourceManager.get<Texture>("hitmarker");
-
-    if (ressourceManager.get<Image>("hitmarkerImage"))
-        ressourceManager.remove<Image>("hitmarkerImage");
-    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
-                                                    t_hitmarker->getID(),
-                                                    ressourceManager.get<Shader>("ImageShader"),
-                                                    halfWidth - halfcrosshairSize,
-                                                    halfHeight - halfcrosshairSize,
-                                                    crosshairSize,
-                                                    crosshairSize, 
-                                                    E_GAME_STATE::RUNNING);
-
-    hitmarker->setName("HitMarker");
-    hitmarker->isActive = false;
 
     Texture* t_crosshair = ressourceManager.get<Texture>("crosshair");
 
@@ -1028,6 +1036,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
         loadEnemies(_gameEngine.ressourceManager_);
         loadUpgradeStation(_gameEngine.ressourceManager_);
         loadGUI(_gameEngine.ressourceManager_);
+        loadReferencedGUI(_gameEngine.ressourceManager_);
     
         ScriptSystem::start();
         _gameEngine.gameState = E_GAME_STATE::RUNNING;
@@ -1314,8 +1323,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
     for (std::string &saves : _gameEngine.savePaths)
     {
-        if (saves.size() < 23) // TODO: assert
-            return;
+        GE_assertInfo(!(saves.size() < 23), std::string("wrong savepath paths : ") + saves);
 
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(shortSaveName, pfont2, buttonShader,
@@ -1328,8 +1336,9 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
             Light::resetLight();
             _scene.reset();
             _scene = std::make_unique<Scene>();
-            setupScene(*_scene, saves.c_str());
             loadGUI(_gameEngine.ressourceManager_);
+            setupScene(*_scene, saves.c_str());
+            loadReferencedGUI(_gameEngine.ressourceManager_);
             mainCamera = &_scene->getGameObject("world/MainCamera");
 
             SDL_ShowCursor(false);

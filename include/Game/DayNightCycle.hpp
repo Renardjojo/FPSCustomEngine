@@ -82,8 +82,6 @@ namespace Game
                 _sunDistance                                {sunDistance}
         {
             _name = __FUNCTION__;
-
-            //TODO: check value with assert
         }
 
         DayNightCycle (Engine::Ressources::GameObject &refGameObject, const std::vector<std::string>& params)
