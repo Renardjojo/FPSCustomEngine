@@ -69,18 +69,18 @@ void Firearm::update () noexcept
     }
 }
 
-void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
+bool Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
 {
     if (_isReloading || _isWaitingForNextShot)
     {
-        return;
+        return false;
     }
 
     /*Auto reload*/
     if (_munition == 0)
     {
         reload();
-        return;
+        return false;
     }
 
     if(_sound)
@@ -103,9 +103,13 @@ void Firearm::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             pCollider->OnCollisionEnter(hitInfo1);
 
             if (rayInfo.gameObject->getComponent<EnnemyController>())
+            {
                 rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
+                return true;
+            }
         }
     }
+    return false;
 }
 
 void Firearm::save(xml_document<>& doc, xml_node<>* nodeParent) 

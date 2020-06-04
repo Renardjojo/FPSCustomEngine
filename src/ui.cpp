@@ -496,16 +496,17 @@ void Image::draw()
 
     glDisable(GL_DEPTH_TEST);
 
-    glBindTexture(GL_TEXTURE_2D, _texture);
-
     _shader->use();
     GLuint matrixID = glGetUniformLocation(_shader->getIdProgramm(), "matrix");
 
     glUniformMatrix4fv(matrixID, 1, GL_TRUE, &transform->getModelMatrix()[0][0]);
 
+    glBindTexture(GL_TEXTURE_2D, _texture);
+
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glEnable(GL_DEPTH_TEST);
 }

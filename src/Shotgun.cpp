@@ -17,18 +17,18 @@ Shotgun::Shotgun (Engine::Ressources::GameObject &refGameObject, const std::vect
     _name = __FUNCTION__;
 }
 
-void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
+bool Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
 {
     if (_isReloading || _isWaitingForNextShot)
     {
-        return;
+        return false;
     }
 
     /*Auto reload*/
     if (_munition == 0)
     {
         reload();
-        return;
+        return false;
     }
     
     if(_sound)
@@ -38,6 +38,8 @@ void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
     _isWaitingForNextShot = true;
     
     Engine::Physics::ColliderShape::HitInfo rayInfo;
+
+    bool hit = false;
 
     for (size_t i = 0; i < _bulletPerShot; i++)
     {
@@ -53,9 +55,13 @@ void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             pCollider->OnCollisionEnter(hitInfo1);
 
             if (rayInfo.gameObject->getComponent<EnnemyController>())
+            {
                 rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
+                hit = true;
+            }
         }
     }
+    return hit;
 }
 
 void Shotgun::save(xml_document<>& doc, xml_node<>* nodeParent) 

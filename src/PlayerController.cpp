@@ -52,6 +52,16 @@ void PlayerController::start()
 
     _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
     GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
+
+    for (Image* image : UISystem::getImages())
+    {
+        if (image->getName().compare("HitMarker") == 0)
+        {
+            _hitmarker = image;
+            break;
+        }
+    }
+    GE_assertInfo(_hitmarker != nullptr, "no hitmarker found");
 };
 
 void PlayerController::update()
@@ -110,7 +120,15 @@ void PlayerController::update()
             }
         }
     }
-    std::cout << getCurrentFirearm()->getMagazine() << std::endl;
+    if (_hitmarker->isActive)
+    {
+        _hitmarkerDisplaydelay += TimeSystem::getDeltaTime();
+        if (_hitmarkerDisplaydelay > _hitmarkerDisplayTime)
+        {
+            _hitmarkerDisplaydelay = 0.f;
+            _hitmarker->isActive = false;
+        }
+    }
 }
 
 void PlayerController::fixedUpdate()
@@ -136,7 +154,8 @@ void PlayerController::switchFlashLightState()
 
 void PlayerController::shoot()
 {
-    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
+    if (_firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
+        _hitmarker->isActive = true;
 }
 
 void PlayerController::switchAimState()

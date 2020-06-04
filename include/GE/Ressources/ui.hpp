@@ -177,6 +177,7 @@ namespace Engine::Ressources
         Engine::Ressources::Shader *_shader;
         float _x, _y, _w, _h;
         GLuint _VAO;
+        std::string _name{"Image"};
 
     public:
         bool isActive;
@@ -192,6 +193,9 @@ namespace Engine::Ressources
         Image &operator=(Image &&other) = delete;
 
         void draw();
+
+        std::string getName() { return _name; }
+        void setName(std::string name) { _name = name; }
 
         Engine::Core::Maths::Vec2 getPos();
     };

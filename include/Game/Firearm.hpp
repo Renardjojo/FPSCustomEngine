@@ -56,7 +56,7 @@ namespace Game
 
         virtual bool isAiming() const noexcept { return _isAiming; }
 
-        virtual void shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept;
+        virtual bool shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept;
 
         virtual void reload () noexcept { _isReloading = true; }
 

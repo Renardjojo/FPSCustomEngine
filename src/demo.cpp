@@ -661,7 +661,7 @@ void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceM
 
     TextureCreateArg tcaCrosshair{
         "./ressources/texture/crossair.png",
-        E_WrapType::CLAMP_TO_BORDER,
+        E_WrapType::CLAMP_TO_BORDER
     };
 
     Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
@@ -674,6 +674,26 @@ void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceM
                                 crosshairSize,
                                 crosshairSize,
                                 E_GAME_STATE::RUNNING);
+
+
+    TextureCreateArg hitmarkerTextureArg{
+        "./ressources/texture/hitmarker.png",
+        E_WrapType::CLAMP_TO_BORDER
+    };
+    
+    Texture &hitmarkerTexture = ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
+
+    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
+                                                    hitmarkerTexture.getID(),
+                                                    imageShader,
+                                                    halfWidth - halfcrosshairSize,
+                                                    halfHeight - halfcrosshairSize,
+                                                    crosshairSize,
+                                                    crosshairSize, 
+                                                    E_GAME_STATE::RUNNING);
+    hitmarker->setName("HitMarker");
+
+    hitmarker->isActive = false;
 }        
 
 void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)

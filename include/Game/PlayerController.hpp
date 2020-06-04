@@ -11,6 +11,8 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/Firearm.hpp"
+#include "GE/Core/System/UISystem.hpp"
+#include "GE/Ressources/ui.hpp"
 
 namespace Game
 {
@@ -34,6 +36,8 @@ namespace Game
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
+        float _hitmarkerDisplayTime{0.2f};
+        float _hitmarkerDisplaydelay{0.f};
         int   _life{5};
         int   _money{500};
         bool _jump{false};
@@ -42,6 +46,7 @@ namespace Game
 
 
         std::vector<Firearm*> _firesGuns {}; /*First element is the weapon used*/
+        Engine::Ressources::Image* _hitmarker;
 
         CameraType _type{CameraType::FirstPerson};
 
