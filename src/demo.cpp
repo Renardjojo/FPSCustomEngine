@@ -93,6 +93,7 @@ Demo::Demo(Engine::GE& gameEngine)
     loadBulletHoleContenor (50);
     loadEnemies(_gameEngine.ressourceManager_);
     loadUI(_gameEngine.ressourceManager_);
+    loadUpgradeStation(_gameEngine.ressourceManager_);
 
     ScriptSystem::start();
 

@@ -104,7 +104,7 @@ void EnnemyController::walk()
     if (length < 5.f)
         _checkpointManager.nextCheckPoint();
 
-    if ((_nexus->getPosition() - _gameObject.getPosition()).length() < _attackRadius)
+    if ((_nexus->getPosition() - _gameObject.getPosition()).length() < _attackRadius * 1.5f)
         autoDestroy();
 
 }

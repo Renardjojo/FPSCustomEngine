@@ -11,6 +11,8 @@
 #include "GE/LowRenderer/Light/spotLight.hpp"
 #include "GE/Ressources/ui.hpp"
 #include "Game/Firearm.hpp"
+#include "GE/Core/System/UISystem.hpp"
+#include "GE/Ressources/ui.hpp"
 
 namespace Game
 {
@@ -23,7 +25,6 @@ namespace Game
         };
 
     private:
-        Engine::Ressources::t_RessourcesManager* _rm;
         Engine::Physics::PhysicalObject *_physics;
         Engine::LowRenderer::SpotLight *_flashLight;
         Engine::Core::Maths::Vec2 _orbit{0.f,0.f};
@@ -35,6 +36,8 @@ namespace Game
         float _playerMaxSpeed{1.f};
         float _cameraSpeed{10.f};
         float _cameraYoffset{5.f};
+        float _hitmarkerDisplayTime{0.2f};
+        float _hitmarkerDisplaydelay{0.f};
         int   _life{5};
         int   _money{500};
         bool _jump{false};
@@ -43,6 +46,7 @@ namespace Game
 
 
         std::vector<Firearm*> _firesGuns {}; /*First element is the weapon used*/
+        Engine::Ressources::Image* _hitmarker;
 
         CameraType _type{CameraType::FirstPerson};
 
@@ -78,8 +82,10 @@ namespace Game
 
         void setCameraType(CameraType type);
         void toggleCameraType();
+
         void addFirearm(Firearm* Firearm);
-        
+        Firearm* getCurrentFirearm() { return _firesGuns.empty() ? nullptr : _firesGuns[0];}
+
         void activateLootMachine();
         void inflictDamage(int damage);
         void onCollisionEnter(Engine::Physics::ColliderShape::HitInfo& hitInfo) override;

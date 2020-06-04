@@ -1,4 +1,5 @@
 #include "Game/Shotgun.hpp"
+#include "Game/EnnemyController.hpp"
 
 using namespace Game;
 
@@ -16,27 +17,29 @@ Shotgun::Shotgun (Engine::Ressources::GameObject &refGameObject, const std::vect
     _name = __FUNCTION__;
 }
 
-void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
+bool Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::Core::Maths::Vec3& direction) noexcept
 {
     if (_isReloading || _isWaitingForNextShot)
     {
-        return;
+        return false;
     }
 
     /*Auto reload*/
     if (_munition == 0)
     {
         reload();
-        return;
+        return false;
     }
     
     if(_sound)
         Engine::Ressources::SoundPlayer::play(*_sound);
 
-    _munition -= _bulletPerShot;
+    _munition -= 1;
     _isWaitingForNextShot = true;
     
     Engine::Physics::ColliderShape::HitInfo rayInfo;
+
+    bool hit = false;
 
     for (size_t i = 0; i < _bulletPerShot; i++)
     {
@@ -50,8 +53,15 @@ void Shotgun::shoot (const Engine::Core::Maths::Vec3& startPoint, const Engine::
             tempGOWithTag.setTag("Bullet");
             Engine::Physics::ColliderShape::HitInfo hitInfo1 {rayInfo.intersectionsInfo, &tempGOWithTag, _bulletVelocity};
             pCollider->OnCollisionEnter(hitInfo1);
+
+            if (rayInfo.gameObject->getComponent<EnnemyController>())
+            {
+                rayInfo.gameObject->getComponent<EnnemyController>()->inflictDamage(_bulletDamage);
+                hit = true;
+            }
         }
     }
+    return hit;
 }
 
 void Shotgun::save(xml_document<>& doc, xml_node<>* nodeParent) 

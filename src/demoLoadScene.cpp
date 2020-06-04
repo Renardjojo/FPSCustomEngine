@@ -40,6 +40,7 @@
 #include "Game/LifeLoot.hpp"
 #include "Game/BombeLoot.hpp"
 #include "Game/LevitationMovement.hpp"
+#include "Game/UpgradeStation.hpp"
 
 #include "../src/stb_image.h"
 
@@ -414,8 +415,8 @@ void Demo::loadFog           (t_RessourcesManager& ressourceManager, unsigned in
 void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
 {
     GameObjectCreateArg lootMachinArgGameObject{"LootMachine",
-                                            {{20.f, 5.f, 20.f},
-                                             {0.f, M_PI_4, 0.f},
+                                            {{-30.f, 5.f, -80.f},
+                                             {0.f, 0.f, 0.f},
                                              {1.f, 1.f, 1.f}}};
 
     GameObject& lootMachin = _scene->add<GameObject>(_scene->getWorld(), lootMachinArgGameObject);
@@ -693,6 +694,191 @@ void Demo::loadLootMachin              (t_RessourcesManager& ressourceManager)
         //spawnerGO.destroyImmediate();
     }
 }
+
+void createUpgradeStation(std::unique_ptr<Scene>& scene, t_RessourcesManager& ressourceManager, GameObject& parent, std::string mat)
+{
+    {// Back
+        GameObjectCreateArg plankGOArg{"upgradePlankBack",
+                                    {{0.f, 0.f, 0.f},
+                                    {0.f, 0.f, 0.f},
+                                    {5.f, 5.f, 0.5f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    { // Left
+        GameObjectCreateArg plankGOArg{"upgradePlankLeft",
+                                    {{-2.5f, 0.f, 1.f},
+                                    {0.f, M_PI, 0.f},
+                                    {0.5f, 5.f, 2.f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    { // right
+        GameObjectCreateArg plankGOArg{"upgradePlankRight",
+                                    {{2.5f, 0.f, 1.f},
+                                    {0.f, M_PI, 0.f},
+                                    {0.5f, 5.f, 2.f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {// Deck
+        GameObjectCreateArg plankGOArg{"upgradePlanDeck",
+                                    {{0.f, 1.3f, 0.5f},
+                                    {0.f, 0.f, 0.f},
+                                    {5.f, 0.5f, 1.3f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("BlackMaterial"),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                "BlackMaterial",
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {// Button
+        GameObjectCreateArg sphereGOarg{"upgradeButton",
+                                    {{0.f, 1.5f, 0.5f},
+                                    {0.f, 0.f, 0.f},
+                                    {0.5f, 0.5f, 0.5f}}};
+
+        GameObject& sphereGO = scene->add<GameObject>(parent, sphereGOarg);
+
+        ModelCreateArg sphereModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>("YellowMaterial"),
+                                &ressourceManager.get<Mesh>("Sphere"),
+                                "LightAndTexture",
+                                "YellowMaterial",
+                                "Sphere"};
+
+        sphereGO.addComponent<Model>(sphereModelArg);
+    }
+    {// Front
+        GameObjectCreateArg plankGOArg{"upgradePlankFront",
+                                    {{0.f, -0.5f, 1.4f},
+                                    {degres_to_rad(-10.f), 0.f, 0.f},
+                                    {5.f, 4.f, 0.5f}}};
+
+        GameObject& plank = scene->add<GameObject>(parent, plankGOArg);
+
+        ModelCreateArg plankModelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                                &ressourceManager.get<std::vector<Material>>(mat),
+                                &ressourceManager.get<Mesh>("Cube"),
+                                "LightAndTexture",
+                                mat,
+                                "Cube"};
+
+        plank.addComponent<Model>(plankModelArg);
+        plank.addComponent<OrientedBoxCollider>();
+    }
+    {
+        GameObjectCreateArg lightGOarg{"Light",
+                                    {{0.f, 0.f, 0.4f},
+                                    {0.f, 0.f, 0.f},
+                                    {1.f, 1.f, 1.f}}};
+
+        GameObject& lightGO = scene->add<GameObject>(parent, lightGOarg);
+
+        PointLightCreateArg lightArg{ {0.5f, 0.2f, 0.2f, 0.2f},
+                                    {0.5f, 0.2f, 0.2f, 0.5f},
+                                    {0.5f, 0.2f, 0.2f, 0.7f},
+                                    0.f, 0.2f, 0.f, true};
+        
+        lightGO.addComponent<PointLight>(lightArg);
+    }
+}
+
+void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
+{
+    {
+        GameObjectCreateArg upgradeStationGOArg{"ReloadTimeUpgradeStation",
+                                                {{30.f, 2.5f, -50.f},
+                                                {0.f, -M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<ReloadTimeUpgradeStation>(1000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "ReloadMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"AutoUpgradeStation",
+                                                {{-75.f, 2.5f, -20.f},
+                                                {0.f, M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<AutoUpgradeStation>(2000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "AutoMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"DamageUpgradeStation",
+                                                {{75.f, 2.5f, -40.f},
+                                                {0.f, -M_PI_4, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<DamageUpgradeStation>(1500);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "DamageMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"FireRateUpgradeStation",
+                                                {{65.f, 2.5f, 40.f},
+                                                {0.f, -M_PI_4 - M_PI_2, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<FireRateUpgradeStation>(1000);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "FireRateMaterial");
+    }
+    {
+        GameObjectCreateArg upgradeStationGOArg{"MunitionCapacityUpgradeStation",
+                                                {{-55.f, 2.5f, 40.f},
+                                                {0.f, M_PI_2, 0.f},
+                                                {1.f, 1.f, 1.f}}};
+
+        GameObject& upgradeStationGO = _scene->add<GameObject>(_scene->getWorld(), upgradeStationGOArg);
+        upgradeStationGO.addComponent<MunitionCapacityUpgradeStation>(800);
+
+        createUpgradeStation(_scene, ressourceManager, upgradeStationGO, "MunitionMaterial");
+    }
+}         
 
 void Demo::loadCamera()
 {
@@ -1089,6 +1275,8 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 {
     GameObjectCreateArg NexusGameObjectArg{"Nexus"};
 
+    GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
+
     ModelCreateArg modelNexusArg{&ressourceManager.get<Shader>("LightAndTexture"),
                           &ressourceManager.get<std::vector<Material>>("NexusMaterial"),
                           &ressourceManager.get<Mesh>("NexusMesh"),
@@ -1096,130 +1284,68 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
                           "NexusMaterial",
                           "NexusMesh"};
     modelNexusArg.isOpaque = false;
+    nexus.addComponent<Model>(modelNexusArg);
 
     PointLightCreateArg lightArgNexusLight{{0.f, 0.2f, 1.f, 0.2f},
                                 {0.f, 0.2f, 1.f, 0.5f},
                                 {0.f, 0.2f, 1.f, 0.7f},
                                 0.f, 0.05f, 0.f, true};
+    
+    nexus.addComponent<PointLight>(lightArgNexusLight);
 
-    GameObject& nexus = _scene->add<GameObject>(_scene->getWorld(), NexusGameObjectArg);
     nexus.setTranslation(Vec3{-10, 8, -10});
     nexus.setScale(Vec3{0.3f, 0.3f, 0.3f});
-    nexus.addComponent<Model>(modelNexusArg);
+    
     nexus.addComponent<Nexus>();
     nexus.addComponent<LevitationMovement>(1.f, 1.f);
-    nexus.addComponent<PointLight>(lightArgNexusLight);
-    
-    GameObject* checkpoint1 = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
-    checkpoint1->addComponent<Checkpoint>().addCheckpoint(Vec3{10, 5, 10});
-    checkpoint1->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10, 5, -10});
 
     enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
-    
-    { /*Eyes ball enemie*/
-        GameObjectCreateArg Ennemy1GameObjectArg{"EyesBallEnnemy"};
-        Ennemy1GameObjectArg.transformArg.position = Vec3{0.f, 5.f, 0.f};
-        //Ennemy1GameObjectArg.transformArg.scale = Vec3{0.3f, 0.3f, 0.3f};
 
-        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("EyesBallMaterial"),
-                            &ressourceManager.get<Mesh>("EyesBallMesh"),
-                            "LightAndTexture",
-                            "EyesBallMaterial",
-                            "EyesBallMesh"};
+    GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
 
-        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
-        enemyBase.setTag("Enemy");
+    ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
+                        &ressourceManager.get<std::vector<Material>>("RedMaterial"),
+                        &ressourceManager.get<Mesh>("Cube"),
+                        "ColorWithLight",
+                        "RedMaterial",
+                        "Cube"};
 
-        enemyBase.addComponent<Model>(modelArg);
-        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
-        enemyPhysicalObjComp.setFreezeRotX(true);
-        enemyPhysicalObjComp.setFreezeRotY(true);
-        enemyPhysicalObjComp.setFreezeRotZ(true);
-        enemyBase.addComponent<LevitationMovement>(1.f, 0.1f);
-        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
-        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+    enemyBase.setTag("Enemy");
 
-        enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
 
-        Save::createPrefab(enemyBase, "enemy1");
-        enemyBase.destroyImmediate();
-    }
+    enemyBase.addComponent<Model>(modelArg);
+    enemyBase.addComponent<PhysicalObject>().setMass(1);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotX(true);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotY(true);
+    enemyBase.getComponent<PhysicalObject>()->setFreezeRotZ(true);
+    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
+    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
 
-    {   /*Spider ennemie*/
-        GameObjectCreateArg Ennemy1GameObjectArg{"SpiderEnnemie"};
-        Ennemy1GameObjectArg.transformArg.position = Vec3{0.f, 5.f, 0.f};
+    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
+    Save::createPrefab(enemyBase, "enemy1");
 
-        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("SpiderMaterial"),
-                            &ressourceManager.get<Mesh>("SpiderMesh"),
-                            "LightAndTexture",
-                            "SpiderMaterial",
-                            "SpiderMesh"};
+    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(8);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
+    enemyBase.getComponent<EnnemyController>()->setDamage(2);
+    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
+    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
 
-        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
-        enemyBase.setTag("Enemy");
+    Save::createPrefab(enemyBase, "enemy2");
 
-        enemyBase.addComponent<Model>(modelArg);
-        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
-        enemyPhysicalObjComp.setFreezeRotX(true);
-        enemyPhysicalObjComp.setFreezeRotY(true);
-        enemyPhysicalObjComp.setFreezeRotZ(true);
-        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
-        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
+    enemyBase.getComponent<EnnemyController>()->setLife(3);
+    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
+    enemyBase.getComponent<EnnemyController>()->setDamage(1);
+    enemyBase.getComponent<EnnemyController>()->setRadius(50);
 
-        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+    Save::createPrefab(enemyBase, "enemy3");
 
-        ennemyControllerComp.setLife(8);
-        ennemyControllerComp.setSpeed(10);
-        ennemyControllerComp.setDamage(2);
-        ennemyControllerComp.setValueOnHit(10);
-        ennemyControllerComp.setValueOnDeath(100);
-
-        Save::createPrefab(enemyBase, "enemy2");
-        enemyBase.destroyImmediate();
-    }
-
-
-    {   /*Plant monster ennemie*/
-        GameObjectCreateArg Ennemy1GameObjectArg{"PlantMonsterEnnemie"};
-        Ennemy1GameObjectArg.transformArg.scale = Vec3{4.f, 6.f, 4.f};
-
-
-        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
-                            &ressourceManager.get<std::vector<Material>>("PlantMonsterMaterial"),
-                            &ressourceManager.get<Mesh>("PlantMonsterMesh"),
-                            "LightAndTexture",
-                            "PlantMonsterMaterial",
-                            "PlantMonsterMesh"};
-
-        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
-        enemyBase.setTag("Enemy");
-
-        enemyBase.addComponent<Model>(modelArg);
-        PhysicalObject& enemyPhysicalObjComp = enemyBase.addComponent<PhysicalObject>();
-        enemyPhysicalObjComp.setFreezeTrX(true);
-        enemyPhysicalObjComp.setFreezeTrZ(true);
-        enemyPhysicalObjComp.setFreezeTrY(true);
-        enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
-        enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
-
-        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
-
-        ennemyControllerComp.setLife(3);
-        ennemyControllerComp.setSpeed(35);
-        ennemyControllerComp.setDamage(1);
-        ennemyControllerComp.setRadius(50);
-        ennemyControllerComp.setValueOnHit(10);
-        ennemyControllerComp.setValueOnDeath(100);
-
-        Save::createPrefab(enemyBase, "enemy3");
-        enemyBase.destroyImmediate();
-    }
+    enemyBase.destroyImmediate();
 
     GameObjectCreateArg spawnerGOArg;
 
@@ -1228,13 +1354,27 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
                                 {1.f, 0.f, 0.f, 0.7f},
                                 {1.f, 1.f, 1.f, 0.3f},
                                 0.f, 0.05f, 0.f, true};
+    ModelCreateArg modelSpawnerArg{&ressourceManager.get<Shader>("ColorWithLight"),
+                            &ressourceManager.get<std::vector<Material>>("BlueMaterial"),
+                            &ressourceManager.get<Mesh>("Sphere"),
+                            "ColorWithLight",
+                            "BlueMaterial",
+                            "Sphere"};
     {
         spawnerGOArg.name = "Spawner1";
-        spawnerGOArg.transformArg.position = {5.f, 5.f, 5.f};
+        spawnerGOArg.transformArg.position = {-120.f, 5.f, -175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint1"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-72.f, 5.f, 145.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-65.f, 5.f, -90.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-36.f, 5.f, -10.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, 1.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
+        
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
         spawnerGO.destroyImmediate();
@@ -1242,10 +1382,17 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner2";
-        spawnerGOArg.transformArg.position = {-5.f, 5.f, 5.f};
+        spawnerGOArg.transformArg.position = {-150.f, 5.f, 59.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint2"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{-116.f, 5.f, 21.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-95.f, 5.f, -6.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-52.f, 5.f, -2.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-15.f, 5.f, -4.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1254,10 +1401,17 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner3";
-        spawnerGOArg.transformArg.position = {5.f, 5.f, -5.f};
+        spawnerGOArg.transformArg.position = {95.f, 5.f, 175.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint3"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{52.f, 5.f, 170.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{30.f, 5.f, 110.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{5.f, 5.f, 35.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-8.f, 5.f, -6.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);
@@ -1266,10 +1420,18 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     {
         spawnerGOArg.name = "Spawner4";
-        spawnerGOArg.transformArg.position = {-5.f, 5.f, -5.f};
+        spawnerGOArg.transformArg.position = {108.f, 5.f, -173.f};
 
         GameObject& spawnerGO = _scene->add<GameObject>(_scene->getWorld(), spawnerGOArg);
-        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint1->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        GameObject* checkpoint = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg {"checkpoint4"});
+        checkpoint->addComponent<Checkpoint>().addCheckpoint(Vec3{135.f, 5.f, -109.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{114.f, 5.f, -60.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{90.f, 5.f, -21.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{35.f, 5.f, -15.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-4.f, 5.f, -10.f});
+        checkpoint->getComponent<Checkpoint>()->addCheckpoint(Vec3{-10.f, 5.f, -10.f});
+        spawnerGO.addComponent<CircularEntitiesSpawner>(enemiesContener, checkpoint->getComponent<Checkpoint>(), 2.f, 0.5f, 0.f);
+        spawnerGO.addComponent<Model>(modelSpawnerArg);
         _scene->add<GameObject>(spawnerGO, pointLightGameObjectArg).addComponent<PointLight>(lightArg);
 
         Save::createPrefab(spawnerGO, spawnerGOArg.name);

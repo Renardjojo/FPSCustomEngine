@@ -43,6 +43,8 @@ namespace Engine::Core::System
         static void update(Engine::GE &gameEngine) noexcept;
         static void draw(Engine::GE &gameEngine) noexcept;
 
+        static std::vector<Engine::Ressources::Image *>& getImages() { return pImages; }
+
         static void addTextField(Engine::Ressources::TextField *pTextField) noexcept
         {
             pTextFields.push_back(pTextField);
