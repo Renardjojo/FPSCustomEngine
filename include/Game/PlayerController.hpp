@@ -38,10 +38,10 @@ namespace Game
                 unsigned int _weaponIndex{0};
                 float _mouseSpeed{0.5f};
                 float _playerForce{0.f};
-                float _playerMaxSpeed{50.f};
-                float _jumpForce{10.f};
+                float _playerMaxSpeed{30.f};
+                float _jumpForce{5.f};
                 float _airForce{5.f};
-                float _groundForce{300.f};
+                float _groundForce{150.f};
                 float _cameraYoffset{5.f};
                 float _hitmarkerDisplayTime{0.2f};
                 float _hitmarkerDisplaydelay{0.f};
