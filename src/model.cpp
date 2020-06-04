@@ -63,9 +63,9 @@ Model::Model (GameObject &refGameObject, const ModelCreateArg& arg)
 
 Model::Model(GameObject &refGameObject, std::vector<std::string>& params, t_RessourcesManager& ressourcesManager)
     :   IModel                  (refGameObject),
-        pShader_                (&ressourcesManager.get<Shader>(params[0])),
-        pMaterial_              (&ressourcesManager.get<std::vector<Material>>(params[1])),
-        pMesh_                  (&ressourcesManager.get<Mesh>(params[2])),
+        pShader_                (ressourcesManager.get<Shader>(params[0])),
+        pMaterial_              (ressourcesManager.get<std::vector<Material>>(params[1])),
+        pMesh_                  (ressourcesManager.get<Mesh>(params[2])),
         shaderName_             (params[0]),
         materialName_           ({params[1]}),
         meshName_               (params[2]),

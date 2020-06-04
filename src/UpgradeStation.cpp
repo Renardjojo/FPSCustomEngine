@@ -56,7 +56,7 @@ void UpgradeStation::save(xml_document<>& doc, xml_node<>* nodeParent)
 
 void MunitionCapacityUpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)
 {
-    if (playerStats->getMoney() >= _cost)
+    if (*playerStats->getMoney() >= _cost)
     {
         if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
         {
@@ -69,7 +69,7 @@ void MunitionCapacityUpgradeStation::activate(Vec3 playerPosition, PlayerControl
 
 void DamageUpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)
 {
-    if (playerStats->getMoney() >= _cost)
+    if (*playerStats->getMoney() >= _cost)
     {
         if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
         {
@@ -81,7 +81,7 @@ void DamageUpgradeStation::activate(Vec3 playerPosition, PlayerController* playe
 
 void FireRateUpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)
 {
-    if (playerStats->getMoney() >= _cost)
+    if (*playerStats->getMoney() >= _cost)
     {
         if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
         {
@@ -93,7 +93,7 @@ void FireRateUpgradeStation::activate(Vec3 playerPosition, PlayerController* pla
 
 void ReloadTimeUpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)
 {
-    if (playerStats->getMoney() >= _cost)
+    if (*playerStats->getMoney() >= _cost)
     {
         if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
         {
@@ -105,7 +105,7 @@ void ReloadTimeUpgradeStation::activate(Vec3 playerPosition, PlayerController* p
 
 void AutoUpgradeStation::activate(Vec3 playerPosition, PlayerController* playerStats)
 {
-    if (playerStats->getMoney() >= _cost)
+    if (*playerStats->getMoney() >= _cost)
     {
         if ((playerPosition - _gameObject.getGlobalPosition()).length() <= _activationRadius)
         {

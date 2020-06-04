@@ -35,6 +35,7 @@ namespace Game
         unsigned int    _munition               {_munitionCapacity};
         float           _delay                  {0.f};
         bool            _isReloading            {false};
+        bool            _Reloaded               {false};
         bool            _isWaitingForNextShot   {false};
         bool            _isAutomatic            {false}; //on fire gun stats but here for memory alignas
         bool            _isAiming               {false};
@@ -68,6 +69,8 @@ namespace Game
 
         unsigned int getMagazine () const noexcept { return _munitionCapacity;}
 
+        void setReloaded(bool state) { _Reloaded = state; }
+        bool getReloaded() { return _Reloaded; }
 
         void addDamage(int bulletDamage) { _bulletDamage += bulletDamage; } 
 

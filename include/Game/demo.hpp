@@ -89,7 +89,6 @@ namespace Game
             void loadGlassRessource         (Engine::Ressources::t_RessourcesManager& ressourceManager); 
             void loadFogRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);   
             void loadLootRessource          (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadGuiRessource           (Engine::Ressources::t_RessourcesManager& ressourceManager);              
             void loadSniperScopeRessource   (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUpgradeStationRessource       (Engine::Ressources::t_RessourcesManager& ressourceManager);            
 
@@ -109,6 +108,7 @@ namespace Game
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadBulletHoleContenor (int maxDecale);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadGUI                (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTimeManager        ();
             void loadCamera             ();
 
