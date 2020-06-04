@@ -1,3 +1,5 @@
+Utiliser le tag GOLD ( et non pas gold qui correspond au projet précédent, merci )
+
 # Projet FPS avec moteur de jeu OpenGl3.3/SDL2.0
 > Gavelle Anthony, Nisi Guillaume, Six Jonathan
 > Juin 2020
