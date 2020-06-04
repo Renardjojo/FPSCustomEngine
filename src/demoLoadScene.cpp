@@ -270,7 +270,7 @@ void Demo::loadPlayer(t_RessourcesManager &ressourceManager)
     GameObjectCreateArg pseudoGameObject{"Pseudo",
                                          {{0.0f, 5.0f, 0.0f},
                                           {0.f, 0.f, 0.f},
-                                          {-textureSize.width / 10.f, 1.f, textureSize.heigth / 10.f}}};
+                                          {-textureSize.width / 10.f, 1.f, textureSize.height / 10.f}}};
 
     ModelCreateArg planeArg{&ressourceManager.get<Shader>("TextureOnly"),
                             &vecMaterialsPseudo,
@@ -806,7 +806,7 @@ void Demo::loadUpgradeStation         (t_RessourcesManager& ressourceManager)
 
 void Demo::loadCamera()
 {
-    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().heigth), 0.1f, 10000.0f, 45.0f, "MainCamera"};
+    CameraPerspectiveCreateArg camArg{{0.f, 0.f, 30.f}, {0.f, 0.f, 0.f}, _gameEngine.getWinSize().width / static_cast<float>(_gameEngine.getWinSize().height), 0.1f, 10000.0f, 45.0f, "MainCamera"};
     mainCamera = &_scene->add<Camera>(_scene->getWorld(), camArg);
     dynamic_cast<Camera *>(mainCamera)->use();
 }
@@ -854,13 +854,15 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     Font *pfont2 = &ressourceManager.add<Font>("font2", fontarg2);
     Shader *buttonShader = &ressourceManager.add<Shader>("ButtonShader", "./ressources/shader/text.vs", "./ressources/shader/texture.fs");
 
-    int tempX = _gameEngine.getWinSize().width / 2.0f;
-    int tempY = _gameEngine.getWinSize().heigth / 2.0f;
+    int halfWidth = _gameEngine.getWinSize().width / 2.0f;
+    int halfHeight = _gameEngine.getWinSize().height / 2.0f;
+    float crosshairSize = _gameEngine.getWinSize().height / 15;
+    float halfcrosshairSize = crosshairSize * 0.5;
 
 #pragma region Start
 
     ressourceManager.add<Button>("MenuStartButton", pfont, buttonShader,
-                                 tempX - 90, tempY - 200,
+                                 halfWidth - 90, halfHeight - 200,
                                  200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "New Game",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
@@ -869,7 +871,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("MenuLoadButton", pfont, buttonShader,
-                                 tempX - 95, tempY - 100,
+                                 halfWidth - 95, halfHeight - 100,
                                  220.0f, 60.0f, SDL_Color{170, 170, 80, 0}, "Load Game",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
@@ -877,7 +879,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("MenuOptionButton", pfont, buttonShader,
-                                 tempX - 65, tempY,
+                                 halfWidth - 65, halfHeight,
                                  150.0f, 60.0f, SDL_Color{80, 170, 170, 0}, "Options",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
@@ -885,7 +887,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("MenuQuitButton", pfont, buttonShader,
-                                 tempX - 35, tempY + 100,
+                                 halfWidth - 35, halfHeight + 100,
                                  150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",
                                  E_GAME_STATE::STARTING)
         .function = [&]() {
@@ -897,7 +899,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 #pragma region Pause
 
     ressourceManager.add<Button>("PausePlayButton", pfont, buttonShader,
-                                 tempX - 35, tempY - 100,
+                                 halfWidth - 35, halfHeight - 100,
                                  150.0f, 60.0f, SDL_Color{170, 80, 170, 0}, "Play",
                                  E_GAME_STATE::PAUSE)
         .function = [&]() {
@@ -906,7 +908,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("PauseMenuButton", pfont, buttonShader,
-                                 tempX - 45, tempY,
+                                 halfWidth - 45, halfHeight,
                                  150.0f, 60.0f, SDL_Color{80, 170, 80, 0}, "Menu",
                                  E_GAME_STATE::PAUSE)
         .function = [&]() {
@@ -921,12 +923,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     int decal = 250;
 
     ressourceManager.add<Title>("OptionForwardTitle", pfont, buttonShader,
-                                tempX - decal - 155, tempY - 400,
+                                halfWidth - decal - 155, halfHeight - 400,
                                 175.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Forward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionForwardButton", pfont, buttonShader,
-                                 tempX - decal + 50, tempY - 400,
+                                 halfWidth - decal + 50, halfHeight - 400,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.up)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -941,12 +943,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionBackwardTitle", pfont, buttonShader,
-                                tempX - decal - 185, tempY - 300,
+                                halfWidth - decal - 185, halfHeight - 300,
                                 200.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Backward :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionBackwardButton", pfont, buttonShader,
-                                 tempX - decal + 50, tempY - 300,
+                                 halfWidth - decal + 50, halfHeight - 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.down)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -961,12 +963,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionLeftTitle", pfont, buttonShader,
-                                tempX - decal - 75, tempY - 200,
+                                halfWidth - decal - 75, halfHeight - 200,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Left :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionLeftButton", pfont, buttonShader,
-                                 tempX - decal + 50, tempY - 200,
+                                 halfWidth - decal + 50, halfHeight - 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.left)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -981,12 +983,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionRightTitle", pfont, buttonShader,
-                                tempX - decal - 100, tempY - 100,
+                                halfWidth - decal - 100, halfHeight - 100,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Right :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionRightButton", pfont, buttonShader,
-                                 tempX - decal + 50, tempY - 100,
+                                 halfWidth - decal + 50, halfHeight - 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.right)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1001,12 +1003,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionJumpTitle", pfont, buttonShader,
-                                tempX - decal - 105, tempY,
+                                halfWidth - decal - 105, halfHeight,
                                 150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Jump :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionJumpButton", pfont, buttonShader,
-                                 tempX - decal + 50, tempY,
+                                 halfWidth - decal + 50, halfHeight,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.jump)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1021,7 +1023,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("OptionSwitchButton", pfont, buttonShader,
-                                 tempX - decal - 45, tempY + 100,
+                                 halfWidth - decal - 45, halfHeight + 100,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "WASD",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1062,12 +1064,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionFlashLightTitle", pfont, buttonShader,
-                                tempX + decal - 200, tempY - 400,
+                                halfWidth + decal - 200, halfHeight - 400,
                                 400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Flash Light :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionFlashLightButton", pfont, buttonShader,
-                                 tempX + decal + 50, tempY - 400,
+                                 halfWidth + decal + 50, halfHeight - 400,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.flashLight)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1082,12 +1084,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionReloadTitle", pfont, buttonShader,
-                                tempX + decal - 130, tempY - 300,
+                                halfWidth + decal - 130, halfHeight - 300,
                                 400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Reload :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionReloadButton", pfont, buttonShader,
-                                 tempX + decal + 50, tempY - 300,
+                                 halfWidth + decal + 50, halfHeight - 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.reload)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1102,12 +1104,12 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Title>("OptionUseTitle", pfont, buttonShader,
-                                tempX + decal - 72, tempY - 200,
+                                halfWidth + decal - 72, halfHeight - 200,
                                 400.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Use :",
                                 E_GAME_STATE::OPTION);
 
     ressourceManager.add<Button>("OptionUseButton", pfont, buttonShader,
-                                 tempX + decal + 50, tempY - 200,
+                                 halfWidth + decal + 50, halfHeight - 200,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, SDL_GetKeyName(SDL_GetKeyFromScancode(Input::keyboard.use)),
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1122,7 +1124,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     };
 
     ressourceManager.add<Button>("Return", pfont, buttonShader,
-                                 tempX - 50, tempY + 300,
+                                 halfWidth - 50, halfHeight + 300,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::OPTION)
         .function = [&]() {
@@ -1150,7 +1152,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
         shortSaveName = saves.substr(19, saves.size() - 23);
         ressourceManager.add<Button>(shortSaveName, pfont2, buttonShader,
-                                     tempX + i, tempY + j,
+                                     halfWidth + i, halfHeight + j,
                                      75.0f, 60.0f, SDL_Color{200, 200, 200, 0},
                                      shortSaveName, E_GAME_STATE::STARTSAVE)
             .function = [&]() {
@@ -1176,7 +1178,7 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
     }
 
     ressourceManager.add<Button>("ReturnSave", pfont, buttonShader,
-                                 tempX - 50, tempY + 250,
+                                 halfWidth - 50, halfHeight + 250,
                                  150.0f, 60.0f, SDL_Color{200, 200, 200, 0}, "Return",
                                  E_GAME_STATE::STARTSAVE)
         .function = [&]() {
@@ -1188,9 +1190,76 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 #pragma region UI in Game
 
 ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
-                                tempX  - tempX / 10.f, tempY - tempY / 10.f * 9.f,
+                                halfWidth  - halfWidth / 10.f, halfHeight - halfHeight / 10.f * 9.f,
                                 150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
 
+
+    TextureCreateArg tcaCrosshair{"./ressources/texture/crossair.png",E_WrapType::CLAMP_TO_BORDER};
+    TextureCreateArg tcaBullet{"./ressources/texture/Bullet.png",E_WrapType::CLAMP_TO_BORDER,E_FilterType::LINEAR,false};
+    TextureCreateArg tcaHealth{"./ressources/texture/Health.png",E_WrapType::CLAMP_TO_BORDER};
+    TextureCreateArg hitmarkerTextureArg{"./ressources/texture/hitmarker.png",E_WrapType::CLAMP_TO_BORDER};
+
+    Texture &t_crosshair = ressourceManager.add<Texture>("crosshair", tcaCrosshair);
+    Texture &t_bullet = ressourceManager.add<Texture>("bullet", tcaBullet);
+    Texture &t_health = ressourceManager.add<Texture>("Health", tcaHealth);
+    Texture &hitmarkerTexture = ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
+    
+    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
+                                                    hitmarkerTexture.getID(),
+                                                    &ressourceManager.get<Shader>("ImageShader"),
+                                                    halfWidth - halfcrosshairSize,
+                                                    halfHeight - halfcrosshairSize,
+                                                    crosshairSize,
+                                                    crosshairSize, 
+                                                    E_GAME_STATE::RUNNING);
+
+    hitmarker->setName("HitMarker");
+    hitmarker->isActive = false;
+
+    ressourceManager.add<Image>("CrosshairImage",
+                                t_crosshair.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                halfWidth - halfcrosshairSize,
+                                halfHeight - halfcrosshairSize,
+                                crosshairSize,
+                                crosshairSize,
+                                E_GAME_STATE::RUNNING);
+    ressourceManager.add<Image>("HealthImage",
+                                t_health.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                0,
+                                halfHeight*2 - t_health.getSize().height,
+                                t_health.getSize().width,
+                                t_health.getSize().height,
+                                E_GAME_STATE::RUNNING);
+    ressourceManager.add<Image>("BulletImage",
+                                t_bullet.getID(),
+                                &ressourceManager.get<Shader>("ImageShader"),
+                                halfWidth*2 - t_bullet.getSize().width - t_bullet.getSize().width/2,
+                                halfHeight*2 - t_bullet.getSize().height - t_bullet.getSize().height/15,
+                                t_bullet.getSize().width,
+                                t_bullet.getSize().height,
+                                E_GAME_STATE::RUNNING);
+
+    ressourceManager.add<ReferencedTitle>("lifeIndicator", pfont, buttonShader,
+                                halfWidth/10.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getLife(),"", E_GAME_STATE::RUNNING);
+    ressourceManager.add<ReferencedTitle>("maxlifeIndicator", pfont, buttonShader,
+                                halfWidth/5.f, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMaxLife(),"/ ", E_GAME_STATE::RUNNING);                        
+    
+    ressourceManager.add<ReferencedTitle>("moneyIndicator", pfont, buttonShader,
+                                halfWidth/10.f, halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{120, 240, 120, 255},_scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->getMoney(),"$", E_GAME_STATE::RUNNING);                        
+    
+    
+    Title* bulletIndicator = &ressourceManager.add<Title>("bulletIndicator", pfont, buttonShader,
+                                halfWidth*1.75, halfHeight*2 - halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 240, 240, 255}," Bullets", E_GAME_STATE::RUNNING);
+    
+    _scene->getGameObject("world/Players/Player1").getComponent<PlayerController>()->setBulletReference(bulletIndicator);
+
+    
 #pragma endregion
 }
 
