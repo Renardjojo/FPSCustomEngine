@@ -1,3 +1,5 @@
+#ifndef DNEDITOR
+
 #include "GE/LowRenderer/EditorTools/Editor.hpp"
 #include "GE/Core/InputSystem/input.hpp"
 #include "GE/Ressources/Saves.hpp"
@@ -94,3 +96,5 @@ void Editor::update(Scene& scene, GE& engine)
 
     EditModeControllerWindow::update();
 }
+
+#endif
