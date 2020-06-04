@@ -77,6 +77,11 @@ ou
 ```
 /!\ Attention vous devez utiliser un terminal indépendant et non celui d'un IDE sinon, le son ne fonctionnera pas.
 
+Il est possible de compiler le programme avec différente flag en modifier directement le makefile :
+- Pour la version debug avec editeur : CXX_DEBUG en c++ et C_DEBUG en C
+- Pour la version release sans editeur : CXX_EDITOR en c++ et C_EDITOR en C
+- Pour la version release avec editeur : CXX_BUILD en c++ et C_BUILD en C
+
 ## Bug
 
 Tous cas de collision n'ont pus être testé. La version actuelle est stable mais il peut y avoir certain cas particulier non détecté lors des playtests.
