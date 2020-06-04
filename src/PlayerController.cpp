@@ -224,6 +224,10 @@ void PlayerController::toggleCameraType()
 void PlayerController::activateLootMachine()
 {
   Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition(), _money);
+  Scene::getCurrentScene()->getGameObject("ReloadTimeUpgradeStation").getComponent<ReloadTimeUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
+  Scene::getCurrentScene()->getGameObject("AutoUpgradeStation").getComponent<AutoUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
+  Scene::getCurrentScene()->getGameObject("DamageUpgradeStation").getComponent<DamageUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
+  Scene::getCurrentScene()->getGameObject("FireRateUpgradeStation").getComponent<FireRateUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this); 
   Scene::getCurrentScene()->getGameObject("MunitionCapacityUpgradeStation").getComponent<MunitionCapacityUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
 }
 

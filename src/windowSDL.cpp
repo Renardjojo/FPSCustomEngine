@@ -25,7 +25,7 @@ void    WindowSDL::initialize (const WindowCreateArg& arg) noexcept
                             SDL_WINDOWPOS_CENTERED, 
                             arg.width, 
                             arg.height, 
-                            SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED );
+                            SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED);
 
     if (win == NULL)
     {
