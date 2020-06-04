@@ -1293,51 +1293,117 @@ void Demo::loadEnemies(t_RessourcesManager &ressourceManager)
 
     enemiesContener = &_scene->add<GameObject>(_scene->getWorld(), GameObjectCreateArg{"EnemiesContener"});
 
-    GameObjectCreateArg Ennemy1GameObjectArg{"Ennemy"};
+    {
+        GameObjectCreateArg Ennemy1GameObjectArg{"EyesBall"};
+        Ennemy1GameObjectArg.transformArg.scale = {5.f, 5.f, 5.f};
 
-    ModelCreateArg modelArg{&ressourceManager.get<Shader>("ColorWithLight"),
-                        &ressourceManager.get<std::vector<Material>>("RedMaterial"),
-                        &ressourceManager.get<Mesh>("Cube"),
-                        "ColorWithLight",
-                        "RedMaterial",
-                        "Cube"};
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("EyesBallMaterial"),
+                            &ressourceManager.get<Mesh>("EyesBallMesh"),
+                            "LightAndTexture",
+                            "EyesBallMaterial",
+                            "EyesBallMesh"};
 
-    GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
-    enemyBase.setTag("Enemy");
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
 
-    enemyBase.setScale(Vec3{3.f, 5.f, 3.f});
+        enemyBase.addComponent<Model>(modelArg);
 
-    enemyBase.addComponent<Model>(modelArg);
-    enemyBase.addComponent<PhysicalObject>().setMass(1);
-    enemyBase.getComponent<PhysicalObject>()->setFreezeRotX(true);
-    enemyBase.getComponent<PhysicalObject>()->setFreezeRotY(true);
-    enemyBase.getComponent<PhysicalObject>()->setFreezeRotZ(true);
-    enemyBase.addComponent<SphereCollider>().setBounciness(0.f);
-    enemyBase.getComponent<SphereCollider>()->setFriction(0.97f);
+        PhysicalObject& physicalObjectComp = enemyBase.addComponent<PhysicalObject>();
+        physicalObjectComp.setMass(1);
+        physicalObjectComp.setFreezeRotX(true);
+        physicalObjectComp.setFreezeRotY(true);
+        physicalObjectComp.setFreezeRotZ(true);
 
-    enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
-                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+        SphereCollider& sphereColliderComp = enemyBase.addComponent<SphereCollider>();
+        sphereColliderComp.setBounciness(0.f);
+        sphereColliderComp.setFriction(0.97f);
 
-    Save::createPrefab(enemyBase, "enemy1");
+        enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                &Scene::getCurrentScene()->getGameObject("world/Nexus"));
 
-    enemyBase.setScale(Vec3{4.f, 6.f, 4.f});
-    enemyBase.getComponent<EnnemyController>()->setLife(8);
-    enemyBase.getComponent<EnnemyController>()->setSpeed(10);
-    enemyBase.getComponent<EnnemyController>()->setDamage(2);
-    enemyBase.getComponent<EnnemyController>()->setValueOnHit(10);
-    enemyBase.getComponent<EnnemyController>()->setValueOnDeath(100);
+        Save::createPrefab(enemyBase, "enemy1");
+        enemyBase.destroyImmediate();
+    }
 
-    Save::createPrefab(enemyBase, "enemy2");
+    {
+        GameObjectCreateArg Ennemy1GameObjectArg{"Spider"};
+        Ennemy1GameObjectArg.transformArg.scale = {5.f, 5.f, 5.f};
 
-    enemyBase.setScale(Vec3{2.f, 2.f, 2.f});
-    enemyBase.getComponent<EnnemyController>()->setLife(3);
-    enemyBase.getComponent<EnnemyController>()->setSpeed(35);
-    enemyBase.getComponent<EnnemyController>()->setDamage(1);
-    enemyBase.getComponent<EnnemyController>()->setRadius(50);
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("SpiderMaterial"),
+                            &ressourceManager.get<Mesh>("SpiderMesh"),
+                            "LightAndTexture",
+                            "SpiderMaterial",
+                            "SpiderMesh"};
 
-    Save::createPrefab(enemyBase, "enemy3");
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
 
-    enemyBase.destroyImmediate();
+        enemyBase.addComponent<Model>(modelArg);
+
+        PhysicalObject& physicalObjectComp = enemyBase.addComponent<PhysicalObject>();
+        physicalObjectComp.setMass(1);
+        physicalObjectComp.setFreezeRotX(true);
+        physicalObjectComp.setFreezeRotY(true);
+        physicalObjectComp.setFreezeRotZ(true);
+
+        SphereCollider& sphereColliderComp = enemyBase.addComponent<SphereCollider>();
+        sphereColliderComp.setBounciness(0.f);
+        sphereColliderComp.setFriction(0.97f);
+
+        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+
+        ennemyControllerComp.setLife(8);
+        ennemyControllerComp.setSpeed(10);
+        ennemyControllerComp.setDamage(2);
+        ennemyControllerComp.setValueOnHit(10);
+        ennemyControllerComp.setValueOnDeath(100);
+
+        Save::createPrefab(enemyBase, "enemy2");
+        enemyBase.destroyImmediate();
+    }
+
+    {
+        GameObjectCreateArg Ennemy1GameObjectArg{"PlantMonster"};
+        Ennemy1GameObjectArg.transformArg.scale = {5.f, 5.f, 5.f};
+
+        ModelCreateArg modelArg{&ressourceManager.get<Shader>("LightAndTexture"),
+                            &ressourceManager.get<std::vector<Material>>("PlantMonsterMaterial"),
+                            &ressourceManager.get<Mesh>("PlantMonsterMesh"),
+                            "LightAndTexture",
+                            "PlantMonsterMaterial",
+                            "PlantMonsterMesh"};
+
+        GameObject& enemyBase = _scene->add<GameObject>(_scene->getWorld(), Ennemy1GameObjectArg);
+        enemyBase.setTag("Enemy");
+
+        enemyBase.addComponent<Model>(modelArg);
+
+        PhysicalObject& physicalObjectComp = enemyBase.addComponent<PhysicalObject>();
+        physicalObjectComp.setMass(1);
+        physicalObjectComp.setFreezeRotX(true);
+        physicalObjectComp.setFreezeRotY(true);
+        physicalObjectComp.setFreezeRotZ(true);
+
+        SphereCollider& sphereColliderComp = enemyBase.addComponent<SphereCollider>();
+        sphereColliderComp.setBounciness(0.f);
+        sphereColliderComp.setFriction(0.97f);
+
+        EnnemyController& ennemyControllerComp = enemyBase.addComponent<EnnemyController>(  &Scene::getCurrentScene()->getGameObject("world/Players/Player1"), 
+                                                                                            &Scene::getCurrentScene()->getGameObject("world/Nexus"));
+
+        ennemyControllerComp.setLife(3);
+        ennemyControllerComp.setSpeed(35);
+        ennemyControllerComp.setDamage(1);
+        ennemyControllerComp.setRadius(50);
+        ennemyControllerComp.setValueOnHit(10);
+        ennemyControllerComp.setValueOnDeath(100);
+
+        Save::createPrefab(enemyBase, "enemy3");
+        enemyBase.destroyImmediate();
+    }
 
     GameObjectCreateArg spawnerGOArg;
 
