@@ -10,6 +10,8 @@
 #include "GE/Physics/PhysicSystem.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
+#include "GE/GE.hpp"
+#include "Game/define.h"
 
 using namespace Game;
 using namespace Engine::Physics;
@@ -29,8 +31,9 @@ Nexus::Nexus(GameObject &_gameObject)
 
 Nexus::Nexus(GameObject &gameObject, const std::vector<std::string> &params)
     : ScriptComponent{gameObject},
-    _life{std::stoi(params[0])}
-{}
+      _life{std::stoi(params[0])}
+{
+}
 
 void Nexus::start()
 {
@@ -41,25 +44,28 @@ void Nexus::start()
 void Nexus::update()
 {
     if (_life <= 0)
-        std::cout << "nexus destroy" << std::endl;
+    {
+        _life = 0;
+        Engine::GE::gameState = Engine::E_GAME_STATE::DEAD;
+    }
 }
 
 void Nexus::fixedUpdate()
 {
 }
 
-void Nexus::onCollisionEnter(HitInfo& hitInfo)
+void Nexus::onCollisionEnter(HitInfo &hitInfo)
 {
     (void)hitInfo;
 }
 
-void Nexus::inflictDamage(int damage) 
-{ 
-    _life -= damage; 
+void Nexus::inflictDamage(int damage)
+{
+    _life -= damage;
     _light->setLinear(0.05f + (11 - _life) * 0.01f);
 }
 
-void Nexus::save(xml_document<>& doc, xml_node<>* nodeParent)
+void Nexus::save(xml_document<> &doc, xml_node<> *nodeParent)
 {
     if (!nodeParent)
         return;

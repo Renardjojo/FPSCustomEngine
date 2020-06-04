@@ -48,6 +48,7 @@ namespace Game
         private:
             float _musicVolume{0.35f};
             float _effectsVolume{0.5f};
+            bool _won{false};
 
         protected:
 
