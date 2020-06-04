@@ -182,7 +182,8 @@ void Demo::loadRessources(t_RessourcesManager &ressourceManager)
     loadFogRessource            (ressourceManager);
     loadLootRessource           (ressourceManager); 
     loadGuiRessource            (ressourceManager); 
-    loadSniperScopeRessource    (ressourceManager); 
+    loadSniperScopeRessource    (ressourceManager);
+    loadUpgradeStationRessource (ressourceManager);
 }
 void Demo::loadSounds(t_RessourcesManager &rm)
 {
@@ -555,6 +556,25 @@ void Demo::loadGuiRessource (Engine::Ressources::t_RessourcesManager& ressourceM
                                 crosshairSize,
                                 crosshairSize,
                                 E_GAME_STATE::RUNNING);
+
+        TextureCreateArg hitmarkerTextureArg{
+        "./ressources/texture/hitmarker.png",
+        E_WrapType::CLAMP_TO_BORDER
+    };
+    
+    Texture &hitmarkerTexture = ressourceManager.add<Texture>("hitmarker", hitmarkerTextureArg);
+
+    Image* hitmarker = &ressourceManager.add<Image>("hitmarkerImage",
+                                                    hitmarkerTexture.getID(),
+                                                    imageShader,
+                                                    halfWidth - halfcrosshairSize,
+                                                    halfHeight - halfcrosshairSize,
+                                                    crosshairSize,
+                                                    crosshairSize, 
+                                                    E_GAME_STATE::RUNNING);
+    hitmarker->setName("HitMarker");
+
+    hitmarker->isActive = false;
 }        
 
 void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
@@ -574,4 +594,52 @@ void Demo::loadSniperScopeRessource (t_RessourcesManager& ressourceManager)
                                 _gameEngine.getWinSize().width,
                                 _gameEngine.getWinSize().heigth,
                                 E_GAME_STATE::RUNNING).isActive = false;;
+}
+
+
+void Demo::loadUpgradeStationRessource(t_RessourcesManager& ressourceManager)
+{
+    MaterialAndTextureCreateArg frontMat;
+    frontMat.name = "ReloadMaterial";
+    frontMat.comp.ambient.rgbi = {1.f, 1.f, 1.f, 1.f};
+    frontMat.comp.diffuse.rgbi = {1.f, 1.f, 1.f, 1.f};
+    frontMat.comp.specular.rgbi = {1.f, 1.f, 1.f, 0.1f};
+    frontMat.pathDiffuseTexture = "./ressources/texture/reload.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "FireRateMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/firerate.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "DamageMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/damage.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "AutoMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/auto.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
+
+    frontMat.name = "MunitionMaterial";
+    frontMat.pathDiffuseTexture = "./ressources/texture/munition.png";
+    {
+        std::vector<Material> material;
+        material.emplace_back(frontMat);
+        ressourceManager.add<std::vector<Material>>(frontMat.name, std::move(material));
+    }
 }

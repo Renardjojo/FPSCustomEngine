@@ -173,7 +173,7 @@ void PhysicalObject::addTorque(const Vec3& force) noexcept
     if (!_freezeRotY)
         _angularVelocity.y += force.y;
     else
-        _velocity.y = 0.f;
+        _angularVelocity.y = 0.f;
 
     if (!_freezeRotZ)
         _angularVelocity.z += force.z;
@@ -268,14 +268,12 @@ void PhysicalObject::setAngularVelocity(const Engine::Core::Maths::Vec3& velocit
     if (!_freezeRotY)
         _angularVelocity.y = velocity.y;
     else
-        _velocity.y = 0.f;
+        _angularVelocity.y = 0.f;
 
     if (!_freezeRotZ)
         _angularVelocity.z = velocity.z;
     else
         _angularVelocity.z = 0.f;
-
-    _angularVelocity = velocity;
 }
 
 void PhysicalObject::addForceAtPoint(const Engine::Core::Maths::Vec3& force, const Engine::Core::Maths::Vec3& position) noexcept

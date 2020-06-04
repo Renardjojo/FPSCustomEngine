@@ -77,7 +77,7 @@ void WaveManager::update()
         return;
     }
 
-    /*Check and remove the the empty spawner*/
+    /*Check and remove the empty spawner*/
     for (std::list<std::unique_ptr<GameObject>>::iterator it =  _gameObject.children.begin(); it != _gameObject.children.end(); it++)
     {
         CircularEntitiesSpawner* pSpawner = (*it)->getComponent<CircularEntitiesSpawner>();
@@ -101,7 +101,7 @@ void WaveManager::nextWave()
     std::vector<unsigned int> contenorNumberEnemie; // from weakest to strongest
     int totalEnnemiesOnThisWave = generateNumberEnnemy (contenorNumberEnemie);
 
-    GE_assertInfo(totalEnnemiesOnThisWave != 0, "Anought ennemies for with wave");
+    GE_assertInfo(totalEnnemiesOnThisWave != 0, "Enought ennemies for with wave");
 
     /*Activate new spawner*/
     size_t numberSpawnActivate = totalEnnemiesOnThisWave / 5 + 1;

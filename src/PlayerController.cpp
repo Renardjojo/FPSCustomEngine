@@ -7,6 +7,7 @@
 #include "GE/LowRenderer/ParticleSystemFactory.hpp"
 #include "Game/ParticuleGenerator.hpp"
 #include "Game/LootMachine.hpp"
+#include "Game/UpgradeStation.hpp"
 #include "Game/LifeDuration.hpp"
 #include "GE/Ressources/scene.hpp"
 #include "GE/Ressources/ressourcesManager.hpp"
@@ -30,7 +31,6 @@ using namespace Engine::LowRenderer;
 
 PlayerController::PlayerController(GameObject &_gameObject)
     : ScriptComponent{_gameObject},
-      _rm{t_RessourcesManager::getRessourceManagerUse()},
       _camera{Camera::getCamUse()}
 {
     _name = __FUNCTION__;
@@ -52,6 +52,16 @@ void PlayerController::start()
 
     _flashLight = _gameObject.getChild("FlashLight")->getComponent<SpotLight>();
     GE_assertInfo(_flashLight != nullptr, "Game object name \"flashLight\" must contain component \"SpotLight\"");
+
+    for (Image* image : UISystem::getImages())
+    {
+        if (image->getName().compare("HitMarker") == 0)
+        {
+            _hitmarker = image;
+            break;
+        }
+    }
+    GE_assertInfo(_hitmarker != nullptr, "no hitmarker found");
 };
 
 void PlayerController::update()
@@ -67,8 +77,8 @@ void PlayerController::update()
 
     move();
 
-    if (_life <= 0)
-        std::cout << "player is dead" << std::endl;
+    // if (_life <= 0)
+    //     std::cout << "player is dead" << std::endl;
 
     if (!_firesGuns.empty() && (_firesGuns[0]->isAutomatic() ? Input::mouse.leftClicDown : Input::mouse.leftClicDownOnce))
         shoot();
@@ -110,6 +120,15 @@ void PlayerController::update()
             }
         }
     }
+    if (_hitmarker->isActive)
+    {
+        _hitmarkerDisplaydelay += TimeSystem::getDeltaTime();
+        if (_hitmarkerDisplaydelay > _hitmarkerDisplayTime)
+        {
+            _hitmarkerDisplaydelay = 0.f;
+            _hitmarker->isActive = false;
+        }
+    }
 }
 
 void PlayerController::fixedUpdate()
@@ -135,14 +154,14 @@ void PlayerController::switchFlashLightState()
 
 void PlayerController::shoot()
 {
-    _firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward());
+    if (_firesGuns[0]->shoot(_gameObject.getGlobalPosition(), _gameObject.getModelMatrix().getVectorForward()))
+        _hitmarker->isActive = true;
 }
 
 void PlayerController::switchAimState()
 {
     _firesGuns[0]->switchAimState();
 }
-
 
 void PlayerController::setCameraType(CameraType type)
 {
@@ -160,7 +179,8 @@ void PlayerController::toggleCameraType()
 
 void PlayerController::activateLootMachine()
 {
-    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition());
+    Scene::getCurrentScene()->getGameObject("LootMachine").getComponent<LootMachine>()->activate(_gameObject.getGlobalPosition(), _money);
+    Scene::getCurrentScene()->getGameObject("MunitionCapacityUpgradeStation").getComponent<MunitionCapacityUpgradeStation>()->activate(_gameObject.getGlobalPosition(), this);
 }
 
 void PlayerController::addFirearm(Firearm *Firearm)
