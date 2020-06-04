@@ -58,10 +58,7 @@ namespace Engine::Physics
 
 #pragma region accessor
 
-		Engine::Core::Maths::Vec3 getVelocity()
-		{
-			return _velocity;
-		}
+		Engine::Core::Maths::Vec3 getVelocity() { return _velocity; }
 
 		Engine::Core::Maths::Vec3 getAngularVelocity() const noexcept { return _angularVelocity; }
 		float getMass() const noexcept { return _mass; }
@@ -74,28 +71,9 @@ namespace Engine::Physics
 
 #pragma region mutator
 
-		void setVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
-		{
-			_isDirty = true;
-			_sleep = false;
-			_velocity = velocity;
-		}
-
-		void setVelocity(float x, float y, float z) noexcept
-		{
-			_isDirty = true;
-			_sleep = false;
-			_velocity.x = x;
-			_velocity.y = y;
-			_velocity.z = z;
-		}
-
-		void setAngularVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
-		{
-			_isDirty = true;
-			_sleep = false;
-			_angularVelocity = velocity;
-		}
+		void setVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept;
+		void setVelocity(float x, float y, float z) noexcept;
+		void setAngularVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept;
 
 		void setMass			(float mass) noexcept { _mass = mass; }
 		void setIsKinematic		(bool state) noexcept { _isKinematic = state; }
