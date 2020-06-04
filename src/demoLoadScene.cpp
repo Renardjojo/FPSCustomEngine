@@ -631,14 +631,13 @@ void Demo::loadEntity(t_RessourcesManager &ressourceManager)
     Random::initSeed(10.f);
 
     loadTimeManager             ();
-    loadRock                    (ressourceManager, 100);
-    loadTree                    (ressourceManager, 50);
+    loadRock                    (ressourceManager, 10);
+    loadTree                    (ressourceManager, 5);
     loadSkybox                  (ressourceManager);
     loadPlayer                  (ressourceManager);
     loadGround                  (ressourceManager);
-    loadFog                     (ressourceManager, 20);
-    //loadTower                  (ressourceManager);Game
-    loadLootMachin               (ressourceManager);
+    loadFog                     (ressourceManager, 10);
+    loadLootMachin              (ressourceManager);
 
     /*Add randome seed*/
     Random::initSeed();

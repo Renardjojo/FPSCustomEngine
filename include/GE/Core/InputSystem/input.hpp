@@ -93,6 +93,7 @@ namespace Engine::Core::InputSystem
         bool isMinimized{false};        // window has been minimized. Note use SDL_MinimizeWindow
         bool isMaximized{false};        // window has been maximized. Note use SDL_MaximizeWindow
         bool focusInWindow{true};       //true while mouse or keyboard focus is in focus
+        bool isQuit {false};
     };
 
     class Input

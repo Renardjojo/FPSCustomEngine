@@ -6,10 +6,10 @@
 using namespace Engine::Ressources;
 using namespace Engine::Core::Debug;
 
-bool SoundPlayer::_initialized = false;
-ALCdevice *SoundPlayer::_device;
-ALCcontext *SoundPlayer::_context;
-std::vector<std::string> SoundPlayer::_devices;
+bool SoundPlayer::_initialized      = false;
+ALCdevice *SoundPlayer::_device     = nullptr;
+ALCcontext *SoundPlayer::_context   = nullptr;
+std::vector<std::string> SoundPlayer::_devices {};
 
 bool SoundPlayer::initialize()
 {
