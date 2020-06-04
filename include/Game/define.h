@@ -18,6 +18,7 @@ namespace Engine
         OPTION,
         STARTSAVE,
         LOADSAVE,
+        DEAD,
         EXIT
     };
 

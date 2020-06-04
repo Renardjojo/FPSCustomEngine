@@ -1264,9 +1264,34 @@ void Demo::loadUI(t_RessourcesManager &ressourceManager)
 
 #pragma endregion
 
+#pragma region Death
+
+    ressourceManager.add<Title>("youredead", pfont, buttonShader,
+                                halfWidth- halfWidth/8.f, halfHeight- halfHeight/10.f,
+                                halfWidth, halfWidth/10.f, SDL_Color{240, 0, 0, 255},"You died.", E_GAME_STATE::DEAD);
+    
+    ressourceManager.add<Button>("DeathRestart", pfont, buttonShader,
+                                 halfWidth- halfWidth/8.f, halfHeight- halfHeight/5.f,
+                                 200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Restart",
+                                 E_GAME_STATE::STARTING)
+        .function = [&]() {
+            _gameEngine.gameState = E_GAME_STATE::RUNNING;
+            usingMouse = false;
+        };
+
+    ressourceManager.add<Button>("DeathQuit", pfont, buttonShader,
+                                 halfWidth - 35, halfHeight + 100,
+                                 150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Rage quit",
+                                 E_GAME_STATE::DEAD)
+        .function = [&]() {
+        _gameEngine.gameState = E_GAME_STATE::EXIT;
+    };
+    
+
+#pragma endregion
 #pragma region UI in Game
 
-ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
+    ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", pfont, buttonShader,
                                 halfWidth  - halfWidth / 10.f, halfHeight - halfHeight / 10.f * 9.f,
                                 150.0f, 60.0f, SDL_Color{200, 30, 30, 255}, (int*)_scene->getGameObject("waveManager").getComponent<WaveManager>()->getPCurrentWave(),"Wave ", E_GAME_STATE::RUNNING);
 

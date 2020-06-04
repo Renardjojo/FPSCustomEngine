@@ -14,6 +14,8 @@
 #include "Game/LifeDuration.hpp"
 #include "Game/LootMachine.hpp"
 #include "Game/ParticuleGenerator.hpp"
+#include "GE/GE.hpp"
+#include "Game/define.h"
 #include <iostream>
 
 #include <algorithm>
@@ -80,8 +82,11 @@ void PlayerController::update()
 
   move();
 
-  // if (_life <= 0)
-  //   std::cout << "player is dead" << std::endl;
+  if (_life <= 0)
+  {
+    _life = 0;
+    Engine::GE::gameState = Engine::E_GAME_STATE::DEAD;
+  }
 
   if (_firearms.empty())
     return;
