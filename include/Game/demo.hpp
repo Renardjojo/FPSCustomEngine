@@ -104,13 +104,11 @@ namespace Game
             void loadUpgradeStation         (Engine::Ressources::t_RessourcesManager& ressourceManager);            
             
             void loadEntity             (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadLights             (Engine::Ressources::t_RessourcesManager& ressourceManager);
+            void loadLights             ();
             void loadSkyBox             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadEnemies            (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadBulletHoleContenor (int maxDecale);
-            //void loadGround             (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadUI                 (Engine::Ressources::t_RessourcesManager& ressourceManager);
-            void loadReferential        (Engine::Ressources::t_RessourcesManager& ressourceManager);
             void loadTimeManager        ();
             void loadCamera             ();
 

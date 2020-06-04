@@ -118,7 +118,6 @@ void PhysicalObject::addForce(const Vec3& force) noexcept
         return;
 
     _isDirty = true;
-    _sleep = false;
 
     if (!_freezeTrX)
         _velocity.x += force.x; 
@@ -142,19 +141,18 @@ void PhysicalObject::addForce(float x, float y, float z) noexcept
         return;
 
     _isDirty = true;
-    _sleep = false;
 
-    if (!_freezeRotX)
+    if (!_freezeTrX)
         _velocity.x += x;
     else
         _velocity.x = 0.f;
     
-    if (!_freezeRotY)
+    if (!_freezeTrY)
         _velocity.y += y;
     else
         _velocity.y = 0.f;
     
-    if (!_freezeRotZ)
+    if (!_freezeTrZ)
         _velocity.z += z;
     else
         _velocity.z = 0.f;
@@ -175,7 +173,7 @@ void PhysicalObject::addTorque(const Vec3& force) noexcept
     if (!_freezeRotY)
         _angularVelocity.y += force.y;
     else
-        _velocity.y = 0.f;
+        _angularVelocity.y = 0.f;
 
     if (!_freezeRotZ)
         _angularVelocity.z += force.z;
@@ -190,18 +188,90 @@ void PhysicalObject::addTorque(float x, float y, float z) noexcept
         
     _isDirty = true;
 
-    if (!_freezeTrX)
+    if (!_freezeRotX)
         _angularVelocity.x += x;
     else
         _angularVelocity.x = 0.f;
     
-    if (!_freezeTrY)
+    if (!_freezeRotY)
         _angularVelocity.y += y;
     else
         _angularVelocity.y = 0.f;
     
-    if (!_freezeTrZ)
+    if (!_freezeRotZ)
         _angularVelocity.z += z;
+    else
+        _angularVelocity.z = 0.f;
+}
+
+void PhysicalObject::setVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
+{
+    if (_isKinematic)
+        return;
+
+    _isDirty = true;
+    _sleep = false;
+
+    if (!_freezeTrX)
+        _velocity.x = velocity.x; 
+    else
+        _velocity.x = 0.f;
+
+    if (!_freezeTrY)
+        _velocity.y = velocity.y;
+    else
+        _velocity.y = 0.f;
+
+    if (!_freezeTrZ)
+        _velocity.z = velocity.z;
+    else
+        _velocity.z = 0.f;
+}
+
+void PhysicalObject::setVelocity(float x, float y, float z) noexcept
+{
+    if (_isKinematic)
+        return;
+
+    _isDirty = true;
+    _sleep = false;
+
+    if (!_freezeTrX)
+        _velocity.x = x; 
+    else
+        _velocity.x = 0.f;
+
+    if (!_freezeTrY)
+        _velocity.y = y;
+    else
+        _velocity.y = 0.f;
+
+    if (!_freezeTrZ)
+        _velocity.z = z;
+    else
+        _velocity.z = 0.f;
+}
+
+void PhysicalObject::setAngularVelocity(const Engine::Core::Maths::Vec3& velocity) noexcept
+{
+    if (_isKinematic)
+        return;
+
+    _isDirty = true;
+    _sleep = false;
+
+    if (!_freezeRotX)
+        _angularVelocity.x = velocity.x; 
+    else
+        _angularVelocity.x = 0.f;
+
+    if (!_freezeRotY)
+        _angularVelocity.y = velocity.y;
+    else
+        _angularVelocity.y = 0.f;
+
+    if (!_freezeRotZ)
+        _angularVelocity.z = velocity.z;
     else
         _angularVelocity.z = 0.f;
 }

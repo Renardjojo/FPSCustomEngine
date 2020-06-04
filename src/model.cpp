@@ -169,10 +169,7 @@ void Model::draw () const noexcept
             }
         }
         else
-        {
-            if ((*pMaterial_)[0].getPDiffuseTexture() != nullptr)
-                (*pMaterial_)[0].getPDiffuseTexture()->use();
-        
+        {          
             if ((pShader_->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
             {
                 pShader_->setMaterialBlock((*pMaterial_)[0].getMaterialComponent());
@@ -185,12 +182,17 @@ void Model::draw () const noexcept
                                             (*pMaterial_)[0].getMaterialComponent().ambient.kb,
                                             (*pMaterial_)[0].getMaterialComponent().ambient.ki);
             }
-    
+            else
+            {
+                if ((*pMaterial_)[0].getPDiffuseTexture() != nullptr)
+                    (*pMaterial_)[0].getPDiffuseTexture()->use();
+            }
         }
 
 		glDrawArrays(GL_TRIANGLES, first, pMesh_->getIndices()[part].size());
 		first += pMesh_->getIndices()[part].size();
 	}
+        glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Model::loadInGPU() noexcept
