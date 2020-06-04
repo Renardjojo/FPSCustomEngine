@@ -855,6 +855,64 @@ void Demo::loadGUI(t_RessourcesManager &ressourceManager)
     float crosshairSize = _gameEngine.getWinSize().height / 15;
     float halfcrosshairSize = crosshairSize * 0.5;
 
+    if(ressourceManager.get<Title>("gameover"))
+        ressourceManager.remove<Title>("gameover");
+
+    ressourceManager.add<Title>("gameover", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth- halfWidth/13.f, halfHeight- halfHeight/10.f,
+                                halfWidth, halfWidth/8.f, SDL_Color{240, 0, 0, 255},"Game over", E_GAME_STATE::DEAD);
+    
+    if(ressourceManager.get<Button>("DeathRestart"))
+        ressourceManager.remove<Button>("DeathRestart");
+
+    ressourceManager.add<Button>("DeathRestart",ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth- halfWidth/20.f, halfHeight + halfHeight/10.f,
+                                 200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Restart",
+                                 E_GAME_STATE::DEAD)
+        .function = [&]() {
+
+            Light::resetLight();
+            _scene.reset();
+            _gameEngine.gameState = E_GAME_STATE::STARTING;
+            usingMouse = false;
+        };
+
+    if(ressourceManager.get<Button>("DeathQuit"))
+        ressourceManager.remove<Button>("DeathQuit");
+    ressourceManager.add<Button>("DeathQuit", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth - 35, halfHeight + 100,
+                                 150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Rage quit",E_GAME_STATE::DEAD)
+        .function = [&]() {
+        _gameEngine.gameState = E_GAME_STATE::EXIT;
+    };
+
+    if(ressourceManager.get<Title>("win"))
+        ressourceManager.remove<Title>("win");
+
+    ressourceManager.add<Title>("win", ressourceManager.get<Font>("font1"), ressourceManager.get<Shader>("ButtonShader"),
+                                halfWidth- halfWidth/13.f, halfHeight- halfHeight/10.f,
+                                halfWidth, halfWidth/8.f, SDL_Color{212, 175, 55, 255},"You won !", E_GAME_STATE::WIN);
+
+    if(ressourceManager.get<Button>("WinContinue"))
+        ressourceManager.remove<Button>("WinContinue");
+
+    ressourceManager.add<Button>("WinContinue",ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth- halfWidth/20.f, halfHeight + halfHeight/10.f,
+                                 200.0f, 60.0f, SDL_Color{170, 80, 80, 0}, "Continue ?",E_GAME_STATE::WIN)
+        .function = [&]() {
+            _gameEngine.gameState = E_GAME_STATE::RUNNING;
+            usingMouse=false;
+    };
+
+    if(ressourceManager.get<Button>("WinQuit"))
+        ressourceManager.remove<Button>("WinQuit");
+    ressourceManager.add<Button>("WinQuit", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),
+                                 halfWidth - 35, halfHeight + 100,
+                                 150.0f, 60.0f, SDL_Color{80, 80, 170, 0}, "Quit",E_GAME_STATE::WIN)
+        .function = [&]() {
+            _gameEngine.gameState = E_GAME_STATE::EXIT;
+    };
+
     if (ressourceManager.get<ReferencedTitle>("WaveIndicatorUI"))
         ressourceManager.remove<ReferencedTitle>("WaveIndicatorUI");
     ressourceManager.add<ReferencedTitle>("WaveIndicatorUI", ressourceManager.get<Font>("font2"), ressourceManager.get<Shader>("ButtonShader"),

@@ -12,6 +12,8 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Ressources::Save;
 using namespace Engine::Core::InputSystem;
 
+E_GAME_STATE GE::gameState;
+
 GE::GE ()
 {
     //init Log

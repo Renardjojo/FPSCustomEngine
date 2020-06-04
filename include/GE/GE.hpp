@@ -31,7 +31,7 @@ namespace Engine
 
             Engine::Ressources::t_RessourcesManager ressourceManager_;
 
-            E_GAME_STATE gameState;
+            static E_GAME_STATE gameState;
 
             std::vector<std::string> savePaths;
 
